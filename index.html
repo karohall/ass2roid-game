@@ -25,11 +25,17 @@
   button:hover:not(:disabled) { background:#444; color:var(--hot); }
   button:disabled { opacity:.4; cursor:default; }
   .btns { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  #meter { height:14px; background:#111; border:1px solid #555; position:relative; }
-  #meterFill { height:100%; width:0; background:#bbb; }
-  #meterFill.hot { background:#fff; }
-  #scale { display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-top:4px; }
-  #scale span.on { color:var(--hot); }
+  #dosage { width:440px; margin-top:10px; }
+  #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+  #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
+  #meter { height:32px; background:#111; border:2px solid #666; position:relative;
+           background-image:repeating-linear-gradient(90deg, transparent 0 calc(20% - 2px), #444 calc(20% - 2px) 20%); }
+  #meterFill { height:100%; width:0; background:#bbb; transition:width .15s; }
+  #meterFill.hot { background:#fff; animation:throb .4s ease-in-out infinite alternate; }
+  @keyframes throb { from { opacity:.65; } to { opacity:1; } }
+  #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
+  #scale span { flex:1; text-align:center; }
+  #scale span.on { color:var(--hot); font-weight:bold; }
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
   .small { font-size:11px; color:var(--dim); }
   #card { border:1px dashed #555; padding:8px; min-height:80px; }
@@ -53,6 +59,13 @@
     </div>
     <div id="end" class="overlay hidden"></div>
     <div id="hint"></div>
+    <div id="dosage">
+      <div id="dosageHead"><span>Dosage scale</span><span id="dosageNow">Get out of our sight</span></div>
+      <div id="meter"><div id="meterFill"></div></div>
+      <div id="scale">
+        <span>Get out of our sight</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
+      </div>
+    </div>
     <div id="legend" class="small">
       <span><i class="sw" style="background:#ddd"></i>You</span>
       <span><i class="sw" style="background:#5a5a5a"></i>Rock</span>
@@ -86,21 +99,13 @@
         <button id="drinkStr">[1] Drink Strength<br><span class="small" id="bStr">0 bottles</span></button>
         <button id="drinkCalm">[2] Drink Calm<br><span class="small" id="bCalm">0 bottles</span></button>
       </div>
-      <div class="small" style="margin-top:6px">Caution: Strength and Calm interact. Double check any possible interactions.</div>
+      <div class="small" style="margin-top:6px">Caution: Strength and Calm interact. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
     <div class="box">
-      <h3>Dosage scale</h3>
-      <div id="meter"><div id="meterFill"></div></div>
-      <div id="scale">
-        <span>Get out of our sight</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
-      </div>
-    </div>
-
-    <div class="box">
       <h3>Field Guide · Kroeber Foundation</h3>
-      <div id="card"><b>Artefact 1</b><br><span class="small">? ? ?<br>Not yet recovered.</span></div>
+      <div id="card"><b>Artefact 1</b><br><span class="small">? ? ?<br><i>Recovered under conditions the Kroeber Foundation does not endorse.</i><br>Requires elevated compound state.</span></div>
     </div>
 
     <div class="box">
@@ -140,12 +145,18 @@ function gen() {
       g[y][x] = { t, hp, max: hp };
     }
   }
-  // Hidden stratum: a seam that sober tools cannot touch, with the artefact inside.
-  const left = Math.random() < .5, cx = left ? 2 : W - 3, cy = 25;
+}
+
+// Hidden stratum: frenzy opens a seam right beside the prospector, artefact inside.
+function openSeam() {
+  if (s.artefact || s.seamOpen) return;
+  const cx = p.x >= 5 ? p.x - 2 : p.x + 2, cy = Math.max(2, Math.min(H - 3, p.y));
   for (let y = cy - 1; y <= cy + 1; y++)
     for (let x = cx - 1; x <= cx + 1; x++)
       g[y][x] = { t: SEAM, hp: 6, max: 6 };
   g[cy][cx] = { t: ART, hp: 3, max: 3 };
+  s.seamOpen = true;
+  say('A seam has opened. It was not on the survey.');
 }
 
 function reset() {
@@ -153,10 +164,10 @@ function reset() {
   p = { x: 5, y: 1 };
   s = { ore: 0, dust: 0, whey: 0, bStr: 0, bCalm: 0, strUntil: 0, calmUntil: 0,
         meter: 0, frenzyUntil: 0, inFrenzy: false, drinks: 0, dug: 0, frenzies: 0, lost: 0,
-        artefact: false, firstDrink: true, lastWarn: 0 };
+        artefact: false, seamOpen: false, announce: '', announceUntil: 0, firstDrink: true, lastWarn: 0 };
   $('log').innerHTML = '';
   $('card').className = '';
-  $('card').innerHTML = '<b>Artefact 1</b><br><span class="small">? ? ?<br>Not yet recovered.</span>';
+  $('card').innerHTML = '<b>Artefact 1</b><br><span class="small">? ? ?<br><i>Recovered under conditions the Kroeber Foundation does not endorse.</i><br>Requires elevated compound state.</span>';
   particles = [];
   say('Welcome to Korova Rock. Dig responsibly.');
 }
@@ -178,9 +189,9 @@ function power() {
 }
 
 function act(dx, dy) {
-  if (frenzy() && Math.random() < .5) {
+  if (frenzy() && dy && Math.random() < .5) {
     // The drill digs sideways.
-    if (dy) { dx = Math.random() < .5 ? -1 : 1; dy = 0; } else { dy = 1; dx = 0; }
+    dx = Math.random() < .5 ? -1 : 1; dy = 0;
   }
   const nx = p.x + dx, ny = p.y + dy;
   if (ny < 0 || ny >= H || nx < 0 || nx >= W) return;
@@ -224,8 +235,15 @@ function findArtefact() {
 }
 
 function mix(kind) {
+  const before = s.bStr + s.bCalm + s.drinks;
   if (kind === 'str' && s.dust >= 2) { s.dust -= 2; s.bStr++; say('Strength mixed.'); }
   if (kind === 'calm' && s.whey >= 2) { s.whey -= 2; s.bCalm++; say('Calm mixed.'); }
+  // First bottle ever: the Belt Authority plants the seed before any frenzy is possible.
+  if (before === 0 && s.bStr + s.bCalm === 1) {
+    s.announce = 'Frenzy is documented. Certain strata are only accessible in this state. The Foundation does not endorse it. The Foundation has noted its usefulness.';
+    s.announceUntil = now() + 8000;
+    say(s.announce);
+  }
 }
 
 function drink(kind) {
@@ -235,16 +253,17 @@ function drink(kind) {
   if (kind === 'calm' && s.bCalm < 1) return;
   if (s.firstDrink) { say('Do not spill. Make us proud.'); s.firstDrink = false; }
   s.drinks++;
+  // Strength + Calm in the system at once = instant frenzy.
   if (kind === 'str') {
     s.bStr--;
-    if (s.calmUntil > t) { s.meter += 60; say('Interaction detected. You were told to double check.'); }
+    if (s.calmUntil > t) { s.meter = 100; say('Interaction detected. You were told to double check.'); }
     else if (s.strUntil > t) { s.meter += 45; say('Stacking Strength. Bold.'); }
     else s.meter += 28;
     s.strUntil = t + STR_TIME;
   } else {
     s.bCalm--;
-    if (s.strUntil > t) { s.meter += 60; say('Interaction detected. You were told to double check.'); }
-    else s.meter = Math.max(0, s.meter - 40);
+    if (s.strUntil > t) { s.meter = 100; say('Interaction detected. You were told to double check.'); }
+    else { s.meter = Math.max(0, s.meter - 40); say('Calm consumed. Noted in your file.'); }
     s.calmUntil = t + CALM_TIME;
   }
 }
@@ -255,10 +274,11 @@ function update() {
   if (frenzy()) { s.meter = 100; }
   else if (s.inFrenzy) { s.inFrenzy = false; s.meter = 45; say('Frenzy subsiding. Count your ore.'); }
   else {
-    s.meter = Math.max(0, s.meter - 0.02);
-    if (s.meter >= 100) {
+    if (s.meter < 100) s.meter = Math.max(0, s.meter - 0.02);
+    else {
       s.frenzyUntil = t + FRENZY_TIME; s.inFrenzy = true; s.frenzies++;
       say('FRENZY. The Rock is speaking. Do not answer.');
+      openSeam();
     }
   }
   // Gravity.
@@ -289,7 +309,11 @@ function draw() {
     if (c.t === DUST) { ctx.fillStyle = '#eee'; ctx.fillText('S', px + T / 2, py + T / 2); }
     if (c.t === WHEY) { ctx.fillStyle = '#eee'; ctx.fillText('C', px + T / 2, py + T / 2); }
     if (c.t === BAND) { ctx.strokeStyle = '#2a2a2a'; ctx.beginPath(); for (let i = 0; i < T; i += 8) { ctx.moveTo(px + i, py + T); ctx.lineTo(px + i + 8, py); } ctx.stroke(); }
-    if (c.t === SEAM || c.t === ART) { ctx.fillStyle = frenzy() ? '#aaa' : '#626262'; ctx.font = '10px monospace'; ctx.fillText('?', px + T / 2, py + T / 2); ctx.font = 'bold 14px monospace'; }
+    if (c.t === SEAM || c.t === ART) {
+      if (frenzy()) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
+      ctx.fillStyle = frenzy() ? '#fff' : '#777'; ctx.font = frenzy() ? 'bold 22px monospace' : '12px monospace';
+      ctx.fillText('?', px + T / 2, py + T / 2); ctx.font = 'bold 14px monospace';
+    }
     if (c.hp < c.max && c.max !== Infinity) {
       const k = 1 - c.hp / c.max;
       ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1.5; ctx.beginPath();
@@ -314,15 +338,17 @@ function draw() {
 
 function hint() {
   const t = now(), nearBand = (p.y >= 12 && p.y < 17) || (p.y >= 26 && p.y < 31), strOn = s.strUntil > t;
-  if (frenzy()) return 'FRENZY! Now you can dig the ? blocks next to a side wall at about 72 m. Hurry.';
+  if (frenzy()) return s.artefact ? 'FRENZY! Double digging power. Go go go.' : 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.';
+  if (s.announceUntil > t) return s.announce;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
-  if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy. (Calm lowers it, but not while Strength is active.)';
+  if (s.seamOpen && !s.artefact) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
+  if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy.';
   if (s.bStr > 0 && !strOn && nearBand) return 'Hard band below. Press 1 to drink Strength.';
   if (s.bStr > 0 && s.drinks === 0) return 'You have a Strength bottle. Press 1 to drink it: digging power goes from 1 to 4.';
   if (s.dust >= 2 && s.bStr === 0 && s.drinks === 0) return 'You have 2 Shaker Dust. Click "Mix Strength" in the panel on the right.';
   if (s.drinks === 0) return 'Dig into S blocks to collect Shaker Dust. You need 2 to mix Strength.';
   if (nearBand && !strOn) return 'Hard band ahead (striped rock). Strength makes it much faster.';
-  if (!s.artefact && s.frenzies === 0) return 'Rumour: a ? seam by the wall at about 72 m only opens in frenzy. Overdo it on purpose?';
+  if (!s.artefact && s.frenzies === 0) return 'Rumour: Strength and Calm together do something the Foundation will not print.';
   return 'Keep digging. The bottom of the layer is at 129 m.';
 }
 
@@ -346,6 +372,8 @@ function hud() {
   $('meterFill').className = frenzy() ? 'hot' : '';
   const lvl = Math.min(4, Math.floor(s.meter / 20));
   [...$('scale').children].forEach((el, i) => el.className = i === lvl ? 'on' : '');
+  const lbl = frenzy() ? 'FRENZY' : $('scale').children[lvl].textContent;
+  if ($('dosageNow').textContent !== lbl) $('dosageNow').textContent = lbl;
   cv.className = frenzy() ? 'frenzy' : '';
   const h = running ? hint() : '';
   if ($('hint').textContent !== h) $('hint').textContent = h;
