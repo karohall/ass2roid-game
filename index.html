@@ -63,7 +63,7 @@
       <div id="dosageHead"><span>Dosage scale</span><span id="dosageNow">Get out of our sight</span></div>
       <div id="meter"><div id="meterFill"></div></div>
       <div id="scale">
-        <span>Get out of our sight</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
+        <span>Get out</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
       </div>
     </div>
     <div id="legend" class="small">
@@ -118,7 +118,8 @@
 <script>
 const W = 11, H = 46, T = 40, VIEW = 13;
 const AIR = 0, DIRT = 1, ORE = 2, DUST = 3, WHEY = 4, BAND = 5, SEAM = 6, ART = 7, ROCK = 8;
-const STR_TIME = 25000, CALM_TIME = 15000, FRENZY_TIME = 12000, DIG_MS = 160;
+const DOSAGE = ['Get out of our sight', 'Coward', 'Meh', 'We see you', 'Hell yeah'];
+const STR_TIME =25000, CALM_TIME = 15000, FRENZY_TIME = 12000, DIG_MS = 160;
 
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const $ = id => document.getElementById(id);
@@ -372,7 +373,7 @@ function hud() {
   $('meterFill').className = frenzy() ? 'hot' : '';
   const lvl = Math.min(4, Math.floor(s.meter / 20));
   [...$('scale').children].forEach((el, i) => el.className = i === lvl ? 'on' : '');
-  const lbl = frenzy() ? 'FRENZY' : $('scale').children[lvl].textContent;
+  const lbl = frenzy() ? 'FRENZY' : DOSAGE[lvl];
   if ($('dosageNow').textContent !== lbl) $('dosageNow').textContent = lbl;
   cv.className = frenzy() ? 'frenzy' : '';
   const h = running ? hint() : '';
