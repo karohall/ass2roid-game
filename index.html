@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASS2ROID: Ex Profundo — Prototype 1</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: monospace;
+  background: #d8d8d8;
+  color: #111;
+  min-height: 100vh;
+  padding: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body.in-frenzy { animation: tilt 0.7s ease-in-out infinite alternate; }
+@keyframes tilt { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
+
+h1 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border-bottom: 3px solid #111;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid #888;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+
+/* ── FRENZY BAR ── */
+#frenzy-section {
+  background: #c8c8c8;
+  border: 2px solid #111;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+#frenzy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+#frenzy-track { height: 16px; background: #aaa; border: 1px solid #777; }
+#frenzy-fill  { height: 100%; width: 0%; background: #555; transition: width 0.25s, background-color 0.3s; }
+#frenzy-fill.danger { background: #333; }
+#frenzy-fill.peak   { background: #111; animation: pulse 0.5s infinite alternate; }
+@keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
+
+/* ── GRID ── */
+#game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 620px) { #game-grid { grid-template-columns: 1fr; } }
+
+.panel {
+  background: #c8c8c8;
+  border: 2px solid #111;
+  padding: 12px;
+}
+
+/* ── BUTTONS ── */
+button {
+  font-family: monospace;
+  font-size: 0.78rem;
+  background: #d8d8d8;
+  border: 2px solid #888;
+  padding: 6px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  width: 100%;
+  margin-bottom: 6px;
+  text-align: left;
+  line-height: 1.4;
+}
+
+button:hover:not(:disabled) { background: #bbb; border-color: #444; }
+button:active:not(:disabled) { background: #aaa; }
+button:disabled { opacity: 0.35; cursor: default; }
+
+#dig-btn {
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 14px;
+  text-align: center;
+  border-width: 3px;
+  border-color: #555;
+  margin-bottom: 12px;
+  letter-spacing: 0.18em;
+}
+
+#dig-btn.frenzy-state { border-color: #111; animation: pulse 0.4s infinite alternate; }
+
+/* ── STATS ── */
+.stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  margin-bottom: 5px;
+}
+.stat-k { color: #555; }
+.stat-v { font-weight: bold; }
+
+/* ── DEPTH BAR ── */
+#depth-track { height: 10px; background: #aaa; border: 1px solid #777; margin-bottom: 10px; }
+#depth-fill  { height: 100%; width: 0%; background: #555; transition: width 0.2s; }
+#depth-fill.full { background: #222; }
+
+/* ── EFFECTS / LOG LINES ── */
+#effects-line {
+  font-size: 0.74rem;
+  min-height: 18px;
+  margin-top: 8px;
+  border-top: 1px solid #999;
+  padding-top: 5px;
+  color: #333;
+}
+
+#dig-log { font-size: 0.7rem; min-height: 16px; color: #555; margin-top: 5px; }
+
+/* ── BREAKTHROUGH BOX ── */
+#bk-box {
+  display: none;
+  margin-top: 8px;
+  border: 2px solid #777;
+  padding: 7px 9px;
+  background: #bbb;
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+#bk-box.go { border-color: #111; background: #aaa; font-weight: bold; }
+
+/* ── MIX PANEL ── */
+.mix-note {
+  font-size: 0.7rem;
+  color: #555;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+#mix-log {
+  font-size: 0.74rem;
+  min-height: 40px;
+  border-top: 1px solid #999;
+  padding-top: 6px;
+  margin-top: 4px;
+  color: #333;
+  line-height: 1.45;
+}
+
+/* ── FIELD GUIDE ── */
+.guide-note {
+  font-size: 0.7rem;
+  color: #555;
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.card {
+  border: 2px solid #888;
+  padding: 9px;
+  margin-bottom: 8px;
+  background: #d0d0d0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.card.locked { opacity: 0.45; background: #bcbcbc; }
+.card-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+}
+.card-body { color: #333; }
+.tag {
+  display: inline-block;
+  background: #999;
+  color: #111;
+  font-size: 0.67rem;
+  padding: 1px 5px;
+  margin: 3px 2px 0 0;
+}
+.qmark { font-size: 2rem; text-align: center; color: #777; display: block; margin: 6px 0 4px; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #222;
+  color: #ddd;
+  font-family: monospace;
+  font-size: 0.76rem;
+  padding: 8px 12px;
+  border: 2px solid #111;
+  max-width: 270px;
+  line-height: 1.4;
+  display: none;
+  z-index: 200;
+}
+</style>
+</head>
+<body>
+
+<h1>ASS2ROID: Ex Profundo &mdash; Prototype 1</h1>
+
+<section id="frenzy-section">
+  <div id="frenzy-header">
+    <span>Frenzy Meter</span>
+    <span id="frenzy-label">Get out of our sight</span>
+    <span id="frenzy-pct">0%</span>
+  </div>
+  <div id="frenzy-track"><div id="frenzy-fill"></div></div>
+</section>
+
+<div id="game-grid">
+
+  <!-- ── DIG PANEL ── -->
+  <div class="panel">
+    <h2>Regolith Prime</h2>
+    <div class="stat"><span class="stat-k">Depth</span><span class="stat-v" id="depth-val">0 / 100 m</span></div>
+    <div id="depth-track"><div id="depth-fill"></div></div>
+    <button id="dig-btn">DIG</button>
+    <div class="stat"><span class="stat-k">Ore</span><span class="stat-v" id="ore-val">0</span></div>
+    <div class="stat"><span class="stat-k">Dig power</span><span class="stat-v" id="power-val">5</span></div>
+    <div class="stat"><span class="stat-k">Shaker Dust</span><span class="stat-v" id="sd-val">0</span></div>
+    <div class="stat"><span class="stat-k">Chrome Filings</span><span class="stat-v" id="cf-val">0</span></div>
+    <div id="effects-line">No active effects.</div>
+    <div id="bk-box"></div>
+    <div id="dig-log">&nbsp;</div>
+  </div>
+
+  <!-- ── MILK+ LAB ── -->
+  <div class="panel">
+    <h2>Milk+ Lab</h2>
+    <p class="mix-note">Each drink raises the frenzy meter. Mix the same blend twice in a row to trigger a clash.</p>
+    <button id="btn-strength">
+      Mix Strength<br>
+      <small style="text-transform:none;letter-spacing:0;font-size:0.7rem">(1&times; Shaker Dust) &mdash; boosts dig power</small>
+    </button>
+    <button id="btn-calm">
+      Mix Calm<br>
+      <small style="text-transform:none;letter-spacing:0;font-size:0.7rem">(1&times; Chrome Filings) &mdash; lowers frenzy</small>
+    </button>
+    <button id="btn-blend">
+      Mix Blend &#9888;<br>
+      <small style="text-transform:none;letter-spacing:0;font-size:0.7rem">(1&times; each) &mdash; partial both effects &mdash; clash if repeated</small>
+    </button>
+    <div id="mix-log">No drinks mixed yet.</div>
+  </div>
+
+  <!-- ── FIELD GUIDE ── -->
+  <div class="panel">
+    <h2>Field Guide</h2>
+    <p class="guide-note">Kroeber Foundation. Not liable for frenzy.</p>
+
+    <div class="card locked" id="card-layer">
+      <div class="card-title">Regolith Prime</div>
+      <div class="card-body">Break through the layer to unlock this entry.</div>
+    </div>
+
+    <div class="card locked" id="card-artefact">
+      <span class="qmark">?</span>
+      <div class="card-body" style="text-align:center">Unknown &mdash; recover in frenzy.</div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIG — tune these to adjust feel
+// ─────────────────────────────────────────────────────────────────────────────
+const CONFIG = {
+  // Digging
+  baseDigPower:          5,      // ore per click without effects
+  depthPerDig:           3,      // metres gained per click, no Strength
+  depthPerDigStrength:   7,      // metres gained per click with Strength active
+  ingredientChance:      0.28,   // probability of ingredient drop per click (0–1)
+
+  // Layer
+  layerDepth:            100,    // metres needed to unlock the breakthrough
+
+  // Strength Milk+
+  strengthBoost:         15,     // dig power added while active
+  strengthDuration:      20000,  // ms Strength effect lasts
+
+  // Calm Milk+
+  calmReduce:            25,     // frenzy % removed per Calm drink
+
+  // Frenzy meter (0–100%)
+  frenzyPerStrength:     18,     // % per Strength drink
+  frenzyPerCalm:         5,      // % per Calm drink (net negative after reduction)
+  frenzyPerBlend:        28,     // % per first Blend drink
+  frenzyPerClash:        55,     // % surge when Blend is used twice in a row (the clash)
+  frenzyDecayPerSec:     2.5,    // % natural decay per second
+  frenzyTrigger:         100,    // % at which frenzy state fires
+
+  // Frenzy state
+  frenzyDuration:        10000,  // ms of active frenzy
+  frenzySettleAt:        55,     // % meter value after frenzy ends
+  frenzyDigMin:          -4,     // min ore delta per frenzy click (negative = loss)
+  frenzyDigMax:          20,     // max ore delta per frenzy click
+  artefactChance:        0.35,   // probability per frenzy click to find the artefact
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+const S = {
+  ore:            0,
+  shakerDust:     0,
+  chromeFiling:   0,
+  depth:          0,
+  layerCleared:   false,
+  artefactFound:  false,
+
+  frenzyMeter:    0,
+  inFrenzy:       false,
+  frenzyTimer:    null,
+
+  strengthActive: false,
+  strengthTimer:  null,
+
+  lastDrink:      null,   // 'strength' | 'calm' | 'blend'
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOM
+// ─────────────────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const D = {
+  digBtn:      $('dig-btn'),
+  depthVal:    $('depth-val'),
+  depthFill:   $('depth-fill'),
+  oreVal:      $('ore-val'),
+  powerVal:    $('power-val'),
+  sdVal:       $('sd-val'),
+  cfVal:       $('cf-val'),
+  effectsLine: $('effects-line'),
+  bkBox:       $('bk-box'),
+  digLog:      $('dig-log'),
+
+  frenzyFill:  $('frenzy-fill'),
+  frenzyLabel: $('frenzy-label'),
+  frenzyPct:   $('frenzy-pct'),
+
+  btnStrength: $('btn-strength'),
+  btnCalm:     $('btn-calm'),
+  btnBlend:    $('btn-blend'),
+  mixLog:      $('mix-log'),
+
+  cardLayer:   $('card-layer'),
+  cardArtefact:$('card-artefact'),
+  toast:       $('toast'),
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FRENZY LABELS  (low pct = cautious = judged; high pct = reckless = rewarded)
+// ─────────────────────────────────────────────────────────────────────────────
+function frenzyLabel(pct) {
+  if (pct >= 80) return 'Hell yeah';
+  if (pct >= 60) return 'We see you';
+  if (pct >= 40) return 'Meh';
+  if (pct >= 20) return 'Coward';
+  return 'Get out of our sight';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function digPower() {
+  return CONFIG.baseDigPower + (S.strengthActive ? CONFIG.strengthBoost : 0);
+}
+
+let toastTimer = null;
+function toast(msg) {
+  D.toast.textContent = msg;
+  D.toast.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { D.toast.style.display = 'none'; }, 3500);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+function render() {
+  const pct     = Math.min(100, Math.max(0, Math.round(S.frenzyMeter)));
+  const power   = digPower();
+  const depthPct= Math.min(100, S.depth / CONFIG.layerDepth * 100);
+  const atDepth = S.depth >= CONFIG.layerDepth && !S.layerCleared;
+
+  // Dig panel stats
+  D.depthVal.textContent = `${S.depth} / ${CONFIG.layerDepth} m`;
+  D.depthFill.style.width = depthPct + '%';
+  D.depthFill.className  = depthPct >= 100 ? 'full' : '';
+  D.oreVal.textContent   = S.ore;
+  D.powerVal.textContent = power;
+  D.sdVal.textContent    = S.shakerDust;
+  D.cfVal.textContent    = S.chromeFiling;
+
+  // Active effects line
+  const fx = [];
+  if (S.strengthActive) fx.push('STRENGTH active');
+  if (S.inFrenzy)       fx.push('FRENZY');
+  D.effectsLine.textContent = fx.length ? fx.join(' · ') : 'No active effects.';
+
+  // Breakthrough box
+  if (atDepth) {
+    D.bkBox.style.display = 'block';
+    if (S.strengthActive) {
+      D.bkBox.textContent = 'STRENGTH ACTIVE — dig now to break through.';
+      D.bkBox.className   = 'go';
+    } else {
+      D.bkBox.textContent = 'Depth reached. Drink Strength Milk+, then dig to break through.';
+      D.bkBox.className   = '';
+    }
+  } else {
+    D.bkBox.style.display = 'none';
+  }
+
+  // Dig button
+  if (S.inFrenzy) {
+    D.digBtn.textContent = 'DIG (FRENZY)';
+    D.digBtn.className   = 'frenzy-state';
+  } else {
+    D.digBtn.textContent = 'DIG';
+    D.digBtn.className   = '';
+  }
+
+  // Frenzy bar
+  D.frenzyFill.style.width = pct + '%';
+  D.frenzyPct.textContent  = pct + '%';
+  D.frenzyLabel.textContent= frenzyLabel(pct);
+  D.frenzyFill.className   = S.inFrenzy ? 'peak' : pct >= 60 ? 'danger' : '';
+
+  // Mix buttons
+  D.btnStrength.disabled = S.shakerDust < 1;
+  D.btnCalm.disabled     = S.chromeFiling < 1;
+  D.btnBlend.disabled    = S.shakerDust < 1 || S.chromeFiling < 1;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FRENZY
+// ─────────────────────────────────────────────────────────────────────────────
+function addFrenzy(amount) {
+  S.frenzyMeter = Math.min(CONFIG.frenzyTrigger, S.frenzyMeter + amount);
+  if (S.frenzyMeter >= CONFIG.frenzyTrigger && !S.inFrenzy) triggerFrenzy();
+}
+
+function triggerFrenzy() {
+  S.inFrenzy = true;
+  S.frenzyMeter = CONFIG.frenzyTrigger;
+  document.body.classList.add('in-frenzy');
+  toast('FRENZY. The drill has opinions. Hidden things are reachable. Dig fast.');
+  D.digLog.textContent = 'Frenzy active — digging is unreliable. Hidden strata accessible.';
+  clearTimeout(S.frenzyTimer);
+  S.frenzyTimer = setTimeout(endFrenzy, CONFIG.frenzyDuration);
+}
+
+function endFrenzy() {
+  S.inFrenzy = false;
+  S.frenzyMeter = CONFIG.frenzySettleAt;
+  document.body.classList.remove('in-frenzy');
+  D.digLog.textContent = 'Frenzy subsided. Count your ore.';
+  render();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DIG
+// ─────────────────────────────────────────────────────────────────────────────
+function dig() {
+  if (S.inFrenzy) { frenzyDig(); return; }
+
+  const gained = digPower();
+  S.ore += gained;
+
+  if (!S.layerCleared) {
+    const dp = S.strengthActive ? CONFIG.depthPerDigStrength : CONFIG.depthPerDig;
+    S.depth  = Math.min(CONFIG.layerDepth, S.depth + dp);
+  }
+
+  if (Math.random() < CONFIG.ingredientChance) {
+    if (Math.random() < 0.5) { S.shakerDust++;  D.digLog.textContent = 'Found: Shaker Dust.'; }
+    else                      { S.chromeFiling++; D.digLog.textContent = 'Found: Chrome Filings.'; }
+  } else {
+    D.digLog.textContent = '+' + gained + ' ore.';
+  }
+
+  if (!S.layerCleared && S.depth >= CONFIG.layerDepth && S.strengthActive) {
+    breakThrough();
+  }
+
+  render();
+}
+
+function frenzyDig() {
+  const delta = Math.floor(
+    CONFIG.frenzyDigMin + Math.random() * (CONFIG.frenzyDigMax - CONFIG.frenzyDigMin + 1)
+  );
+  S.ore = Math.max(0, S.ore + delta);
+  D.digLog.textContent = delta < 0
+    ? 'Drill went sideways. Lost ' + Math.abs(delta) + ' ore.'
+    : 'Frenzy dig: +' + delta + ' ore.';
+
+  if (!S.artefactFound && Math.random() < CONFIG.artefactChance) findArtefact();
+  render();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UNLOCKS
+// ─────────────────────────────────────────────────────────────────────────────
+function breakThrough() {
+  S.layerCleared = true;
+  toast('REGOLITH PRIME CLEARED. Field Guide updated.');
+  D.cardLayer.classList.remove('locked');
+  D.cardLayer.innerHTML = `
+    <div class="card-title">Regolith Prime</div>
+    <div class="card-body">
+      Surface layer. Loose regolith, compressed grit, abandoned equipment from the last survey.
+      <br><br>
+      <strong>Ingredients found here:</strong><br>
+      <span class="tag">SHAKER DUST</span><span class="tag">CHROME FILINGS</span>
+      <br><br>
+      <em>Kroeber Fact #1: "The average prospector consumes 3.4 Milk+ units before acknowledging
+      the smell. The Kroeber Foundation does not consider this a problem."</em>
+    </div>`;
+}
+
+function findArtefact() {
+  S.artefactFound = true;
+  toast('ARTEFACT RECOVERED. Conditions the Kroeber Foundation does not endorse.');
+  D.cardArtefact.classList.remove('locked');
+  D.cardArtefact.innerHTML = `
+    <div class="card-title">Artefact 1</div>
+    <div class="card-body">
+      <em>Site KR-1, Crater 5, Quadrant 3.</em><br><br>
+      A protein shaker, fused shut. Contents unidentified. Emits a faint hum at proximity.
+      <br><br>
+      <span class="tag">FRENZY FIND</span><span class="tag">KR-1 / C5 / Q3</span>
+      <br><br>
+      <small><em>"Recovered under conditions the Kroeber Foundation does not endorse."</em></small>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MIXING
+// ─────────────────────────────────────────────────────────────────────────────
+function activateStrength() {
+  S.strengthActive = true;
+  clearTimeout(S.strengthTimer);
+  S.strengthTimer = setTimeout(() => {
+    S.strengthActive = false;
+    D.digLog.textContent = 'Strength wore off.';
+    render();
+  }, CONFIG.strengthDuration);
+}
+
+function drinkStrength() {
+  if (S.shakerDust < 1) return;
+  S.shakerDust--;
+  S.lastDrink = 'strength';
+  activateStrength();
+  addFrenzy(CONFIG.frenzyPerStrength);
+  D.mixLog.textContent = 'Strength mixed. Dig power up for ' +
+    (CONFIG.strengthDuration / 1000) + 's. Do not spill. Make us proud.';
+  render();
+}
+
+function drinkCalm() {
+  if (S.chromeFiling < 1) return;
+  S.chromeFiling--;
+  S.lastDrink = 'calm';
+  S.frenzyMeter = Math.max(0, S.frenzyMeter - CONFIG.calmReduce);
+  addFrenzy(CONFIG.frenzyPerCalm);
+  D.mixLog.textContent = 'Calm mixed. Frenzy reduced by ' + CONFIG.calmReduce + '%. Breathe through it.';
+  render();
+}
+
+function drinkBlend() {
+  if (S.shakerDust < 1 || S.chromeFiling < 1) return;
+  S.shakerDust--;
+  S.chromeFiling--;
+
+  const wasBlend = S.lastDrink === 'blend';
+  S.lastDrink = 'blend';
+
+  if (wasBlend) {
+    D.mixLog.textContent = '⚠ CLASH — Shaker Dust and Chrome Filings again. That was not recommended.';
+    toast('CLASH. The Kroeber Foundation warned you.');
+    addFrenzy(CONFIG.frenzyPerClash);
+  } else {
+    activateStrength();
+    S.frenzyMeter = Math.max(0, S.frenzyMeter - CONFIG.calmReduce * 0.4);
+    addFrenzy(CONFIG.frenzyPerBlend);
+    D.mixLog.textContent = 'Blend mixed. Strength and some calm. The meter is watching. Do not repeat.';
+  }
+  render();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FRENZY DECAY — runs every animation frame; only re-renders when meter moves
+// ─────────────────────────────────────────────────────────────────────────────
+let lastTick = Date.now();
+
+function tick() {
+  const now = Date.now();
+  const dt  = (now - lastTick) / 1000;
+  lastTick  = now;
+
+  if (!S.inFrenzy && S.frenzyMeter > 0) {
+    const next = Math.max(0, S.frenzyMeter - CONFIG.frenzyDecayPerSec * dt);
+    if (Math.abs(next - S.frenzyMeter) > 0.15) {
+      S.frenzyMeter = next;
+      render();
+    }
+  }
+
+  requestAnimationFrame(tick);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EVENTS
+// ─────────────────────────────────────────────────────────────────────────────
+D.digBtn.addEventListener('click', dig);
+D.btnStrength.addEventListener('click', drinkStrength);
+D.btnCalm.addEventListener('click', drinkCalm);
+D.btnBlend.addEventListener('click', drinkBlend);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────────────────
+render();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
