@@ -69,9 +69,9 @@
     <div id="legend" class="small">
       <span><i class="sw" style="background:#ddd"></i>You</span>
       <span><i class="sw" style="background:#5a5a5a"></i>Rock</span>
-      <span>◆ Ore</span>
-      <span><b>S</b> Shaker Dust → Strength</span>
-      <span><b>C</b> Chalk Whey → Calm</span>
+      <span>◆ Drill sample</span>
+      <span><b>W</b> Regolith Whey → Strength</span>
+      <span><b>P</b> Legacy Powder → Calm</span>
       <span><i class="sw hatch"></i>Hard band</span>
     </div>
   </div>
@@ -80,22 +80,22 @@
     <div class="box">
       <h3>Rover panel</h3>
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
-      <div class="row"><span>Ore</span><span id="ore">0</span></div>
+      <div class="row"><span>Drill samples</span><span id="ore">0</span></div>
       <div class="row"><span>Shift time</span><span id="time">0:00</span></div>
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
     </div>
 
     <div class="box">
       <h3>Ingredients</h3>
-      <div class="row"><span>[S] Shaker Dust</span><span id="dust">0</span></div>
-      <div class="row"><span>[C] Chalk Whey</span><span id="whey">0</span></div>
+      <div class="row"><span>[W] Regolith Whey</span><span id="dust">0</span></div>
+      <div class="row"><span>[P] Legacy Powder</span><span id="whey">0</span></div>
     </div>
 
     <div class="box">
       <h3>Milk+ menu</h3>
       <div class="btns">
-        <button id="mixStr">Mix Strength<br><span class="small">2 Shaker Dust</span></button>
-        <button id="mixCalm">Mix Calm<br><span class="small">2 Chalk Whey</span></button>
+        <button id="mixStr">Mix Strength<br><span class="small">2 Regolith Whey</span></button>
+        <button id="mixCalm">Mix Calm<br><span class="small">2 Legacy Powder</span></button>
         <button id="drinkStr">[1] Drink Strength<br><span class="small" id="bStr">0 bottles</span></button>
         <button id="drinkCalm">[2] Drink Calm<br><span class="small" id="bCalm">0 bottles</span></button>
       </div>
@@ -205,15 +205,15 @@ function hit(x, y, c) {
   if ((c.t === SEAM || c.t === ART) && !frenzy()) { warn('This seam does not respond to sober tools.'); bump(x, y, 2); return; }
   c.hp -= power();
   bump(x, y, 4);
-  if (frenzy() && s.ore > 0 && Math.random() < .12) { s.ore--; s.lost++; say('1 ore lost to the void.'); }
+  if (frenzy() && s.ore > 0 && Math.random() < .12) { s.ore--; s.lost++; say('1 drill sample lost to the void.'); }
   if (c.hp > 0) return;
   const was = c.t;
   g[y][x] = { t: AIR, hp: 0, max: 0 };
   s.dug++;
   bump(x, y, 10);
   if (was === ORE) s.ore += 1 + (Math.random() < .3 ? 1 : 0);
-  if (was === DUST) { const n = 1 + (Math.random() < .4 ? 1 : 0); s.dust += n; say(`+${n} Shaker Dust.`); }
-  if (was === WHEY) { const n = 1 + (Math.random() < .4 ? 1 : 0); s.whey += n; say(`+${n} Chalk Whey.`); }
+  if (was === DUST) { const n = 1 + (Math.random() < .4 ? 1 : 0); s.dust += n; say(`+${n} Regolith Whey.`); }
+  if (was === WHEY) { const n = 1 + (Math.random() < .4 ? 1 : 0); s.whey += n; say(`+${n} Legacy Powder.`); }
   if (was === BAND && y === 17) say('Compacted band. Strength is recommended.');
   if (was === ART) findArtefact();
 }
@@ -272,7 +272,7 @@ function update() {
   const t = now();
   // Frenzy meter.
   if (frenzy()) { s.meter = 100; }
-  else if (s.inFrenzy) { s.inFrenzy = false; s.meter = 45; say('Frenzy subsiding. Count your ore.'); }
+  else if (s.inFrenzy) { s.inFrenzy = false; s.meter = 45; say('Frenzy subsiding. Count your samples.'); }
   else {
     if (s.meter < 100) s.meter = Math.max(0, s.meter - 0.02);
     else {
@@ -306,8 +306,8 @@ function draw() {
     if (c.t === AIR) continue;
     ctx.fillStyle = fill[c.t]; ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === ORE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', px + T / 2, py + T / 2); }
-    if (c.t === DUST) { ctx.fillStyle = '#eee'; ctx.fillText('S', px + T / 2, py + T / 2); }
-    if (c.t === WHEY) { ctx.fillStyle = '#eee'; ctx.fillText('C', px + T / 2, py + T / 2); }
+    if (c.t === DUST) { ctx.fillStyle = '#eee'; ctx.fillText('W', px + T / 2, py + T / 2); }
+    if (c.t === WHEY) { ctx.fillStyle = '#eee'; ctx.fillText('P', px + T / 2, py + T / 2); }
     if (c.t === BAND) { ctx.strokeStyle = '#2a2a2a'; ctx.beginPath(); for (let i = 0; i < T; i += 8) { ctx.moveTo(px + i, py + T); ctx.lineTo(px + i + 8, py); } ctx.stroke(); }
     if (c.t === SEAM || c.t === ART) {
       if (frenzy()) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
@@ -345,8 +345,8 @@ function hint() {
   if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy.';
   if (s.bStr > 0 && !strOn && nearBand) return 'Hard band below. Press 1 to drink Strength.';
   if (s.bStr > 0 && s.drinks === 0) return 'You have a Strength bottle. Press 1 to drink it: digging power goes from 1 to 4.';
-  if (s.dust >= 2 && s.bStr === 0 && s.drinks === 0) return 'You have 2 Shaker Dust. Click "Mix Strength" in the panel on the right.';
-  if (s.drinks === 0) return 'Dig into S blocks to collect Shaker Dust. You need 2 to mix Strength.';
+  if (s.dust >= 2 && s.bStr === 0 && s.drinks === 0) return 'You have 2 Regolith Whey. Click "Mix Strength" in the panel on the right.';
+  if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to mix Strength.';
   if (nearBand && !strOn) return 'Hard band ahead (striped rock). Strength makes it much faster.';
   if (!s.artefact && s.frenzies === 0) return 'Rumour: Strength and Calm together do something the Foundation will not print.';
   return 'Keep digging. The bottom of the layer is at 129 m.';
@@ -385,7 +385,7 @@ function finish() {
   $('end').classList.remove('hidden');
   $('end').innerHTML = `<h1>LAYER CLEARED</h1>
     <div>Regolith Prime · ${(H - 3) * 3} m</div>
-    <div class="small">Time ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')} · Ore ${s.ore} · Milk+ consumed ${s.drinks} · Frenzies ${s.frenzies} · Ore lost ${s.lost}</div>
+    <div class="small">Time ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')} · Drill samples ${s.ore} · Milk+ consumed ${s.drinks} · Frenzies ${s.frenzies} · Samples lost ${s.lost}</div>
     <div>${s.artefact ? 'Artefact 1 recovered. The Foundation will pretend not to know.' : 'Field Guide: 1 slot remains ? ? ?<br><span class="small">Some strata only open to those who did not double check.</span>'}</div>
     <button id="again">Next shift</button>`;
   $('again').onclick = start;

@@ -44,7 +44,17 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 Each layer needs more strength, yields new ingredients, and has its own Kroeber Fact.
 
 ## Ingredients (fictional)
-Korova minerals in the menu's format (Nutrition Facts, Caution, Fun fact). For example: **Shaker Dust, Chrome Filings, Crack Spores, Core Lactate.**
+Korova minerals in the menu's format (Nutrition Facts, Caution, Fun fact). One signature compound per layer:
+
+1. Regolith Prime: **Regolith Whey**
+2. The Shaker Strata: **Legacy Powder**
+3. The Chrome Vein: **Chrome Filings**
+4. The Crack: **Crack Spores**
+5. The Core: **[REDACTED COMPOUND]**
+
+In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from the Shaker Strata) mixes Calm.
+
+**Drill samples** are what you collect and count while digging (the score).
 
 ## Field Guide (collectible)
 *Published by the Kroeber Foundation.*
