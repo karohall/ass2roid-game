@@ -1,660 +1,409 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASS2ROID: Ex Profundo — Prototype 1</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASS2ROID: Ex Profundo (Prototype 1)</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: monospace;
-  background: #d8d8d8;
-  color: #111;
-  min-height: 100vh;
-  padding: 16px;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-body.in-frenzy { animation: tilt 0.7s ease-in-out infinite alternate; }
-@keyframes tilt { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
-
-h1 {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border-bottom: 3px solid #111;
-  padding-bottom: 8px;
-  margin-bottom: 12px;
-}
-
-h2 {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  border-bottom: 1px solid #888;
-  padding-bottom: 4px;
-  margin-bottom: 10px;
-}
-
-/* ── FRENZY BAR ── */
-#frenzy-section {
-  background: #c8c8c8;
-  border: 2px solid #111;
-  padding: 8px 10px;
-  margin-bottom: 12px;
-}
-
-#frenzy-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 5px;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-#frenzy-track { height: 16px; background: #aaa; border: 1px solid #777; }
-#frenzy-fill  { height: 100%; width: 0%; background: #555; transition: width 0.25s, background-color 0.3s; }
-#frenzy-fill.danger { background: #333; }
-#frenzy-fill.peak   { background: #111; animation: pulse 0.5s infinite alternate; }
-@keyframes pulse { from { opacity: 0.6; } to { opacity: 1; } }
-
-/* ── GRID ── */
-#game-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-@media (max-width: 620px) { #game-grid { grid-template-columns: 1fr; } }
-
-.panel {
-  background: #c8c8c8;
-  border: 2px solid #111;
-  padding: 12px;
-}
-
-/* ── BUTTONS ── */
-button {
-  font-family: monospace;
-  font-size: 0.78rem;
-  background: #d8d8d8;
-  border: 2px solid #888;
-  padding: 6px 10px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: block;
-  width: 100%;
-  margin-bottom: 6px;
-  text-align: left;
-  line-height: 1.4;
-}
-
-button:hover:not(:disabled) { background: #bbb; border-color: #444; }
-button:active:not(:disabled) { background: #aaa; }
-button:disabled { opacity: 0.35; cursor: default; }
-
-#dig-btn {
-  font-size: 1.3rem;
-  font-weight: bold;
-  padding: 14px;
-  text-align: center;
-  border-width: 3px;
-  border-color: #555;
-  margin-bottom: 12px;
-  letter-spacing: 0.18em;
-}
-
-#dig-btn.frenzy-state { border-color: #111; animation: pulse 0.4s infinite alternate; }
-
-/* ── STATS ── */
-.stat {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  margin-bottom: 5px;
-}
-.stat-k { color: #555; }
-.stat-v { font-weight: bold; }
-
-/* ── DEPTH BAR ── */
-#depth-track { height: 10px; background: #aaa; border: 1px solid #777; margin-bottom: 10px; }
-#depth-fill  { height: 100%; width: 0%; background: #555; transition: width 0.2s; }
-#depth-fill.full { background: #222; }
-
-/* ── EFFECTS / LOG LINES ── */
-#effects-line {
-  font-size: 0.74rem;
-  min-height: 18px;
-  margin-top: 8px;
-  border-top: 1px solid #999;
-  padding-top: 5px;
-  color: #333;
-}
-
-#dig-log { font-size: 0.7rem; min-height: 16px; color: #555; margin-top: 5px; }
-
-/* ── BREAKTHROUGH BOX ── */
-#bk-box {
-  display: none;
-  margin-top: 8px;
-  border: 2px solid #777;
-  padding: 7px 9px;
-  background: #bbb;
-  font-size: 0.74rem;
-  line-height: 1.4;
-}
-#bk-box.go { border-color: #111; background: #aaa; font-weight: bold; }
-
-/* ── MIX PANEL ── */
-.mix-note {
-  font-size: 0.7rem;
-  color: #555;
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-#mix-log {
-  font-size: 0.74rem;
-  min-height: 40px;
-  border-top: 1px solid #999;
-  padding-top: 6px;
-  margin-top: 4px;
-  color: #333;
-  line-height: 1.45;
-}
-
-/* ── FIELD GUIDE ── */
-.guide-note {
-  font-size: 0.7rem;
-  color: #555;
-  font-style: italic;
-  margin-bottom: 10px;
-}
-
-.card {
-  border: 2px solid #888;
-  padding: 9px;
-  margin-bottom: 8px;
-  background: #d0d0d0;
-  font-size: 0.78rem;
-  line-height: 1.45;
-}
-.card.locked { opacity: 0.45; background: #bcbcbc; }
-.card-title {
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 5px;
-  font-size: 0.8rem;
-}
-.card-body { color: #333; }
-.tag {
-  display: inline-block;
-  background: #999;
-  color: #111;
-  font-size: 0.67rem;
-  padding: 1px 5px;
-  margin: 3px 2px 0 0;
-}
-.qmark { font-size: 2rem; text-align: center; color: #777; display: block; margin: 6px 0 4px; }
-
-/* ── TOAST ── */
-#toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #222;
-  color: #ddd;
-  font-family: monospace;
-  font-size: 0.76rem;
-  padding: 8px 12px;
-  border: 2px solid #111;
-  max-width: 270px;
-  line-height: 1.4;
-  display: none;
-  z-index: 200;
-}
+  :root { --bg:#1b1b1b; --panel:#262626; --line:#444; --text:#ddd; --dim:#888; --hot:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+  #wrap { display:flex; gap:16px; justify-content:center; padding:16px; flex-wrap:wrap; }
+  #stage { position:relative; }
+  canvas { display:block; border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
+  canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
+  @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
+  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:38px; }
+  #legend { width:440px; display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:8px; }
+  .sw { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
+  .sw.hatch { background:repeating-linear-gradient(45deg,#3a3a3a 0 3px,#2a2a2a 3px 6px); }
+  #panel { width:320px; display:flex; flex-direction:column; gap:10px; }
+  .box { background:var(--panel); border:1px solid var(--line); padding:10px; }
+  .box h3 { margin:0 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+  .row { display:flex; justify-content:space-between; }
+  button { font:inherit; background:#333; color:var(--text); border:1px solid #555; padding:6px 8px; cursor:pointer; width:100%; text-align:left; }
+  button:hover:not(:disabled) { background:#444; color:var(--hot); }
+  button:disabled { opacity:.4; cursor:default; }
+  .btns { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  #meter { height:14px; background:#111; border:1px solid #555; position:relative; }
+  #meterFill { height:100%; width:0; background:#bbb; }
+  #meterFill.hot { background:#fff; }
+  #scale { display:flex; justify-content:space-between; font-size:10px; color:var(--dim); margin-top:4px; }
+  #scale span.on { color:var(--hot); }
+  #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
+  .small { font-size:11px; color:var(--dim); }
+  #card { border:1px dashed #555; padding:8px; min-height:80px; }
+  #card.found { border-style:solid; border-color:#bbb; }
+  .overlay { position:absolute; inset:0; background:rgba(0,0,0,.88); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
+  .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
+  .overlay button { width:auto; text-align:center; padding:8px 20px; }
+  .hidden { display:none; }
 </style>
 </head>
 <body>
-
-<h1>ASS2ROID: Ex Profundo &mdash; Prototype 1</h1>
-
-<section id="frenzy-section">
-  <div id="frenzy-header">
-    <span>Frenzy Meter</span>
-    <span id="frenzy-label">Get out of our sight</span>
-    <span id="frenzy-pct">0%</span>
-  </div>
-  <div id="frenzy-track"><div id="frenzy-fill"></div></div>
-</section>
-
-<div id="game-grid">
-
-  <!-- ── DIG PANEL ── -->
-  <div class="panel">
-    <h2>Regolith Prime</h2>
-    <div class="stat"><span class="stat-k">Depth</span><span class="stat-v" id="depth-val">0 / 100 m</span></div>
-    <div id="depth-track"><div id="depth-fill"></div></div>
-    <button id="dig-btn">DIG</button>
-    <div class="stat"><span class="stat-k">Ore</span><span class="stat-v" id="ore-val">0</span></div>
-    <div class="stat"><span class="stat-k">Dig power</span><span class="stat-v" id="power-val">5</span></div>
-    <div class="stat"><span class="stat-k">Shaker Dust</span><span class="stat-v" id="sd-val">0</span></div>
-    <div class="stat"><span class="stat-k">Chrome Filings</span><span class="stat-v" id="cf-val">0</span></div>
-    <div id="effects-line">No active effects.</div>
-    <div id="bk-box"></div>
-    <div id="dig-log">&nbsp;</div>
-  </div>
-
-  <!-- ── MILK+ LAB ── -->
-  <div class="panel">
-    <h2>Milk+ Lab</h2>
-    <p class="mix-note">Each drink raises the frenzy meter. Mix the same blend twice in a row to trigger a clash.</p>
-    <button id="btn-strength">
-      Mix Strength<br>
-      <small style="text-transform:none;letter-spacing:0;font-size:0.7rem">(1&times; Shaker Dust) &mdash; boosts dig power</small>
-    </button>
-    <button id="btn-calm">
-      Mix Calm<br>
-      <small style="text-transform:none;letter-spacing:0;font-size:0.7rem">(1&times; Chrome Filings) &mdash; lowers frenzy</small>
-    </button>
-    <button id="btn-blend">
-      Mix Blend &#9888;<br>
-      <small style="text-transform:none;letter-spacing:0;font-size:0.7rem">(1&times; each) &mdash; partial both effects &mdash; clash if repeated</small>
-    </button>
-    <div id="mix-log">No drinks mixed yet.</div>
-  </div>
-
-  <!-- ── FIELD GUIDE ── -->
-  <div class="panel">
-    <h2>Field Guide</h2>
-    <p class="guide-note">Kroeber Foundation. Not liable for frenzy.</p>
-
-    <div class="card locked" id="card-layer">
-      <div class="card-title">Regolith Prime</div>
-      <div class="card-body">Break through the layer to unlock this entry.</div>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="c" width="440" height="520" tabindex="0"></canvas>
+    <div id="start" class="overlay">
+      <h1>ASS2ROID</h1>
+      <div>Ex Profundo · Prototype 1 · Layer 1: Regolith Prime</div>
+      <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
+      <div class="small">Arrows / WASD: move and dig (hold) · 1: drink Strength · 2: drink Calm<br>Mix Milk+ in the panel. Reach the bottom of the layer.</div>
+      <button id="go">Begin shift</button>
     </div>
-
-    <div class="card locked" id="card-artefact">
-      <span class="qmark">?</span>
-      <div class="card-body" style="text-align:center">Unknown &mdash; recover in frenzy.</div>
+    <div id="end" class="overlay hidden"></div>
+    <div id="hint"></div>
+    <div id="legend" class="small">
+      <span><i class="sw" style="background:#ddd"></i>You</span>
+      <span><i class="sw" style="background:#5a5a5a"></i>Rock</span>
+      <span>◆ Ore</span>
+      <span><b>S</b> Shaker Dust → Strength</span>
+      <span><b>C</b> Chalk Whey → Calm</span>
+      <span><i class="sw hatch"></i>Hard band</span>
     </div>
   </div>
 
+  <div id="panel">
+    <div class="box">
+      <h3>Rover panel</h3>
+      <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
+      <div class="row"><span>Ore</span><span id="ore">0</span></div>
+      <div class="row"><span>Shift time</span><span id="time">0:00</span></div>
+      <div class="row"><span>Digging power</span><span id="power">1</span></div>
+    </div>
+
+    <div class="box">
+      <h3>Ingredients</h3>
+      <div class="row"><span>[S] Shaker Dust</span><span id="dust">0</span></div>
+      <div class="row"><span>[C] Chalk Whey</span><span id="whey">0</span></div>
+    </div>
+
+    <div class="box">
+      <h3>Milk+ menu</h3>
+      <div class="btns">
+        <button id="mixStr">Mix Strength<br><span class="small">2 Shaker Dust</span></button>
+        <button id="mixCalm">Mix Calm<br><span class="small">2 Chalk Whey</span></button>
+        <button id="drinkStr">[1] Drink Strength<br><span class="small" id="bStr">0 bottles</span></button>
+        <button id="drinkCalm">[2] Drink Calm<br><span class="small" id="bCalm">0 bottles</span></button>
+      </div>
+      <div class="small" style="margin-top:6px">Caution: Strength and Calm interact. Double check any possible interactions.</div>
+      <div class="small" id="effects" style="margin-top:4px">Active: none</div>
+    </div>
+
+    <div class="box">
+      <h3>Dosage scale</h3>
+      <div id="meter"><div id="meterFill"></div></div>
+      <div id="scale">
+        <span>Get out of our sight</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
+      </div>
+    </div>
+
+    <div class="box">
+      <h3>Field Guide · Kroeber Foundation</h3>
+      <div id="card"><b>Artefact 1</b><br><span class="small">? ? ?<br>Not yet recovered.</span></div>
+    </div>
+
+    <div class="box">
+      <h3>Belt Authority Public Service</h3>
+      <div id="log"></div>
+    </div>
+  </div>
 </div>
 
-<div id="toast"></div>
-
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// CONFIG — tune these to adjust feel
-// ─────────────────────────────────────────────────────────────────────────────
-const CONFIG = {
-  // Digging
-  baseDigPower:          5,      // ore per click without effects
-  depthPerDig:           3,      // metres gained per click, no Strength
-  depthPerDigStrength:   7,      // metres gained per click with Strength active
-  ingredientChance:      0.28,   // probability of ingredient drop per click (0–1)
+const W = 11, H = 46, T = 40, VIEW = 13;
+const AIR = 0, DIRT = 1, ORE = 2, DUST = 3, WHEY = 4, BAND = 5, SEAM = 6, ART = 7, ROCK = 8;
+const STR_TIME = 25000, CALM_TIME = 15000, FRENZY_TIME = 12000, DIG_MS = 160;
 
-  // Layer
-  layerDepth:            100,    // metres needed to unlock the breakthrough
-
-  // Strength Milk+
-  strengthBoost:         15,     // dig power added while active
-  strengthDuration:      20000,  // ms Strength effect lasts
-
-  // Calm Milk+
-  calmReduce:            25,     // frenzy % removed per Calm drink
-
-  // Frenzy meter (0–100%)
-  frenzyPerStrength:     18,     // % per Strength drink
-  frenzyPerCalm:         5,      // % per Calm drink (net negative after reduction)
-  frenzyPerBlend:        28,     // % per first Blend drink
-  frenzyPerClash:        55,     // % surge when Blend is used twice in a row (the clash)
-  frenzyDecayPerSec:     2.5,    // % natural decay per second
-  frenzyTrigger:         100,    // % at which frenzy state fires
-
-  // Frenzy state
-  frenzyDuration:        10000,  // ms of active frenzy
-  frenzySettleAt:        55,     // % meter value after frenzy ends
-  frenzyDigMin:          -4,     // min ore delta per frenzy click (negative = loss)
-  frenzyDigMax:          20,     // max ore delta per frenzy click
-  artefactChance:        0.35,   // probability per frenzy click to find the artefact
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────────────────────────────────────
-const S = {
-  ore:            0,
-  shakerDust:     0,
-  chromeFiling:   0,
-  depth:          0,
-  layerCleared:   false,
-  artefactFound:  false,
-
-  frenzyMeter:    0,
-  inFrenzy:       false,
-  frenzyTimer:    null,
-
-  strengthActive: false,
-  strengthTimer:  null,
-
-  lastDrink:      null,   // 'strength' | 'calm' | 'blend'
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DOM
-// ─────────────────────────────────────────────────────────────────────────────
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const $ = id => document.getElementById(id);
-const D = {
-  digBtn:      $('dig-btn'),
-  depthVal:    $('depth-val'),
-  depthFill:   $('depth-fill'),
-  oreVal:      $('ore-val'),
-  powerVal:    $('power-val'),
-  sdVal:       $('sd-val'),
-  cfVal:       $('cf-val'),
-  effectsLine: $('effects-line'),
-  bkBox:       $('bk-box'),
-  digLog:      $('dig-log'),
 
-  frenzyFill:  $('frenzy-fill'),
-  frenzyLabel: $('frenzy-label'),
-  frenzyPct:   $('frenzy-pct'),
+let g, p, s, held = null, lastAct = 0, lastFall = 0, cam = 0, particles = [], running = false, startT = 0;
 
-  btnStrength: $('btn-strength'),
-  btnCalm:     $('btn-calm'),
-  btnBlend:    $('btn-blend'),
-  mixLog:      $('mix-log'),
+function baseHp(y) { return y < 10 ? 2 : y < 18 ? 3 : y < 31 ? 4 : 5; }
 
-  cardLayer:   $('card-layer'),
-  cardArtefact:$('card-artefact'),
-  toast:       $('toast'),
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// FRENZY LABELS  (low pct = cautious = judged; high pct = reckless = rewarded)
-// ─────────────────────────────────────────────────────────────────────────────
-function frenzyLabel(pct) {
-  if (pct >= 80) return 'Hell yeah';
-  if (pct >= 60) return 'We see you';
-  if (pct >= 40) return 'Meh';
-  if (pct >= 20) return 'Coward';
-  return 'Get out of our sight';
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
-function digPower() {
-  return CONFIG.baseDigPower + (S.strengthActive ? CONFIG.strengthBoost : 0);
-}
-
-let toastTimer = null;
-function toast(msg) {
-  D.toast.textContent = msg;
-  D.toast.style.display = 'block';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { D.toast.style.display = 'none'; }, 3500);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// RENDER
-// ─────────────────────────────────────────────────────────────────────────────
-function render() {
-  const pct     = Math.min(100, Math.max(0, Math.round(S.frenzyMeter)));
-  const power   = digPower();
-  const depthPct= Math.min(100, S.depth / CONFIG.layerDepth * 100);
-  const atDepth = S.depth >= CONFIG.layerDepth && !S.layerCleared;
-
-  // Dig panel stats
-  D.depthVal.textContent = `${S.depth} / ${CONFIG.layerDepth} m`;
-  D.depthFill.style.width = depthPct + '%';
-  D.depthFill.className  = depthPct >= 100 ? 'full' : '';
-  D.oreVal.textContent   = S.ore;
-  D.powerVal.textContent = power;
-  D.sdVal.textContent    = S.shakerDust;
-  D.cfVal.textContent    = S.chromeFiling;
-
-  // Active effects line
-  const fx = [];
-  if (S.strengthActive) fx.push('STRENGTH active');
-  if (S.inFrenzy)       fx.push('FRENZY');
-  D.effectsLine.textContent = fx.length ? fx.join(' · ') : 'No active effects.';
-
-  // Breakthrough box
-  if (atDepth) {
-    D.bkBox.style.display = 'block';
-    if (S.strengthActive) {
-      D.bkBox.textContent = 'STRENGTH ACTIVE — dig now to break through.';
-      D.bkBox.className   = 'go';
-    } else {
-      D.bkBox.textContent = 'Depth reached. Drink Strength Milk+, then dig to break through.';
-      D.bkBox.className   = '';
+function gen() {
+  g = [];
+  for (let y = 0; y < H; y++) {
+    g[y] = [];
+    for (let x = 0; x < W; x++) {
+      let t, hp;
+      if (x === 0 || x === W - 1 || y === H - 1) { t = ROCK; hp = Infinity; }
+      else if (y < 2) { t = AIR; hp = 0; }
+      else if (y === 17 || y === 18) { t = BAND; hp = 20; }
+      else if (y === 31 || y === 32) { t = BAND; hp = 30; }
+      else {
+        const r = Math.random();
+        t = r < .08 ? ORE : r < .18 ? DUST : r < .27 ? WHEY : DIRT;
+        hp = baseHp(y) + (t === ORE ? 1 : 0);
+      }
+      g[y][x] = { t, hp, max: hp };
     }
-  } else {
-    D.bkBox.style.display = 'none';
   }
+  // Hidden stratum: a seam that sober tools cannot touch, with the artefact inside.
+  const left = Math.random() < .5, cx = left ? 2 : W - 3, cy = 25;
+  for (let y = cy - 1; y <= cy + 1; y++)
+    for (let x = cx - 1; x <= cx + 1; x++)
+      g[y][x] = { t: SEAM, hp: 6, max: 6 };
+  g[cy][cx] = { t: ART, hp: 3, max: 3 };
+}
 
-  // Dig button
-  if (S.inFrenzy) {
-    D.digBtn.textContent = 'DIG (FRENZY)';
-    D.digBtn.className   = 'frenzy-state';
-  } else {
-    D.digBtn.textContent = 'DIG';
-    D.digBtn.className   = '';
+function reset() {
+  gen();
+  p = { x: 5, y: 1 };
+  s = { ore: 0, dust: 0, whey: 0, bStr: 0, bCalm: 0, strUntil: 0, calmUntil: 0,
+        meter: 0, frenzyUntil: 0, inFrenzy: false, drinks: 0, dug: 0, frenzies: 0, lost: 0,
+        artefact: false, firstDrink: true, lastWarn: 0 };
+  $('log').innerHTML = '';
+  $('card').className = '';
+  $('card').innerHTML = '<b>Artefact 1</b><br><span class="small">? ? ?<br>Not yet recovered.</span>';
+  particles = [];
+  say('Welcome to Korova Rock. Dig responsibly.');
+}
+
+function say(m) {
+  const d = document.createElement('div'); d.textContent = m;
+  $('log').prepend(d);
+  while ($('log').children.length > 5) $('log').lastChild.remove();
+}
+
+const now = () => performance.now();
+const frenzy = () => s.frenzyUntil > now();
+
+function power() {
+  let d = 1;
+  if (s.strUntil > now()) d += 3;
+  if (frenzy()) d *= 2;
+  return d;
+}
+
+function act(dx, dy) {
+  if (frenzy() && Math.random() < .5) {
+    // The drill digs sideways.
+    if (dy) { dx = Math.random() < .5 ? -1 : 1; dy = 0; } else { dy = 1; dx = 0; }
   }
-
-  // Frenzy bar
-  D.frenzyFill.style.width = pct + '%';
-  D.frenzyPct.textContent  = pct + '%';
-  D.frenzyLabel.textContent= frenzyLabel(pct);
-  D.frenzyFill.className   = S.inFrenzy ? 'peak' : pct >= 60 ? 'danger' : '';
-
-  // Mix buttons
-  D.btnStrength.disabled = S.shakerDust < 1;
-  D.btnCalm.disabled     = S.chromeFiling < 1;
-  D.btnBlend.disabled    = S.shakerDust < 1 || S.chromeFiling < 1;
+  const nx = p.x + dx, ny = p.y + dy;
+  if (ny < 0 || ny >= H || nx < 0 || nx >= W) return;
+  const c = g[ny][nx];
+  if (c.t === AIR) { if (dy >= 0) { p.x = nx; p.y = ny; } return; } // No climbing.
+  hit(nx, ny, c);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FRENZY
-// ─────────────────────────────────────────────────────────────────────────────
-function addFrenzy(amount) {
-  S.frenzyMeter = Math.min(CONFIG.frenzyTrigger, S.frenzyMeter + amount);
-  if (S.frenzyMeter >= CONFIG.frenzyTrigger && !S.inFrenzy) triggerFrenzy();
+function hit(x, y, c) {
+  if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
+  if ((c.t === SEAM || c.t === ART) && !frenzy()) { warn('This seam does not respond to sober tools.'); bump(x, y, 2); return; }
+  c.hp -= power();
+  bump(x, y, 4);
+  if (frenzy() && s.ore > 0 && Math.random() < .12) { s.ore--; s.lost++; say('1 ore lost to the void.'); }
+  if (c.hp > 0) return;
+  const was = c.t;
+  g[y][x] = { t: AIR, hp: 0, max: 0 };
+  s.dug++;
+  bump(x, y, 10);
+  if (was === ORE) s.ore += 1 + (Math.random() < .3 ? 1 : 0);
+  if (was === DUST) { const n = 1 + (Math.random() < .4 ? 1 : 0); s.dust += n; say(`+${n} Shaker Dust.`); }
+  if (was === WHEY) { const n = 1 + (Math.random() < .4 ? 1 : 0); s.whey += n; say(`+${n} Chalk Whey.`); }
+  if (was === BAND && y === 17) say('Compacted band. Strength is recommended.');
+  if (was === ART) findArtefact();
 }
 
-function triggerFrenzy() {
-  S.inFrenzy = true;
-  S.frenzyMeter = CONFIG.frenzyTrigger;
-  document.body.classList.add('in-frenzy');
-  toast('FRENZY. The drill has opinions. Hidden things are reachable. Dig fast.');
-  D.digLog.textContent = 'Frenzy active — digging is unreliable. Hidden strata accessible.';
-  clearTimeout(S.frenzyTimer);
-  S.frenzyTimer = setTimeout(endFrenzy, CONFIG.frenzyDuration);
-}
+function warn(m) { if (now() - s.lastWarn > 1500) { say(m); s.lastWarn = now(); } }
 
-function endFrenzy() {
-  S.inFrenzy = false;
-  S.frenzyMeter = CONFIG.frenzySettleAt;
-  document.body.classList.remove('in-frenzy');
-  D.digLog.textContent = 'Frenzy subsided. Count your ore.';
-  render();
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DIG
-// ─────────────────────────────────────────────────────────────────────────────
-function dig() {
-  if (S.inFrenzy) { frenzyDig(); return; }
-
-  const gained = digPower();
-  S.ore += gained;
-
-  if (!S.layerCleared) {
-    const dp = S.strengthActive ? CONFIG.depthPerDigStrength : CONFIG.depthPerDig;
-    S.depth  = Math.min(CONFIG.layerDepth, S.depth + dp);
-  }
-
-  if (Math.random() < CONFIG.ingredientChance) {
-    if (Math.random() < 0.5) { S.shakerDust++;  D.digLog.textContent = 'Found: Shaker Dust.'; }
-    else                      { S.chromeFiling++; D.digLog.textContent = 'Found: Chrome Filings.'; }
-  } else {
-    D.digLog.textContent = '+' + gained + ' ore.';
-  }
-
-  if (!S.layerCleared && S.depth >= CONFIG.layerDepth && S.strengthActive) {
-    breakThrough();
-  }
-
-  render();
-}
-
-function frenzyDig() {
-  const delta = Math.floor(
-    CONFIG.frenzyDigMin + Math.random() * (CONFIG.frenzyDigMax - CONFIG.frenzyDigMin + 1)
-  );
-  S.ore = Math.max(0, S.ore + delta);
-  D.digLog.textContent = delta < 0
-    ? 'Drill went sideways. Lost ' + Math.abs(delta) + ' ore.'
-    : 'Frenzy dig: +' + delta + ' ore.';
-
-  if (!S.artefactFound && Math.random() < CONFIG.artefactChance) findArtefact();
-  render();
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// UNLOCKS
-// ─────────────────────────────────────────────────────────────────────────────
-function breakThrough() {
-  S.layerCleared = true;
-  toast('REGOLITH PRIME CLEARED. Field Guide updated.');
-  D.cardLayer.classList.remove('locked');
-  D.cardLayer.innerHTML = `
-    <div class="card-title">Regolith Prime</div>
-    <div class="card-body">
-      Surface layer. Loose regolith, compressed grit, abandoned equipment from the last survey.
-      <br><br>
-      <strong>Ingredients found here:</strong><br>
-      <span class="tag">SHAKER DUST</span><span class="tag">CHROME FILINGS</span>
-      <br><br>
-      <em>Kroeber Fact #1: "The average prospector consumes 3.4 Milk+ units before acknowledging
-      the smell. The Kroeber Foundation does not consider this a problem."</em>
-    </div>`;
+function bump(x, y, n) {
+  for (let i = 0; i < n; i++)
+    particles.push({ x: x * T + T / 2, y: y * T + T / 2, vx: (Math.random() - .5) * 4, vy: (Math.random() - 1) * 3, life: 30 });
 }
 
 function findArtefact() {
-  S.artefactFound = true;
-  toast('ARTEFACT RECOVERED. Conditions the Kroeber Foundation does not endorse.');
-  D.cardArtefact.classList.remove('locked');
-  D.cardArtefact.innerHTML = `
-    <div class="card-title">Artefact 1</div>
-    <div class="card-body">
-      <em>Site KR-1, Crater 5, Quadrant 3.</em><br><br>
-      A protein shaker, fused shut. Contents unidentified. Emits a faint hum at proximity.
-      <br><br>
-      <span class="tag">FRENZY FIND</span><span class="tag">KR-1 / C5 / Q3</span>
-      <br><br>
-      <small><em>"Recovered under conditions the Kroeber Foundation does not endorse."</em></small>
-    </div>`;
+  s.artefact = true;
+  say('Artefact recovered. The Foundation has been notified.');
+  $('card').className = 'found';
+  $('card').innerHTML = '<b>Artefact 1</b><br>Site KR-1, Crater 5, Quadrant 3.<br>' +
+    '<span class="small">A fossilised protein shaker, lid still on. Contents: unknown, still cold.<br>' +
+    '<i>Recovered under conditions the Kroeber Foundation does not endorse.</i></span>';
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MIXING
-// ─────────────────────────────────────────────────────────────────────────────
-function activateStrength() {
-  S.strengthActive = true;
-  clearTimeout(S.strengthTimer);
-  S.strengthTimer = setTimeout(() => {
-    S.strengthActive = false;
-    D.digLog.textContent = 'Strength wore off.';
-    render();
-  }, CONFIG.strengthDuration);
+function mix(kind) {
+  if (kind === 'str' && s.dust >= 2) { s.dust -= 2; s.bStr++; say('Strength mixed.'); }
+  if (kind === 'calm' && s.whey >= 2) { s.whey -= 2; s.bCalm++; say('Calm mixed.'); }
 }
 
-function drinkStrength() {
-  if (S.shakerDust < 1) return;
-  S.shakerDust--;
-  S.lastDrink = 'strength';
-  activateStrength();
-  addFrenzy(CONFIG.frenzyPerStrength);
-  D.mixLog.textContent = 'Strength mixed. Dig power up for ' +
-    (CONFIG.strengthDuration / 1000) + 's. Do not spill. Make us proud.';
-  render();
-}
-
-function drinkCalm() {
-  if (S.chromeFiling < 1) return;
-  S.chromeFiling--;
-  S.lastDrink = 'calm';
-  S.frenzyMeter = Math.max(0, S.frenzyMeter - CONFIG.calmReduce);
-  addFrenzy(CONFIG.frenzyPerCalm);
-  D.mixLog.textContent = 'Calm mixed. Frenzy reduced by ' + CONFIG.calmReduce + '%. Breathe through it.';
-  render();
-}
-
-function drinkBlend() {
-  if (S.shakerDust < 1 || S.chromeFiling < 1) return;
-  S.shakerDust--;
-  S.chromeFiling--;
-
-  const wasBlend = S.lastDrink === 'blend';
-  S.lastDrink = 'blend';
-
-  if (wasBlend) {
-    D.mixLog.textContent = '⚠ CLASH — Shaker Dust and Chrome Filings again. That was not recommended.';
-    toast('CLASH. The Kroeber Foundation warned you.');
-    addFrenzy(CONFIG.frenzyPerClash);
+function drink(kind) {
+  if (!running) return;
+  const t = now();
+  if (kind === 'str' && s.bStr < 1) return;
+  if (kind === 'calm' && s.bCalm < 1) return;
+  if (s.firstDrink) { say('Do not spill. Make us proud.'); s.firstDrink = false; }
+  s.drinks++;
+  if (kind === 'str') {
+    s.bStr--;
+    if (s.calmUntil > t) { s.meter += 60; say('Interaction detected. You were told to double check.'); }
+    else if (s.strUntil > t) { s.meter += 45; say('Stacking Strength. Bold.'); }
+    else s.meter += 28;
+    s.strUntil = t + STR_TIME;
   } else {
-    activateStrength();
-    S.frenzyMeter = Math.max(0, S.frenzyMeter - CONFIG.calmReduce * 0.4);
-    addFrenzy(CONFIG.frenzyPerBlend);
-    D.mixLog.textContent = 'Blend mixed. Strength and some calm. The meter is watching. Do not repeat.';
+    s.bCalm--;
+    if (s.strUntil > t) { s.meter += 60; say('Interaction detected. You were told to double check.'); }
+    else s.meter = Math.max(0, s.meter - 40);
+    s.calmUntil = t + CALM_TIME;
   }
-  render();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FRENZY DECAY — runs every animation frame; only re-renders when meter moves
-// ─────────────────────────────────────────────────────────────────────────────
-let lastTick = Date.now();
-
-function tick() {
-  const now = Date.now();
-  const dt  = (now - lastTick) / 1000;
-  lastTick  = now;
-
-  if (!S.inFrenzy && S.frenzyMeter > 0) {
-    const next = Math.max(0, S.frenzyMeter - CONFIG.frenzyDecayPerSec * dt);
-    if (Math.abs(next - S.frenzyMeter) > 0.15) {
-      S.frenzyMeter = next;
-      render();
+function update() {
+  const t = now();
+  // Frenzy meter.
+  if (frenzy()) { s.meter = 100; }
+  else if (s.inFrenzy) { s.inFrenzy = false; s.meter = 45; say('Frenzy subsiding. Count your ore.'); }
+  else {
+    s.meter = Math.max(0, s.meter - 0.02);
+    if (s.meter >= 100) {
+      s.frenzyUntil = t + FRENZY_TIME; s.inFrenzy = true; s.frenzies++;
+      say('FRENZY. The Rock is speaking. Do not answer.');
     }
   }
-
-  requestAnimationFrame(tick);
+  // Gravity.
+  if (t - lastFall > 90 && p.y + 1 < H && g[p.y + 1][p.x].t === AIR) { p.y++; lastFall = t; }
+  // Held digging.
+  if (held && t - lastAct > DIG_MS) { act(held[0], held[1]); lastAct = t; }
+  // Smooth camera.
+  const target = Math.max(0, Math.min(H - VIEW, p.y - 4));
+  cam += (target - cam) * .15;
+  particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .25; q.life--; });
+  particles = particles.filter(q => q.life > 0);
+  if (p.y >= H - 2) finish();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// EVENTS
-// ─────────────────────────────────────────────────────────────────────────────
-D.digBtn.addEventListener('click', dig);
-D.btnStrength.addEventListener('click', drinkStrength);
-D.btnCalm.addEventListener('click', drinkCalm);
-D.btnBlend.addEventListener('click', drinkBlend);
+const fill = { [DIRT]: '#5a5a5a', [ORE]: '#4a4a4a', [DUST]: '#6a6a6a', [WHEY]: '#6a6a6a', [BAND]: '#3a3a3a', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222' };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────────────────────────────
-render();
-requestAnimationFrame(tick);
+function draw() {
+  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.save();
+  ctx.translate(0, -cam * T);
+  const y0 = Math.floor(cam), y1 = Math.min(H, y0 + VIEW + 1);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 14px monospace';
+  for (let y = y0; y < y1; y++) for (let x = 0; x < W; x++) {
+    const c = g[y][x], px = x * T, py = y * T;
+    if (c.t === AIR) continue;
+    ctx.fillStyle = fill[c.t]; ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
+    if (c.t === ORE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', px + T / 2, py + T / 2); }
+    if (c.t === DUST) { ctx.fillStyle = '#eee'; ctx.fillText('S', px + T / 2, py + T / 2); }
+    if (c.t === WHEY) { ctx.fillStyle = '#eee'; ctx.fillText('C', px + T / 2, py + T / 2); }
+    if (c.t === BAND) { ctx.strokeStyle = '#2a2a2a'; ctx.beginPath(); for (let i = 0; i < T; i += 8) { ctx.moveTo(px + i, py + T); ctx.lineTo(px + i + 8, py); } ctx.stroke(); }
+    if (c.t === SEAM || c.t === ART) { ctx.fillStyle = frenzy() ? '#aaa' : '#626262'; ctx.font = '10px monospace'; ctx.fillText('?', px + T / 2, py + T / 2); ctx.font = 'bold 14px monospace'; }
+    if (c.hp < c.max && c.max !== Infinity) {
+      const k = 1 - c.hp / c.max;
+      ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(px + T / 2, py + T / 2); ctx.lineTo(px + T / 2 - 14 * k, py + 6);
+      ctx.moveTo(px + T / 2, py + T / 2); ctx.lineTo(px + T - 6, py + T / 2 + 12 * k);
+      if (k > .5) { ctx.moveTo(px + T / 2, py + T / 2); ctx.lineTo(px + 8, py + T - 6); }
+      ctx.stroke(); ctx.lineWidth = 1;
+    }
+  }
+  // Prospector.
+  const bob = s.strUntil > now() ? 2 : 0;
+  ctx.fillStyle = frenzy() ? '#fff' : '#ddd';
+  ctx.fillRect(p.x * T + 8 - bob, p.y * T + 6 - bob, T - 16 + bob * 2, T - 10 + bob);
+  ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 13, p.y * T + 12, 14, 6); // visor
+  ctx.fillStyle = '#bbb';
+  particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
+  ctx.restore();
+  // Depth marker.
+  ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left';
+  ctx.fillText(`${Math.round(cam * 3)} m`, 4, 10);
+}
+
+function hint() {
+  const t = now(), nearBand = (p.y >= 12 && p.y < 17) || (p.y >= 26 && p.y < 31), strOn = s.strUntil > t;
+  if (frenzy()) return 'FRENZY! Now you can dig the ? blocks next to a side wall at about 72 m. Hurry.';
+  if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
+  if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy. (Calm lowers it, but not while Strength is active.)';
+  if (s.bStr > 0 && !strOn && nearBand) return 'Hard band below. Press 1 to drink Strength.';
+  if (s.bStr > 0 && s.drinks === 0) return 'You have a Strength bottle. Press 1 to drink it: digging power goes from 1 to 4.';
+  if (s.dust >= 2 && s.bStr === 0 && s.drinks === 0) return 'You have 2 Shaker Dust. Click "Mix Strength" in the panel on the right.';
+  if (s.drinks === 0) return 'Dig into S blocks to collect Shaker Dust. You need 2 to mix Strength.';
+  if (nearBand && !strOn) return 'Hard band ahead (striped rock). Strength makes it much faster.';
+  if (!s.artefact && s.frenzies === 0) return 'Rumour: a ? seam by the wall at about 72 m only opens in frenzy. Overdo it on purpose?';
+  return 'Keep digging. The bottom of the layer is at 129 m.';
+}
+
+function hud() {
+  const t = now(), sec = Math.floor((t - startT) / 1000);
+  $('depth').textContent = `${Math.max(0, p.y - 1) * 3} m`;
+  $('ore').textContent = s.ore;
+  $('time').textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+  $('power').textContent = power();
+  $('dust').textContent = s.dust; $('whey').textContent = s.whey;
+  $('bStr').textContent = `${s.bStr} bottle${s.bStr === 1 ? '' : 's'}`;
+  $('bCalm').textContent = `${s.bCalm} bottle${s.bCalm === 1 ? '' : 's'}`;
+  $('mixStr').disabled = s.dust < 2; $('mixCalm').disabled = s.whey < 2;
+  $('drinkStr').disabled = s.bStr < 1; $('drinkCalm').disabled = s.bCalm < 1;
+  const fx = [];
+  if (s.strUntil > t) fx.push(`Strength ${Math.ceil((s.strUntil - t) / 1000)}s`);
+  if (s.calmUntil > t) fx.push(`Calm ${Math.ceil((s.calmUntil - t) / 1000)}s`);
+  if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
+  $('effects').textContent = 'Active: ' + (fx.join(' · ') || 'none');
+  $('meterFill').style.width = Math.min(100, s.meter) + '%';
+  $('meterFill').className = frenzy() ? 'hot' : '';
+  const lvl = Math.min(4, Math.floor(s.meter / 20));
+  [...$('scale').children].forEach((el, i) => el.className = i === lvl ? 'on' : '');
+  cv.className = frenzy() ? 'frenzy' : '';
+  const h = running ? hint() : '';
+  if ($('hint').textContent !== h) $('hint').textContent = h;
+}
+
+function finish() {
+  running = false; held = null;
+  const sec = Math.floor((now() - startT) / 1000);
+  $('end').classList.remove('hidden');
+  $('end').innerHTML = `<h1>LAYER CLEARED</h1>
+    <div>Regolith Prime · ${(H - 3) * 3} m</div>
+    <div class="small">Time ${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')} · Ore ${s.ore} · Milk+ consumed ${s.drinks} · Frenzies ${s.frenzies} · Ore lost ${s.lost}</div>
+    <div>${s.artefact ? 'Artefact 1 recovered. The Foundation will pretend not to know.' : 'Field Guide: 1 slot remains ? ? ?<br><span class="small">Some strata only open to those who did not double check.</span>'}</div>
+    <button id="again">Next shift</button>`;
+  $('again').onclick = start;
+}
+
+function start() {
+  reset();
+  $('start').classList.add('hidden'); $('end').classList.add('hidden');
+  startT = now(); running = true;
+  cv.focus();
+}
+
+function loop() {
+  if (running) update();
+  if (g) { draw(); hud(); }
+  requestAnimationFrame(loop);
+}
+
+const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowDown: [0, 1], s: [0, 1], ArrowUp: [0, -1], w: [0, -1] };
+addEventListener('keydown', e => {
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (dirs[k]) {
+    e.preventDefault();
+    if (!running) return;
+    if (held !== dirs[k]) { held = dirs[k]; act(...held); lastAct = now(); }
+  }
+  if (k === '1') drink('str');
+  if (k === '2') drink('calm');
+});
+addEventListener('keyup', e => {
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (dirs[k] === held) held = null;
+});
+
+// Clicking the game area hands the arrow keys back to it.
+cv.addEventListener('mousedown', () => cv.focus());
+
+$('go').onclick = start;
+$('mixStr').onclick = () => mix('str');
+$('mixCalm').onclick = () => mix('calm');
+$('drinkStr').onclick = () => drink('str');
+$('drinkCalm').onclick = () => drink('calm');
+for (const b of document.querySelectorAll('button')) b.addEventListener('mouseup', () => b.blur());
+
+reset();
+loop();
 </script>
 </body>
 </html>
