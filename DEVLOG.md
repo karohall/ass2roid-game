@@ -27,3 +27,22 @@
 - Outside feedback: explain frenzy *before* it happens, as invitation rather than warning. Added all three: a Belt Authority announcement on first mix (also in the hint bar), a caution line in the Milk+ menu, and a locked Field Guide card that says what unlocks it.
 - Dosage scale moved under the hint bar, full width and much bigger. The hint bar is a keeper.
 - Naming: ore → **drill samples**; ingredients → **Regolith Whey** (Strength) and **Legacy Powder** (Calm). Full compound list per layer added to the GDD.
+
+Tagged as `prototype-1`.
+
+---
+
+## 2026-10-21 — Prototype 2
+
+Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in one `CONFIG` object at the top of the script.
+
+- **Three layers**, each its own shaft: Regolith Prime → The Shaker Strata → The Chrome Vein. Rock gets harder, and each layer ends in a **crust** that needs a minimum digging power (1 / 4 / 7). Power 7 means drinking Strength twice, which pushes the dosage meter: the strength requirement and the frenzy risk are now the same decision.
+- **Ingredients follow the GDD**, not the old brief: Regolith Whey, Legacy Powder, Chrome Filings, plus Crack Spores seeping up from The Crack. Each new layer brings a new ingredient and unlocks a new recipe.
+- **Four Milk+ variants with recipes:** Strength (2 Whey), Calm (2 Powder), Stamina (Whey + Chrome), Focus (Powder + Spores). Unknown ingredients show as `?` in the recipes until found.
+- **Tiredness:** every hit adds a little. Tired digging is slower and drifts sideways. Stops recovering while you keep digging. Stamina knocks it down and slows it.
+- **Focus:** less drift, and broken rock sometimes yields the layer's rare ingredient.
+- **Two clashes:** Strength × Calm = instant frenzy (as in P1). Stamina × Focus = +55 on the meter.
+- **Field Guide:** 9 slots: 3 layers, 4 ingredients, 2 frenzy artefacts. Locked slots show `?`. Artefact 1 can turn up in any layer; Artefact 2 only in The Chrome Vein, after Artefact 1.
+- **Crater picker:** after each breakthrough, a two-choice text menu. Each crater shifts ingredient yields.
+- **Sleep:** saves to localStorage (grid, position, inventory, Field Guide). Waking up clears effects, the meter and tiredness. The start screen offers Continue.
+- Fix: fast key taps are queued instead of dropped during the dig cooldown, so mashing always counts.
