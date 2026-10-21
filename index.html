@@ -39,8 +39,10 @@
   button { font:inherit; background:#333; color:var(--text); border:1px solid #555; padding:6px 8px; cursor:pointer; width:100%; text-align:left; }
   button:hover:not(:disabled) { background:#444; color:var(--hot); }
   button:disabled { opacity:.4; cursor:default; }
-  .recipe { display:grid; grid-template-columns:1fr 64px 64px; gap:6px; align-items:center; margin-bottom:5px; }
-  .recipe button { text-align:center; padding:4px; }
+  .recipe { display:grid; grid-template-columns:1fr 96px; gap:6px; align-items:center; margin-bottom:5px; }
+  .recipe button { text-align:center; padding:6px 4px; }
+  .recipe button.ready { background:#eee; color:#111; border-color:#fff; font-weight:bold; }
+  .recipe button.ready:hover { background:#fff; color:#111; }
   .recipe .name { line-height:1.25; }
   .small { font-size:11px; color:var(--dim); }
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
@@ -75,7 +77,7 @@
       <div>Ex Profundo · Prototype 2</div>
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–4: mix and drink Milk+ · P: pause</div>
+      <div class="small">Arrows / WASD: move and dig · 1–4: shake, then drink Milk+ · P: pause</div>
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
@@ -110,6 +112,7 @@
     <div class="box">
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
+      <div class="small" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
       <div class="small" style="margin-top:6px">Caution: Strength × Calm. Stamina × Hyperfocus. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small" id="effects" style="margin-top:4px">Active: none</div>
     </div>
@@ -185,6 +188,7 @@ const CONFIG = {
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
   loadingMs: 4000,                // loading screen bar; then it waits for a key
+  mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
 
 };
 
@@ -240,7 +244,7 @@ function freshState() {
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0 }, strStacks: 0,
     samples: 0, tired: 0, lastHit: 0, meter: 0, frenzyUntil: 0, inFrenzy: false,
     guide: [], artCrater: {}, seamOpen: false, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
-    drinks: 0, dug: 0, frenzies: 0, clashes: 0, lost: 0, timeMs: 0,
+    shake: null, drinks: 0, dug: 0, frenzies: 0, clashes: 0, lost: 0, timeMs: 0,
   };
 }
 
@@ -318,6 +322,7 @@ function driftChance() {
 }
 
 function act(dx, dy) {
+  if (shaking()) return warn('Both hands on the shaker. Digging resumes when it is ready.');
   // Drift: downward digs wander sideways when frenzied or tired.
   if (dy > 0 && Math.random() < driftChance()) { dx = Math.random() < .5 ? -1 : 1; dy = 0; }
   const nx = p.x + dx, ny = p.y + dy;
@@ -367,29 +372,39 @@ function bump(x, y, n) {
 // ─────────────────────────────────────────────────────────────────────────────
 function canMix(v) { return Object.entries(CONFIG.recipes[v]).every(([k, n]) => s.inv[k] >= n); }
 
+// Mixing takes time: you shake the bottle and cannot dig meanwhile. Drinking is instant.
+const shaking = () => s.shake && s.shake.until > now();
+
 function mix(v) {
-  if (!running || !canMix(v)) return;
-  const first = s.drinks === 0 && VARIANTS.every(k => s.bottles[k] === 0);
+  if (!running || shaking() || !canMix(v)) return;
   for (const [k, n] of Object.entries(CONFIG.recipes[v])) s.inv[k] -= n;
-  s.bottles[v]++;
-  say(`${VNAME[v]} mixed.`);
-  // First bottle ever: the Belt Authority plants the seed before any frenzy is possible.
-  if (first) announce('Frenzy is documented. Certain strata are only accessible in this state. The Foundation does not endorse it. The Foundation has noted its usefulness.');
+  s.shake = { v, until: now() + CONFIG.mix.shakeMs };
+  held = null; pendingTap = null;
+  say(`Shaking ${VNAME[v]}…`);
 }
 
-// Fast command (keys 1–4): drink a bottle if you have one, otherwise mix one and drink it.
-function quaff(v) {
+function finishShake() {
+  const { v } = s.shake;
+  s.shake = null;
+  s.bottles[v]++;
+  say(`${VNAME[v]} ready. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
+}
+
+// One button (and key 1–4) per shake: SHAKE → Shaking… → DRINK.
+// First press shakes a bottle, second press drinks it instantly. One bottle per shake.
+function press(v) {
   if (!running) return;
-  if (s.bottles[v] < 1) {
-    if (!canMix(v)) { warn(`Not enough for ${VNAME[v]}: ${recipeText(v)}.`); return; }
-    mix(v);
-  }
-  drink(v);
+  if (s.bottles[v] > 0) return drink(v);
+  if (shaking()) return warn('Already shaking. One bottle at a time.');
+  if (!canMix(v)) return warn(`Not enough for ${VNAME[v]}: ${recipeText(v)}.`);
+  mix(v);
 }
 
 function drink(v) {
   if (!running || s.bottles[v] < 1) return;
   s.bottles[v]--;
+  // First drink ever: the Belt Authority plants the seed before any frenzy is possible.
+  if (s.drinks === 0) announce('Frenzy is documented. Certain strata are only accessible in this state. The Foundation does not endorse it. The Foundation has noted its usefulness.');
   s.drinks++;
   if (s.firstDrink) { say('Do not spill. Make us proud.'); s.firstDrink = false; }
   const clash = CONFIG.clashes.find(c => (c.a === v && active(c.b)) || (c.b === v && active(c.a)));
@@ -554,6 +569,7 @@ function resume() {
   const d = now() - pausedAt;
   for (const v of VARIANTS) if (s.fx[v]) s.fx[v] += d;
   for (const k of ['frenzyUntil', 'announceUntil', 'lastHit', 'lastWarn']) if (s[k]) s[k] += d;
+  if (s.shake) s.shake.until += d;
   lastAct += d; lastFall += d;
   hideMenu();
   running = true;
@@ -586,7 +602,7 @@ function say(m) {
   while ($('log').children.length > 5) $('log').lastChild.remove();
 }
 
-function announce(m) { if (!m) return; s.announce = m; s.announceUntil = now() + 8000; say(m); }
+function announce(m, extraMs = 0) { if (!m) return; s.announce = m; s.announceUntil = now() + 8000 + extraMs; say(m); }
 
 function update(dt) {
   const t = now();
@@ -601,6 +617,7 @@ function update(dt) {
     openSeam();
   }
   if (!active('strength')) s.strStacks = 0;
+  if (s.shake && !shaking()) finishShake();
   // Tiredness recovers when you stop digging for a moment.
   if (t - s.lastHit > CONFIG.tired.recoverDelayMs) s.tired = Math.max(0, s.tired - CONFIG.tired.recoverPerSec * dt / 1000);
   // Gravity.
@@ -649,11 +666,19 @@ function draw() {
       ctx.stroke(); ctx.lineWidth = 1;
     }
   }
-  // Prospector.
+  // Prospector (jitters while shaking, with a progress bar overhead).
   const bob = active('strength') ? 2 * s.strStacks : 0;
+  const jx = shaking() ? Math.round(Math.sin(now() / 25) * 3) : 0, px0 = p.x * T + jx;
   ctx.fillStyle = frenzy() ? '#fff' : '#ddd';
-  ctx.fillRect(p.x * T + 8 - bob, p.y * T + 6 - bob, T - 16 + bob * 2, T - 10 + bob);
-  ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 13, p.y * T + 12, 14, 6); // visor
+  ctx.fillRect(px0 + 8 - bob, p.y * T + 6 - bob, T - 16 + bob * 2, T - 10 + bob);
+  ctx.fillStyle = '#111'; ctx.fillRect(px0 + 13, p.y * T + 12, 14, 6); // visor
+  if (shaking()) {
+    const k = 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs;
+    ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
+    ctx.fillStyle = '#fff'; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
+    ctx.font = '10px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Shaking…', p.x * T + T / 2, p.y * T - 12);
+  }
   ctx.fillStyle = '#bbb';
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
   ctx.restore();
@@ -670,6 +695,7 @@ function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
   const nearCrust = p.y >= H - 8, artLeft = s.seamOpen && CONFIG.artefacts.some(a => !s.guide.includes(a.id) && g.some(r => r.some(c => c.art === a.id)));
   if (frenzy()) return artLeft ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.' : 'FRENZY! Double digging power. Go go go.';
+  if (shaking()) return `Shaking ${VNAME[s.shake.v]}… No digging until it is ready. Then press ${VARIANTS.indexOf(s.shake.v) + 1} again to drink it.`;
   if (s.announceUntil > t) return s.announce;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.tired >= CONFIG.tired.warnAt) return s.layer === 0
@@ -679,9 +705,10 @@ function hint() {
   if (artLeft) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
   if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy.';
   const ready = VARIANTS.find(v => s.bottles[v] > 0);
-  if (ready && s.drinks === 0) return `You have a ${VNAME[ready]} bottle. Press ${VARIANTS.indexOf(ready) + 1} to drink it.`;
-  if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Press 1 to mix and drink Strength in one go.';
-  if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to mix Strength.';
+  if (ready && s.drinks === 0) return `${VNAME[ready]} is ready. Press ${VARIANTS.indexOf(ready) + 1} again to drink it, instantly. Or keep it for when it counts.`;
+  if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Press 1 to shake a Strength (2 s, no digging meanwhile).';
+  if (s.drinks >= 2 && s.drinks < 5 && VARIANTS.every(v => !s.bottles[v]) && VARIANTS.some(canMix)) return 'Tip: shake in a quiet moment and keep the bottle. Drinking it later is instant.';
+  if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to shake a Strength.';
   if (nearBand && !active('strength')) return 'Hard band ahead (striped rock). Strength makes it much faster.';
   if (s.frenzies === 0) return 'Rumour: Strength and Calm together do something the Foundation will not print.';
   return `Keep digging. Break the crust at the bottom of ${L.name}.`;
@@ -695,10 +722,9 @@ function renderStatic() {
   $('recipes').innerHTML = VARIANTS.map((v, i) => `
     <div class="recipe">
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="small" id="rc_${v}"></span></div>
-      <button id="mix_${v}">Mix</button>
-      <button id="drink_${v}">Drink</button>
+      <button id="act_${v}">Shake</button>
     </div>`).join('');
-  VARIANTS.forEach(v => { $('mix_' + v).onclick = () => mix(v); $('drink_' + v).onclick = () => drink(v); });
+  VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
 }
 
@@ -720,13 +746,15 @@ function hud() {
     setText('iv_' + k, s.inv[k]);
   }
   for (const v of VARIANTS) {
-    setText('rc_' + v, `${recipeText(v)} · ${s.bottles[v]} btl`);
-    $('mix_' + v).disabled = !running || !canMix(v);
-    $('drink_' + v).disabled = !running || s.bottles[v] < 1;
-    $('mix_' + v).title = VDESC[v];
+    setText('rc_' + v, recipeText(v));
+    const b = $('act_' + v), ready = s.bottles[v] > 0, mine = shaking() && s.shake.v === v;
+    setText('act_' + v, mine ? 'Shaking…' : ready ? 'Drink' : 'Shake');
+    b.className = ready ? 'ready' : '';
+    b.disabled = !running || (!ready && (shaking() || !canMix(v)));
   }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
+  if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
   setText('effects', 'Active: ' + (fx.join(' · ') || 'none'));
   $('meterFill').style.width = Math.min(100, s.meter) + '%';
   $('meterFill').className = frenzy() ? 'hot' : '';
@@ -773,7 +801,7 @@ addEventListener('keydown', e => {
     held = dirs[k];
   }
   const i = '1234'.indexOf(k);
-  if (i >= 0) quaff(VARIANTS[i]);
+  if (i >= 0) press(VARIANTS[i]);
 });
 addEventListener('keyup', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
