@@ -62,7 +62,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 
 ## 2026-10-21 — Radio
 
-**Did:** designed the five radio stations (The Pump Zone, Disco Gravitas, Void FM, Näsa Radio, Belt Authority Public Service) and generated the first songs in Suno.
+**Did:** designed the four radio stations (The Pump Zone, Disco Gravitas, Void FM, Näsa Radio) and generated the first songs in Suno.
 
 **Decided:** every station has a fixed DNA, and each song gets a role (signature, driver, contrast, wildcard), so the radio is varied without feeling scattered. All lyrics are about mining, in three emotional registers: body (Pump Zone), heart (Disco Gravitas) and consciousness (Void FM).
 
