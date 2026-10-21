@@ -76,7 +76,7 @@
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
       <div class="small">Arrows / WASD: move and dig · 1–4: mix and drink Milk+ · P: pause</div>
-      <button id="go">Begin shift</button>
+      <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="hint"></div>
@@ -759,6 +759,7 @@ function loop(t) {
 const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowDown: [0, 1], s: [0, 1], ArrowUp: [0, -1], w: [0, -1] };
 addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
   if (k === 'p' || k === 'Escape') { pause(); return; }
   if (dirs[k]) {
