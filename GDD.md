@@ -67,7 +67,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 
 ## The radio
 - **Italo Korova** (suave cruising): calms the frenzy meter a little
-- **Pump FM** (gym, name to be decided): digging goes slightly faster
+- **The Pump Zone** (gym, DJ Coach Rocky): digging goes slightly faster
 - **Void FM** (gazing out and falling in): effect to be decided
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 

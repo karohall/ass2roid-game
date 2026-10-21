@@ -32,11 +32,27 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   3. **Asteroid Belt Boulevard**
   4. **Dolce de Leche+**
 
-### Pump FM *(gym; name to be decided, see [naming](#naming-pump-fm))*
+### The Pump Zone *(gym)*
 - **Effect:** digging goes slightly faster.
-- **Generation prompt:**
-  > instrumental 80s workout synth pop, 128 bpm, gated drums, driving bassline, bright synth stabs, motivational, steady groove, no big build, no outro, no vocals
-- **Tracks:** _none yet_
+- **Style prompt** (base; instrumental, no lyrics: Coach Rocky does the talking between tracks):
+  > instrumental 1980s aerobics workout track, 128 BPM, gated reverb drums, slap bass, punchy synth brass, call-and-response between brass and synth, high energy, VHS fitness video, cheesy and euphoric, no vocals
+- **DJ: Coach Rocky.** An overly positive aerobics instructor and gym coach in one. Loud, encouraging, counts reps, and takes everything completely seriously. *"You know what you want, and if you don't, Rocky does."*
+- **DJ lines:**
+  - *"Good morning, Korova Rock! Are you warm? Are you hydrated? Are you digging? Let's GO!"*
+  - *"Four more! Three more! Two more! The rock does not respect hesitation!"*
+  - *"Remember, prospectors: all documented side effects are also features. Feel the burn!"*
+  - *"Never leave a bro hanging. Coming up next on The Pump Zone!"*
+  - *"That frenzy you're feeling? That's not a problem. That's PROGRESS."*
+- **Songs** (a workout arc: warm-up, strength, peak, cool-down; all instrumental, looping):
+  1. **Loading Dose** *(the warm-up; first dose of the shift)*
+     > instrumental 1980s aerobics warm-up track, 124 BPM, gated reverb drums, bouncy slap bass, punchy synth brass, call-and-response between brass and synth, energy rising step by step, VHS fitness video opening, cheesy and euphoric, steady groove, no outro, no vocals
+  2. **Body Mass** *(the heavy one; power and bulk)*
+     > instrumental 1980s aerobics strength workout track, 128 BPM, stomping gated reverb drums, heavy distorted slap bass, massive synth brass stabs, call-and-response between brass and synth, powerful and swaggering, VHS fitness video, cheesy and euphoric, steady groove, no outro, no vocals
+  3. **Feel the Burn (In the Crater)** *(peak cardio; the fastest)*
+     > instrumental 1980s high-intensity aerobics track, 132 BPM, driving gated reverb drums, fast slap bass, screaming synth brass, call-and-response between brass and synth, echoing cavernous reverb, sweaty and relentless, VHS fitness video, cheesy and euphoric, steady groove, no outro, no vocals
+  4. **Arnold j'adore** *(the cool-down pose-down; Euro camp)*
+     > instrumental 1980s Euro disco bodybuilding posing routine, 120 BPM, gated reverb drums, rubbery slap bass, glossy synth brass, call-and-response between brass and synth, flexing and admiring, sultry and over the top, VHS fitness video, cheesy and euphoric, steady groove, no outro, no vocals
+- **Tempo note:** if the game needs one fixed tempo for the digging-speed effect, set all four to 128 BPM.
 
 ### Void FM *(gazing out and falling in)*
 - **Effect:** _not decided._
@@ -52,20 +68,6 @@ Not a station. Every few minutes it cuts into whatever is playing, which matches
   - *"Näsa Premium Void™. Void, but better."*
   - *"Näsa is not liable for frenzy."*
 - **In-game feel:** duck the music, show a chrome pop-up, and make the close button slightly annoying to hit.
-
----
-
-## Naming: Pump FM
-
-| Candidate | Why |
-|-----------|-----|
-| **Leg Day FM** | Already canon: the Shaker Strata card dates the fossils to "leg day". Dry, and sounds like a real station. |
-| **RPM: Reps Per Minute** | Radio "RPM", and the track is 128 bpm. Reads well on a rover dial. |
-| **Whey Out FM** | Ties to Regolith Whey and Milk+. A pun on "way out", fitting for a shaft. |
-| **Spotter FM** | A gym spotter, and spotting things in space. |
-| **The Belt** | Weightlifting belt and asteroid belt. Ironic next to the Belt Authority. |
-
-**Decision:** _pending_
 
 ---
 
@@ -86,7 +88,7 @@ Not a station. Every few minutes it cuts into whatever is playing, which matches
 ## Technical notes (for later)
 
 - **Format:** `.ogg` (with `.mp3` fallback) for browser support. Keep each music loop small enough for itch.io load times.
-- **File naming:** `audio/<station>/<nn>-<slug>.ogg`, e.g. `audio/pump-fm/01-leg-day.ogg`.
+- **File naming:** `audio/<station>/<nn>-<slug>.ogg`, e.g. `audio/pump-zone/01-loading-dose.ogg`.
 - **Browser autoplay:** sound can only start after the player's first key press or click. "Begin shift (Enter)" is a natural moment to switch the radio on.
 - **Controls:** one key to change station (not yet chosen; 1–4 are taken by the shakes, P by pause).
 - **Effects in `CONFIG`:** each station's gameplay modifier should live in the config object, like every other tunable number.
