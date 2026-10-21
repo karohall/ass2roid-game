@@ -46,3 +46,4 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **Crater picker:** after each breakthrough, a two-choice text menu. Each crater shifts ingredient yields.
 - **Sleep:** saves to localStorage (grid, position, inventory, Field Guide). Waking up clears effects, the meter and tiredness. The start screen offers Continue.
 - Fix: fast key taps are queued instead of dropped during the dig cooldown, so mashing always counts.
+- Renamed Focus → **Hyperfocus**.

@@ -103,7 +103,7 @@
     <div class="box">
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small" style="margin-top:6px">Caution: Strength × Calm. Stamina × Focus. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small" style="margin-top:6px">Caution: Strength × Calm. Stamina × Hyperfocus. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
@@ -182,7 +182,7 @@ const CONFIG = {
 // CONTENT: names and Field Guide copy.
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'stamina', 'focus'];
-const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Focus' };
+const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus' };
 const VDESC = { strength: '+3 digging power. Stacks.', calm: 'Lowers the dosage meter.', stamina: 'Less tiredness, slower to tire.', focus: 'Less drift, more rare finds.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
@@ -198,7 +198,7 @@ const LAYER_CARD = [
 const LAYER_INTRO = [
   '',
   'The Shaker Strata. New compound: Chrome Filings. Stamina can now be mixed. The crust below needs digging power 4.',
-  'The Chrome Vein. Crack Spores rise from below. Focus can now be mixed. The crust below needs digging power 7. Stack your Strength.',
+  'The Chrome Vein. Crack Spores rise from below. Hyperfocus can now be mixed. The crust below needs digging power 7. Stack your Strength.',
 ];
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
@@ -333,7 +333,7 @@ function hit(x, y, c) {
   if (c.t === SAMPLE) s.samples += 1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0);
   if (c.t === INGR) gain(c.ing, 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
   if (c.t === DIRT && active('focus') && Math.random() < CONFIG.focus.rareChance) {
-    gain(layer().rare, 1); say(`Focus: spotted ${ING[layer().rare].name} in the rubble.`);
+    gain(layer().rare, 1); say(`Hyperfocus: spotted ${ING[layer().rare].name} in the rubble.`);
   }
   if (c.t === BAND && y === Math.floor(H / 2)) say('Compacted band. Strength is recommended.');
   if (c.t === ART) unlock(c.art);

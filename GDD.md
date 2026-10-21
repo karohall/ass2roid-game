@@ -21,7 +21,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Strength:** more digging power, for harder layers
 - **Stamina:** dig longer before tiring
 - **Energy:** faster digging for a while
-- **Focus:** less drill drift, more rare finds
+- **Hyperfocus:** less drill drift, more rare finds
 - **Calm:** lowers the frenzy meter
 - **Recovery:** repairs tools and body after frenzy
 - **Sleep:** ends the shift and saves progress
