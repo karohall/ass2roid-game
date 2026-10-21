@@ -66,9 +66,9 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a short animation, and you arrive. No driving.
 
 ## The radio
-- **Italo Korova** (suave cruising): calms the frenzy meter a little
-- **The Pump Zone** (gym, DJ Coach Rocky): digging goes slightly faster
-- **Void FM** (gazing out and falling in): effect to be decided
+- **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky): digging goes slightly faster
+- **Disco Gravitas** (heart: Italo and space disco): calms the frenzy meter a little
+- **Void FM** (consciousness: melancholy futurepop): effect to be decided
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 
 Details, music prompts and licence log: [RADIO.md](RADIO.md).

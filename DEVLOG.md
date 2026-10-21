@@ -57,3 +57,15 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **One button per shake.** With drinking instant, separate Mix and Drink buttons were pointless. Now each shake has one button (and key 1–4) that cycles **Shake → Shaking… → Drink**: first press shakes a bottle, second press drinks it. You can shake in a quiet moment and keep the bottle for when it counts. One bottle per shake at a time. The frenzy announcement moved from the first shake to the first drink so it doesn't hide the "press again to drink" hint.
 
 **Reflection:** *I understand how it can be beneficial for UX to build a game, as you have to work out recurring solutions for how to teach the player the rules of the game.*
+
+---
+
+## 2026-10-21 — Radio
+
+**Did:** designed the five radio stations (The Pump Zone, Disco Gravitas, Void FM, Näsa Radio, Belt Authority Public Service) and generated the first songs in Suno.
+
+**Decided:** every station has a fixed DNA, and each song gets a role (signature, driver, contrast, wildcard), so the radio is varied without feeling scattered. All lyrics are about mining, in three emotional registers: body (Pump Zone), heart (Disco Gravitas) and consciousness (Void FM).
+
+**Surprised me:** the first prompts sounded flat. It worked when the lyrics included directions for each section (voice, energy, sound). It's like directing a performance.
+
+**Next:** generate the remaining songs, then build the radio into Prototype 3.
