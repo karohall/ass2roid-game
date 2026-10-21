@@ -44,6 +44,11 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **Two clashes:** Strength × Calm = instant frenzy (as in P1). Stamina × Focus = +55 on the meter.
 - **Field Guide:** 9 slots: 3 layers, 4 ingredients, 2 frenzy artefacts. Locked slots show `?`. Artefact 1 can turn up in any layer; Artefact 2 only in The Chrome Vein, after Artefact 1.
 - **Crater picker:** after each breakthrough, a two-choice text menu. Each crater shifts ingredient yields.
-- **Sleep:** saves to localStorage (grid, position, inventory, Field Guide). Waking up clears effects, the meter and tiredness. The start screen offers Continue.
+- **Sleep:** saved to localStorage, with Continue on the start screen. (Removed the same day, see below.)
 - Fix: fast key taps are queued instead of dropped during the dig cooldown, so mashing always counts.
 - Renamed Focus → **Hyperfocus**.
+- **Fast commands:** keys 1–4 mix *and* drink in one press when you have no bottle. No mouse needed while digging.
+- **Crater picker parked.** Choosing a crater between layers is too soon in the dev process. Replaced with a short loading screen (rover en route, random crater). The picker still works and can be switched back on with `CONFIG.craterPicker = true`.
+- **Sleep and save removed.** A 10–15 minute game doesn't need them. Replaced with **Pause** (P, Esc or the panel button). Pausing freezes every timer, so drinks and frenzy don't run out while you're away.
+- **Loading screen slowed down and made readable.** It now shows what the next layer brings (new compound, new recipe, the crust's power requirement). The bar fills over 4 seconds, then the screen waits for ↓, so nobody is rushed past the text.
+- **Progress marker.** A journey strip on the start screen, loading screen and pause screen: Regolith Prime → Shaker Strata → Chrome Vein → The end, with cleared layers ticked and the next one highlighted ("Layer 2 of 3"). The player always knows how long the game is.

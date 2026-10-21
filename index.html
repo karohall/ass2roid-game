@@ -57,6 +57,13 @@
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
+  .journey { display:flex; align-items:flex-start; width:100%; max-width:400px; margin:4px 0; }
+  .journey .step { width:64px; flex:none; font-size:10px; color:var(--dim); text-align:center; line-height:1.2; }
+  .journey .dot { width:26px; height:26px; margin:0 auto 4px; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; }
+  .journey .link { flex:1; height:2px; background:#555; margin-top:13px; }
+  .journey .done .dot { background:#888; border-color:#888; color:#111; }
+  .journey .here { color:var(--hot); font-weight:bold; }
+  .journey .here .dot { border-color:#fff; background:#fff; color:#111; animation:throb .6s ease-in-out infinite alternate; }
 </style>
 </head>
 <body>
@@ -66,9 +73,9 @@
     <div id="start" class="overlay">
       <h1>ASS2ROID</h1>
       <div>Ex Profundo · Prototype 2</div>
+      <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–4: drink Milk+<br>Mix Milk+ in the panel · Sleep saves your shift.</div>
-      <button id="continue" class="hidden">Continue shift</button>
+      <div class="small">Arrows / WASD: move and dig · 1–4: mix and drink Milk+ · P: pause</div>
       <button id="go">Begin shift</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
@@ -118,7 +125,7 @@
       <div id="log"></div>
     </div>
 
-    <button id="sleep">Sleep: end shift and save</button>
+    <button id="pauseBtn">Pause (P)</button>
   </div>
 </div>
 
@@ -175,7 +182,10 @@ const CONFIG = {
     { id: 'art2', minLayer: 2 },
   ],
 
-  saveKey: 'ass2roid-p2-save',
+  // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
+  craterPicker: false,
+  loadingMs: 4000,                // loading screen bar; then it waits for a key
+
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -367,6 +377,16 @@ function mix(v) {
   if (first) announce('Frenzy is documented. Certain strata are only accessible in this state. The Foundation does not endorse it. The Foundation has noted its usefulness.');
 }
 
+// Fast command (keys 1–4): drink a bottle if you have one, otherwise mix one and drink it.
+function quaff(v) {
+  if (!running) return;
+  if (s.bottles[v] < 1) {
+    if (!canMix(v)) { warn(`Not enough for ${VNAME[v]}: ${recipeText(v)}.`); return; }
+    mix(v);
+  }
+  drink(v);
+}
+
 function drink(v) {
   if (!running || s.bottles[v] < 1) return;
   s.bottles[v]--;
@@ -443,8 +463,27 @@ function breakthrough() {
   running = false; held = null;
   unlock('layer' + s.layer);
   s.depthOffset += (H - 1) * CONFIG.grid.metresPerRow;
+  p.y = 1;                                                 // depth now reads as the top of the next layer
   if (s.layer === CONFIG.layers.length - 1) return finishGame();
   const next = CONFIG.layers[s.layer + 1];
+  if (!CONFIG.craterPicker) {
+    // Loading screen: the rover picks a crater and drives there. It waits for the player,
+    // so there is always time to read what comes next.
+    const i = Math.floor(Math.random() * next.craters.length);
+    showMenu(`<h2>${layer().name.toUpperCase()} CLEARED</h2>
+      ${journey(s.layer + 1)}
+      <div>Rover en route to <b>${next.craters[i].label}</b>, ${next.name}.</div>
+      <div class="small" style="max-width:360px;color:var(--text)">${LAYER_INTRO[s.layer + 1]}</div>
+      <div class="bar" style="width:260px;height:12px"><div id="loadBar" style="transition:width ${CONFIG.loadingMs}ms linear"></div></div>
+      <div id="loadGo" class="small">1. Check engine light. 2. Ignore that it is on. 3. See Step 1.</div>`);
+    menuKeys = () => {};                                   // swallow keys while driving
+    requestAnimationFrame(() => requestAnimationFrame(() => $('loadBar').style.width = '100%'));
+    setTimeout(() => {
+      $('loadGo').innerHTML = '<b style="color:var(--hot);font-size:14px">Press ↓ to start digging</b>';
+      menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
+    }, CONFIG.loadingMs);
+    return;
+  }
   showMenu(`<h2>${layer().name.toUpperCase()} CLEARED</h2>
     <div class="small">The rover is warm. Choose the next crater.</div>
     <div>Next: <b>${next.name}</b></div>
@@ -454,6 +493,17 @@ function breakthrough() {
 }
 
 let menuKeys = null;
+
+// Progress marker: every layer of the prototype, with the one you are heading into marked.
+function journey(at) {
+  const steps = CONFIG.layers.map((L, i) => {
+    const state = i < at ? 'done' : i === at ? 'here' : 'todo';
+    return `<div class="step ${state}"><div class="dot">${i < at ? '✓' : i + 1}</div><div>${L.name.replace('The ', '')}</div></div>`;
+  });
+  return `<div class="journey">${steps.join('<div class="link"></div>')}<div class="link"></div>
+    <div class="step todo"><div class="dot">■</div><div>The end</div></div></div>
+    <div class="small">Layer ${at + 1} of ${CONFIG.layers.length}</div>`;
+}
 
 function pickCrater(i) {
   const next = CONFIG.layers[s.layer + 1];
@@ -470,7 +520,6 @@ function pickCrater(i) {
 
 function finishGame() {
   const sec = Math.floor(s.timeMs / 1000), total = guideEntries().length;
-  try { localStorage.removeItem(CONFIG.saveKey); } catch (e) {}
   showMenu(`<h1>PROTOTYPE 2 COMPLETE</h1>
     <div>Below you: The Crack. It is not in this prototype.</div>
     <div class="small">Depth ${s.depthOffset} m · Time ${fmt(sec)} · Drill samples ${s.samples} · Milk+ ${s.drinks} · Clashes ${s.clashes} · Frenzies ${s.frenzies} · Samples lost ${s.lost}</div>
@@ -484,37 +533,34 @@ function showMenu(html) { $('menu').innerHTML = html; $('menu').classList.remove
 function hideMenu() { $('menu').classList.add('hidden'); menuKeys = null; }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SAVE / SLEEP
+// PAUSE
 // ─────────────────────────────────────────────────────────────────────────────
-function sleep() {
+let pausedAt = 0;
+
+function pause() {
   if (!running) return;
-  running = false; held = null;
-  // Sleep ends the shift: effects wear off, the meter settles, you wake rested.
-  s.fx = { strength: 0, calm: 0, stamina: 0, focus: 0 }; s.strStacks = 0;
-  s.meter = 0; s.frenzyUntil = 0; s.inFrenzy = false; s.tired = 0; s.announceUntil = 0;
-  let ok = true;
-  try { localStorage.setItem(CONFIG.saveKey, JSON.stringify({ v: 2, s, g, p })); } catch (e) { ok = false; }
-  showMenu(`<h2>SHIFT ENDED</h2>
-    <div>${ok ? 'Progress saved. Sleep well, prospector.' : 'The rover could not save. Your browser is blocking storage.'}</div>
+  running = false; held = null; pendingTap = null; pausedAt = now();
+  showMenu(`<h2>PAUSED</h2>
+    ${journey(s.layer)}
     <div class="small">${layer().name} · ${depthNow()} m · ${s.samples} drill samples · Field Guide ${s.guide.length} / ${guideEntries().length}</div>
-    <button id="wake">Next shift</button>`);
-  $('wake').onclick = () => { hideMenu(); running = true; say('Good morning. The Rock missed you.'); cv.focus(); };
+    <div class="small">The Rock will wait. It has waited before.</div>
+    <button id="resume">Resume (P)</button>`);
+  $('resume').onclick = resume;
+  menuKeys = k => { if (k === 'p' || k === 'Escape') resume(); };
 }
 
-function loadSave() {
-  try { const d = JSON.parse(localStorage.getItem(CONFIG.saveKey)); return d && d.v === 2 ? d : null; } catch (e) { return null; }
-}
-
-function continueGame() {
-  const d = loadSave(); if (!d) return newGame();
-  s = Object.assign(freshState(), d.s);
-  g = d.g; p = d.p; H = g.length; cam = Math.max(0, Math.min(H - VIEW, p.y - 4));
-  begin();
-  say('Shift resumed. Your samples are where you left them.');
+function resume() {
+  // Every timer is a timestamp, so shift them all by the time spent paused.
+  const d = now() - pausedAt;
+  for (const v of VARIANTS) if (s.fx[v]) s.fx[v] += d;
+  for (const k of ['frenzyUntil', 'announceUntil', 'lastHit', 'lastWarn']) if (s[k]) s[k] += d;
+  lastAct += d; lastFall += d;
+  hideMenu();
+  running = true;
+  cv.focus();
 }
 
 function newGame() {
-  try { localStorage.removeItem(CONFIG.saveKey); } catch (e) {}
   s = freshState();
   genLayer();
   begin();
@@ -618,6 +664,7 @@ function draw() {
 const depthNow = () => s.depthOffset + Math.max(0, p.y - 1) * CONFIG.grid.metresPerRow;
 const fmt = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 const known = k => s.guide.includes('ing_' + k);
+const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
 function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
@@ -633,7 +680,7 @@ function hint() {
   if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy.';
   const ready = VARIANTS.find(v => s.bottles[v] > 0);
   if (ready && s.drinks === 0) return `You have a ${VNAME[ready]} bottle. Press ${VARIANTS.indexOf(ready) + 1} to drink it.`;
-  if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Click "Mix" next to Strength in the panel on the right.';
+  if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Press 1 to mix and drink Strength in one go.';
   if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to mix Strength.';
   if (nearBand && !active('strength')) return 'Hard band ahead (striped rock). Strength makes it much faster.';
   if (s.frenzies === 0) return 'Rumour: Strength and Calm together do something the Foundation will not print.';
@@ -673,8 +720,7 @@ function hud() {
     setText('iv_' + k, s.inv[k]);
   }
   for (const v of VARIANTS) {
-    const rec = Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
-    setText('rc_' + v, `${rec} · ${s.bottles[v]} btl`);
+    setText('rc_' + v, `${recipeText(v)} · ${s.bottles[v]} btl`);
     $('mix_' + v).disabled = !running || !canMix(v);
     $('drink_' + v).disabled = !running || s.bottles[v] < 1;
     $('mix_' + v).title = VDESC[v];
@@ -689,7 +735,7 @@ function hud() {
   setText('dosageNow', frenzy() ? 'FRENZY' : DOSAGE[lvl]);
   cv.className = frenzy() ? 'frenzy' : '';
   setText('hint', running ? hint() : '');
-  $('sleep').disabled = !running;
+  $('pauseBtn').disabled = !running;
   setHTML('legend', [
     '<span><i class="sw" style="background:#ddd"></i>You</span>',
     `<span><i class="sw" style="background:${layer().tint}"></i>Rock</span>`,
@@ -714,6 +760,7 @@ const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], Ar
 addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   if (menuKeys) { menuKeys(k); return; }
+  if (k === 'p' || k === 'Escape') { pause(); return; }
   if (dirs[k]) {
     e.preventDefault();
     if (!running) return;
@@ -725,7 +772,7 @@ addEventListener('keydown', e => {
     held = dirs[k];
   }
   const i = '1234'.indexOf(k);
-  if (i >= 0) drink(VARIANTS[i]);
+  if (i >= 0) quaff(VARIANTS[i]);
 });
 addEventListener('keyup', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
@@ -735,14 +782,13 @@ cv.addEventListener('mousedown', () => cv.focus());
 document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.target.closest('button').blur(); });
 
 $('go').onclick = newGame;
-$('continue').onclick = continueGame;
-$('sleep').onclick = sleep;
+$('pauseBtn').onclick = pause;
+$('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
 // Boot: show a world behind the start screen.
 s = freshState();
 genLayer();
 renderStatic(); renderGuide();
-if (loadSave()) { $('continue').classList.remove('hidden'); $('go').textContent = 'New game (erases save)'; }
 requestAnimationFrame(loop);
 </script>
 </body>
