@@ -55,3 +55,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **Enter begins the shift.**
 - **Mix vs Drink.** *"There needs to be a difference between Mix and Drink."* Mixing now takes time: **shaking a Milk+ takes 2 s and you can't dig meanwhile**. Drinking is instant. A small progress bar and a "Shaking…" label appear over the prospector's head (kept small on purpose: cute and on brand). The delay works well.
 - **One button per shake.** With drinking instant, separate Mix and Drink buttons were pointless. Now each shake has one button (and key 1–4) that cycles **Shake → Shaking… → Drink**: first press shakes a bottle, second press drinks it. You can shake in a quiet moment and keep the bottle for when it counts. One bottle per shake at a time. The frenzy announcement moved from the first shake to the first drink so it doesn't hide the "press again to drink" hint.
+
+**Reflection:** *I understand how it can be beneficial for UX to build a game, as you have to work out recurring solutions for how to teach the player the rules of the game.*
