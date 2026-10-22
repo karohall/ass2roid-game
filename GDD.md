@@ -22,17 +22,22 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Stamina:** dig longer before tiring
 - **Energy:** faster digging for a while
 - **Hyperfocus:** less drill drift, more rare finds
-- **Calm:** lowers the frenzy meter
+- **Calm:** pushes the balance meter toward Stillness
 - **Recovery:** repairs tools and body after frenzy
 - **Sleep:** ends the shift and saves progress
 
 **Secret menu** (unlocked through frenzy): Jizz+, Candygirl, XXX.
 
-## Frenzy (push your luck)
-- **Rule:** *Double check any possible interactions.* Some combinations clash, and drinking too much too fast fills the meter.
-- **The meter** uses the guide's dosage scale: *Hell yeah → We see you → Meh → Coward → Get out of our sight.*
-- **In frenzy:** the screen tilts, the drill digs sideways, and you can lose ore or damage tools.
-- **The reward:** only frenzy reaches **hidden strata** and **frenzy artefacts**, logged as *"Recovered under conditions the Kroeber Foundation does not endorse."*
+## Frenzy and Stillness (push your luck)
+- **Rule:** *Double check any possible interactions.* The Foundation measures how fast, not just how much.
+- **The balance meter** runs from −100 (Stillness) through 0 (balanced) to +100 (Frenzy), and drifts slowly back toward 0.
+- **Every Milk+ has a direction and a weight:** Strength +30, Calm −30, Stamina and Hyperfocus +10 each. Energy and Recovery get their own weights later.
+- **The dose window does the damage.** Each drink's push is multiplied by the number of drinks in the last 20 seconds: ×1, ×1.5, ×2, ×3. Drinking slowly is safe; several in quick succession tips you over. The window is shown on the meter ("next drink ×1.5"), so players learn the rule by watching it.
+- **Reaching the edge tips you into a state:** Frenzy at the top, Stillness at the bottom. In Regolith Prime the edge is ±70, so two quick drinks reach either state; deeper layers need ±100.
+- **The meter** uses the guide's dosage scale across both sides: *Get out of our sight → Coward → Meh → We see you → Hell yeah* (Stillness → balanced → Frenzy). Calling Calm "Coward" is the Tourist Guide's tone, and hides that Stillness is a reward too.
+- **In Frenzy:** the screen tilts, the drill digs sideways, digging power doubles, and you can lose ore or damage tools.
+- **In Stillness:** everything slows, colours drain to violet and grey, and the drill goes exactly where you point it.
+- **The reward:** each state opens a seam beside you that only answers to that state: **frenzy artefacts** and **Stillness artefacts**, logged as *"Recovered under conditions the Kroeber Foundation does not endorse."*
 
 ## The layers
 1. **Regolith Prime:** surface dust
@@ -90,9 +95,11 @@ You reach the core. *"We went to Korova Rock to mine. What we ended up mining wa
 - First Milk+: *"Do not spill. Make us proud."*
 
 ## Ideas for later
-- **A single balance meter from Stillness to Frenzy.**
-  - Too much Calm tips into **Stillness**: everything slows, colours drain to violet and grey, Void FM comes through early even near the surface, Stillness artefacts in the Field Guide, The You Show plays.
-  - Too much Strength or clashing mixes tip into **Frenzy**: Down in the Shaft plays.
+- **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
+- **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
+- **The radio reacts to the balance meter** (the meter itself is now in the game, see *Frenzy and Stillness*):
+  - In **Stillness**, Void FM comes through early, even near the surface, and The You Show plays.
+  - In **Frenzy**, Down in the Shaft plays.
 
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.

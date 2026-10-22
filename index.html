@@ -12,6 +12,7 @@
   #stage { position:relative; }
   canvas { display:block; border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
+  canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:38px; }
   #dosage { width:440px; margin-top:10px; }
@@ -19,8 +20,13 @@
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
   #meter { height:32px; background:#111; border:2px solid #666; position:relative;
            background-image:repeating-linear-gradient(90deg, transparent 0 calc(20% - 2px), #444 calc(20% - 2px) 20%); }
-  #meterFill { height:100%; width:0; background:#bbb; transition:width .15s; }
+  #meterFill { position:absolute; top:0; bottom:0; left:50%; width:0; background:#bbb; transition:left .15s, width .15s; }
   #meterFill.hot { background:#fff; animation:throb .4s ease-in-out infinite alternate; }
+  #meter .mark { position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; }
+  #meter .mark.mid { left:calc(50% - 1px); background:#888; }
+  #meter .mark.tip { background:none; border-left:2px dashed #fff; }
+  #doseWindow { font-size:12px; color:var(--hot); text-transform:none; letter-spacing:0; }
+  #doseWindow b { background:#fff; color:#111; padding:0 4px; }
   @keyframes throb { from { opacity:.65; } to { opacity:1; } }
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
@@ -83,8 +89,8 @@
     <div id="menu" class="overlay hidden"></div>
     <div id="hint"></div>
     <div id="dosage">
-      <div id="dosageHead"><span>Dosage scale</span><span id="dosageNow">Get out of our sight</span></div>
-      <div id="meter"><div id="meterFill"></div></div>
+      <div id="dosageHead"><span>Dosage scale</span><span id="doseWindow"></span><span id="dosageNow">Meh</span></div>
+      <div id="meter"><div id="meterFill"></div><div class="mark mid"></div><div class="mark tip" id="tipLo"></div><div class="mark tip" id="tipHi"></div></div>
       <div id="scale">
         <span>Get out</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
       </div>
@@ -113,7 +119,7 @@
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
       <div class="small" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
-      <div class="small" style="margin-top:6px">Caution: some Milk+ do not mix. Drink Strength while Calm is still counting down (or the other way round) and you go straight into frenzy. Stamina and Hyperfocus together push the dosage meter up sharply. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
@@ -140,12 +146,19 @@ const CONFIG = {
   grid:    { cols: 11, tile: 40, viewRows: 13, metresPerRow: 3 },
   dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.4 },
   tired:   { perHit: 0.4, recoverPerSec: 6, recoverDelayMs: 1200, slowdown: 1.5, driftFrom: 50, maxDrift: 0.3, warnAt: 70 },
-  strength:{ boost: 3, maxStacks: 2, durationMs: 25000, meter: 28, stackMeter: 45 },
-  calm:    { meterDrop: 40, durationMs: 15000 },
-  stamina: { tiredDrop: 60, gainMult: 0.3, durationMs: 30000, meter: 15 },
-  focus:   { driftMult: 0.3, rareChance: 0.08, durationMs: 30000, meter: 15 },
-  frenzy:  { durationMs: 12000, settleAt: 45, decayPerSec: 1.2, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
-  seam:    { hp: 6, artefactHp: 3 },
+  strength:{ boost: 3, maxStacks: 2, durationMs: 25000 },
+  calm:    { durationMs: 15000 },
+  stamina: { tiredDrop: 60, gainMult: 0.3, durationMs: 30000 },
+  focus:   { driftMult: 0.3, rareChance: 0.08, durationMs: 30000 },
+
+  // Balance meter: −100 Stillness … 0 balanced … +100 Frenzy. Drifts back toward 0.
+  // Each drink's push is multiplied by how many drinks you've had in the last windowMs.
+  balance: { min: -100, max: 100, decayPerSec: 1.2, windowMs: 20000, windowMult: [1, 1.5, 2, 3] },
+  push:    { strength: 30, calm: -30, stamina: 10, focus: 10 },
+
+  frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
+  stillness: { durationMs: 12000, settleAt: 45, slowMult: 2 },   // everything slows; no drift
+  seam:      { hp: 6, artefactHp: 3 },
 
   // Each recipe is ingredient → amount.
   recipes: {
@@ -155,23 +168,19 @@ const CONFIG = {
     focus:    { powder: 1, spores: 1 },
   },
 
-  // Drinking one while the other is active. meter: 100 means instant frenzy.
-  clashes: [
-    { a: 'strength', b: 'calm',  meter: 100 },
-    { a: 'stamina',  b: 'focus', meter: 55 },
-  ],
-
+  // tipAt: how far the balance meter must go to tip into Frenzy or Stillness.
+  // Regolith Prime tips early so a new player can reach both states with two quick drinks.
   layers: [
-    { name: 'Regolith Prime', rows: 36, hp: [2, 3], bandHp: 20, crustHp: 24, crustMinPower: 1, tint: '#5a5a5a',
+    { name: 'Regolith Prime', rows: 36, hp: [2, 3], bandHp: 20, crustHp: 24, crustMinPower: 1, tipAt: 70, tint: '#5a5a5a',
       yields: { whey: 0.10, powder: 0.07 }, rare: 'powder',
       craters: null },
-    { name: 'The Shaker Strata', rows: 36, hp: [4, 5], bandHp: 30, crustHp: 36, crustMinPower: 4, tint: '#565350',
+    { name: 'The Shaker Strata', rows: 36, hp: [4, 5], bandHp: 30, crustHp: 36, crustMinPower: 4, tipAt: 100, tint: '#565350',
       yields: { powder: 0.10, whey: 0.05, chrome: 0.05 }, rare: 'chrome',
       craters: [
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
         { id: 7, label: 'Crater 7', note: 'Metallic traces. More Chrome Filings, less Legacy Powder.', mods: { chrome: 1.5, powder: 0.7 } },
       ] },
-    { name: 'The Chrome Vein', rows: 36, hp: [6, 7], bandHp: 40, crustHp: 50, crustMinPower: 7, tint: '#4f5358',
+    { name: 'The Chrome Vein', rows: 36, hp: [6, 7], bandHp: 40, crustHp: 50, crustMinPower: 7, tipAt: 100, tint: '#4f5358',
       yields: { chrome: 0.10, whey: 0.05, powder: 0.04, spores: 0.035 }, rare: 'spores',
       craters: [
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
@@ -179,10 +188,12 @@ const CONFIG = {
       ] },
   ],
 
-  // Frenzy artefacts: a frenzy opens a seam holding the next unfound one.
+  // Altered-state artefacts: tipping into a state opens a seam beside you holding the
+  // next unfound artefact of that kind. The seam only answers to that state.
   artefacts: [
-    { id: 'art1', minLayer: 0 },
-    { id: 'art2', minLayer: 2 },
+    { id: 'art1',   kind: 'frenzy', minLayer: 0 },
+    { id: 'art2',   kind: 'frenzy', minLayer: 2 },
+    { id: 'still1', kind: 'still',  minLayer: 0 },
   ],
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
@@ -197,7 +208,7 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'stamina', 'focus'];
 const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus' };
-const VDESC = { strength: '+3 digging power. Stacks.', calm: 'Lowers the dosage meter.', stamina: 'Less tiredness, slower to tire.', focus: 'Less drift, more rare finds.' };
+const VDESC = { strength: '+3 digging power. Stacks. Pushes toward Frenzy.', calm: 'Pushes toward Stillness.', stamina: 'Less tiredness, slower to tire.', focus: 'Less drift, more rare finds.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown, the label has fossilised. Caution: seeps upward. Fun fact: the Shaker Strata were someone\'s gym bag.' },
@@ -217,6 +228,7 @@ const LAYER_INTRO = [
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
   art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa serial number. Näsa denies ownership.`,
+  still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
 };
 const DOSAGE = ['Get out of our sight', 'Coward', 'Meh', 'We see you', 'Hell yeah'];
 const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endorse.';
@@ -235,6 +247,12 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
 const frenzy = () => s.frenzyUntil > now();
+const stillness = () => s.stillUntil > now();
+const inState = kind => kind === 'still' ? stillness() : frenzy();
+const tipAt = () => layer().tipAt;
+// Drinks in the dose window, and the multiplier the next drink will get.
+const windowDrinks = () => s.window.filter(t => now() - t < CONFIG.balance.windowMs);
+const nextMult = () => { const m = CONFIG.balance.windowMult; return m[Math.min(windowDrinks().length, m.length - 1)]; };
 
 function freshState() {
   return {
@@ -242,9 +260,9 @@ function freshState() {
     inv: { whey: 0, powder: 0, chrome: 0, spores: 0 },
     bottles: { strength: 0, calm: 0, stamina: 0, focus: 0 },
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0 }, strStacks: 0,
-    samples: 0, tired: 0, lastHit: 0, meter: 0, frenzyUntil: 0, inFrenzy: false,
-    guide: [], artCrater: {}, seamOpen: false, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
-    shake: null, drinks: 0, dug: 0, frenzies: 0, clashes: 0, lost: 0, timeMs: 0,
+    samples: 0, tired: 0, lastHit: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
+    guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
+    shake: null, shakesDone: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
 
@@ -284,22 +302,34 @@ function genLayer() {
     }
   }
   p = { x: 5, y: 1 };
-  s.seamOpen = false;
+  s.seamOpen = { frenzy: false, still: false };
   cam = 0;
 }
 
-// Frenzy opens a seam right beside the prospector, holding the next unfound artefact.
-function openSeam() {
-  const a = CONFIG.artefacts.find(a => !s.guide.includes(a.id) && s.layer >= a.minLayer);
-  if (!a || s.seamOpen) return;
-  const cx = p.x >= 5 ? p.x - 2 : p.x + 2, cy = Math.max(2, Math.min(H - 5, p.y));
+// Tipping into a state opens a seam right beside the prospector, holding the next
+// unfound artefact of that kind. The seam only answers to that state.
+function openSeam(kind) {
+  const a = CONFIG.artefacts.find(a => a.kind === kind && !s.guide.includes(a.id) && s.layer >= a.minLayer);
+  if (!a || s.seamOpen[kind]) return;
+  // Pick a 3×3 spot beside the prospector that doesn't overlap the other state's seam:
+  // the nearer side first, then the far side, then the same again a little lower or higher.
+  const near = p.x >= 5 ? -2 : 2, row = Math.max(2, Math.min(H - 5, p.y));
+  const spots = [0, 3, -3].flatMap(dy => [[p.x + near, row + dy], [p.x - near, row + dy]]);
+  const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 5 &&
+    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => ![SEAM, ART].includes(g[y0 + dy][x0 + dx].t)));
+  const spot = spots.find(fits);
+  if (!spot) return;
+  const [cx, cy] = spot;
   for (let y = cy - 1; y <= cy + 1; y++)
     for (let x = cx - 1; x <= cx + 1; x++)
-      g[y][x] = { t: SEAM, hp: CONFIG.seam.hp, max: CONFIG.seam.hp };
-  g[cy][cx] = { t: ART, hp: CONFIG.seam.artefactHp, max: CONFIG.seam.artefactHp, art: a.id };
-  s.seamOpen = true;
-  say('A seam has opened. It was not on the survey.');
+      g[y][x] = { t: SEAM, hp: CONFIG.seam.hp, max: CONFIG.seam.hp, kind };
+  g[cy][cx] = { t: ART, hp: CONFIG.seam.artefactHp, max: CONFIG.seam.artefactHp, art: a.id, kind };
+  s.seamOpen[kind] = true;
+  say(kind === 'still' ? 'A seam has opened. It is very quiet in there.' : 'A seam has opened. It was not on the survey.');
 }
+
+// Is there an unfound artefact of this kind sitting in an open seam on this layer?
+const seamWaiting = kind => s.seamOpen[kind] && g.some(r => r.some(c => c.t === ART && c.kind === kind));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DIGGING
@@ -311,9 +341,11 @@ function power() {
   return d;
 }
 
-function tiredFactor() { return 1 + s.tired / 100 * CONFIG.tired.slowdown; }
+// How much slower digging is: tiredness, and everything slows in Stillness.
+function tiredFactor() { return (1 + s.tired / 100 * CONFIG.tired.slowdown) * (stillness() ? CONFIG.stillness.slowMult : 1); }
 
 function driftChance() {
+  if (stillness()) return 0;                                 // Stillness: the drill goes exactly where you point it
   const t = CONFIG.tired;
   let c = frenzy() ? CONFIG.frenzy.drift : 0;
   if (s.tired > t.driftFrom) c += (s.tired - t.driftFrom) / (100 - t.driftFrom) * t.maxDrift;
@@ -334,7 +366,10 @@ function act(dx, dy) {
 
 function hit(x, y, c) {
   if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
-  if ((c.t === SEAM || c.t === ART) && !frenzy()) { warn('This seam does not respond to sober tools.'); bump(x, y, 2); return; }
+  if ((c.t === SEAM || c.t === ART) && !inState(c.kind)) {
+    warn(c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
+    bump(x, y, 2); return;
+  }
   if (c.t === CRUST && power() < layer().crustMinPower) { warn(`The crust does not yield. Digging power ${layer().crustMinPower} required.`); bump(x, y, 2); return; }
   c.hp -= power();
   s.tired = Math.min(100, s.tired + CONFIG.tired.perHit * (active('stamina') ? CONFIG.stamina.gainMult : 1));
@@ -386,6 +421,7 @@ function mix(v) {
 function finishShake() {
   const { v } = s.shake;
   s.shake = null;
+  s.shakesDone++;
   s.bottles[v]++;
   say(`${VNAME[v]} ready. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
 }
@@ -403,25 +439,25 @@ function press(v) {
 function drink(v) {
   if (!running || s.bottles[v] < 1) return;
   s.bottles[v]--;
-  // First drink ever: the Belt Authority plants the seed before any frenzy is possible.
-  if (s.drinks === 0) announce('Frenzy is documented. Certain strata are only accessible in this state. The Foundation does not endorse it. The Foundation has noted its usefulness.');
+  // First drink ever: the Belt Authority plants the seed before either state is possible.
+  if (s.drinks === 0) announce('Frenzy and Stillness are documented. Certain strata are only accessible in these states. The Foundation does not endorse them. The Foundation has noted their usefulness.');
   s.drinks++;
   if (s.firstDrink) { say('Do not spill. Make us proud.'); s.firstDrink = false; }
-  const clash = CONFIG.clashes.find(c => (c.a === v && active(c.b)) || (c.b === v && active(c.a)));
-  if (clash) { s.meter += clash.meter; s.clashes++; say('Interaction detected. You were told to double check.'); }
   const t = now();
-  if (v === 'strength') {
-    if (active('strength')) {
-      s.strStacks = Math.min(CONFIG.strength.maxStacks, s.strStacks + 1);
-      if (!clash) { s.meter += CONFIG.strength.stackMeter; say('Stacking Strength. Bold.'); }
-    } else {
-      s.strStacks = 1;
-      if (!clash) s.meter += CONFIG.strength.meter;
-    }
+  // The dose window: the push is multiplied by how many drinks you've had in the last 20 s.
+  const mult = nextMult();
+  s.window = [...windowDrinks(), t];
+  if (!frenzy() && !stillness()) {
+    const B = CONFIG.balance;
+    s.meter = Math.max(B.min, Math.min(B.max, s.meter + CONFIG.push[v] * mult));
+    if (mult > 1) say(`Dose window ×${mult}. The Foundation measures how fast, not just how much.`);
   }
-  if (v === 'calm' && !clash) { s.meter = Math.max(0, s.meter - CONFIG.calm.meterDrop); say('Calm consumed. Noted in your file.'); }
-  if (v === 'stamina') { s.tired = Math.max(0, s.tired - CONFIG.stamina.tiredDrop); if (!clash) s.meter += CONFIG.stamina.meter; }
-  if (v === 'focus' && !clash) s.meter += CONFIG.focus.meter;
+  if (v === 'strength') {
+    if (active('strength')) { s.strStacks = Math.min(CONFIG.strength.maxStacks, s.strStacks + 1); say('Stacking Strength. Bold.'); }
+    else s.strStacks = 1;
+  }
+  if (v === 'calm') say('Calm consumed. Noted in your file.');
+  if (v === 'stamina') s.tired = Math.max(0, s.tired - CONFIG.stamina.tiredDrop);
   s.fx[v] = t + CONFIG[v].durationMs;
 }
 
@@ -432,15 +468,18 @@ function guideEntries() {
   return [
     ...CONFIG.layers.map((L, i) => ({ id: 'layer' + i, cat: 'Layers', label: L.name.replace('The ', ''), title: L.name, body: LAYER_CARD[i] })),
     ...Object.keys(ING).map(k => ({ id: 'ing_' + k, cat: 'Ingredients', label: ING[k].name, title: ING[k].name, body: ING[k].card })),
-    ...CONFIG.artefacts.map((a, i) => ({ id: a.id, cat: 'Frenzy finds', label: 'Artefact ' + (i + 1), title: 'Artefact ' + (i + 1),
-      body: ARTEFACT_CARD[a.id](s.artCrater[a.id] || 5) + '<br><i>' + ENDORSE + '</i>', frenzy: true })),
+    ...CONFIG.artefacts.map((a, i) => ({ id: a.id, cat: a.kind === 'still' ? 'Stillness finds' : 'Frenzy finds',
+      label: 'Artefact ' + (i + 1), title: 'Artefact ' + (i + 1),
+      body: ARTEFACT_CARD[a.id](s.artCrater[a.id] || 5) + '<br><i>' + ENDORSE + '</i>', state: a.kind })),
   ];
 }
+
+const isArtefact = id => CONFIG.artefacts.some(a => a.id === id);
 
 function unlock(id) {
   if (s.guide.includes(id)) return;
   s.guide.push(id);
-  if (id.startsWith('art')) {
+  if (isArtefact(id)) {
     s.artCrater[id] = s.crater;
     say('Artefact recovered. The Foundation has been notified.');
   }
@@ -461,8 +500,8 @@ function renderGuide() {
   const e = entries.find(e => e.id === selCard);
   if (!e) $('cardDetail').innerHTML = 'Select a card. Empty slots are things you have not found yet.';
   else if (s.guide.includes(e.id)) $('cardDetail').innerHTML = `<b style="color:var(--text)">${e.title}</b><br>${e.body}`;
-  else $('cardDetail').innerHTML = e.frenzy
-    ? `<b style="color:var(--text)">? ? ?</b><br><i>${ENDORSE}</i><br>Requires elevated compound state.`
+  else $('cardDetail').innerHTML = e.state
+    ? `<b style="color:var(--text)">? ? ?</b><br><i>${ENDORSE}</i><br>Requires ${e.state === 'still' ? 'reduced' : 'elevated'} compound state.`
     : `<b style="color:var(--text)">? ? ?</b><br>Not yet documented.`;
 }
 
@@ -537,9 +576,9 @@ function finishGame() {
   const sec = Math.floor(s.timeMs / 1000), total = guideEntries().length;
   showMenu(`<h1>PROTOTYPE 2 COMPLETE</h1>
     <div>Below you: The Crack. It is not in this prototype.</div>
-    <div class="small">Depth ${s.depthOffset} m · Time ${fmt(sec)} · Drill samples ${s.samples} · Milk+ ${s.drinks} · Clashes ${s.clashes} · Frenzies ${s.frenzies} · Samples lost ${s.lost}</div>
+    <div class="small">Depth ${s.depthOffset} m · Time ${fmt(sec)} · Drill samples ${s.samples} · Milk+ ${s.drinks} · Frenzies ${s.frenzies} · Stillnesses ${s.stills} · Samples lost ${s.lost}</div>
     <div>Field Guide: ${s.guide.length} / ${total} cards.</div>
-    <div class="small">${CONFIG.artefacts.every(a => s.guide.includes(a.id)) ? 'Both frenzy artefacts recovered. The Foundation will pretend not to know.' : 'Some slots remain ? ? ?. Some strata only open to those who did not double check.'}</div>
+    <div class="small">${CONFIG.artefacts.every(a => s.guide.includes(a.id)) ? 'Every altered-state artefact recovered. The Foundation will pretend not to know.' : 'Some slots remain ? ? ?. Some strata only open to those who did not double check.'}</div>
     <button id="again">New game</button>`);
   $('again').onclick = newGame;
 }
@@ -568,7 +607,8 @@ function resume() {
   // Every timer is a timestamp, so shift them all by the time spent paused.
   const d = now() - pausedAt;
   for (const v of VARIANTS) if (s.fx[v]) s.fx[v] += d;
-  for (const k of ['frenzyUntil', 'announceUntil', 'lastHit', 'lastWarn']) if (s[k]) s[k] += d;
+  for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastHit', 'lastWarn']) if (s[k]) s[k] += d;
+  s.window = s.window.map(w => w + d);
   if (s.shake) s.shake.until += d;
   lastAct += d; lastFall += d;
   hideMenu();
@@ -607,14 +647,23 @@ function announce(m, extraMs = 0) { if (!m) return; s.announce = m; s.announceUn
 function update(dt) {
   const t = now();
   s.timeMs += dt;
-  // Frenzy meter.
-  if (frenzy()) s.meter = 100;
-  else if (s.inFrenzy) { s.inFrenzy = false; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.'); }
-  else if (s.meter < 100) s.meter = Math.max(0, s.meter - CONFIG.frenzy.decayPerSec * dt / 1000);
-  else {
-    s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inFrenzy = true; s.frenzies++;
+  // Balance meter: pinned while a state lasts, settles after, otherwise drifts back toward 0.
+  const B = CONFIG.balance;
+  if (frenzy()) s.meter = B.max;
+  else if (stillness()) s.meter = B.min;
+  else if (s.inState === 'frenzy') { s.inState = null; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.'); }
+  else if (s.inState === 'still') { s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.'); }
+  else if (s.meter >= tipAt()) {
+    s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
     say('FRENZY. The Rock is speaking. Do not answer.');
-    openSeam();
+    openSeam('frenzy');
+  } else if (s.meter <= -tipAt()) {
+    s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;
+    say('STILLNESS. Everything has slowed down. You do not mind.');
+    openSeam('still');
+  } else {
+    const k = B.decayPerSec * dt / 1000;
+    s.meter = s.meter > 0 ? Math.max(0, s.meter - k) : Math.min(0, s.meter + k);
   }
   if (!active('strength')) s.strStacks = 0;
   if (s.shake && !shaking()) finishShake();
@@ -653,8 +702,9 @@ function draw() {
       ctx.stroke();
     }
     if (c.t === SEAM || c.t === ART) {
-      if (frenzy()) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
-      ctx.fillStyle = frenzy() ? '#fff' : '#777'; ctx.font = frenzy() ? 'bold 22px monospace' : '12px monospace';
+      const open = inState(c.kind);                          // lights up only in its own state
+      if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
+      ctx.fillStyle = open ? '#fff' : '#777'; ctx.font = open ? 'bold 22px monospace' : '12px monospace';
       ctx.fillText('?', cx, cy);
     }
     if (c.hp < c.max && c.t !== ROCK) {
@@ -677,7 +727,7 @@ function draw() {
     ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
     ctx.fillStyle = '#fff'; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
     ctx.font = '10px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    ctx.fillText('Shaking…', p.x * T + T / 2, p.y * T - 12);
+    if (s.shakesDone === 0) ctx.fillText('Shaking…', p.x * T + T / 2, p.y * T - 12);   // the word once, then just the bar
   }
   ctx.fillStyle = '#bbb';
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
@@ -693,24 +743,28 @@ const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}�
 
 function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
-  const nearCrust = p.y >= H - 8, artLeft = s.seamOpen && CONFIG.artefacts.some(a => !s.guide.includes(a.id) && g.some(r => r.some(c => c.art === a.id)));
-  if (frenzy()) return artLeft ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.' : 'FRENZY! Double digging power. Go go go.';
-  if (shaking()) return `Shaking ${VNAME[s.shake.v]}… No digging until it is ready. Then press ${VARIANTS.indexOf(s.shake.v) + 1} again to drink it.`;
+  const nearCrust = p.y >= H - 8;
+  if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.' : 'FRENZY! Double digging power. Go go go.';
+  if (stillness()) return seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.';
+  if (shaking() && s.shakesDone === 0) return `Shaking ${VNAME[s.shake.v]}… No digging until it is ready. Then press ${VARIANTS.indexOf(s.shake.v) + 1} again to drink it.`;
   if (s.announceUntil > t) return s.announce;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.tired >= CONFIG.tired.warnAt) return s.layer === 0
     ? 'You are tired: digging slows down and drifts. Stop for a breath. (Stamina arrives in the Shaker Strata.)'
     : 'You are tired: digging slows down and drifts. Drink Stamina, or stop for a breath.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice.' : 'Drink Strength.'}`;
-  if (artLeft) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
-  if (s.meter >= 60) return 'Dosage is high. One more drink tips you into frenzy.';
+  if (seamWaiting('frenzy')) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
+  if (seamWaiting('still')) return 'The quiet ? seam sealed when the stillness lifted. Find stillness again to break in.';
+  if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
+  if (s.meter + CONFIG.push.calm * nextMult() <= -tipAt()) return 'One more quick Calm tips you into Stillness.';
   const ready = VARIANTS.find(v => s.bottles[v] > 0);
   if (ready && s.drinks === 0) return `${VNAME[ready]} is ready. Press ${VARIANTS.indexOf(ready) + 1} again to drink it, instantly. Or keep it for when it counts.`;
   if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Press 1 to shake a Strength (2 s, no digging meanwhile).';
   if (s.drinks >= 2 && s.drinks < 5 && VARIANTS.every(v => !s.bottles[v]) && VARIANTS.some(canMix)) return 'Tip: shake in a quiet moment and keep the bottle. Drinking it later is instant.';
   if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to shake a Strength.';
   if (nearBand && !active('strength')) return 'Hard band ahead (striped rock). Strength makes it much faster.';
-  if (s.frenzies === 0) return 'Rumour: Strength and Calm together do something the Foundation will not print.';
+  if (s.frenzies === 0 && s.stills === 0) return 'Rumour: the Foundation measures how fast, not just how much.';
+  if (s.stills === 0) return 'Rumour: Calm, taken quickly, goes somewhere too.';
   return `Keep digging. Break the crust at the bottom of ${L.name}.`;
 }
 
@@ -754,14 +808,24 @@ function hud() {
   }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
+  if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
   setText('effects', 'Active: ' + (fx.join(' · ') || 'none'));
-  $('meterFill').style.width = Math.min(100, s.meter) + '%';
-  $('meterFill').className = frenzy() ? 'hot' : '';
-  const lvl = Math.min(4, Math.floor(s.meter / 20));
+  // Two-sided meter: fill grows from the centre, left toward Stillness, right toward Frenzy.
+  const B = CONFIG.balance, pct = m => (m - B.min) / (B.max - B.min) * 100;
+  $('meterFill').style.left = Math.min(pct(0), pct(s.meter)) + '%';
+  $('meterFill').style.width = Math.abs(pct(s.meter) - pct(0)) + '%';
+  $('meterFill').className = frenzy() || stillness() ? 'hot' : '';
+  $('tipLo').style.left = `calc(${pct(-tipAt())}% - 1px)`;
+  $('tipHi').style.left = `calc(${pct(tipAt())}% - 1px)`;
+  const lvl = Math.max(0, Math.min(4, Math.floor(pct(s.meter) / 20)));
   [...$('scale').children].forEach((el, i) => el.className = i === lvl ? 'on' : '');
-  setText('dosageNow', frenzy() ? 'FRENZY' : DOSAGE[lvl]);
-  cv.className = frenzy() ? 'frenzy' : '';
+  setText('dosageNow', frenzy() ? 'FRENZY' : stillness() ? 'STILLNESS' : DOSAGE[lvl]);
+  // The dose window, made visible: what the next drink will be multiplied by, and for how long.
+  const win = windowDrinks();
+  setHTML('doseWindow', win.length && !frenzy() && !stillness()
+    ? `next drink <b>×${nextMult()}</b> · ${Math.ceil((Math.max(...win) + B.windowMs - t) / 1000)}s` : '');
+  cv.className = frenzy() ? 'frenzy' : stillness() ? 'still' : '';
   setText('hint', running ? hint() : '');
   $('pauseBtn').disabled = !running;
   setHTML('legend', [

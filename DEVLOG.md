@@ -83,3 +83,31 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Next:** generate The You Show, then the remaining Void FM songs.
 
 **Update:** The You Show is finished. Final lyrics are in RADIO.md. Turning up Suno's Weirdness setting is beneficial to the kind of sound I make.
+
+---
+
+## 2026-10-22 — Balance meter: Frenzy and Stillness
+
+**Did:** replaced the frenzy meter and the clashes with a signed balance meter, from −100 (Stillness) through 0 to +100 (Frenzy). Every Milk+ pushes it in a direction (Strength +30, Calm −30, Stamina and Hyperfocus +10), and a **dose window** multiplies each push by the number of drinks in the last 20 seconds (×1, ×1.5, ×2, ×3). Stillness is now a state of its own: everything slows, colours drain to violet and grey, the drill stops drifting, and a quiet seam opens with a **Stillness artefact** inside.
+
+**Decided:**
+- **Calm stops being a pure brake.** One Calm brings you back toward balanced; several in a row send you into Stillness, which has its own reward. This fixes "nobody brakes" for real.
+- **The clashes go.** "Strength + Calm = instant frenzy" was the first playtest's secret. The new secret is the window: *"Rumour: the Foundation measures how fast, not just how much."*
+- **Show the window** on the meter ("next drink ×1.5 · 14s"), so players learn the rule by watching it rather than by being told. Same idea as the effect countdown.
+- **A cheaper cost in layer 1, rather than a steeper multiplier.** Under the new rule, Frenzy in Regolith Prime would need three quick Strengths: six Regolith Whey in 20 seconds, too much for a new player, and Artefact 1 would drift out of reach. The two options were a steeper window (`[1, 1.75, 2.5, 3]`) or a lower price in the first layer. I chose the lower price: Regolith Prime tips at ±70 instead of ±100, so two quick drinks reach either state, while the window stays simple and the same everywhere. Deeper layers keep the full ±100.
+- **Keep the dosage labels** across both sides: *Get out of our sight · Coward · Meh · We see you · Hell yeah*. Calm being called "Coward" is exactly the guide's tone, and hides that Stillness pays off.
+
+**Fix along the way:** tipping into both states without moving made the second seam overwrite the first, artefact included. Seams now find a free spot beside you.
+
+**Also changed:** the caution line is down to *"Caution: quick drinks push harder. Double check any possible interactions."* The word "Shaking…" now appears only on the first shake; after that, the little progress bar says it all.
+
+**Noticed:** there is now a lot for the player to take in at once when the browser tab opens: the rock, the hint bar, the dosage scale with its window and tip markers, the key, the rover panel, ingredients, four recipes, the caution, the Field Guide and the feed. Every piece earns its place, but together they're a wall. It's a difficult balance to manage: each rule needs teaching, and each bit of teaching adds to the screen.
+
+**Reflection:** *The design of the interface feels daunting, since it is my first game interface.*
+
+**For later:**
+- **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
+- **The scale:** I don't like the dashed tip lines. Fine for prototype mode, but the scale needs a proper look.
+- **An optional overlay** for players who want the numbers (the ×1.5, the durations, the tip points), so the default interface can be sleeker.
+
+**Next:** playtest the window. Is ×1.5 felt? Is two quick drinks in layer 1 too easy?
