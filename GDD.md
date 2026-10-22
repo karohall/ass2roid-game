@@ -89,6 +89,11 @@ You reach the core. *"We went to Korova Rock to mine. What we ended up mining wa
 - Loading screen: *"1. Check engine light. 2. Ignore that it is on. 3. See Step 1."*
 - First Milk+: *"Do not spill. Make us proud."*
 
+## Ideas for later
+- **A single balance meter from Stillness to Frenzy.**
+  - Too much Calm tips into **Stillness**: everything slows, colours drain to violet and grey, Void FM comes through early even near the surface, Stillness artefacts in the Field Guide, The You Show plays.
+  - Too much Strength or clashing mixes tip into **Frenzy**: Down in the Shaft plays.
+
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.
 

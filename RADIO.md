@@ -19,6 +19,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   | Driver | Faster and more energetic. Keeps the digging going. |
   | Contrast | Slower or quieter. A breather. |
   | Wildcard | Bends the DNA furthest, e.g. instrumental or more electronic. |
+  | Stillness | Special: plays only when the balance meter tips fully into Stillness. Not in normal rotation. |
 
 - **All lyrics are about mining,** in three emotional registers:
 
@@ -128,6 +129,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **In-game effect:** _not decided._
 - **DNA:** melancholy futurepop, wide pads, longing and vastness, depth as loneliness.
 - **DJ (draft):** a calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
+- **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
 - **Example lines (draft):**
   - *"You are three hundred metres down. Everyone you know is above you. This is Void FM."*
   - *"If you can hear this, you are deeper than the signal was designed to reach."*
@@ -140,6 +142,76 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Driver | **Parallax for Two Prospectors** | More driving, a duet between two distant voices |
 | Contrast | **No Ground Beneath, No Ceiling** | Sparse and intimate, almost whispered, slow |
 | Wildcard | **Kármán Line (Extended Longing Mix)** | Long instrumental, ambient, made for drifting |
+| Stillness | **The You Show** | Plays only in Stillness. Experimental, 66 BPM, detuned piano, deadpan spoken-sung vocal |
+
+#### The You Show
+
+- **Station:** Void FM
+- **Role:** Stillness track. Plays only when the balance meter tips fully toward Stillness (too much Calm). Not in normal rotation.
+- **Concept:** a warm, older female guide leads the listener through a slow, weightless state. Halfway through, the perspective shifts and the listener becomes the traveller. In the outro the guide reveals she was watching from below while the traveller watched from above.
+- **Style prompt:**
+  > Experimental minimal indie, 66 BPM, detuned upright piano recorded in a large empty room, warped tape and wow-and-flutter, granular ambient drones, bowed metal and distant radio transmissions, sparse cello used as texture not melody, unpolished deadpan female vocal, half-spoken and slightly off-mic, intimate and strange, unquantized and human, long silences between phrases, lo-fi home recording character, cold and vast
+- **Exclude:**
+  > pop, ballad, polished, belting, big chorus, power ballad, radio-friendly, string swell, drums
+- **Lyrics:**
+
+```
+[Intro: faint radio static, a single piano note repeating, spoken older female voice, warm, intimate and slightly teasing]
+I'll draw you a map, it looks something like this
+Look closely, this is something you don't wanna miss
+Kismet has come to say hello
+It is time for your inner world to grow
+
+[Verse 1: deadpan spoken-sung, room noise, piano slightly out of time]
+The opening to the wormhole is underneath but not below
+I dare you to go through, it's okay to take it slow
+Let's look at the pretty pictures inside your mind
+Everything you were, and what you left behind
+Old memories turn into soil
+Take my hand, let's peak together
+This is a little something I like to call the You show
+
+[Verse 2: cello enters as texture, voice tender and maternal]
+Let me tell you a story
+It begins with a loop in the sky
+It was a very long time ago (and I think you are old enough to know)
+It is okay if you cry
+Press the quick-release, and let it all go
+But remember: in space, tears cannot flow
+
+[Pre-Chorus: voice lower and conspiratorial, tape starting to warp]
+Okay darling, here's the thing: physics doesn't always behave
+Just follow along, start drifting away
+If you climb beneath the cyclical cage and choose the right frame
+You'll soon come to know the Milky Way
+You're falling through time, gaze turns to grain
+
+[Verse 3: the voice changes perspective, now singing as the traveller, softer and farther away]
+I feel a bit low, or did I learn to fly?
+I know how it started, now I slip off the edge of the night
+I'm sinking through the ground
+I've become nothing but pure light
+
+[Chorus: everything drops out except a bowed metal tone and the voice, doubled an octave lower]
+Beneath the cyclical cage
+Someone has hidden a very strange game
+I'm falling through time, I'm drifting off the page
+I keep forgetting my name, I don't remember my age
+
+[Bridge: tape slowing down, words stretched apart]
+My hands are an aeon away
+Your voice arrives a minute late
+I watch myself from somewhere high
+I couldn't move if I tried
+(and I don't mind)
+
+[Outro: single repeating piano note and static, the guide's voice returns, very quiet]
+I think you already know
+But I was watching you from below
+Holding your hand, waving goodbye
+I'm so happy you feel alive
+That was the You show.
+```
 
 ### Näsa – Big Space™ *(commercial breaks)*
 

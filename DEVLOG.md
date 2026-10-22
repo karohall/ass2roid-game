@@ -69,3 +69,15 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Surprised me:** the first prompts sounded flat. It worked when the lyrics included directions for each section (voice, energy, sound). It's like directing a performance.
 
 **Next:** generate the remaining songs, then build the radio into Prototype 3.
+
+---
+
+## 2026-10-22 — Void FM and Stillness
+
+**Did:** wrote The You Show, Void FM's Stillness track, and made it into a song in Suno. Iterated the lyrics over several rounds, from a sad time-dilation story to a guided, weightless experience told by an older female guide.
+
+**Decided:** the sad story was reduced to metaphor; the song describes a state rather than explaining one. Calm now has its own overdose state, Stillness, as the mirror of Frenzy, on one shared balance meter. A woman's voice for the lonely astronaut, to break the trope.
+
+**Surprised me:** How easy it is to write song lyrics about the things that lie close to my heart. The first piano version sounded finished but conventional. Removing the signals for polish (excluding "big chorus", adding detuned piano, warped tape and a deadpan vocal) made it sound like mine. Also: describing the arrangement and mix, not just the genre, is what makes Suno sound produced.
+
+**Next:** generate The You Show, then the remaining Void FM songs.
