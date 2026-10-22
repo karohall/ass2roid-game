@@ -131,3 +131,17 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Also:** the space bar pauses and resumes (P and Esc still work). Space no longer scrolls the page.
 
 **Hyperfocus gets a new job: a steady hand.** With tiredness gone, its old jobs had faded: "less drift" only helped during Frenzy, where the drift is the fun, and "more rare finds" mostly found Crack Spores, the ingredient for Hyperfocus itself. Now, while it lasts, drinks don't stack (the dose window counts ×1, and those drinks leave no trace in the window afterwards), and the balance meter holds still. Stamina buys time; Hyperfocus gives control. It unlocks in the Chrome Vein, exactly where the crust needs two quick Strengths: with Hyperfocus first, that's 10 + 30 + 30 = 70, safely under the edge. Other ideas considered: showing the hidden numbers while hyperfocused (a diegetic version of the optional overlay), and holding a sealed seam open.
+
+---
+
+## 2026-10-22 — Goal, A$$ coin, and parked ideas
+
+**Decided:**
+- **The goal of the game:** reach the core, and experience all the peak and altered states along the way.
+- **The A$$ coin is the currency.** Very on brand. The ending line *"What we ended up mining was A$$"* is out: too vulgar, even for me.
+- **The shift clock is hidden from the player.** It added pressure that doesn't fit the game. It's still measured, and the end screen tells you: *"Shift length: 12 minutes. The Foundation has logged your overtime."*
+- **Drill samples stay for now.** Today they're a score with no meaning, but they'll be traded for A$$ coins once tool upgrades exist.
+
+**Parked for later:**
+- **Tool upgrades.** First version: a stronger drill bit isn't optional, and how strong it gets depends on how many A$$ coins your drill samples were worth. Later: a shop where you choose between depth, accuracy and so on.
+- **Stillness overload as a space sequence:** you drift off the mining shaft into deep space, doing slow somersaults for the length of The You Show (about 4 minutes).

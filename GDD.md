@@ -7,6 +7,8 @@
 **Tone:** the Korova Rock Tourist Guide's voice: dry, official, and completely serious about absurd things.
 **Platform:** browser (HTML/JavaScript), published on itch.io.
 **Length:** 10–15 minutes to the core, with a clear ending.
+**Goal:** reach the core, and experience all the peak and altered states along the way.
+**Currency:** the **A$$ coin**. Drill samples are traded for A$$ coins.
 
 ## Core loop
 **Dig → collect ingredients → mix Milk+ → drink → get stronger → handle bigger tools → dig deeper.**
@@ -89,7 +91,7 @@ Music: original, or AI-generated or royalty-free under licences that allow it. N
 - **Fonts and colours** from the year-one identity, shifting toward year two.
 
 ## Ending
-You reach the core. *"We went to Korova Rock to mine. What we ended up mining was $A$$."* The player receives the challenge coin (*Ex profundo, nova. 1 A$$*) as an image to share.
+You reach the core. The player receives the challenge coin (*Ex profundo, nova. 1 A$$*) as an image to share.
 
 ## Microcopy
 - Loading screen: *"1. Check engine light. 2. Ignore that it is on. 3. See Step 1."*
@@ -101,6 +103,10 @@ You reach the core. *"We went to Korova Rock to mine. What we ended up mining wa
 - **The radio reacts to the balance meter** (the meter itself is now in the game, see *Frenzy and Stillness*):
   - In **Stillness**, Void FM comes through early, even near the surface, and The You Show plays.
   - In **Frenzy**, Down in the Shaft plays.
+- **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
+  - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
+  - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.
+- **Stillness overload as a space sequence:** the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). Probably an interface job for later.
 
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.

@@ -105,7 +105,6 @@
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
       <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
-      <div class="row small"><span>Shift time</span><span id="time">0:00</span></div>
     </div>
 
     <div class="box">
@@ -571,10 +570,12 @@ function pickCrater(i) {
 
 function finishGame() {
   const sec = Math.floor(s.timeMs / 1000), total = guideEntries().length;
+  const mins = Math.max(1, Math.round(sec / 60));
   showMenu(`<h1>PROTOTYPE 2 COMPLETE</h1>
     <div>Below you: The Crack. It is not in this prototype.</div>
-    <div class="small">Depth ${s.depthOffset} m · Time ${fmt(sec)} · Drill samples ${s.samples} · Milk+ ${s.drinks} · Frenzies ${s.frenzies} · Stillnesses ${s.stills} · Samples lost ${s.lost}</div>
+    <div class="small">Depth ${s.depthOffset} m · Drill samples ${s.samples} · Milk+ ${s.drinks} · Frenzies ${s.frenzies} · Stillnesses ${s.stills} · Samples lost ${s.lost}</div>
     <div>Field Guide: ${s.guide.length} / ${total} cards.</div>
+    <div class="small">Shift length: ${mins} minute${mins === 1 ? '' : 's'}. The Foundation has logged your overtime.</div>
     <div class="small">${CONFIG.artefacts.every(a => s.guide.includes(a.id)) ? 'Every altered-state artefact recovered. The Foundation will pretend not to know.' : 'Some slots remain ? ? ?. Some strata only open to those who did not double check.'}</div>
     <button id="again">New game</button>`);
   $('again').onclick = newGame;
@@ -782,7 +783,6 @@ function hud() {
   const t = now();
   setText('depth', `${depthNow()} m`);
   setText('samples', s.samples);
-  setText('time', fmt(Math.floor(s.timeMs / 1000)));
   setText('power', power());
   for (const k of Object.keys(ING)) {
     setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
