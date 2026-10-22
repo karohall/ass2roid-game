@@ -105,8 +105,6 @@
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
       <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
-      <div class="row"><span>Tiredness</span><span id="tiredTxt">0</span></div>
-      <div class="bar" id="tiredBar"><div></div></div>
       <div class="row small"><span>Shift time</span><span id="time">0:00</span></div>
     </div>
 
@@ -145,10 +143,9 @@
 const CONFIG = {
   grid:    { cols: 11, tile: 40, viewRows: 13, metresPerRow: 3 },
   dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.4 },
-  tired:   { perHit: 0.4, recoverPerSec: 6, recoverDelayMs: 1200, slowdown: 1.5, driftFrom: 50, maxDrift: 0.3, warnAt: 70 },
   strength:{ boost: 3, maxStacks: 2, durationMs: 25000 },
   calm:    { durationMs: 15000 },
-  stamina: { tiredDrop: 60, gainMult: 0.3, durationMs: 30000 },
+  stamina: { stretch: 1.5, durationMs: 30000 },   // a buffer: every other countdown lasts 50% longer
   focus:   { driftMult: 0.3, rareChance: 0.08, durationMs: 30000 },
 
   // Balance meter: −100 Stillness … 0 balanced … +100 Frenzy. Drifts back toward 0.
@@ -208,7 +205,7 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'stamina', 'focus'];
 const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus' };
-const VDESC = { strength: '+3 digging power. Stacks. Pushes toward Frenzy.', calm: 'Pushes toward Stillness.', stamina: 'Less tiredness, slower to tire.', focus: 'Less drift, more rare finds.' };
+const VDESC = { strength: '+3 digging power. Stacks. Pushes toward Frenzy.', calm: 'Pushes toward Stillness.', stamina: 'Your other Milk+ last 50% longer.', focus: 'Less drift, more rare finds.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown, the label has fossilised. Caution: seeps upward. Fun fact: the Shaker Strata were someone\'s gym bag.' },
@@ -222,7 +219,7 @@ const LAYER_CARD = [
 ];
 const LAYER_INTRO = [
   '',
-  'The Shaker Strata. New compound: Chrome Filings. Stamina can now be mixed. The crust below needs digging power 4.',
+  'The Shaker Strata. New compound: Chrome Filings. Stamina can now be mixed: it makes your other Milk+ last longer. The crust below needs digging power 4.',
   'The Chrome Vein. Crack Spores rise from below. Hyperfocus can now be mixed. The crust below needs digging power 7. Stack your Strength.',
 ];
 const ARTEFACT_CARD = {
@@ -260,7 +257,7 @@ function freshState() {
     inv: { whey: 0, powder: 0, chrome: 0, spores: 0 },
     bottles: { strength: 0, calm: 0, stamina: 0, focus: 0 },
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0 }, strStacks: 0,
-    samples: 0, tired: 0, lastHit: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
+    samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
     guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
     shake: null, shakesDone: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
@@ -341,21 +338,19 @@ function power() {
   return d;
 }
 
-// How much slower digging is: tiredness, and everything slows in Stillness.
-function tiredFactor() { return (1 + s.tired / 100 * CONFIG.tired.slowdown) * (stillness() ? CONFIG.stillness.slowMult : 1); }
+// How much slower digging is: everything slows in Stillness.
+function slowFactor() { return stillness() ? CONFIG.stillness.slowMult : 1; }
 
 function driftChance() {
   if (stillness()) return 0;                                 // Stillness: the drill goes exactly where you point it
-  const t = CONFIG.tired;
   let c = frenzy() ? CONFIG.frenzy.drift : 0;
-  if (s.tired > t.driftFrom) c += (s.tired - t.driftFrom) / (100 - t.driftFrom) * t.maxDrift;
   if (active('focus')) c *= CONFIG.focus.driftMult;
   return c;
 }
 
 function act(dx, dy) {
   if (shaking()) return warn('Both hands on the shaker. Digging resumes when it is ready.');
-  // Drift: downward digs wander sideways when frenzied or tired.
+  // Drift: downward digs wander sideways when frenzied.
   if (dy > 0 && Math.random() < driftChance()) { dx = Math.random() < .5 ? -1 : 1; dy = 0; }
   const nx = p.x + dx, ny = p.y + dy;
   if (ny < 0 || ny >= H || nx < 0 || nx >= W) return;
@@ -372,8 +367,6 @@ function hit(x, y, c) {
   }
   if (c.t === CRUST && power() < layer().crustMinPower) { warn(`The crust does not yield. Digging power ${layer().crustMinPower} required.`); bump(x, y, 2); return; }
   c.hp -= power();
-  s.tired = Math.min(100, s.tired + CONFIG.tired.perHit * (active('stamina') ? CONFIG.stamina.gainMult : 1));
-  s.lastHit = now();
   bump(x, y, 4);
   if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('1 drill sample lost to the void.'); }
   if (c.hp > 0) return;
@@ -457,8 +450,16 @@ function drink(v) {
     else s.strStacks = 1;
   }
   if (v === 'calm') say('Calm consumed. Noted in your file.');
-  if (v === 'stamina') s.tired = Math.max(0, s.tired - CONFIG.stamina.tiredDrop);
-  s.fx[v] = t + CONFIG[v].durationMs;
+  // Stamina is a buffer: whatever is already counting down stretches by 50%,
+  // and every other Milk+ drunk while it lasts runs 50% longer.
+  const stretch = CONFIG.stamina.stretch;
+  if (v === 'stamina') {
+    for (const k of VARIANTS) if (k !== 'stamina' && active(k)) s.fx[k] = t + (s.fx[k] - t) * stretch;
+    if (frenzy()) s.frenzyUntil = t + (s.frenzyUntil - t) * stretch;
+    if (stillness()) s.stillUntil = t + (s.stillUntil - t) * stretch;
+    say('Stamina. Everything lasts a little longer.');
+  }
+  s.fx[v] = t + CONFIG[v].durationMs * (v !== 'stamina' && active('stamina') ? stretch : 1);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -607,7 +608,7 @@ function resume() {
   // Every timer is a timestamp, so shift them all by the time spent paused.
   const d = now() - pausedAt;
   for (const v of VARIANTS) if (s.fx[v]) s.fx[v] += d;
-  for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastHit', 'lastWarn']) if (s[k]) s[k] += d;
+  for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastWarn']) if (s[k]) s[k] += d;
   s.window = s.window.map(w => w + d);
   if (s.shake) s.shake.until += d;
   lastAct += d; lastFall += d;
@@ -654,11 +655,11 @@ function update(dt) {
   else if (s.inState === 'frenzy') { s.inState = null; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.'); }
   else if (s.inState === 'still') { s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.'); }
   else if (s.meter >= tipAt()) {
-    s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
+    s.frenzyUntil = t + CONFIG.frenzy.durationMs * (active('stamina') ? CONFIG.stamina.stretch : 1); s.inState = 'frenzy'; s.frenzies++;
     say('FRENZY. The Rock is speaking. Do not answer.');
     openSeam('frenzy');
   } else if (s.meter <= -tipAt()) {
-    s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;
+    s.stillUntil = t + CONFIG.stillness.durationMs * (active('stamina') ? CONFIG.stamina.stretch : 1); s.inState = 'still'; s.stills++;
     say('STILLNESS. Everything has slowed down. You do not mind.');
     openSeam('still');
   } else {
@@ -667,13 +668,11 @@ function update(dt) {
   }
   if (!active('strength')) s.strStacks = 0;
   if (s.shake && !shaking()) finishShake();
-  // Tiredness recovers when you stop digging for a moment.
-  if (t - s.lastHit > CONFIG.tired.recoverDelayMs) s.tired = Math.max(0, s.tired - CONFIG.tired.recoverPerSec * dt / 1000);
   // Gravity.
   if (t - lastFall > 90 && p.y + 1 < H && g[p.y + 1][p.x].t === AIR) { p.y++; lastFall = t; }
   // Queued tap, then held digging.
-  if (pendingTap && t - lastAct >= CONFIG.dig.tapMs * tiredFactor()) { act(...pendingTap); pendingTap = null; lastAct = t; }
-  else if (held && t - lastAct > CONFIG.dig.holdMs * tiredFactor()) { act(held[0], held[1]); lastAct = t; }
+  if (pendingTap && t - lastAct >= CONFIG.dig.tapMs * slowFactor()) { act(...pendingTap); pendingTap = null; lastAct = t; }
+  else if (held && t - lastAct > CONFIG.dig.holdMs * slowFactor()) { act(held[0], held[1]); lastAct = t; }
   // Smooth camera.
   cam += (Math.max(0, Math.min(H - VIEW, p.y - 4)) - cam) * .15;
   particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .25; q.life--; });
@@ -749,9 +748,6 @@ function hint() {
   if (shaking() && s.shakesDone === 0) return `Shaking ${VNAME[s.shake.v]}… No digging until it is ready. Then press ${VARIANTS.indexOf(s.shake.v) + 1} again to drink it.`;
   if (s.announceUntil > t) return s.announce;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
-  if (s.tired >= CONFIG.tired.warnAt) return s.layer === 0
-    ? 'You are tired: digging slows down and drifts. Stop for a breath. (Stamina arrives in the Shaker Strata.)'
-    : 'You are tired: digging slows down and drifts. Drink Stamina, or stop for a breath.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice.' : 'Drink Strength.'}`;
   if (seamWaiting('frenzy')) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
   if (seamWaiting('still')) return 'The quiet ? seam sealed when the stillness lifted. Find stillness again to break in.';
@@ -792,9 +788,6 @@ function hud() {
   setText('samples', s.samples);
   setText('time', fmt(Math.floor(s.timeMs / 1000)));
   setText('power', power());
-  setText('tiredTxt', s.tired >= CONFIG.tired.warnAt ? `${Math.round(s.tired)} · tired` : Math.round(s.tired));
-  $('tiredBar').firstChild.style.width = s.tired + '%';
-  $('tiredBar').className = 'bar' + (s.tired >= CONFIG.tired.warnAt ? ' warn' : '');
   for (const k of Object.keys(ING)) {
     setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
     setText('iv_' + k, s.inv[k]);
@@ -859,7 +852,7 @@ addEventListener('keydown', e => {
     if (!running) return;
     if (held !== dirs[k]) {
       // A tap acts now, or as soon as the cooldown allows: mashing is never swallowed.
-      if (now() - lastAct >= CONFIG.dig.tapMs * tiredFactor()) { act(...dirs[k]); lastAct = now(); }
+      if (now() - lastAct >= CONFIG.dig.tapMs * slowFactor()) { act(...dirs[k]); lastAct = now(); }
       else pendingTap = dirs[k];
     }
     held = dirs[k];

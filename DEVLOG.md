@@ -115,3 +115,15 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **After playing it out:**
 - **Layer 1 tip point lowered from ±70 to ±60.** With the 2-second shake between drinks, the meter drifts back a little, so two quick Strengths landed just under +70. "Two quick drinks" has to work every time, so it's ±60 now.
 - **The Frenzy artefact stays easy** (three presses at doubled power). That's on purpose: the player needs a carrot to stay in the game, and to learn that interesting things happen if they buy in.
+
+---
+
+## 2026-10-22 — Tiredness out, Stamina as a buffer
+
+**Did:** removed tiredness completely (the bar, the slowdown, the tired drift and its hints). Gave Stamina a new job: it's a **buffer**. Drinking it stretches whatever is already counting down by 50% (other Milk+, Frenzy, Stillness), and every other Milk+ drunk while it lasts runs 50% longer.
+
+**Decided:**
+- **Why tiredness went:** it existed mainly so Stamina had something to do. It braked fast mashing, which is the fun part, while the dose window already makes drinking fast the risk. In play you hardly felt it, and it was one more bar on a screen that already asks a lot of the player.
+- **Why the buffer:** it builds on the countdowns, which work well, and gives Stamina a clear use: stretching a Strength over the hard band or crust, or keeping Stillness going while you dig the quiet seam. One rule and one bar fewer.
+
+**Radio:** finished songs so far: Ex Profundo (Void FM; it replaces one of the four planned songs), Down in the Shaft and Hard Hat, Hard Body (The Pump Zone), and The You Show, which moved to a new folder, **Space oddities**, for songs that play on special occasions such as Stillness overload.

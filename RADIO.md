@@ -4,14 +4,14 @@
 
 The rover has a radio. Each station is a small gameplay modifier and a piece of world-building in the Korova Rock Tourist Guide's voice: dry, official, and completely serious about absurd things.
 
-**Status:** songs in progress in Suno. Not yet in the game (Prototypes 1 and 2 have no sound). Planned for Prototype 3.
+**Status:** songs in progress in Suno. Finished: Down in the Shaft, Hard Hat, Hard Body (The Pump Zone), Ex Profundo (Void FM) and The You Show (Space oddities). Not yet in the game (Prototypes 1 and 2 have no sound). Planned for Prototype 3.
 
 ---
 
 ## Design principles
 
 - **Every station has a fixed DNA.** The DNA is the station's sound and attitude. Every song on the station shares it.
-- **Every song has a role:** **signature**, **driver**, **contrast** or **wildcard**. The roles keep each station varied without it feeling scattered.
+- **Every song has a role:** **signature**, **driver**, **contrast** or **wildcard**. The roles keep each station varied without it feeling scattered. Songs for special occasions (such as Stillness overload) live outside the stations, in [Space oddities](#space-oddities-special-occasions).
 
   | Role | What it does |
   |------|--------------|
@@ -19,7 +19,6 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   | Driver | Faster and more energetic. Keeps the digging going. |
   | Contrast | Slower or quieter. A breather. |
   | Wildcard | Bends the DNA furthest, e.g. instrumental or more electronic. |
-  | Stillness | Special: plays only when the balance meter tips fully into Stillness. Not in normal rotation. |
 
 - **All lyrics are about mining,** in three emotional registers:
 
@@ -97,12 +96,12 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **Suno style prompt (draft):**
   > 80s heavy metal gym anthem, distorted guitars, gated reverb drums, pounding bass, gang vocals, shouted call-and-response, sweaty, cheeky innuendo, arena energy
 
-| Role | Song | What varies |
-|------|------|-------------|
-| Signature | **Down in the Shaft** | Arena-sized, 150 BPM, gang vocals |
-| Driver | **Heavy Ore** | Faster and tighter, more workout and shouting |
-| Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals |
-| Wildcard | **Jackhammer Heart** | Synth metal, sequenced bass, more electronic |
+| Role | Song | What varies | Status |
+|------|------|-------------|--------|
+| Signature | **Down in the Shaft** | Arena-sized, 150 BPM, gang vocals | **Finished** |
+| Driver | **Heavy Ore** | Faster and tighter, more workout and shouting | _Not yet_ |
+| Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
+| Wildcard | **Jackhammer Heart** | Synth metal, sequenced bass, more electronic | _Not yet_ |
 
 ### Disco Gravitas
 
@@ -116,12 +115,12 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **Suno style prompt (draft):**
   > Italo disco, space disco, arpeggiated synths, vocoder, warm analog bass, gated snare, dreamy pads, falsetto vocals, romantic, 80s
 
-| Role | Song | What varies |
-|------|------|-------------|
-| Signature | **Amore Orbitale** | Mid-tempo, romantic, big chorus, falsetto |
-| Driver | **I Dig You (All Night Long)** | Faster dance track, 125 BPM, playful |
-| Contrast | **Dolce de Leche+** | Slow and sticky, a duet, sweet and cheesy |
-| Wildcard | **Asteroid Belt Boulevard** | Instrumental space disco, lasers and vocoder |
+| Role | Song | What varies | Status |
+|------|------|-------------|--------|
+| Signature | **Amore Orbitale** | Mid-tempo, romantic, big chorus, falsetto | _Not yet_ |
+| Driver | **I Dig You (All Night Long)** | Faster dance track, 125 BPM, playful | _Not yet_ |
+| Contrast | **Dolce de Leche+** | Slow and sticky, a duet, sweet and cheesy | _Not yet_ |
+| Wildcard | **Asteroid Belt Boulevard** | Instrumental space disco, lasers and vocoder | _Not yet_ |
 
 ### Void FM
 
@@ -136,17 +135,26 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **Suno style prompt (draft):**
   > melancholy futurepop, wide lush pads, pulsing synth bass, emotional vocals, longing, vast and spacious, reverb-drenched, 80s-inspired synths
 
-| Role | Song | What varies |
-|------|------|-------------|
-| Signature | **Falling Forwards Backwards Into Dimension** | Anthemic, 130 BPM, builds to an uplifting chorus |
-| Driver | **Parallax for Two Prospectors** | More driving, a duet between two distant voices |
-| Contrast | **No Ground Beneath, No Ceiling** | Sparse and intimate, almost whispered, slow |
-| Wildcard | **Kármán Line (Extended Longing Mix)** | Long instrumental, ambient, made for drifting |
-| Stillness | **The You Show** | Plays only in Stillness. Experimental, 66 BPM, detuned piano, deadpan spoken-sung vocal |
+| Role | Song | What varies | Status |
+|------|------|-------------|--------|
+| Signature | **Falling Forwards Backwards Into Dimension** | Anthemic, 130 BPM, builds to an uplifting chorus | _Not yet_ |
+| Driver | **Parallax for Two Prospectors** | More driving, a duet between two distant voices | _Not yet_ |
+| Contrast | **No Ground Beneath, No Ceiling** | Sparse and intimate, almost whispered, slow | _Not yet_ |
+| Wildcard | **Kármán Line (Extended Longing Mix)** | Long instrumental, ambient, made for drifting | _Not yet_ |
+| _To decide_ | **Ex Profundo** | Replaces one of the four planned songs (which one: to decide) | **Finished** |
+
+### Space oddities *(special occasions)*
+
+- **Concept:** a folder, not a station. Songs that only play on special occasions, triggered by what happens in the game, never in normal rotation.
+- **Occasions so far:** Stillness overload (The You Show).
+
+| Occasion | Song | Status |
+|----------|------|--------|
+| Stillness overload | **The You Show** | **Finished** |
 
 #### The You Show
 
-- **Station:** Void FM
+- **Folder:** Space oddities (special occasions)
 - **Status:** finished.
 - **Role:** Stillness track. Plays only when the balance meter tips fully toward Stillness (too much Calm). Not in normal rotation.
 - **Concept:** a warm female guide leads the listener through a slow, weightless state. Halfway through, the perspective shifts and the listener becomes the traveller. In the outro the guides return together: the ones who came before are watching from below, holding the traveller in their embrace.
@@ -227,7 +235,10 @@ Cradling your face
 
 | # | Title | Station | Source (tool / composer / library) | Licence / plan | Commercial use OK? | Attribution needed | File | Date added |
 |---|-------|---------|-------------------------------------|----------------|--------------------|--------------------|------|------------|
-|   |       |         |                                     |                |                    |                    |      |            |
+| 1 | Down in the Shaft | The Pump Zone | Suno | | | | | |
+| 2 | Hard Hat, Hard Body | The Pump Zone | Suno | | | | | |
+| 3 | Ex Profundo | Void FM | Suno | | | | | |
+| 4 | The You Show | Space oddities | Suno | | | | | |
 
 ## DJ voice log
 

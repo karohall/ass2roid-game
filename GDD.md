@@ -19,7 +19,7 @@
 Mixed from ingredients found in the layers. Each one is a temporary effect:
 
 - **Strength:** more digging power, for harder layers
-- **Stamina:** dig longer before tiring
+- **Stamina:** a buffer: your other Milk+, and Frenzy or Stillness, last 50% longer
 - **Energy:** faster digging for a while
 - **Hyperfocus:** less drill drift, more rare finds
 - **Calm:** pushes the balance meter toward Stillness
@@ -75,6 +75,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 - **Disco Gravitas** (heart: Italo and space disco): calms the frenzy meter a little
 - **Void FM** (consciousness: melancholy futurepop): effect to be decided
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
+- **Space oddities:** not a station; a folder of songs for special occasions, such as The You Show on Stillness overload
 
 Details, music prompts and licence log: [RADIO.md](RADIO.md).
 
