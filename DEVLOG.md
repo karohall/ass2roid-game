@@ -127,3 +127,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **Why the buffer:** it builds on the countdowns, which work well, and gives Stamina a clear use: stretching a Strength over the hard band or crust, or keeping Stillness going while you dig the quiet seam. One rule and one bar fewer.
 
 **Radio:** finished songs so far: Ex Profundo (Void FM; it replaces one of the four planned songs), Down in the Shaft and Hard Hat, Hard Body (The Pump Zone), and The You Show, which moved to a new folder, **Space oddities**, for songs that play on special occasions such as Stillness overload.
+
+**Also:** the space bar pauses and resumes (P and Esc still work). Space no longer scrolls the page.

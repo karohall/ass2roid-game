@@ -83,7 +83,7 @@
       <div>Ex Profundo · Prototype 2</div>
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–4: shake, then drink Milk+ · P: pause</div>
+      <div class="small">Arrows / WASD: move and dig · 1–4: shake, then drink Milk+ · Space: pause</div>
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
@@ -132,7 +132,7 @@
       <div id="log"></div>
     </div>
 
-    <button id="pauseBtn">Pause (P)</button>
+    <button id="pauseBtn">Pause (Space)</button>
   </div>
 </div>
 
@@ -599,9 +599,9 @@ function pause() {
     ${journey(s.layer)}
     <div class="small">${layer().name} · ${depthNow()} m · ${s.samples} drill samples · Field Guide ${s.guide.length} / ${guideEntries().length}</div>
     <div class="small">The Rock will wait. It has waited before.</div>
-    <button id="resume">Resume (P)</button>`);
+    <button id="resume">Resume (Space)</button>`);
   $('resume').onclick = resume;
-  menuKeys = k => { if (k === 'p' || k === 'Escape') resume(); };
+  menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
 }
 
 function resume() {
@@ -844,9 +844,10 @@ function loop(t) {
 const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowDown: [0, 1], s: [0, 1], ArrowUp: [0, -1], w: [0, -1] };
 addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (k === ' ') e.preventDefault();
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
-  if (k === 'p' || k === 'Escape') { pause(); return; }
+  if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
   if (dirs[k]) {
     e.preventDefault();
     if (!running) return;
