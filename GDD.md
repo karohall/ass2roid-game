@@ -21,7 +21,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Strength:** more digging power, for harder layers
 - **Stamina:** a buffer: your other Milk+, and Frenzy or Stillness, last 50% longer
 - **Energy:** faster digging for a while
-- **Hyperfocus:** less drill drift, more rare finds
+- **Hyperfocus:** a steady hand: drinks don't stack (the dose window counts ×1), and the balance meter holds still
 - **Calm:** pushes the balance meter toward Stillness
 - **Recovery:** repairs tools and body after frenzy
 - **Sleep:** ends the shift and saves progress
