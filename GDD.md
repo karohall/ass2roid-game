@@ -106,7 +106,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
   - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
   - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.
-- **Stillness overload as a space sequence:** the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Probably an interface job for later.
+- **Stillness overload as a space sequence:** the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". Probably an interface job for later.
 
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.

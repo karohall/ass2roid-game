@@ -218,6 +218,22 @@ Nebulae holding you in their embrace
 Cradling your face
 ```
 
+#### Stillness overload sequence (storyboard)
+
+What the player sees while The You Show plays (about 4 minutes). No controls, no task: the point is to just watch. Each shot starts as its section of the song begins.
+
+| Song section | What we see |
+|--------------|-------------|
+| **Intro** | An actual wormhole opens. The prospector drifts through into deep, vast, absolute black space, with galaxies, stars, nebulae. |
+| **Verse 1** | More space phenomena appear, but all is still, sublime and vast. |
+| **Pre-Chorus** | *(continues)* |
+| **Verse 2** | The prospector starts to dissolve into beautiful cosmic dust, trailing behind them. |
+| **Chorus** | *(continues)* |
+| **Bridge** | The prospector is completely dissolved. Beautiful space sparkles. |
+| **Outro** | The black space meets a beautiful sunrise, a beam of light from within: cosmic love from the ancient galaxies. |
+
+Throughout: slow somersaults.
+
 ### Näsa – Big Space™ *(commercial breaks)*
 
 - **Concept:** not a station. Every few minutes Näsa cuts into whatever is playing, which matches the pop-up ad gag in the GDD.
