@@ -144,4 +144,4 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 
 **Parked for later:**
 - **Tool upgrades.** First version: a stronger drill bit isn't optional, and how strong it gets depends on how many A$$ coins your drill samples were worth. Later: a shop where you choose between depth, accuracy and so on.
-- **Stillness overload as a space sequence:** you drift off the mining shaft into deep space, doing slow somersaults for the length of The You Show (about 4 minutes).
+- **Stillness overload as a space sequence:** you drift off the mining shaft into deep space, doing slow somersaults for the length of The You Show (about 4 minutes). The point is to just watch.
