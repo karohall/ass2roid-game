@@ -111,3 +111,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **An optional overlay** for players who want the numbers (the ×1.5, the durations, the tip points), so the default interface can be sleeker.
 
 **Next:** playtest the window. Is ×1.5 felt? Is two quick drinks in layer 1 too easy?
+
+**After playing it out:**
+- **Layer 1 tip point lowered from ±70 to ±60.** With the 2-second shake between drinks, the meter drifts back a little, so two quick Strengths landed just under +70. "Two quick drinks" has to work every time, so it's ±60 now.
+- **The Frenzy artefact stays easy** (three presses at doubled power). That's on purpose: the player needs a carrot to stay in the game, and to learn that interesting things happen if they buy in.
