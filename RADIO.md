@@ -147,53 +147,50 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 #### The You Show
 
 - **Station:** Void FM
+- **Status:** finished.
 - **Role:** Stillness track. Plays only when the balance meter tips fully toward Stillness (too much Calm). Not in normal rotation.
-- **Concept:** a warm, older female guide leads the listener through a slow, weightless state. Halfway through, the perspective shifts and the listener becomes the traveller. In the outro the guide reveals she was watching from below while the traveller watched from above.
+- **Concept:** a warm female guide leads the listener through a slow, weightless state. Halfway through, the perspective shifts and the listener becomes the traveller. In the outro the guides return together: the ones who came before are watching from below, holding the traveller in their embrace.
 - **Style prompt:**
   > Experimental minimal indie, 66 BPM, detuned upright piano recorded in a large empty room, warped tape and wow-and-flutter, granular ambient drones, bowed metal and distant radio transmissions, sparse cello used as texture not melody, unpolished deadpan female vocal, half-spoken and slightly off-mic, intimate and strange, unquantized and human, long silences between phrases, lo-fi home recording character, cold and vast
 - **Exclude:**
   > pop, ballad, polished, belting, big chorus, power ballad, radio-friendly, string swell, drums
-- **Lyrics:**
+- **Lyrics (final):**
 
 ```
-[Intro: faint radio static, a single piano note repeating, spoken older female voice, warm, intimate and slightly teasing]
-I'll draw you a map, it looks something like this
-Look closely, this is something you don't wanna miss
-Kismet has come to say hello
-It is time for your inner world to grow
-
-[Verse 1: deadpan spoken-sung, room noise, piano slightly out of time]
+[Intro: faint radio static, vinyl scratch, spoken older female voice, deadpan spoken-sung, room noise, old piano slightly out of time]
 The opening to the wormhole is underneath but not below
 I dare you to go through, it's okay to take it slow
 Let's look at the pretty pictures inside your mind
 Everything you were, and what you left behind
-Old memories turn into soil
+Old memories turn into cosmic soil
 Take my hand, let's peak together
-This is a little something I like to call the You show
+This is a little something I like to call
+The You show
 
-[Verse 2: cello enters as texture, voice tender and maternal]
+[Verse 1: cello enters as texture, female voice tender and maternal]
 Let me tell you a story
 It begins with a loop in the sky
-It was a very long time ago (and I think you are old enough to know)
-It is okay if you cry
+Celestial cathedrals, where old voices pray
+Echoing their hellos and their goodbyes
+It's okay if you cry. We all need to, sometimes
 Press the quick-release, and let it all go
-But remember: in space, tears cannot flow
+But remember: in space, tears spiral, they don't flow
 
-[Pre-Chorus: voice lower and conspiratorial, tape starting to warp]
-Okay darling, here's the thing: physics doesn't always behave
-Just follow along, start drifting away
-If you climb beneath the cyclical cage and choose the right frame
+[Pre-Chorus: voices lower and conspiratorial, tape starting to warp]
+Here's the thing: physics doesn't always behave
+Just follow along, start floating away
+Stars kissing your cheeks, moonflowers wave
 You'll soon come to know the Milky Way
 You're falling through time, gaze turns to grain
 
-[Verse 3: the voice changes perspective, now singing as the traveller, softer and farther away]
+[Verse 2: the voice changes perspective, now singing as the traveller]
 I feel a bit low, or did I learn to fly?
 I know how it started, now I slip off the edge of the night
 I'm sinking through the ground
-I've become nothing but pure light
+I've become nothing but pure life
 
-[Chorus: everything drops out except a bowed metal tone and the voice, doubled an octave lower]
-Beneath the cyclical cage
+[Chorus: everything drops out except a bowed metal tone and the voice]
+Beneath the frame you see every day
 Someone has hidden a very strange game
 I'm falling through time, I'm drifting off the page
 I keep forgetting my name, I don't remember my age
@@ -205,12 +202,12 @@ I watch myself from somewhere high
 I couldn't move if I tried
 (and I don't mind)
 
-[Outro: single repeating piano note and static, the guide's voice returns, very quiet]
+[Outro: single repeating piano note and static, the guides' voices return, singing clearly and with love]
 I think you already know
-But I was watching you from below
-Holding your hand, waving goodbye
-I'm so happy you feel alive
-That was the You show.
+The ones who came before
+They are watching you from below
+Nebulae holding you in their embrace
+Cradling your face
 ```
 
 ### Näsa – Big Space™ *(commercial breaks)*

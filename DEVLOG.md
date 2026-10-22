@@ -81,3 +81,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Surprised me:** How easy it is to write song lyrics about the things that lie close to my heart. The first piano version sounded finished but conventional. Removing the signals for polish (excluding "big chorus", adding detuned piano, warped tape and a deadpan vocal) made it sound like mine. Also: describing the arrangement and mix, not just the genre, is what makes Suno sound produced.
 
 **Next:** generate The You Show, then the remaining Void FM songs.
+
+**Update:** The You Show is finished. Final lyrics are in RADIO.md. Turning up Suno's Weirdness setting is beneficial to the kind of sound I make.
