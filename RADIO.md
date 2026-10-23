@@ -4,7 +4,7 @@
 
 The rover has a radio. Each station is a small gameplay modifier and a piece of world-building in the Korova Rock Tourist Guide's voice: dry, official, and completely serious about absurd things.
 
-**Status:** songs in progress in Suno. Finished: Down in the Shaft, Hard Hat, Hard Body (The Pump Zone), Ex Profundo (Void FM) and The You Show (Space oddities). Not yet in the game (Prototypes 1 and 2 have no sound). Planned for Prototype 3.
+**Status:** songs in progress in Suno. Finished: Down in the Shaft, Hard Hat, Hard Body (The Pump Zone), Amore Orbitale and I Dig You (All Night Long) (Disco Gravitas), Ex Profundo (Void FM) and The You Show (Space oddities). Not yet in the game (Prototypes 1 and 2 have no sound). Planned for Prototype 3.
 
 ---
 
@@ -117,8 +117,8 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 
 | Role | Song | What varies | Status |
 |------|------|-------------|--------|
-| Signature | **Amore Orbitale** | Mid-tempo, romantic, big chorus, falsetto | _Not yet_ |
-| Driver | **I Dig You (All Night Long)** | Faster dance track, 125 BPM, playful | _Not yet_ |
+| Signature | **Amore Orbitale** | Mid-tempo, romantic, big chorus, falsetto | **Finished** |
+| Driver | **I Dig You (All Night Long)** | Faster dance track, 125 BPM, playful | **Finished** |
 | Contrast | **Dolce de Leche+** | Slow and sticky, a duet, sweet and cheesy | _Not yet_ |
 | Wildcard | **Asteroid Belt Boulevard** | Instrumental space disco, lasers and vocoder | _Not yet_ |
 
@@ -255,6 +255,8 @@ Throughout: slow somersaults.
 | 2 | Hard Hat, Hard Body | The Pump Zone | Suno | | | | | |
 | 3 | Ex Profundo | Void FM | Suno | | | | | |
 | 4 | The You Show | Space oddities | Suno | | | | | |
+| 5 | I Dig You (All Night Long) | Disco Gravitas | Suno | | | | | |
+| 6 | Amore Orbitale | Disco Gravitas | Suno | | | | | |
 
 ## DJ voice log
 

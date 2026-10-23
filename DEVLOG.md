@@ -145,3 +145,15 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Parked for later:**
 - **Tool upgrades.** First version: a stronger drill bit isn't optional, and how strong it gets depends on how many A$$ coins your drill samples were worth. Later: a shop where you choose between depth, accuracy and so on.
 - **Stillness overload as a space sequence:** you drift off the mining shaft into deep space, doing slow somersaults for the length of The You Show (about 4 minutes). The point is to just watch.
+
+---
+
+## 2026-10-23 — I Dig You (All Night Long)
+
+**Did:** finished I Dig You (All Night Long), the driver track on Disco Gravitas.
+
+**Surprised me:** the lyrics only came alive once they were less correct. The radio countdown carries the story, less so the words.
+
+**For the case study:** the process across the songs (Ex Profundo on Void FM, The You Show in Space oddities, Amore Orbitale and I Dig You on Disco Gravitas) makes good material: genre research, the too-clean problem, and imperfection on purpose.
+
+**Reflection:** *This confirms a lot of the earlier work with ASS2ROID: there needs to exist a core personality, and the human behind the gears needs to know the feeling to aim for.*
