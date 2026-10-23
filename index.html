@@ -65,6 +65,15 @@
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
+  /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
+  .later { opacity:0; pointer-events:none; transition:opacity 1.2s ease; }
+  .later.shown { opacity:1; pointer-events:auto; }
+  .recipe.later:not(.shown) { display:none; }            /* recipes take no space until they appear */
+  .recipe.later.shown { animation:fadein 1.2s ease; }
+  @keyframes fadein { from { opacity:0; } to { opacity:1; } }
+  body.intro .box:has(#recipes) { border-color:transparent; background:none; }
+  .box:has(#recipes) { transition:background-color 1.2s, border-color 1.2s; }
+  #hint:empty { visibility:hidden; }
   .journey { display:flex; align-items:flex-start; width:100%; max-width:400px; margin:4px 0; }
   .journey .step { width:64px; flex:none; font-size:10px; color:var(--dim); text-align:center; line-height:1.2; }
   .journey .dot { width:26px; height:26px; margin:0 auto 4px; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; }
@@ -74,7 +83,7 @@
   .journey .here .dot { border-color:#fff; background:#fff; color:#111; animation:throb .6s ease-in-out infinite alternate; }
 </style>
 </head>
-<body>
+<body class="intro">
 <div id="wrap">
   <div id="stage">
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
@@ -88,18 +97,18 @@
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="hint"></div>
-    <div id="dosage">
+    <div id="dosage" class="later" data-reveal="drink">
       <div id="dosageHead"><span>Dosage scale</span><span id="doseWindow"></span><span id="dosageNow">Meh</span></div>
       <div id="meter"><div id="meterFill"></div><div class="mark mid"></div><div class="mark tip" id="tipLo"></div><div class="mark tip" id="tipHi"></div></div>
       <div id="scale">
         <span>Get out</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
       </div>
     </div>
-    <div id="legend" class="small"></div>
+    <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
 
   <div id="panel">
-    <div class="box">
+    <div class="box later" data-reveal="dig">
       <h3>Rover panel</h3>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
@@ -107,31 +116,31 @@
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
     </div>
 
-    <div class="box">
+    <div class="box later" data-reveal="pickup">
       <h3>Ingredients</h3>
       <div id="ingredients"></div>
     </div>
 
     <div class="box">
-      <h3>Milk+ menu</h3>
+      <h3 class="later" data-reveal="drink">Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
-      <div class="small" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
-      <div class="small" id="effects" style="margin-top:4px">Active: none</div>
+      <div class="small later" data-reveal="drink" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
+      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
-    <div class="box">
+    <div class="box later" data-reveal="guide">
       <h3>Field Guide · Kroeber Foundation</h3>
       <div id="guide"></div>
       <div id="cardDetail" class="small"></div>
     </div>
 
-    <div class="box">
+    <div class="box later" data-reveal="drink">
       <h3>Belt Authority Public Service</h3>
       <div id="log"></div>
     </div>
 
-    <button id="pauseBtn">Pause (Space)</button>
+    <button id="pauseBtn" class="later" data-reveal="dig">Pause (Space)</button>
   </div>
 </div>
 
@@ -141,8 +150,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 const CONFIG = {
   grid:    { cols: 11, tile: 40, viewRows: 13, metresPerRow: 3 },
-  dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.4 },
-  strength:{ boost: 3, maxStacks: 2, durationMs: 25000 },
+  dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.1 },
+  strength:{ boost: 3, maxStacks: 2, durationMs: 45000 },
   calm:    { durationMs: 15000 },
   stamina: { stretch: 1.5, durationMs: 30000 },   // a buffer: every other countdown lasts 50% longer
   focus:   { durationMs: 30000 },   // steady hand: drinks do not stack (window ×1) and the meter holds still
@@ -167,17 +176,17 @@ const CONFIG = {
   // tipAt: how far the balance meter must go to tip into Frenzy or Stillness.
   // Regolith Prime tips early so a new player can reach both states with two quick drinks.
   layers: [
-    { name: 'Regolith Prime', rows: 36, hp: [2, 3], bandHp: 20, crustHp: 24, crustMinPower: 1, tipAt: 60, tint: '#5a5a5a',
-      yields: { whey: 0.10, powder: 0.07 },
+    { name: 'Regolith Prime', rows: 60, hp: [8, 10], bandHp: 60, crustHp: 60, crustMinPower: 1, tipAt: 60, tint: '#5a5a5a',
+      yields: { whey: 0.05, powder: 0.035 },
       craters: null },
-    { name: 'The Shaker Strata', rows: 36, hp: [4, 5], bandHp: 30, crustHp: 36, crustMinPower: 4, tipAt: 100, tint: '#565350',
-      yields: { powder: 0.10, whey: 0.05, chrome: 0.05 },
+    { name: 'The Shaker Strata', rows: 60, hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
+      yields: { powder: 0.05, whey: 0.025, chrome: 0.025 },
       craters: [
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
         { id: 7, label: 'Crater 7', note: 'Metallic traces. More Chrome Filings, less Legacy Powder.', mods: { chrome: 1.5, powder: 0.7 } },
       ] },
-    { name: 'The Chrome Vein', rows: 36, hp: [6, 7], bandHp: 40, crustHp: 50, crustMinPower: 7, tipAt: 100, tint: '#4f5358',
-      yields: { chrome: 0.10, whey: 0.05, powder: 0.04, spores: 0.035 },
+    { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 100, tint: '#4f5358',
+      yields: { chrome: 0.05, whey: 0.025, powder: 0.02, spores: 0.0175 },
       craters: [
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
@@ -194,6 +203,7 @@ const CONFIG = {
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
+  start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
 
@@ -258,7 +268,7 @@ function freshState() {
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0 }, strStacks: 0,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
     guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
-    shake: null, shakesDone: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
+    shake: null, shakesDone: 0, pickups: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
 
@@ -297,6 +307,11 @@ function genLayer() {
       g[y][x] = c;
     }
   }
+  // Supply cache left by the last survey: enough Regolith Whey in the row above the crust
+  // for the Strength the crust needs. You can't climb back up, so this prevents getting stuck.
+  const stacks = Math.ceil((L.crustMinPower - CONFIG.dig.basePower) / CONFIG.strength.boost);
+  const cols = [1, 2, 3, 4, 6, 7, 8, 9].sort(() => Math.random() - .5).slice(0, stacks);
+  for (const x of cols) g[H - 4][x] = { t: INGR, hp: L.hp[1], max: L.hp[1], ing: 'whey', cache: true };
   p = { x: 5, y: 1 };
   s.seamOpen = { frenzy: false, still: false };
   cam = 0;
@@ -312,7 +327,7 @@ function openSeam(kind) {
   const near = p.x >= 5 ? -2 : 2, row = Math.max(2, Math.min(H - 5, p.y));
   const spots = [0, 3, -3].flatMap(dy => [[p.x + near, row + dy], [p.x - near, row + dy]]);
   const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 5 &&
-    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => ![SEAM, ART].includes(g[y0 + dy][x0 + dx].t)));
+    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART].includes(c.t) && !c.cache; }));   // never cover the other seam or the supply cache
   const spot = spots.find(fits);
   if (!spot) return;
   const [cx, cy] = spot;
@@ -372,13 +387,15 @@ function hit(x, y, c) {
   s.dug++;
   bump(x, y, 10);
   if (c.t === SAMPLE) s.samples += 1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0);
-  if (c.t === INGR) gain(c.ing, 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
+  if (c.t === INGR) gain(c.ing, c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
+  if (c.cache) say('Survey cache. The last crew left this for you.');
   if (c.t === BAND && y === Math.floor(H / 2)) say('Compacted band. Strength is recommended.');
   if (c.t === ART) unlock(c.art);
 }
 
 function gain(k, n) {
   s.inv[k] += n;
+  s.pickups++;
   say(`+${n} ${ING[k].name}.`);
   unlock('ing_' + k);
 }
@@ -529,6 +546,7 @@ function breakthrough() {
     menuKeys = () => {};                                   // swallow keys while driving
     requestAnimationFrame(() => requestAnimationFrame(() => $('loadBar').style.width = '100%'));
     setTimeout(() => {
+      if (!$('loadGo')) return;                               // the loading screen is already gone
       $('loadGo').innerHTML = '<b style="color:var(--hot);font-size:14px">Press ↓ to start digging</b>';
       menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
     }, CONFIG.loadingMs);
@@ -617,8 +635,11 @@ function resume() {
 function newGame() {
   s = freshState();
   genLayer();
+  // Starter ration, so the first thing a new prospector does is shake a Milk+.
+  s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey');
   begin();
   say('Welcome to Korova Rock. Dig responsibly.');
+  say(`Starter ration: ${CONFIG.start.whey} Regolith Whey. Courtesy of the Foundation.`);
 }
 
 function begin() {
@@ -722,8 +743,6 @@ function draw() {
     const k = 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs;
     ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
     ctx.fillStyle = '#fff'; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
-    ctx.font = '10px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    if (s.shakesDone === 0) ctx.fillText('Shaking…', p.x * T + T / 2, p.y * T - 12);   // the word once, then just the bar
   }
   ctx.fillStyle = '#bbb';
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
@@ -735,6 +754,17 @@ function draw() {
 const depthNow = () => s.depthOffset + Math.max(0, p.y - 1) * CONFIG.grid.metresPerRow;
 const fmt = sec => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 const known = k => s.guide.includes('ing_' + k);
+// Bit by bit: each part of the interface appears when it first matters.
+const REVEAL = {
+  drink:  () => s.drinks > 0,
+  dig:    () => s.dug > 0,
+  pickup: () => s.pickups > 0,
+  guide:  () => s.guide.length > 1,
+  recipe_strength: () => true,
+  recipe_calm:    () => known('powder'),
+  recipe_stamina: () => known('chrome'),
+  recipe_focus:   () => known('spores'),
+};
 const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
 function hint() {
@@ -743,8 +773,13 @@ function hint() {
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.' : 'FRENZY! Double digging power. Go go go.';
   if (stillness()) return seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.';
   if (shaking() && s.shakesDone === 0) return `Shaking ${VNAME[s.shake.v]}… No digging until it is ready. Then press ${VARIANTS.indexOf(s.shake.v) + 1} again to drink it.`;
-  if (s.announceUntil > t) return s.announce;
+  // The opening steps (shake, drink, dig) come before any announcement.
+  if (s.drinks === 0 && s.bottles.strength) return 'Your Strength is ready. Press 1 again to drink it.';
+  if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
+  if (s.announceUntil > t) return s.announce;
+  if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
+  if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;
   if (seamWaiting('frenzy')) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
   if (seamWaiting('still')) return 'The quiet ? seam sealed when the stillness lifted. Find stillness again to break in.';
@@ -756,8 +791,7 @@ function hint() {
   if (s.drinks >= 2 && s.drinks < 5 && VARIANTS.every(v => !s.bottles[v]) && VARIANTS.some(canMix)) return 'Tip: shake in a quiet moment and keep the bottle. Drinking it later is instant.';
   if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to shake a Strength.';
   if (nearBand && !active('strength')) return 'Hard band ahead (striped rock). Strength makes it much faster.';
-  if (s.frenzies === 0 && s.stills === 0) return 'Rumour: the Foundation measures how fast, not just how much.';
-  if (s.stills === 0) return 'Rumour: Calm, taken quickly, goes somewhere too.';
+  if (s.frenzies > 0 && s.stills === 0) return 'Rumour: Calm, taken quickly, goes somewhere too.';
   return `Keep digging. Break the crust at the bottom of ${L.name}.`;
 }
 
@@ -767,7 +801,7 @@ function renderStatic() {
   $('layerName').textContent = `${s.layer + 1}. ${L.name}`;
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
   $('recipes').innerHTML = VARIANTS.map((v, i) => `
-    <div class="recipe">
+    <div class="recipe${i ? ' later' : ''}" data-reveal="recipe_${v}">
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}">Shake</button>
     </div>`).join('');
@@ -816,6 +850,8 @@ function hud() {
     : win.length && !frenzy() && !stillness()
     ? `next drink <b>×${nextMult()}</b> · ${Math.ceil((Math.max(...win) + B.windowMs - t) / 1000)}s` : '');
   cv.className = frenzy() ? 'frenzy' : stillness() ? 'still' : '';
+  document.body.classList.toggle('intro', s.drinks === 0);
+  document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
   setText('hint', running ? hint() : '');
   $('pauseBtn').disabled = !running;
   setHTML('legend', [

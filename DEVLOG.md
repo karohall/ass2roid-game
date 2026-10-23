@@ -167,3 +167,28 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Radio decisions:** all stations are available from the start, plus the rover cassette. The radio is the game's personality, not a reward. The Pump Zone digs slightly faster, Disco Gravitas calms the meter a little, and Void FM has no effect: choosing it is choosing a mood, not a tactic. The radio keeps playing between layers, ducked under the engine on the loading screen. Details in RADIO.md.
 
 **Stillness overload is itself an ending.** It can end the game early, before the core: the prospector dissolves into space during The You Show, and that's the end of the shift. "The drift is saved for the ending" means exactly this.
+
+---
+
+## 2026-10-23 — Slower, longer, and an opening shake
+
+**Problem:** the shakes were too easy to get. I got through three layers in about two minutes, and a minute and a half of it was me shaking roids.
+
+**Measured:** a small bot that plays like me (digs straight down, shakes whenever it can) confirmed it: about a minute per run, 15–20 seconds per layer. The digging was far too quick, so shaking was all that was left to do.
+
+**Did:**
+- **Ingredients halved,** double portions down from 40% to 10%.
+- **Strength lasts 45 seconds** instead of 25, so one shake covers more digging.
+- **Layers are 60 rows deep, and the rock is about three times tougher.** Strength now makes digging roughly twice as fast instead of one-hit.
+- **A supply cache** of Regolith Whey above every crust that needs Strength. With scarcer ingredients, the bot found it could reach the Chrome Vein crust without enough Whey, and you can't climb back up. Now you can always get through.
+- **Result:** a run takes about 3.5 minutes playing greedily, about 8.5 saving Strength for the crusts. Shaking is about 12 seconds of it.
+
+**Loved it:** the slowness, and the long layers. It gives a cool graphic effect.
+
+**The opening shake:** the game now begins with the player shaking a drink. A starter ration of 2 Regolith Whey, and the first hint is "press 1 to shake a Strength", then "press 1 again to drink", then "press ↓ to dig". The player learns to shake, and what it looks like, by doing it. So the "Shaking…" label over the progress bar is gone. It also fixes the slow start.
+
+**Worry:** the levels feel too similar. Possibly just the prototype stage, but a layer probably needs to *play* differently, not just look different: one mechanic of its own per layer.
+
+**The interface arrives bit by bit (pö om pö).** The opening screen is just the prospector, the hint and the Strength button, and the first hint carries the joke: *"Starter ration: 2 Regolith Whey, courtesy of the Foundation."* Everything else appears when it first matters: the dosage scale, the caution and the feed with the first drink; the rover panel, the key and pause with the first dig; ingredients with the first pickup; each recipe when its ingredient turns up; the Field Guide with its second card. Each part fades in. It tells the story to the player.
+
+**The rumour moved.** *"The Foundation measures how fast, not just how much"* was too far-fetched and vague on its own, with no direct connection to the shaking. Now it shows right after the first drink, while "next drink ×1.5" is on screen, and says what it means: drink again while that shows, and it pushes harder.
