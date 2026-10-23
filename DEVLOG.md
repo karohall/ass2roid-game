@@ -157,3 +157,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **For the case study:** the process across the songs (Ex Profundo on Void FM, The You Show in Space oddities, Amore Orbitale and I Dig You on Disco Gravitas) makes good material: genre research, the too-clean problem, and imperfection on purpose.
 
 **Reflection:** *This confirms a lot of the earlier work with ASS2ROID: there needs to exist a core personality, and the human behind the gears needs to know the feeling to aim for.*
+
+**Dolce de Leche+ is finished** (the contrast track on Disco Gravitas). Italo disco becomes hilarious and feels authentic when the bilingual echo is used as a structure. Overall, phonetic spelling works for steering pronunciation ("Letche").
+
+**A nod to OutRun:** the rover has a cassette called **Testarocco**. Pondered the fact that design comes from game history, and isn't just decoration.

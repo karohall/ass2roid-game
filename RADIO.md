@@ -4,7 +4,7 @@
 
 The rover has a radio. Each station is a small gameplay modifier and a piece of world-building in the Korova Rock Tourist Guide's voice: dry, official, and completely serious about absurd things.
 
-**Status:** songs in progress in Suno. Finished: Down in the Shaft, Hard Hat, Hard Body (The Pump Zone), Amore Orbitale and I Dig You (All Night Long) (Disco Gravitas), Ex Profundo (Void FM) and The You Show (Space oddities). Not yet in the game (Prototypes 1 and 2 have no sound). Planned for Prototype 3.
+**Status:** songs in progress in Suno. Finished: Down in the Shaft, Hard Hat, Hard Body (The Pump Zone), Amore Orbitale, I Dig You (All Night Long) and Dolce de Leche+ (Disco Gravitas), Ex Profundo (Void FM) and The You Show (Space oddities). Not yet in the game (Prototypes 1 and 2 have no sound). Planned for Prototype 3.
 
 ---
 
@@ -84,6 +84,8 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 **Tips:**
 - One direction per section, kept short. The style prompt sets the station's DNA; the brackets direct the performance inside it.
 - For songs that loop on the radio, end with a clean `[Outro]` or `[End]` rather than a long fade.
+- **Bilingual echo** (a line in Italian, echoed in English, or the other way round) makes Italo disco both funny and authentic. Use it as a structure, not a gimmick.
+- **Phonetic spelling steers pronunciation:** write it the way it should sound, e.g. "Letche" for *leche*.
 
 ---
 
@@ -127,7 +129,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 |------|------|-------------|--------|
 | Signature | **Amore Orbitale** | Mid-tempo, romantic, big chorus, falsetto | **Finished** |
 | Driver | **I Dig You (All Night Long)** | Faster dance track, 125 BPM, playful | **Finished** |
-| Contrast | **Dolce de Leche+** | Slow and sticky, a duet, sweet and cheesy | _Not yet_ |
+| Contrast | **Dolce de Leche+** | Slow and sticky, a duet, sweet and cheesy | **Finished** |
 | Wildcard | **Asteroid Belt Boulevard** | Instrumental space disco, lasers and vocoder | _Not yet_ |
 
 ### Void FM
@@ -265,6 +267,7 @@ Throughout: slow somersaults.
 | 4 | The You Show | Space oddities | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 5 | I Dig You (All Night Long) | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 6 | Amore Orbitale | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 7 | Dolce de Leche+ | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 
 ## DJ voice log
 
