@@ -28,6 +28,12 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   | Disco Gravitas | **Heart** |
   | Void FM | **Consciousness** |
 
+## Radio decisions (2026-10-23)
+
+- **All stations are available from the start**, plus the rover cassette (Testarocco). The radio is the game's personality, not a reward.
+- **Station effects:** The Pump Zone digs slightly faster. Disco Gravitas calms the meter a little. **Void FM has no effect**: choosing it is choosing a mood, not a tactic. The drift is saved for the ending.
+- **Radio keeps playing between layers**; the loading screen ducks it under the engine.
+
 ## Rules (from the GDD)
 
 - **I write the lyrics myself. AI tools help with mix and arrangement.**
@@ -117,7 +123,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 ### Disco Gravitas
 
 - **Concept:** the **heart**. Love songs about mining, broadcast late at night to lonely prospectors.
-- **In-game effect:** calms the frenzy meter a little.
+- **In-game effect:** calms the balance meter a little (nudges it back toward balanced).
 - **DNA:** Italo and space disco, arpeggios, vocoder, love songs about mining.
 - **DJ:** an over-enthusiastic host who mixes Italian and English and dedicates songs to the player.
 - **Example lines:**
@@ -136,7 +142,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 ### Void FM
 
 - **Concept:** **consciousness**. Gazing out and falling in: the deeper you dig, the further away everyone else is.
-- **In-game effect:** _not decided._
+- **In-game effect:** none. Choosing Void FM is choosing a mood, not a tactic.
 - **DNA:** futurepop at the edge of emptiness. Space without an object, rather than melancholia. Wide, still, unhurried; feeling is allowed, sorrow is not the point.
 - **DJ (draft):** a calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
 - **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
@@ -229,7 +235,7 @@ Cradling your face
 
 #### Stillness overload sequence (storyboard)
 
-What the player sees while The You Show plays (about 4 minutes). No controls, no task: the point is to just watch. Each shot starts as its section of the song begins.
+What the player sees while The You Show plays (about 4 minutes). No controls, no task: the point is to just watch. **Stillness overload is itself an ending:** it can end the game early, before the core. Each shot starts as its section of the song begins.
 
 | Song section | What we see |
 |--------------|-------------|
@@ -299,5 +305,4 @@ Throughout: slow somersaults.
 
 - Does the station effect stack with Milk+ (e.g. Disco Gravitas + Calm)?
 - Should Näsa breaks be a pure joke, or a real cost (e.g. a few seconds of slower digging)?
-- What does Void FM do in the game? (A thought: it fits frenzy and the deeper layers, e.g. less drift, or the hidden seam glows a moment earlier.)
 - How many songs per station is enough for a 10–15 minute game? Four each gives about 12 songs in total.

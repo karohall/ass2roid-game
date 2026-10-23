@@ -163,3 +163,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **A nod to OutRun:** the rover has a cassette called **Testarocco**. Pondered the fact that design comes from game history, and isn't just decoration.
 
 **Reflection:** *Speaking of decoration: AI tools are great to help you see. They put words on qualities, but you are the one providing the actual quality.*
+
+**Radio decisions:** all stations are available from the start, plus the rover cassette. The radio is the game's personality, not a reward. The Pump Zone digs slightly faster, Disco Gravitas calms the meter a little, and Void FM has no effect: choosing it is choosing a mood, not a tactic. The radio keeps playing between layers, ducked under the engine on the loading screen. Details in RADIO.md.
+
+**Stillness overload is itself an ending.** It can end the game early, before the core: the prospector dissolves into space during The You Show, and that's the end of the shift. "The drift is saved for the ending" means exactly this.
