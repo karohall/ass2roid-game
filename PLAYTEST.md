@@ -1,15 +1,16 @@
 # ASS2ROID: Ex Profundo — Playtest guide
 
-*For testing Prototype 2 (tag `prototype-2`) with 3–5 people who have not played it. Run every test the same way, so the results can be compared.*
+*For testing Prototype 2.1 (tag `prototype-2.1`) with 3–5 people who have not played it. Run every test the same way, so the results can be compared. A run takes roughly 4–9 minutes.*
 
 ---
 
 ## What we want to learn
 
-1. **First impression:** where do they look first, and where do they get stuck? Is the screen too much at once? Do they scroll down to the Field Guide and the feed at all? On a laptop they start below the fold.
-2. **Shake and drink:** do they find out how to shake and drink on their own, from the hint bar?
-3. **The dose window:** do they notice "next drink ×1.5" and work out that drinking fast pushes harder?
+1. **First impression:** the game opens with only the prospector, the hint and one button, and the rest of the interface arrives bit by bit. Do they notice new parts appearing? Does it feel calm, or confusing? Where do they look, and where do they get stuck? Do they scroll down to the Field Guide and the feed? On a laptop they sit below the fold.
+2. **Shake and drink:** the game opens by asking them to shake a Strength. Do they understand what shaking is? Later, do they shake again on their own, and do they ever shake ahead and keep a bottle?
+3. **The dose window:** right after the first drink, the hint explains "next drink ×1.5". Do they read it, and do they ever drink quickly on purpose?
 4. **Altered states:** do they reach Frenzy and Stillness, and do they want to go back for more?
+5. **Pace:** the layers are long and slow on purpose. Does that feel good ("a cool graphic effect"), or does it drag? When do they start to get bored, if at all?
 
 ---
 
@@ -40,7 +41,8 @@ Ask these, in this order, and write down the answers:
 2. What did the drinks do? Did any of them surprise you?
 3. What happened when the screen tilted / turned violet? What did you make of it?
 4. Was there anything you didn't understand, or didn't notice until late?
-5. Would you play again? Why, or why not?
+5. How did the pace feel: the long layers, the slow rock?
+6. Would you play again? Why, or why not?
 
 ---
 
@@ -54,14 +56,16 @@ TESTER: ______________   DATE: __________   PLAYED FOR: ____ min
 MOMENTS (time from start)
   First dig ....................... ____
   First ingredient ................ ____
-  First shake ..................... ____   (on their own / after nudge)
-  First drink ..................... ____   (on their own / after nudge)
+  Opening shake + drink ........... ____   (understood / confused)
+  First shake on their own ........ ____   (after the opening one)
+  Noticed parts appearing ......... ____   (yes / no / said: "_______")
   Noticed the dose window ......... ____   (yes / no / said: "_______")
   First Frenzy .................... ____   (on purpose / by accident)
   First Stillness ................. ____   (on purpose / by accident)
   Artefact found .................. ____   (which: ________)
   Layer 1 cleared ................. ____
   Layer 2 cleared ................. ____
+  First sign of boredom ........... ____   (where: ________)
   Finished / stopped .............. ____   (end screen shift length: ____ min)
 
 WHERE THEY LOOKED FIRST
@@ -78,6 +82,7 @@ AFTER-TEST ANSWERS
   3.
   4.
   5.
+  6.
 
 MY OBSERVATIONS
 ```
