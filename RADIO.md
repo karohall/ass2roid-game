@@ -32,6 +32,14 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
 
 - Music is **original**, or **AI-generated or royalty-free under licences that allow it**. No real tracks.
 - Songs are generated in **Suno**. Before release, check that the Suno plan used when each song was made allows commercial use.
+- **Suno rights**, from Suno's own [Terms of Service](https://suno.com/terms) (effective 3 September 2026, read 2026-10-23). All songs so far were made on the **Pro plan**.
+  - **The songs are yours:** for Pro and Premier subscribers, Suno *assigns to you all of its right, title and interest* in the songs made from your prompts. Suno does not promise that copyright exists in AI output.
+  - **Commercial use needs a download:** you may use a song commercially only once you have **downloaded** it through Suno, within your plan's monthly download allowance (shown at suno.com/account). Songs you haven't downloaded may not be used commercially.
+  - **Once downloaded, it's permanent:** the rights are not affected by using up the allowance, later changes, or cancelling the subscription.
+  - **No attribution is required** by the terms.
+  - **Free-tier songs and Remixes** are personal and non-commercial only. Remixes stay non-commercial even on a paid plan.
+  - **Suno keeps a licence to what you put in:** prompts, lyrics and other submissions can be used by Suno, including to train its models ([Privacy Notice](https://suno.com/privacy)).
+  - **Before release:** download the final version of every song while subscribed.
 - DJ voices are made with **ElevenLabs**.
 - Every song and voice clip gets a row in the [licence log](#licence-log) before it goes into the game.
 
@@ -251,12 +259,12 @@ Throughout: slow somersaults.
 
 | # | Title | Station | Source (tool / composer / library) | Licence / plan | Commercial use OK? | Attribution needed | File | Date added |
 |---|-------|---------|-------------------------------------|----------------|--------------------|--------------------|------|------------|
-| 1 | Down in the Shaft | The Pump Zone | Suno | | | | | |
-| 2 | Hard Hat, Hard Body | The Pump Zone | Suno | | | | | |
-| 3 | Ex Profundo | Void FM | Suno | | | | | |
-| 4 | The You Show | Space oddities | Suno | | | | | |
-| 5 | I Dig You (All Night Long) | Disco Gravitas | Suno | | | | | |
-| 6 | Amore Orbitale | Disco Gravitas | Suno | | | | | |
+| 1 | Down in the Shaft | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 2 | Hard Hat, Hard Body | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 3 | Ex Profundo | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 4 | The You Show | Space oddities | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 5 | I Dig You (All Night Long) | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 6 | Amore Orbitale | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 
 ## DJ voice log
 
