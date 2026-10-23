@@ -98,6 +98,10 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - First Milk+: *"Do not spill. Make us proud."*
 
 ## Ideas for later
+- **Field Guide artefact: the VHS cassette.**
+  > *Artefact, Site KR-1, Crater 7, Quadrant 2.*
+  > VHS cassette, handwritten label: "VICE 2–6. DO NOT TAPE OVER." Recovered from the Shaker Strata, rewound.
+  > The series in question ran for five seasons. The Foundation has viewed season six, it was never released on Tellus. The Foundation has no further comment.
 - **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
 - **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
 - **The radio reacts to the balance meter** (the meter itself is now in the game, see *Frenzy and Stillness*):
