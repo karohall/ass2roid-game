@@ -98,6 +98,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - First Milk+: *"Do not spill. Make us proud."*
 
 ## Ideas for later
+- **Archive photos for artefacts.** Field Guide artefact cards get realistic museum-archive photos: neutral grey backdrop, flat lighting, scale bar, accession number, catalogue label. Photos appear only in the Field Guide; the rest of the game stays comic ink, so the archive reads as "real" against the drawn world.
 - **Field Guide artefact: the VHS cassette.**
   > *Artefact, Site KR-1, Crater 7, Quadrant 2.*
   > VHS cassette, handwritten label: "VICE 2–6. DO NOT TAPE OVER." Recovered from the Shaker Strata, rewound.
