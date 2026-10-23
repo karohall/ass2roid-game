@@ -30,6 +30,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
 
 ## Rules (from the GDD)
 
+- **I write the lyrics myself. AI tools help with mix and arrangement.**
 - Music is **original**, or **AI-generated or royalty-free under licences that allow it**. No real tracks.
 - Songs are generated in **Suno**. Before release, check that the Suno plan used when each song was made allows commercial use.
 - **Suno rights**, from Suno's own [Terms of Service](https://suno.com/terms) (effective 3 September 2026, read 2026-10-23). All songs so far were made on the **Pro plan**.
