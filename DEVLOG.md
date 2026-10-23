@@ -161,3 +161,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Dolce de Leche+ is finished** (the contrast track on Disco Gravitas). Italo disco becomes hilarious and feels authentic when the bilingual echo is used as a structure. Overall, phonetic spelling works for steering pronunciation ("Letche").
 
 **A nod to OutRun:** the rover has a cassette called **Testarocco**. Pondered the fact that design comes from game history, and isn't just decoration.
+
+**Reflection:** *Speaking of decoration: AI tools are great to help you see. They put words on qualities, but you are the one providing the actual quality.*

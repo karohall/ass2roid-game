@@ -244,6 +244,15 @@ What the player sees while The You Show plays (about 4 minutes). No controls, no
 
 Throughout: slow somersaults.
 
+### The rover's tape deck
+
+- **Concept:** the rover has a tape deck as well as the radio. Tapes are physical things the prospector carries, not stations.
+- **Tapes so far:**
+
+| Tape | What it is | Contents |
+|------|------------|----------|
+| **Testarocco** | A nod to OutRun (1986), where you picked the music on the car radio before the drive. The name crosses that game's car with rock. | _To decide_ |
+
 ### Näsa – Big Space™ *(commercial breaks)*
 
 - **Concept:** not a station. Every few minutes Näsa cuts into whatever is playing, which matches the pop-up ad gag in the GDD.
