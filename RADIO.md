@@ -137,14 +137,12 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 
 - **Concept:** **consciousness**. Gazing out and falling in: the deeper you dig, the further away everyone else is.
 - **In-game effect:** _not decided._
-- **DNA:** melancholy futurepop, wide pads, longing and vastness, depth as loneliness.
+- **DNA:** futurepop at the edge of emptiness. Space without an object, rather than melancholia. Wide, still, unhurried; feeling is allowed, sorrow is not the point.
 - **DJ (draft):** a calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
 - **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
 - **Example lines (draft):**
   - *"You are three hundred metres down. Everyone you know is above you. This is Void FM."*
   - *"If you can hear this, you are deeper than the signal was designed to reach."*
-- **Suno style prompt (draft):**
-  > melancholy futurepop, wide lush pads, pulsing synth bass, emotional vocals, longing, vast and spacious, reverb-drenched, 80s-inspired synths
 
 | Role | Song | What varies | Status |
 |------|------|-------------|--------|

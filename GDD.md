@@ -75,7 +75,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 ## The radio
 - **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky): digging goes slightly faster
 - **Disco Gravitas** (heart: Italo and space disco): calms the frenzy meter a little
-- **Void FM** (consciousness: melancholy futurepop): effect to be decided
+- **Void FM** (consciousness: futurepop at the edge of emptiness): effect to be decided
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 - **Space oddities:** not a station; a folder of songs for special occasions, such as The You Show on Stillness overload
 
