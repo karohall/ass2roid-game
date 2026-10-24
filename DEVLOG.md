@@ -238,3 +238,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **Frenzy lay very close at hand;** stacking Strength was too easy. Regolith Prime now tips at ±80 instead of ±60: two quick Strengths reach *Hell yeah*, and Frenzy takes a third, or a nudge from another Milk+.
 
 **Reflection:** *The challenge of making UX for games is all the moving parts. It is a living interface that changes as the game teaches the player the rules, and as the player explores the construct.*
+
+**The pacing works.** I like it much more now. Layer 1 has some resistance, both in digging power and mentally: a little frustration, which makes me look around and explore the other panels. Whey is the scarce resource: it goes into Strength, Recovery and Stamina, so every Whey block is a small decision. Kept as is for now. To watch in playtests: the point where "a little frustrating" turns into "nothing to do". If that happens, the gentlest fixes are a bit more Whey in layer 1 only, or a fossil shaker or two there.
