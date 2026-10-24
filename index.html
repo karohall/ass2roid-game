@@ -193,6 +193,7 @@ const CONFIG = {
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
   stillness: { durationMs: 12000, settleAt: 45, slowMult: 2 },   // everything slows; no drift
   seam:      { hp: 6, artefactHp: 3 },
+  calmRumourFrenzies: 2,   // the Calm rumour shows as each of the first two Frenzies ends, never after a Stillness
 
   // Each recipe is ingredient → amount.
   recipes: {
@@ -250,7 +251,7 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'recovery', 'stamina', 'focus'];
 const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
-const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still.', recovery: 'Repairs the drill after a Frenzy.' };
+const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still, and so does an open ? seam.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown, the label has fossilised. Caution: seeps upward. Fun fact: the Shaker Strata were someone\'s gym bag.' },
@@ -311,6 +312,8 @@ const active = v => s.fx[v] > now();
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
+const seamHeld = kind => s.heldSeam === kind && active('focus') && seamWaiting(kind);   // Hyperfocus holds the seam open after the state ends
+const seamAnswers = kind => inState(kind) || seamHeld(kind);
 const tipAt = () => layer().tipAt;
 // Drinks in the dose window, and the multiplier the next drink will get.
 const windowDrinks = () => s.window.filter(t => now() - t < CONFIG.balance.windowMs);
@@ -404,6 +407,13 @@ function openSeam(kind) {
   say(kind === 'still' ? 'A seam has opened. It is very quiet in there.' : 'A seam has opened. It was not on the survey.');
 }
 
+// A state ending under Hyperfocus: the seam stays open for as long as the Hyperfocus lasts.
+function holdSeam(kind) {
+  if (!active('focus') || !seamWaiting(kind)) return;
+  s.heldSeam = kind;
+  say('Hyperfocus. The seam stays open. For now.');
+}
+
 // Is there an unfound artefact of this kind sitting in an open seam on this layer?
 const seamWaiting = kind => s.seamOpen[kind] && g.some(r => r.some(c => c.t === ART && c.kind === kind));
 
@@ -442,7 +452,7 @@ function act(dx, dy) {
 function hit(x, y, c) {
   if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
   if (c.t === SLAB) { nasa(); warn('Näsa chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
-  if ((c.t === SEAM || c.t === ART) && !inState(c.kind)) {
+  if ((c.t === SEAM || c.t === ART) && !seamAnswers(c.kind)) {
     warn(c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
     bump(x, y, 2); return;
   }
@@ -693,7 +703,7 @@ function pickCrater(i) {
   // A new layer is a clean slate: Frenzy or Stillness ends, and the dosage scale is back to balanced.
   // (Milk+ already in your system keeps counting down.)
   if (s.inState || s.meter) say('New layer, clear head. The dosage scale is back to balanced.');
-  s.frenzyUntil = 0; s.stillUntil = 0; s.inState = null; s.meter = 0; s.window = [];
+  s.frenzyUntil = 0; s.stillUntil = 0; s.inState = null; s.heldSeam = null; s.meter = 0; s.window = [];
   running = true;
   say(`Rover arrived at ${next.craters[i].label}.`);
   announce(LAYER_INTRO[s.layer]);
@@ -797,8 +807,9 @@ function update(dt) {
   const B = CONFIG.balance;
   if (frenzy()) s.meter = B.max;
   else if (stillness()) s.meter = B.min;
-  else if (s.inState === 'frenzy') { s.inState = null; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.'); }
-  else if (s.inState === 'still') { s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.'); }
+  else if (s.inState === 'frenzy') { holdSeam('frenzy'); s.inState = null; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.');
+    if (s.stills === 0 && s.frenzies <= CONFIG.calmRumourFrenzies) announce('Rumour: Calm, taken quickly, goes somewhere too.'); }   // only as a Frenzy ends
+  else if (s.inState === 'still') { holdSeam('still'); s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.'); }
   else if (s.meter >= tipAt()) {
     s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
     say('FRENZY. The Rock is speaking. Do not answer.');
@@ -812,6 +823,10 @@ function update(dt) {
     s.meter = s.meter > 0 ? Math.max(0, s.meter - k) : Math.min(0, s.meter + k);
   }
   if (!active('strength')) s.strStacks = 0;
+  if (s.heldSeam && !active('focus')) {             // the hold ends with the Hyperfocus; a later one won't reopen it
+    if (seamWaiting(s.heldSeam)) say('Hyperfocus fading. The seam seals.');
+    s.heldSeam = null;
+  }
   if (s.shake && !shaking()) finishShake();
   // Gravity.
   if (t - lastFall > 90 && p.y + 1 < H && g[p.y + 1][p.x].t === AIR) { p.y++; lastFall = t; }
@@ -853,7 +868,7 @@ function draw() {
       ctx.stroke();
     }
     if (c.t === SEAM || c.t === ART) {
-      const open = inState(c.kind);                          // lights up only in its own state
+      const open = seamAnswers(c.kind);                      // lights up only in its own state, or while Hyperfocus holds it
       if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
       ctx.fillStyle = open ? '#fff' : '#777'; ctx.font = open ? 'bold 22px monospace' : '12px monospace';
       ctx.fillText('?', cx, cy);
@@ -902,7 +917,7 @@ function drawMap() {
     else if (c.t === SLAB) col = '#a9b2bc';
     else if (c.t === CRUST) col = '#4a4a4a';
     else if (c.t === BAND) col = '#2c2c2c';
-    else if ((c.t === SEAM || c.t === ART) && inState(c.kind)) col = '#fff';
+    else if ((c.t === SEAM || c.t === ART) && seamAnswers(c.kind)) col = '#fff';
     else col = '#1d1d1d';
     if (col) { ctx.fillStyle = col; ctx.fillRect(x0 + (x - 1) * cw, top + y * rh, Math.ceil(cw), Math.ceil(rh)); }
   }
@@ -957,6 +972,7 @@ function hint() {
   const nearCrust = p.y >= H - 8;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
   if (stillness()) return seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.';
+  if (seamHeld('frenzy') || seamHeld('still')) return `Hyperfocus is holding the ${seamHeld('still') ? 'quiet ' : ''}? seam open. Dig in before it wears off (${Math.ceil((s.fx.focus - t) / 1000)}s).`;
   const firstShake = `Shaking ${VNAME[s.shake ? s.shake.v : 'strength']}… No digging until it is ready.`;
   if (shaking() && s.shakesDone === 0) return firstShake;
   // The opening steps (shake, drink, dig) come before any announcement.
@@ -981,7 +997,6 @@ function hint() {
   if (s.drinks >= 2 && s.drinks < 5 && VARIANTS.every(v => !s.bottles[v]) && VARIANTS.some(canMix)) return 'Tip: shake in a quiet moment and keep the bottle. Drinking it later is instant.';
   if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to shake a Strength.';
   if (nearBand && !active('strength')) return 'Hard band ahead (striped rock). Strength makes it much faster.';
-  if (s.frenzies > 0 && s.stills === 0) return 'Rumour: Calm, taken quickly, goes somewhere too.';
   return `Keep digging. Break the crust at the bottom of ${L.name}.`;
 }
 

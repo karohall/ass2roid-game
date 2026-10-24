@@ -23,7 +23,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Strength:** more digging power, for harder layers
 - **Stamina:** drink it any time: everything already in your system (other Milk+, Frenzy or Stillness) lasts 50% longer
 - **Energy:** faster digging for a while
-- **Hyperfocus:** a steady hand: drinks don't stack (the dose window counts ×1), and the balance meter holds still
+- **Hyperfocus:** a steady hand: drinks don't stack (the dose window counts ×1), the balance meter holds still, and so does an open seam: if a Frenzy or Stillness ends while Hyperfocus lasts, its seam stays open until the Hyperfocus wears off
 - **Calm:** pushes the balance meter toward Stillness
 - **Recovery:** repairs the drill after a Frenzy, at once, and the pick axe goes back on its hook (1 Regolith Whey + 1 Legacy Powder)
 - **Sleep:** ends the shift and saves progress
@@ -104,6 +104,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 ## Ideas for later
 - **High scores (parking lot).** Personal bests saved in the browser (fastest shift, most drill samples, most Field Guide cards, most Frenzies, most Stillnesses, with a NEW mark), or a shared leaderboard, which would need a server. For now the end screen keeps a personal summary only.
 - **Blowing up Näsa's chrome (Prototype 3).** In Frenzy, with Strength stacked, hitting a Näsa slab heats it up; keep going and it melts or blows open, a new way down. The risk: every hit on a hot slab may blow *you* up instead. Soft failure: the blast breaks the drill and throws the prospector back up a few rows. Näsa pop-up: *"Näsa™ property damaged. An invoice has been issued."* Field Guide find: a lump of molten chrome™.
+- **Climbing upwards (parked).** ↑ climbs one tile, only with solid rock beside you to grip, and slower than moving sideways. It would let you go back for a missed W or seam and make getting stuck at a crust unlikely; the cost is that going down stops being a commitment, which is part of the digging feel. Behind a setting, if tried.
 - **Next prototype: make the start button (Enter) stand out.** A visual cue that draws the eye to "Begin shift": movement, colour, or a light effect. **Preferred: a blinking cursor ▌ after "Begin shift"**, echoing the typewriter hints.
 - **Archive photos for artefacts.** Field Guide artefact cards get realistic museum-archive photos: neutral grey backdrop, flat lighting, scale bar, accession number, catalogue label. Photos appear only in the Field Guide; the rest of the game stays comic ink, so the archive reads as "real" against the drawn world.
 - **Field Guide artefact: the VHS cassette.**
