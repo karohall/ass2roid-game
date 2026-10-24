@@ -102,6 +102,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - First Milk+: *"Do not spill. Make us proud."*
 
 ## Ideas for later
+- **Next prototype: make the start button (Enter) stand out.** A visual cue that draws the eye to "Begin shift": movement, colour, or a light effect. **Preferred: a blinking cursor ▌ after "Begin shift"**, echoing the typewriter hints.
 - **Archive photos for artefacts.** Field Guide artefact cards get realistic museum-archive photos: neutral grey backdrop, flat lighting, scale bar, accession number, catalogue label. Photos appear only in the Field Guide; the rest of the game stays comic ink, so the archive reads as "real" against the drawn world.
 - **Field Guide artefact: the VHS cassette.**
   > *Artefact, Site KR-1, Crater 7, Quadrant 2.*

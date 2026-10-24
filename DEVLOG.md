@@ -256,3 +256,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **States end with the layer, and fossil shakers are drunk at once.** A Frenzy no longer carries over into the next layer: breaking through a crust gives a clean slate (the state ends, the dosage scale is back to balanced; Milk+ already in your system keeps going). And a fossil shaker is drunk the moment you break it: *"Contents: Stamina. Down it goes."* You only find out what it was once it's in you, which makes the gamble real.
 
 **Fix, properly this time: no more resizing.** The bit-by-bit reveal kept making the layout taller, so the game shrank a step every time a new panel appeared. Now the size is measured once, as if everything were already showing (every panel, all five recipes, the longest hint), and kept for the whole game. Only a window resize changes it.
+
+**Typewriter hints.** Each new hint now types itself out in the hint bar, about 60 characters a second, with a block cursor while it types, like a teleprinter in the rover.
+
+**Still a scale jump on my screen, when the hint box emptied.** Couldn't reproduce it in testing at the same size, so the game now guards against the likely culprits: it only refits when the window really changes size (by more than a few pixels), and the page has no scrollbar that could come and go. To check on my own screen.

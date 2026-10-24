@@ -9,7 +9,7 @@
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
   #wrap { display:flex; gap:16px; justify-content:center; align-items:flex-start; padding:16px; flex-wrap:wrap; transform-origin:top center; }
-  body.fitted { overflow:hidden; }
+  html, body { overflow:hidden; }                                /* the game always fits; a page scrollbar coming and going would shift it */
   #stage { position:relative; }
   canvas { display:block; border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
@@ -227,6 +227,7 @@ const CONFIG = {
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
+  hint:    { typeCps: 60 },       // the hint bar types itself out, characters per second
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -649,6 +650,7 @@ function breakthrough() {
 }
 
 let menuKeys = null;
+const typing = { text: '', from: 0 };                      // the hint currently being typed
 
 // Progress marker: every layer of the prototype, with the one you are heading into marked.
 function journey(at) {
@@ -1016,7 +1018,11 @@ function hud() {
   document.body.classList.toggle('intro', s.drinks === 0);
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
   document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
-  setText('hint', running ? hint() : '');
+  // The hint bar types each new hint out, with a block cursor while it types.
+  const target = running ? hint() : '';
+  if (target !== typing.text) { typing.text = target; typing.from = performance.now(); }
+  const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps));
+  setText('hint', n < target.length ? target.slice(0, n) + '▌' : target);
   $('pauseBtn').disabled = !running;
   setText('radioName', RADIO[radio.on].name); setText('radioKind', RADIO[radio.on].kind);
   setText('radioSong', nowPlaying()); setText('radioFx', RADIO[radio.on].fx);
@@ -1091,7 +1097,13 @@ function fit() {
   w.style.transform = k < 1 ? `scale(${k})` : '';
   document.body.classList.toggle('fitted', k < 1);
 }
-addEventListener('resize', fit);
+// Refit only when the window really changes size: a scrollbar coming and going, or the page
+// redrawing, must never rescale the game mid-shift.
+let fittedFor = '';
+addEventListener('resize', () => {
+  const size = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4);   // ignore changes under ~4 px
+  if (size !== fittedFor) { fittedFor = size; fit(); }
+});
 $('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
 // Boot: show a world behind the start screen.
@@ -1099,7 +1111,7 @@ s = freshState();
 genLayer();
 renderStatic(); renderGuide();
 requestAnimationFrame(loop);
-setTimeout(fit, 0);                                           // once, after the first layout
+setTimeout(() => { fittedFor = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4); fit(); }, 0);   // once, after the first layout
 </script>
 </body>
 </html>
