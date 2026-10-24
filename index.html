@@ -237,7 +237,7 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 // CONTENT: names and Field Guide copy.
 // ─────────────────────────────────────────────────────────────────────────────
-const VARIANTS = ['strength', 'calm', 'stamina', 'focus', 'recovery'];
+const VARIANTS = ['strength', 'calm', 'recovery', 'stamina', 'focus'];
 const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
 const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
@@ -925,8 +925,8 @@ function hint() {
   if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.announceUntil > t) return s.announce;
-  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 5 (${recipeText('recovery')}).`;
-  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 5 (${recipeText('recovery')}).`;
+  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
+  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap.';
   if (layer().shakers && !s.mysteries && s.layer === 1) return 'The Shaker Strata: break a fossilised shaker (the little bottles) for a ready Milk+. You don\'t choose which.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';

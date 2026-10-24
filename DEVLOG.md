@@ -248,3 +248,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Radio placeholder.** No sound yet, but the radio has a place and keys. It plays the rover's tape, **Testarocco**, from the start screen, by default: the radio is the game's personality, so it's there before the shift begins. **R** steps through The Pump Zone, Disco Gravitas and Void FM, **T** always returns to the tape, and both work on every screen. The effects are on: The Pump Zone digs about 10% faster, Disco Gravitas calms the meter 50% faster, Void FM and the tape have none. "Now playing" cycles through the song titles.
 
 **Fix: the screen zoomed out and back in mid-run.** The fit-to-window scaling reacted every time the feed or a Field Guide card got longer or shorter, so the whole game pumped in and out. Now the feed and the card text have fixed heights, the hint bar is at least three lines, and during play the scaling only ever shrinks. It rescales freshly on a window resize or a new shift.
+
+**Keys reordered:** Recovery moved from 5 to **3**, so Stamina is now 4 and Hyperfocus 5. Recovery can be needed from the first layer, so it belongs with the early shakes.
