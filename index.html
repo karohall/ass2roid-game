@@ -807,10 +807,12 @@ function draw() {
   ctx.fillStyle = frenzy() ? '#fff' : '#ddd';
   ctx.fillRect(px0 + 8 - bob, p.y * T + 6 - bob, T - 16 + bob * 2, T - 10 + bob);
   ctx.fillStyle = '#111'; ctx.fillRect(px0 + 13, p.y * T + 12, 14, 6); // visor
-  if (onPick()) {                                            // the pick axe: a handle and a head
-    ctx.strokeStyle = '#ddd'; ctx.lineWidth = 2; ctx.beginPath();
-    ctx.moveTo(px0 + T - 6, p.y * T + T - 6); ctx.lineTo(px0 + T + 4, p.y * T + 8);
-    ctx.moveTo(px0 + T - 2, p.y * T + 4); ctx.lineTo(px0 + T + 10, p.y * T + 12); ctx.stroke(); ctx.lineWidth = 1;
+  if (onPick()) {                                            // the pick axe: black, upright, under the visor
+    const mx = px0 + T / 2, py0 = p.y * T;
+    ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(mx, py0 + 21); ctx.lineTo(mx, py0 + 32);           // handle
+    ctx.moveTo(mx - 7, py0 + 23); ctx.quadraticCurveTo(mx, py0 + 18, mx + 7, py0 + 23);   // curved head
+    ctx.stroke(); ctx.lineWidth = 1;
   }
   if (shaking()) {
     const k = 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs;
@@ -820,8 +822,49 @@ function draw() {
   ctx.fillStyle = '#bbb';
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
   ctx.restore();
-  ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left';
-  ctx.fillText(`${s.depthOffset + Math.round(cam * CONFIG.grid.metresPerRow)} m`, 4, 10);
+  if (s.dug > 0) { drawMap(); drawGauge(); }               // the side walls become a map and a depth gauge
+  else { ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left'; ctx.fillText('0 m', 4, 10); }
+}
+
+// Left wall: the whole layer in miniature. Your tunnel, bands, slabs, the crust, and what's on screen.
+function drawMap() {
+  const x0 = 2, w = T - 4, top = 2, h = cv.height - 4, rh = h / H, cw = w / (W - 2);
+  ctx.fillStyle = '#0d0d0d'; ctx.fillRect(x0, top, w, h);
+  for (let y = 0; y < H; y++) for (let x = 1; x < W - 1; x++) {
+    const c = g[y][x]; let col;
+    if (c.t === AIR) col = y < 2 || y === H - 1 ? null : '#8a8a8a';
+    else if (c.t === SLAB) col = '#a9b2bc';
+    else if (c.t === CRUST) col = '#4a4a4a';
+    else if (c.t === BAND) col = '#2c2c2c';
+    else if ((c.t === SEAM || c.t === ART) && inState(c.kind)) col = '#fff';
+    else col = '#1d1d1d';
+    if (col) { ctx.fillStyle = col; ctx.fillRect(x0 + (x - 1) * cw, top + y * rh, Math.ceil(cw), Math.ceil(rh)); }
+  }
+  ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1;                        // the part of the layer on screen
+  ctx.strokeRect(x0 + .5, top + cam * rh + .5, w - 1, VIEW * rh - 1);
+  ctx.fillStyle = '#fff';                                          // you
+  ctx.fillRect(x0 + (p.x - 1) * cw - 1, top + p.y * rh - 1, Math.ceil(cw) + 2, Math.ceil(rh) + 2);
+}
+
+// Right wall: how deep the whole game goes, layer by layer, and how far you've come. We go deeper.
+function drawGauge() {
+  const rows = CONFIG.layers.map(l => l.rows - 1), total = rows.reduce((a, b) => a + b, 0);
+  const x0 = cv.width - T + 12, w = T - 24, top = 18, h = cv.height - 36;
+  const done = rows.slice(0, s.layer).reduce((a, b) => a + b, 0) + Math.min(p.y, rows[s.layer]);
+  ctx.fillStyle = '#0d0d0d'; ctx.fillRect(x0, top, w, h);
+  ctx.fillStyle = '#8a8a8a'; ctx.fillRect(x0, top, w, h * done / total);
+  let y = top; ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  rows.forEach((r, i) => {
+    const sh = h * r / total;
+    ctx.strokeStyle = '#555'; ctx.strokeRect(x0 + .5, y + .5, w - 1, sh - 1);
+    ctx.fillStyle = i === s.layer ? '#fff' : i < s.layer ? '#111' : '#666';
+    ctx.fillText(String(i + 1), x0 + w / 2, y + sh / 2);
+    y += sh;
+  });
+  ctx.fillStyle = '#fff'; ctx.fillRect(x0 - 3, top + h * done / total - 1, w + 6, 3);   // you are here
+  ctx.fillStyle = '#777'; ctx.font = '9px monospace';
+  ctx.fillText('▼', x0 + w / 2, top + h + 9);                          // the end, below the deepest layer
+  ctx.fillText(`${depthNow()}m`, x0 + w / 2, 9);
 }
 
 const depthNow = () => s.depthOffset + Math.max(0, p.y - 1) * CONFIG.grid.metresPerRow;
