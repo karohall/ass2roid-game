@@ -15,7 +15,7 @@
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
-  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; }   /* at least three lines, so it rarely changes height */
+  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; }   /* at least three lines, text at the top */
   #dosage { width:440px; margin-top:10px; }
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
@@ -251,11 +251,13 @@ const LAYER_CARD = [
   'Fossilised protein shakers, lids still on. Kroeber Fact: carbon dating places them in "leg day". The Foundation has stopped asking.',
   'Metallic, and coveted by Näsa. Kroeber Fact: Näsa has filed 41 claims on this vein. All were written in Comic Sans.',
 ];
-const LAYER_INTRO = [
+const LAYER_INTRO = [                                          // the loading screen sets the mood; practical hints come in play
   '',
-  'The Shaker Strata. Fossilised shakers in the rock: break one for a ready Milk+, contents unknown. New compound: Chrome Filings. Stamina can now be mixed: it makes your other Milk+ last longer. The crust below needs digging power 4.',
-  'The Chrome Vein. Näsa has claimed slabs of chrome: they do not dig, so find the gap. Crack Spores rise from below. Hyperfocus can now be mixed: your drinks don\'t stack, and the meter holds still. The crust below needs digging power 7: two Strengths.',
+  'The Shaker Strata. Fossilised protein shakers, lids still on.',
+  'The Chrome Vein. Metallic, and coveted by Näsa.',
 ];
+// The first time a compound is found, the hint bar says what it unlocks.
+const UNLOCKS = { powder: 'calm', chrome: 'stamina', spores: 'focus' };
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
   art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa serial number. Näsa denies ownership.`,
@@ -452,8 +454,9 @@ function hit(x, y, c) {
   bump(x, y, 10);
   if (c.t === SHAKER) {
     const v = VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
-    s.bottles[v]++; s.mysteries++;
-    say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
+    s.mysteries++;                                         // drunk on the spot: you find out what it was once it's in you
+    say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Down it goes.`);
+    s.bottles[v]++; drink(v);
   }
   if (c.t === SAMPLE) s.samples += 1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0);
   if (c.t === INGR) gain(c.ing, c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
@@ -574,6 +577,8 @@ const isArtefact = id => CONFIG.artefacts.some(a => a.id === id);
 function unlock(id) {
   if (s.guide.includes(id)) return;
   s.guide.push(id);
+  const ing = id.startsWith('ing_') && id.slice(4), v = ing && UNLOCKS[ing];
+  if (v) announce(`New compound: ${ING[ing].name}. ${VNAME[v]} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`);
   if (isArtefact(id)) {
     s.artCrater[id] = s.crater;
     say('Artefact recovered. The Foundation has been notified.');
@@ -664,6 +669,10 @@ function pickCrater(i) {
   renderStatic();
   hideMenu();
   if (s.awaySince) { shiftTimers(now() - s.awaySince); s.awaySince = 0; }
+  // A new layer is a clean slate: Frenzy or Stillness ends, and the dosage scale is back to balanced.
+  // (Milk+ already in your system keeps counting down.)
+  if (s.inState || s.meter) say('New layer, clear head. The dosage scale is back to balanced.');
+  s.frenzyUntil = 0; s.stillUntil = 0; s.inState = null; s.meter = 0; s.window = [];
   running = true;
   say(`Rover arrived at ${next.craters[i].label}.`);
   announce(LAYER_INTRO[s.layer]);
@@ -928,7 +937,7 @@ function hint() {
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap.';
-  if (layer().shakers && !s.mysteries && s.layer === 1) return 'The Shaker Strata: break a fossilised shaker (the little bottles) for a ready Milk+. You don\'t choose which.';
+  if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;

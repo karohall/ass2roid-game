@@ -39,12 +39,13 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **The meter** uses the guide's dosage scale across both sides: *Get out of our sight → Coward → Meh → We see you → Hell yeah* (Stillness → balanced → Frenzy). Calling Calm "Coward" is the Tourist Guide's tone, and hides that Stillness is a reward too.
 - **In Frenzy:** the screen tilts, the drill digs sideways, digging power doubles, and you can lose drill samples. **Frenzy wears the drill**, about 4% for every second you keep digging, so a full Frenzy of mashing costs about 40%. The drill digs at full speed until it **breaks** at 0%; then the prospector switches to the **pick axe**, which always works but is twice as slow. Strength still counts on the pick axe. **Recovery** repairs the drill.
 - **You can't lose.** The game has a **soft failure** instead: you can mess up (a broken drill, lost samples), but the run is never lost: the pick axe always works. The stakes are in what you find, and in how well you dig.
+- **States end with the layer.** Breaking through a crust gives a clean slate: Frenzy or Stillness ends and the scale is back to balanced. Milk+ already in your system keeps counting down.
 - **In Stillness:** everything slows, colours drain to violet and grey, and the drill goes exactly where you point it.
 - **The reward:** each state opens a seam beside you that only answers to that state: **frenzy artefacts** and **Stillness artefacts**, logged as *"Recovered under conditions the Kroeber Foundation does not endorse."*
 
 ## The layers
 1. **Regolith Prime:** surface dust. *Its own thing:* the learning layer. The game opens with the first shake.
-2. **The Shaker Strata:** fossilised protein shakers. *Its own thing:* **fossil shakers** in the rock. Break one for a ready Milk+, already shaken, contents unknown: a little gamble with the balance meter.
+2. **The Shaker Strata:** fossilised protein shakers. *Its own thing:* **fossil shakers** in the rock. Break one and you drink it on the spot, contents unknown: a little gamble with the balance meter.
 3. **The Chrome Vein:** metallic, and coveted by Näsa. *Its own thing:* **Näsa chrome slabs™** that can't be dug. Each has a gap to find, so the way down becomes a route, not a straight line. Hitting one brings a Näsa pop-up in Y2K chrome.
 4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (full game):* **darkness.** You only see around the prospector, and the Crack Spores glow.
 5. **The Core:** redacted by the Belt Authority
