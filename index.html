@@ -70,6 +70,7 @@
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
+  #nasa.fading { opacity:0; transition:opacity 1s ease; }
   #nasa { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:300px; padding:8px 12px; border-radius:14px; font-size:12px; color:#123; text-align:center;
           background:linear-gradient(180deg,#fdfdff 0%,#c9d3df 45%,#8e9bab 55%,#e6ecf3 100%); border:2px solid #fff; box-shadow:0 0 0 2px #6d7a8a, 0 6px 18px rgba(0,0,0,.5); }
   #nasa b { color:#0047ff; letter-spacing:.1em; }
@@ -208,9 +209,9 @@ const CONFIG = {
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
         { id: 7, label: 'Crater 7', note: 'Metallic traces. More Chrome Filings, less Legacy Powder.', mods: { chrome: 1.5, powder: 0.7 } },
       ] },
-    { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 100, tint: '#4f5358',
+    { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 90, tint: '#4f5358',
       slabs: { rows: [8, 15, 22, 37, 44, 51], gap: 2 },   // Näsa chrome: can't be dug, find the gap
-      yields: { chrome: 0.05, whey: 0.025, powder: 0.02, spores: 0.0175 },
+      yields: { chrome: 0.05, whey: 0.05, powder: 0.02, spores: 0.0175 },   // Whey doubled: the toughest rock needs Strength
       craters: [
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
@@ -227,7 +228,8 @@ const CONFIG = {
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
-  hint:    { typeCps: 60 },       // the hint bar types itself out, characters per second
+  hint:    { typeCps: 60 },
+  nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often       // the hint bar types itself out, characters per second
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -475,9 +477,13 @@ function gain(k, n) {
 
 // Näsa intrudes like a pop-up ad, at most every 20 seconds.
 function nasa() {
-  if (now() - s.nasaAt < 20000) return;
-  s.nasaAt = now(); $('nasa').classList.remove('hidden');
-  setTimeout(() => $('nasa').classList.add('hidden'), 2600);
+  if (now() - s.nasaAt < CONFIG.nasa.everyMs) return;
+  s.nasaAt = now();
+  const el = $('nasa');
+  el.classList.remove('hidden', 'fading');
+  clearTimeout(nasa.t1); clearTimeout(nasa.t2);
+  nasa.t1 = setTimeout(() => el.classList.add('fading'), CONFIG.nasa.showMs);                 // long enough to read
+  nasa.t2 = setTimeout(() => el.classList.add('hidden'), CONFIG.nasa.showMs + 1000);          // then a one-second fade
 }
 
 function warn(m) { if (now() - s.lastWarn > 1500) { say(m); s.lastWarn = now(); } }
@@ -929,9 +935,10 @@ function hint() {
   const nearCrust = p.y >= H - 8;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.' : 'FRENZY! Double digging power. Go go go.';
   if (stillness()) return seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.';
-  if (shaking() && s.shakesDone === 0) return `Shaking ${VNAME[s.shake.v]}… No digging until it is ready. Then press ${VARIANTS.indexOf(s.shake.v) + 1} again to drink it.`;
+  const firstShake = `Shaking ${VNAME[s.shake ? s.shake.v : 'strength']}… No digging until it is ready.`;
+  if (shaking() && s.shakesDone === 0) return firstShake;
   // The opening steps (shake, drink, dig) come before any announcement.
-  if (s.drinks === 0 && s.bottles.strength) return 'Your Strength is ready. Press 1 again to drink it.';
+  if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + ' Ready! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
   if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.announceUntil > t) return s.announce;
@@ -1020,7 +1027,12 @@ function hud() {
   document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   // The hint bar types each new hint out, with a block cursor while it types.
   const target = running ? hint() : '';
-  if (target !== typing.text) { typing.text = target; typing.from = performance.now(); }
+  if (target !== typing.text) {
+    const shown = Math.min(typing.text.length, (performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps);
+    const extends_ = typing.text && target.startsWith(typing.text);
+    typing.text = target;
+    typing.from = performance.now() - (extends_ ? shown / CONFIG.hint.typeCps * 1000 : 0);   // continue, don't erase
+  }
   const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps));
   setText('hint', n < target.length ? target.slice(0, n) + '▌' : target);
   $('pauseBtn').disabled = !running;

@@ -260,3 +260,11 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Typewriter hints.** Each new hint now types itself out in the hint bar, about 60 characters a second, with a block cursor while it types, like a teleprinter in the rover.
 
 **Still a scale jump on my screen, when the hint box emptied.** Couldn't reproduce it in testing at the same size, so the game now guards against the likely culprits: it only refits when the window really changes size (by more than a few pixels), and the page has no scrollbar that could come and go. To check on my own screen.
+
+**The first shake reads as one line.** The shaking hint had barely finished typing before the "ready" hint erased it. Now it continues on the same line: *"Shaking Strength… No digging until it is ready. Ready! Press 1 again to drink it."* In general, a hint that extends the one on screen keeps typing instead of starting over.
+
+**The Näsa pop-up was gone in an instant** (2.6 seconds, while you're busy finding the gap). Now it stays 5 seconds and fades out over one.
+
+**The Chrome Vein was sooooo slow, and Frenzy almost out of reach.** It had half the Regolith Whey of the first layer on the toughest rock, and Frenzy needed three quick Strengths (six Whey). Whey there is now doubled (a layer went from about 194 to 118 seconds for my bot), and the edge is ±90 instead of ±100: two quick Strengths and a Stamina tip you over. Hyperfocus first still keeps the two Strengths for the crust safe.
+
+**Parked for Prototype 3: blowing up Näsa's chrome.** In Frenzy with stacked Strength, a slab heats up until it blows open, or blows you up: the drill breaks and you're thrown back up a few rows. *"Näsa™ property damaged. An invoice has been issued."* Love the invoice, and that only the drill breaks.
