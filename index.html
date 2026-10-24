@@ -73,10 +73,10 @@
           background:linear-gradient(180deg,#fdfdff 0%,#c9d3df 45%,#8e9bab 55%,#e6ecf3 100%); border:2px solid #fff; box-shadow:0 0 0 2px #6d7a8a, 0 6px 18px rgba(0,0,0,.5); }
   #nasa b { color:#0047ff; letter-spacing:.1em; }
   /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
-  .later { opacity:0; pointer-events:none; transition:opacity 1.2s ease; }
-  .later.shown { opacity:1; pointer-events:auto; }
-  .recipe.later:not(.shown), .row.later:not(.shown) { display:none; }            /* recipes take no space until they appear */
-  .recipe.later.shown:not(.settled) { animation:fadein 1.2s ease; }   /* fade in once; not again when a new layer rebuilds the menu */
+  .later:not(.shown) { display:none !important; }                    /* hidden parts take no space */
+  .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
+  #milk { border-color:#777; }                                        /* the shakes stand out */
+  #milk h3 { color:var(--text); }
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
   body.intro .box:has(#recipes) { border-color:transparent; background:none; }
   .box:has(#recipes) { transition:background-color 1.2s, border-color 1.2s; }
@@ -116,6 +116,21 @@
   </div>
 
   <div id="panel">
+    <div class="box" id="milk">
+      <h3 class="later" data-reveal="drink">Milk+ menu</h3>
+      <div id="recipes"></div>
+      <div class="small later" data-reveal="learning" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
+      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
+    </div>
+
+    <div class="box later" data-reveal="pickup">
+      <h3>Ingredients</h3>
+      <div id="ingredients"></div>
+    </div>
+  </div>
+
+  <div id="panel2" class="panel">
     <div class="box later" data-reveal="dig">
       <h3>Rover panel</h3>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
@@ -125,21 +140,6 @@
       <div class="row later" data-reveal="drill"><span>Drill</span><span id="drill">100%</span></div>
     </div>
 
-    <div class="box later" data-reveal="pickup">
-      <h3>Ingredients</h3>
-      <div id="ingredients"></div>
-    </div>
-
-    <div class="box">
-      <h3 class="later" data-reveal="drink">Milk+ menu</h3>
-      <div id="recipes"></div>
-      <div class="small later" data-reveal="drink" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
-      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
-      <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
-    </div>
-  </div>
-
-  <div id="panel2" class="panel">
     <div class="box later" data-reveal="guide">
       <h3>Field Guide · Kroeber Foundation</h3>
       <div id="guide"></div>
@@ -188,9 +188,9 @@ const CONFIG = {
   },
 
   // tipAt: how far the balance meter must go to tip into Frenzy or Stillness.
-  // Regolith Prime tips early so a new player can reach both states with two quick drinks.
+  // Regolith Prime tips a little earlier than the deeper layers: three quick drinks, or two plus a nudge.
   layers: [
-    { name: 'Regolith Prime', rows: 60, hp: [8, 10], bandHp: 60, crustHp: 60, crustMinPower: 1, tipAt: 60, tint: '#5a5a5a',
+    { name: 'Regolith Prime', rows: 60, hp: [8, 10], bandHp: 60, crustHp: 60, crustMinPower: 1, tipAt: 80, tint: '#5a5a5a',
       yields: { whey: 0.05, powder: 0.035 },
       craters: null },
     { name: 'The Shaker Strata', rows: 60, hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
@@ -830,6 +830,7 @@ const known = k => s.guide.includes('ing_' + k);
 // Bit by bit: each part of the interface appears when it first matters.
 const REVEAL = {
   drink:  () => s.drinks > 0,
+  learning: () => s.drinks > 0 && s.drinks < 3,
   dig:    () => s.dug > 0,
   pickup: () => s.pickups > 0,
   guide:  () => s.guide.length > 1,
@@ -935,7 +936,7 @@ function hud() {
   cv.className = frenzy() ? 'frenzy' : stillness() ? 'still' : '';
   document.body.classList.toggle('intro', s.drinks === 0);
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
-  document.querySelectorAll('.recipe.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
+  document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   setText('hint', running ? hint() : '');
   $('pauseBtn').disabled = !running;
   setHTML('legend', [

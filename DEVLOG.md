@@ -232,3 +232,9 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Found while playing it out:** wear counted per hit barely registered, because in Frenzy (doubled power) most blocks break in one hit and a lot of the time goes to falling. Wear now counts the time between hits, which also makes it the same on any computer.
 
 **Fix: the clock stops on the loading screen.** Playing it out showed that a Frenzy which carries you through a crust kept ticking while you read the loading screen, and was gone by the time you pressed ↓. Now the loading screen freezes every timer, the same way pause does, and you arrive in the next layer still in Frenzy.
+
+**From my own play:**
+- **The interface was hard to take in, and the shakes disappeared** among everything else. Hidden parts kept their place on screen, so the Milk+ menu floated halfway down with gaps above it, and a faint Pause button showed on the start screen. Now hidden parts take no space, the **Milk+ menu sits at the top of the first column, right next to the game**, with the ingredients that feed it underneath, and the rover panel moved to the second column with the Field Guide and the feed. The "press once to shake, press again to drink" line disappears after the first few drinks.
+- **Frenzy lay very close at hand;** stacking Strength was too easy. Regolith Prime now tips at ±80 instead of ±60: two quick Strengths reach *Hell yeah*, and Frenzy takes a third, or a nudge from another Milk+.
+
+**Reflection:** *The challenge of making UX for games is all the moving parts. It is a living interface that changes as the game teaches the player the rules, and as the player explores the construct.*
