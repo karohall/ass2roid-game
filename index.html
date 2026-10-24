@@ -8,7 +8,8 @@
   :root { --bg:#1b1b1b; --panel:#262626; --line:#444; --text:#ddd; --dim:#888; --hot:#fff; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
-  #wrap { display:flex; gap:16px; justify-content:center; padding:16px; flex-wrap:wrap; }
+  #wrap { display:flex; gap:16px; justify-content:center; align-items:flex-start; padding:16px; flex-wrap:wrap; transform-origin:top center; }
+  body.fitted { overflow:hidden; }
   #stage { position:relative; }
   canvas { display:block; border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
@@ -18,6 +19,8 @@
   #dosage { width:440px; margin-top:10px; }
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
+  #dosageHead.vast > span:first-child { display:none; }                /* Stillness: the label takes the whole row */
+  #dosageHead.vast #dosageNow { font-size:16px; letter-spacing:.02em; width:100%; text-align:center; }
   #meter { height:32px; background:#111; border:2px solid #666; position:relative;
            background-image:repeating-linear-gradient(90deg, transparent 0 calc(20% - 2px), #444 calc(20% - 2px) 20%); }
   #meterFill { position:absolute; top:0; bottom:0; left:50%; width:0; background:#bbb; transition:left .15s, width .15s; }
@@ -35,7 +38,7 @@
   .sw { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
   .sw.hatch { background:repeating-linear-gradient(45deg,#3a3a3a 0 3px,#2a2a2a 3px 6px); }
   .sw.crust { background:repeating-linear-gradient(45deg,#222 0 2px,#3a3a3a 2px 4px),#222; border:1px solid #777; }
-  #panel { width:340px; display:flex; flex-direction:column; gap:10px; }
+  #panel, #panel2 { width:300px; display:flex; flex-direction:column; gap:10px; }
   .box { background:var(--panel); border:1px solid var(--line); padding:10px; }
   .box h3 { margin:0 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   .row { display:flex; justify-content:space-between; gap:8px; }
@@ -50,6 +53,7 @@
   .recipe button.ready { background:#eee; color:#111; border-color:#fff; font-weight:bold; }
   .recipe button.ready:hover { background:#fff; color:#111; }
   .recipe .name { line-height:1.25; }
+  .recipe .does { font-size:12px; color:var(--text); }
   .small { font-size:11px; color:var(--dim); }
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
   #guide { display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; }
@@ -65,6 +69,9 @@
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
+  #nasa { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:300px; padding:8px 12px; border-radius:14px; font-size:12px; color:#123; text-align:center;
+          background:linear-gradient(180deg,#fdfdff 0%,#c9d3df 45%,#8e9bab 55%,#e6ecf3 100%); border:2px solid #fff; box-shadow:0 0 0 2px #6d7a8a, 0 6px 18px rgba(0,0,0,.5); }
+  #nasa b { color:#0047ff; letter-spacing:.1em; }
   /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
   .later { opacity:0; pointer-events:none; transition:opacity 1.2s ease; }
   .later.shown { opacity:1; pointer-events:auto; }
@@ -96,6 +103,7 @@
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
+    <div id="nasa" class="hidden"><b>NÄSA™</b> This chrome is the property of Näsa. Big Space™.</div>
     <div id="hint"></div>
     <div id="dosage" class="later" data-reveal="drink">
       <div id="dosageHead"><span>Dosage scale</span><span id="doseWindow"></span><span id="dosageNow">Meh</span></div>
@@ -128,7 +136,9 @@
       <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
+  </div>
 
+  <div id="panel2" class="panel">
     <div class="box later" data-reveal="guide">
       <h3>Field Guide · Kroeber Foundation</h3>
       <div id="guide"></div>
@@ -153,7 +163,7 @@ const CONFIG = {
   dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.1 },
   strength:{ boost: 3, maxStacks: 2, durationMs: 45000 },
   calm:    { durationMs: 15000 },
-  stamina: { stretch: 1.5, durationMs: 30000 },   // a buffer: every other countdown lasts 50% longer
+  stamina: { stretch: 1.5 },     // instant: everything already in your system lasts 50% longer
   focus:   { durationMs: 30000 },   // steady hand: drinks do not stack (window ×1) and the meter holds still
 
   // Balance meter: −100 Stillness … 0 balanced … +100 Frenzy. Drifts back toward 0.
@@ -180,12 +190,14 @@ const CONFIG = {
       yields: { whey: 0.05, powder: 0.035 },
       craters: null },
     { name: 'The Shaker Strata', rows: 60, hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
+      shakers: 0.02,               // fossilised shakers: break one for a ready, random Milk+
       yields: { powder: 0.05, whey: 0.025, chrome: 0.025 },
       craters: [
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
         { id: 7, label: 'Crater 7', note: 'Metallic traces. More Chrome Filings, less Legacy Powder.', mods: { chrome: 1.5, powder: 0.7 } },
       ] },
     { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 100, tint: '#4f5358',
+      slabs: { rows: [8, 15, 22, 37, 44, 51], gap: 2 },   // Näsa chrome: can't be dug, find the gap
       yields: { chrome: 0.05, whey: 0.025, powder: 0.02, spores: 0.0175 },
       craters: [
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
@@ -214,7 +226,7 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'stamina', 'focus'];
 const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus' };
-const VDESC = { strength: '+3 digging power. Stacks. Pushes toward Frenzy.', calm: 'Pushes toward Stillness.', stamina: 'Your other Milk+ last 50% longer.', focus: 'Your drinks don\'t stack, and the meter holds still.' };
+const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown, the label has fossilised. Caution: seeps upward. Fun fact: the Shaker Strata were someone\'s gym bag.' },
@@ -228,8 +240,8 @@ const LAYER_CARD = [
 ];
 const LAYER_INTRO = [
   '',
-  'The Shaker Strata. New compound: Chrome Filings. Stamina can now be mixed: it makes your other Milk+ last longer. The crust below needs digging power 4.',
-  'The Chrome Vein. Crack Spores rise from below. Hyperfocus can now be mixed: your drinks don\'t stack, and the meter holds still. The crust below needs digging power 7: two Strengths.',
+  'The Shaker Strata. Fossilised shakers in the rock: break one for a ready Milk+, contents unknown. New compound: Chrome Filings. Stamina can now be mixed: it makes your other Milk+ last longer. The crust below needs digging power 4.',
+  'The Chrome Vein. Näsa has claimed slabs of chrome: they do not dig, so find the gap. Crack Spores rise from below. Hyperfocus can now be mixed: your drinks don\'t stack, and the meter holds still. The crust below needs digging power 7: two Strengths.',
 ];
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
@@ -242,7 +254,7 @@ const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endo
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────────────────────────────
-const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8;
+const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10;
 const W = CONFIG.grid.cols, T = CONFIG.grid.tile, VIEW = CONFIG.grid.viewRows;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 const $ = id => document.getElementById(id);
@@ -268,7 +280,7 @@ function freshState() {
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0 }, strStacks: 0,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
     guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
-    shake: null, shakesDone: 0, pickups: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
+    shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
 
@@ -307,6 +319,14 @@ function genLayer() {
       g[y][x] = c;
     }
   }
+  // The Shaker Strata: fossilised shakers, still sealed.
+  if (L.shakers) for (let y = 2; y < H - 4; y++) for (let x = 1; x < W - 1; x++)
+    if (g[y][x].t === DIRT && Math.random() < L.shakers) g[y][x] = { t: SHAKER, hp: g[y][x].hp, max: g[y][x].max };
+  // The Chrome Vein: slabs claimed by Näsa. They can't be dug; each has a gap to find.
+  if (L.slabs) for (const y of L.slabs.rows) {
+    const gx = 1 + Math.floor(Math.random() * (W - 1 - L.slabs.gap));
+    for (let x = 1; x < W - 1; x++) if (x < gx || x >= gx + L.slabs.gap) g[y][x] = { t: SLAB, hp: 1e9, max: 1e9 };
+  }
   // Supply cache left by the last survey: enough Regolith Whey in the row above the crust
   // for the Strength the crust needs. You can't climb back up, so this prevents getting stuck.
   const stacks = Math.ceil((L.crustMinPower - CONFIG.dig.basePower) / CONFIG.strength.boost);
@@ -326,8 +346,9 @@ function openSeam(kind) {
   // the nearer side first, then the far side, then the same again a little lower or higher.
   const near = p.x >= 5 ? -2 : 2, row = Math.max(2, Math.min(H - 5, p.y));
   const spots = [0, 3, -3].flatMap(dy => [[p.x + near, row + dy], [p.x - near, row + dy]]);
-  const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 5 &&
-    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART].includes(c.t) && !c.cache; }));   // never cover the other seam or the supply cache
+  const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 6 &&
+    [-1, 0, 1].every(dy => !g[y0 + dy].some(c => c.t === SLAB)) &&   // never block a slab's gap: you can't climb back up
+    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART, SLAB].includes(c.t) && !c.cache; }));   // never cover the other seam, a slab or the supply cache
   const spot = spots.find(fits);
   if (!spot) return;
   const [cx, cy] = spot;
@@ -374,6 +395,7 @@ function act(dx, dy) {
 
 function hit(x, y, c) {
   if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
+  if (c.t === SLAB) { nasa(); warn('Näsa chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
   if ((c.t === SEAM || c.t === ART) && !inState(c.kind)) {
     warn(c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
     bump(x, y, 2); return;
@@ -386,6 +408,11 @@ function hit(x, y, c) {
   g[y][x] = { t: AIR, hp: 0, max: 0 };
   s.dug++;
   bump(x, y, 10);
+  if (c.t === SHAKER) {
+    const v = VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
+    s.bottles[v]++; s.mysteries++;
+    say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
+  }
   if (c.t === SAMPLE) s.samples += 1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0);
   if (c.t === INGR) gain(c.ing, c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
   if (c.cache) say('Survey cache. The last crew left this for you.');
@@ -398,6 +425,13 @@ function gain(k, n) {
   s.pickups++;
   say(`+${n} ${ING[k].name}.`);
   unlock('ing_' + k);
+}
+
+// Näsa intrudes like a pop-up ad, at most every 20 seconds.
+function nasa() {
+  if (now() - s.nasaAt < 20000) return;
+  s.nasaAt = now(); $('nasa').classList.remove('hidden');
+  setTimeout(() => $('nasa').classList.add('hidden'), 2600);
 }
 
 function warn(m) { if (now() - s.lastWarn > 1500) { say(m); s.lastWarn = now(); } }
@@ -462,16 +496,16 @@ function drink(v) {
     else s.strStacks = 1;
   }
   if (v === 'calm') say('Calm consumed. Noted in your file.');
-  // Stamina is a buffer: whatever is already counting down stretches by 50%,
-  // and every other Milk+ drunk while it lasts runs 50% longer.
-  const stretch = CONFIG.stamina.stretch;
+  // Stamina acts at once: everything already in your system lasts 50% longer. No countdown of its own.
   if (v === 'stamina') {
-    for (const k of VARIANTS) if (k !== 'stamina' && active(k)) s.fx[k] = t + (s.fx[k] - t) * stretch;
-    if (frenzy()) s.frenzyUntil = t + (s.frenzyUntil - t) * stretch;
-    if (stillness()) s.stillUntil = t + (s.stillUntil - t) * stretch;
-    say('Stamina. Everything lasts a little longer.');
+    const k2 = CONFIG.stamina.stretch, running = VARIANTS.filter(k => k !== 'stamina' && active(k));
+    for (const k of running) s.fx[k] = t + (s.fx[k] - t) * k2;
+    if (frenzy()) s.frenzyUntil = t + (s.frenzyUntil - t) * k2;
+    if (stillness()) s.stillUntil = t + (s.stillUntil - t) * k2;
+    say(running.length || frenzy() || stillness() ? 'Stamina. Everything in your system lasts a little longer.' : 'Stamina, with nothing to stretch. The Foundation notes the waste.');
+    return;
   }
-  s.fx[v] = t + CONFIG[v].durationMs * (v !== 'stamina' && active('stamina') ? stretch : 1);
+  s.fx[v] = t + CONFIG[v].durationMs;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -673,11 +707,11 @@ function update(dt) {
   else if (s.inState === 'frenzy') { s.inState = null; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.'); }
   else if (s.inState === 'still') { s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.'); }
   else if (s.meter >= tipAt()) {
-    s.frenzyUntil = t + CONFIG.frenzy.durationMs * (active('stamina') ? CONFIG.stamina.stretch : 1); s.inState = 'frenzy'; s.frenzies++;
+    s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
     say('FRENZY. The Rock is speaking. Do not answer.');
     openSeam('frenzy');
   } else if (s.meter <= -tipAt()) {
-    s.stillUntil = t + CONFIG.stillness.durationMs * (active('stamina') ? CONFIG.stamina.stretch : 1); s.inState = 'still'; s.stills++;
+    s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;
     say('STILLNESS. Everything has slowed down. You do not mind.');
     openSeam('still');
   } else if (!active('focus')) {                     // Hyperfocus: the meter holds still
@@ -709,9 +743,16 @@ function draw() {
     const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
     if (c.t === AIR) continue;
     ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222' }[c.t];
+    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
     ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
+    if (c.t === SHAKER) {                                    // a little sealed bottle
+      ctx.fillStyle = '#ddd'; ctx.fillRect(cx - 6, cy - 7, 12, 16); ctx.fillStyle = '#888'; ctx.fillRect(cx - 4, cy - 11, 8, 4);
+    }
+    if (c.t === SLAB) {                                      // Näsa chrome, with a shine and a ™
+      ctx.fillStyle = '#e4e9ee'; ctx.fillRect(px + 1, py + 1, T - 2, 6);
+      ctx.fillStyle = '#5d6670'; ctx.font = 'bold 11px monospace'; ctx.fillText('™', cx, cy + 3); ctx.font = 'bold 14px monospace';
+    }
     if (c.t === INGR) { ctx.fillStyle = '#fff'; ctx.fillText(ING[c.ing].letter, cx, cy); }
     if (c.t === BAND || c.t === CRUST) {
       ctx.strokeStyle = c.t === CRUST ? '#444' : '#2a2a2a'; ctx.beginPath();
@@ -761,9 +802,9 @@ const REVEAL = {
   pickup: () => s.pickups > 0,
   guide:  () => s.guide.length > 1,
   recipe_strength: () => true,
-  recipe_calm:    () => known('powder'),
-  recipe_stamina: () => known('chrome'),
-  recipe_focus:   () => known('spores'),
+  recipe_calm:    () => known('powder') || s.bottles.calm > 0,
+  recipe_stamina: () => known('chrome') || s.bottles.stamina > 0,
+  recipe_focus:   () => known('spores') || s.bottles.focus > 0,
 };
 const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
@@ -778,6 +819,8 @@ function hint() {
   if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.announceUntil > t) return s.announce;
+  if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap.';
+  if (layer().shakers && !s.mysteries && s.layer === 1) return 'The Shaker Strata: break a fossilised shaker (the little bottles) for a ready Milk+. You don\'t choose which.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;
@@ -802,7 +845,7 @@ function renderStatic() {
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
   $('recipes').innerHTML = VARIANTS.map((v, i) => `
     <div class="recipe${i ? ' later' : ''}" data-reveal="recipe_${v}">
-      <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="small" id="rc_${v}"></span></div>
+      <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}">Shake</button>
     </div>`).join('');
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
@@ -843,7 +886,8 @@ function hud() {
   $('tipHi').style.left = `calc(${pct(tipAt())}% - 1px)`;
   const lvl = Math.max(0, Math.min(4, Math.floor(pct(s.meter) / 20)));
   [...$('scale').children].forEach((el, i) => el.className = i === lvl ? 'on' : '');
-  setText('dosageNow', frenzy() ? 'FRENZY' : stillness() ? 'STILLNESS' : DOSAGE[lvl]);
+  setText('dosageNow', frenzy() ? 'FRENZY' : stillness() ? 'Get out into the vast nothingness of space' : DOSAGE[lvl]);
+  $('dosageHead').classList.toggle('vast', stillness());
   // The dose window, made visible: what the next drink will be multiplied by, and for how long.
   const win = windowDrinks();
   setHTML('doseWindow', active('focus') && !frenzy() && !stillness() ? 'steady hand: drinks <b>×1</b>'
@@ -860,6 +904,8 @@ function hud() {
     '<span>◆ Drill sample</span>',
     ...Object.keys(ING).filter(known).map(k => `<span><b>${ING[k].letter}</b> ${ING[k].name}</span>`),
     '<span><i class="sw hatch"></i>Hard band</span>',
+    ...(layer().shakers ? ['<span>▮ Fossil shaker</span>'] : []),
+    ...(layer().slabs ? ['<span><i class="sw" style="background:#a9b2bc"></i>Näsa chrome™</span>'] : []),
     `<span><i class="sw crust"></i>Crust (power ${layer().crustMinPower})</span>`,
   ].join(''));
 }
@@ -903,6 +949,16 @@ document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.ta
 
 $('go').onclick = newGame;
 $('pauseBtn').onclick = pause;
+// Fit the whole game to the window: never scroll, just scale down evenly on small screens.
+function fit() {
+  const w = $('wrap');
+  w.style.transform = '';
+  const k = Math.min(1, innerHeight / w.offsetHeight, innerWidth / w.scrollWidth);
+  w.style.transform = k < 1 ? `scale(${k})` : '';
+  document.body.classList.toggle('fitted', k < 1);
+}
+addEventListener('resize', fit);
+setInterval(fit, 500);                                       // panels grow as parts of the interface appear
 $('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
 // Boot: show a world behind the start screen.

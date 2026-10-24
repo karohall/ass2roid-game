@@ -192,3 +192,35 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **The interface arrives bit by bit (pö om pö).** The opening screen is just the prospector, the hint and the Strength button, and the first hint carries the joke: *"Starter ration: 2 Regolith Whey, courtesy of the Foundation."* Everything else appears when it first matters: the dosage scale, the caution and the feed with the first drink; the rover panel, the key and pause with the first dig; ingredients with the first pickup; each recipe when its ingredient turns up; the Field Guide with its second card. Each part fades in. It tells the story to the player.
 
 **The rumour moved.** *"The Foundation measures how fast, not just how much"* was too far-fetched and vague on its own, with no direct connection to the shaking. Now it shows right after the first drink, while "next drink ×1.5" is on screen, and says what it means: drink again while that shows, and it pushes harder.
+
+---
+
+## 2026-10-24 — Each layer gets its own thing
+
+**Problem:** layer 3 had too few new features. It felt like the only thing that changed was that it was slower and harder.
+
+**Decided:** every layer gets one thing of its own, so it *plays* differently, built from what the GDD already says about it.
+- **The Shaker Strata: fossil shakers.** Little sealed bottles in the rock. Break one for a ready Milk+, already shaken, contents unknown. A small gamble with the balance meter.
+- **The Chrome Vein: Näsa chrome slabs™.** Bars of chrome that can't be dug, each with a gap. The way down becomes a route instead of a straight line. Hitting one brings a Näsa pop-up in Y2K chrome: *"This chrome is the property of Näsa. Big Space™."* The first chrome in the game, as the GDD intended: Näsa intrudes like an ad.
+- **The Crack (full game): darkness.** Only the area around the prospector is visible, and the Crack Spores glow.
+
+**Fix along the way:** an altered-state seam could have opened inside a slab's gap and blocked the only way down. Seams now keep clear of slab rows and the supply cache.
+
+**Also:** in Stillness, the dosage scale now reads *GET OUT INTO THE VAST NOTHINGNESS OF SPACE*.
+
+---
+
+## 2026-10-24 — Playtest feedback
+
+**What came up:**
+- **Unclear what the different shakes do.** What each one did was only in a tooltip, and nobody hovers while digging.
+- *"What's the point with Stamina?"* Unclear whether Stamina should be drunk first, or whether it acts on what's already in your system. I like the idea of always being able to take it, to prolong what's already in your system.
+- **The pillar of information on the right** was a problem: you shouldn't have to scroll to reach the bottom half of the screen.
+- *"Can it go wrong somehow? Can you lose?"*
+
+**Changed:**
+- **Each shake says what it does,** in one line under its name in the Milk+ menu.
+- **Stamina does one thing:** drink it any time, and everything already in your system lasts 50% longer. No countdown of its own. Drink it with nothing in your system and *"The Foundation notes the waste."*
+- **The side panel is now two columns** (rover, ingredients and Milk+; then the Field Guide, the feed and pause), and **the whole game scales to fit the window,** so nothing needs scrolling, even on a small laptop.
+
+**Open:** can you lose? To decide.

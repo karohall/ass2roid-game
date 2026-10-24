@@ -21,7 +21,7 @@
 Mixed from ingredients found in the layers. Each one is a temporary effect:
 
 - **Strength:** more digging power, for harder layers
-- **Stamina:** a buffer: your other Milk+, and Frenzy or Stillness, last 50% longer
+- **Stamina:** drink it any time: everything already in your system (other Milk+, Frenzy or Stillness) lasts 50% longer
 - **Energy:** faster digging for a while
 - **Hyperfocus:** a steady hand: drinks don't stack (the dose window counts ×1), and the balance meter holds still
 - **Calm:** pushes the balance meter toward Stillness
@@ -42,13 +42,13 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **The reward:** each state opens a seam beside you that only answers to that state: **frenzy artefacts** and **Stillness artefacts**, logged as *"Recovered under conditions the Kroeber Foundation does not endorse."*
 
 ## The layers
-1. **Regolith Prime:** surface dust
-2. **The Shaker Strata:** fossilised protein shakers
-3. **The Chrome Vein:** metallic, and coveted by Näsa
-4. **The Crack:** bioluminescent; home of the Jacked Asses
+1. **Regolith Prime:** surface dust. *Its own thing:* the learning layer. The game opens with the first shake.
+2. **The Shaker Strata:** fossilised protein shakers. *Its own thing:* **fossil shakers** in the rock. Break one for a ready Milk+, already shaken, contents unknown: a little gamble with the balance meter.
+3. **The Chrome Vein:** metallic, and coveted by Näsa. *Its own thing:* **Näsa chrome slabs™** that can't be dug. Each has a gap to find, so the way down becomes a route, not a straight line. Hitting one brings a Näsa pop-up in Y2K chrome.
+4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (full game):* **darkness.** You only see around the prospector, and the Crack Spores glow.
 5. **The Core:** redacted by the Belt Authority
 
-Each layer needs more strength, yields new ingredients, and has its own Kroeber Fact.
+Each layer needs more strength, yields new ingredients, has its own Kroeber Fact, and **plays differently**: one thing of its own, so deeper isn't just slower and harder.
 
 ## Ingredients (fictional)
 Korova minerals in the menu's format (Nutrition Facts, Caution, Fun fact). One signature compound per layer:
