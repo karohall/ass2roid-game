@@ -70,6 +70,9 @@
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
+  .stats { border-collapse:collapse; font-size:13px; min-width:300px; }
+  .stats td { padding:2px 8px; border-bottom:1px solid #333; text-align:left; }
+  .stats td.num { text-align:right; color:var(--hot); font-weight:bold; }
   #nasa.fading { opacity:0; transition:opacity 1s ease; }
   #nasa { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:300px; padding:8px 12px; border-radius:14px; font-size:12px; color:#123; text-align:center;
           background:linear-gradient(180deg,#fdfdff 0%,#c9d3df 45%,#8e9bab 55%,#e6ecf3 100%); border:2px solid #fff; box-shadow:0 0 0 2px #6d7a8a, 0 6px 18px rgba(0,0,0,.5); }
@@ -229,6 +232,7 @@ const CONFIG = {
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
   hint:    { typeCps: 60 },
+  ending:  { countMs: 1800 },     // the end screen's stats count up over this long
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often       // the hint bar types itself out, characters per second
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
@@ -316,7 +320,7 @@ function freshState() {
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
     guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
-    shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
+    shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drillBreaks: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
 
@@ -448,7 +452,7 @@ function hit(x, y, c) {
   if (frenzy() && !onPick()) {
     if (!s.drillWorn) say('The drill is complaining.');
     s.drill = Math.max(0, s.drill - CONFIG.drill.wearPerSec * sinceHit / 1000); s.drillWorn = true;
-    if (onPick()) say('The drill is done. Out comes the pick axe. It always works.');
+    if (onPick()) { s.drillBreaks++; say('The drill is done. Out comes the pick axe. It always works.'); }
   }
   if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('1 drill sample lost to the void.'); }
   if (c.hp > 0) return;
@@ -688,16 +692,25 @@ function pickCrater(i) {
 }
 
 function finishGame() {
-  const sec = Math.floor(s.timeMs / 1000), total = guideEntries().length;
-  const mins = Math.max(1, Math.round(sec / 60));
-  showMenu(`<h1>PROTOTYPE 2 COMPLETE</h1>
-    <div>Below you: The Crack. It is not in this prototype.</div>
-    <div class="small">Depth ${s.depthOffset} m · Drill samples ${s.samples} · Milk+ ${s.drinks} · Drill ${onPick() ? 'broken (pick axe)' : Math.round(s.drill) + '%'} · Frenzies ${s.frenzies} · Stillnesses ${s.stills} · Samples lost ${s.lost}</div>
-    <div>Field Guide: ${s.guide.length} / ${total} cards.</div>
-    <div class="small">Shift length: ${mins} minute${mins === 1 ? '' : 's'}. The Foundation has logged your overtime.</div>
-    <div class="small">${CONFIG.artefacts.every(a => s.guide.includes(a.id)) ? 'Every altered-state artefact recovered. The Foundation will pretend not to know.' : 'Some slots remain ? ? ?. Some strata only open to those who did not double check.'}</div>
+  const sec = Math.floor(s.timeMs / 1000);
+  const stats = [
+    ['Depth', s.depthOffset, ' m'], ['Shift length', sec, '', fmt], ['Drill samples', s.samples], ['Milk+ drunk', s.drinks],
+    ['Frenzies', s.frenzies], ['Stillnesses', s.stills], ['Field Guide cards', s.guide.length, ' / ' + guideEntries().length], ['Drill broke', s.drillBreaks, s.drillBreaks === 1 ? ' time' : ' times'],
+  ];
+  showMenu(`<h1>CONGRATULATIONS.</h1>
+    <div style="font-size:16px">You are now further down than anyone asked you to be.</div>
+    <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
+    <div class="small">Prototype 2. Below you: The Crack, which is not in this prototype.</div>
     <button id="again">New game</button>`);
   $('again').onclick = newGame;
+  // The stats count up, like a tally.
+  const cells = [...document.querySelectorAll('#menu .num')], t0 = performance.now();
+  (function count() {
+    const k = Math.min(1, (performance.now() - t0) / CONFIG.ending.countMs);
+    for (const c of cells) { const v = Math.round(+c.dataset.to * k); c.textContent = (c.dataset.fmt ? fmt(v) : v) + c.dataset.unit; }
+    if (k < 1) requestAnimationFrame(count);
+  })();
+  setTimeout(() => cells.forEach(c => c.textContent = (c.dataset.fmt ? fmt(+c.dataset.to) : c.dataset.to) + c.dataset.unit), CONFIG.ending.countMs + 100);   // always land on the final numbers
 }
 
 function showMenu(html) { $('menu').innerHTML = html; $('menu').classList.remove('hidden'); }

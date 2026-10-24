@@ -102,6 +102,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - First Milk+: *"Do not spill. Make us proud."*
 
 ## Ideas for later
+- **High scores (parking lot).** Personal bests saved in the browser (fastest shift, most drill samples, most Field Guide cards, most Frenzies, most Stillnesses, with a NEW mark), or a shared leaderboard, which would need a server. For now the end screen keeps a personal summary only.
 - **Blowing up Näsa's chrome (Prototype 3).** In Frenzy, with Strength stacked, hitting a Näsa slab heats it up; keep going and it melts or blows open, a new way down. The risk: every hit on a hot slab may blow *you* up instead. Soft failure: the blast breaks the drill and throws the prospector back up a few rows. Näsa pop-up: *"Näsa™ property damaged. An invoice has been issued."* Field Guide find: a lump of molten chrome™.
 - **Next prototype: make the start button (Enter) stand out.** A visual cue that draws the eye to "Begin shift": movement, colour, or a light effect. **Preferred: a blinking cursor ▌ after "Begin shift"**, echoing the typewriter hints.
 - **Archive photos for artefacts.** Field Guide artefact cards get realistic museum-archive photos: neutral grey backdrop, flat lighting, scale bar, accession number, catalogue label. Photos appear only in the Field Guide; the rest of the game stays comic ink, so the archive reads as "real" against the drawn world.
