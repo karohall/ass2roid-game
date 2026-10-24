@@ -15,7 +15,7 @@
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
-  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:38px; }
+  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; }   /* at least three lines, so it rarely changes height */
   #dosage { width:440px; margin-top:10px; }
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
@@ -55,6 +55,7 @@
   .recipe .name { line-height:1.25; }
   .recipe .does { font-size:12px; color:var(--text); }
   .small { font-size:11px; color:var(--dim); }
+  #log { height:132px; overflow:hidden; }                            /* fixed height: newest on top, the rest cut off */
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
   #guide { display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; }
   #guide .cat { grid-column:1 / -1; font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.08em; margin-top:2px; }
@@ -62,7 +63,7 @@
   .slot.found { border-style:solid; border-color:#999; color:var(--hot); }
   .slot.sel { outline:1px solid #fff; }
   .slot.locked { color:#666; font-size:16px; }
-  #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; min-height:60px; }
+  #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; height:92px; overflow:hidden; }   /* fixed height */
   .overlay { position:absolute; inset:0; height:520px; background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
   .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
   .overlay h2 { margin:0; font-size:18px; letter-spacing:.08em; }
@@ -99,7 +100,7 @@
       <div>Ex Profundo · Prototype 2</div>
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause</div>
+      <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause · R: radio · T: tape</div>
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
@@ -131,6 +132,13 @@
   </div>
 
   <div id="panel2" class="panel">
+    <div class="box" id="radioBox">
+      <h3>Radio</h3>
+      <div class="row"><b id="radioName">Testarocco</b><span class="small" id="radioKind">Tape</span></div>
+      <div class="small" style="color:var(--text)">Now playing: <span id="radioSong">side A</span></div>
+      <div class="small" id="radioFx"></div>
+      <div class="small" style="margin-top:4px">R: next station · T: tape</div>
+    </div>
     <div class="box later" data-reveal="dig">
       <h3>Rover panel</h3>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
@@ -219,6 +227,7 @@ const CONFIG = {
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
@@ -252,6 +261,24 @@ const ARTEFACT_CARD = {
   art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa serial number. Näsa denies ownership.`,
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
 };
+const RADIO = {
+  tape:  { name: 'Testarocco', kind: 'Tape', fx: 'The rover’s own tape. No effect.', songs: ['side A'] },
+  pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: ['Down in the Shaft', 'Heavy Ore', 'Hard Hat, Hard Body', 'Jackhammer Heart'] },
+  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: ['Amore Orbitale', 'I Dig You (All Night Long)', 'Dolce de Leche+', 'Asteroid Belt Boulevard'] },
+  void:  { name: 'Void FM', kind: 'Station', fx: 'No effect. A mood, not a tactic.', songs: ['Ex Profundo', 'Falling Forwards Backwards Into Dimension', 'Parallax for Two Prospectors', 'No Ground Beneath, No Ceiling', 'Kármán Line (Extended Longing Mix)'] },
+};
+const STATIONS = ['pump', 'disco', 'void'];
+// The radio lives outside the shift: the tape plays from the start screen, and it keeps playing between games.
+const radio = { on: 'tape', last: 'pump', since: 0, clock: 0 };
+function radioKey(k) {
+  if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
+  else radio.on = radio.on === 'tape' ? radio.last : STATIONS[(STATIONS.indexOf(radio.on) + 1) % STATIONS.length];
+  if (radio.on !== 'tape') radio.last = radio.on;
+  radio.since = radio.clock;
+  if (running) say(`Radio: ${RADIO[radio.on].name}.`);
+}
+const nowPlaying = () => { const st = RADIO[radio.on]; return st.songs[Math.floor((radio.clock - radio.since) / CONFIG.radio.songMs) % st.songs.length]; };
+
 const DOSAGE = ['Get out of our sight', 'Coward', 'Meh', 'We see you', 'Hell yeah'];
 const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endorse.';
 
@@ -380,7 +407,7 @@ function power() {
 // How much slower digging is: everything slows in Stillness.
 // The drill works at full speed until it breaks; then the pick axe, which always works, is slower.
 const onPick = () => s.drill <= 0;
-function slowFactor() { return (stillness() ? CONFIG.stillness.slowMult : 1) * (onPick() ? CONFIG.drill.pickSlow : 1); }
+function slowFactor() { return (stillness() ? CONFIG.stillness.slowMult : 1) * (onPick() ? CONFIG.drill.pickSlow : 1) * (radio.on === 'pump' ? CONFIG.radio.pumpDigSpeed : 1); }
 
 function driftChance() {
   if (stillness()) return 0;                                 // Stillness: the drill goes exactly where you point it
@@ -694,6 +721,7 @@ function resume() {
 }
 
 function newGame() {
+  fitK = 1; setTimeout(() => fit(true), 0);                 // a new shift gets a fresh fit
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
@@ -742,7 +770,7 @@ function update(dt) {
     say('STILLNESS. Everything has slowed down. You do not mind.');
     openSeam('still');
   } else if (!active('focus')) {                     // Hyperfocus: the meter holds still
-    const k = B.decayPerSec * dt / 1000;
+    const k = B.decayPerSec * dt / 1000 * (radio.on === 'disco' ? CONFIG.radio.discoCalm : 1);   // Disco Gravitas calms
     s.meter = s.meter > 0 ? Math.max(0, s.meter - k) : Math.min(0, s.meter + k);
   }
   if (!active('strength')) s.strStacks = 0;
@@ -982,6 +1010,8 @@ function hud() {
   document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   setText('hint', running ? hint() : '');
   $('pauseBtn').disabled = !running;
+  setText('radioName', RADIO[radio.on].name); setText('radioKind', RADIO[radio.on].kind);
+  setText('radioSong', nowPlaying()); setText('radioFx', RADIO[radio.on].fx);
   setHTML('legend', [
     '<span><i class="sw" style="background:#ddd"></i>You</span>',
     `<span><i class="sw" style="background:${layer().tint}"></i>Rock</span>`,
@@ -996,6 +1026,7 @@ function hud() {
 
 function loop(t) {
   const dt = Math.min(100, t - (lastFrame || t)); lastFrame = t;
+  radio.clock += dt;
   if (running) update(dt);
   if (g) { draw(); hud(); }
   requestAnimationFrame(loop);
@@ -1008,6 +1039,7 @@ const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], Ar
 addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   if (k === ' ') e.preventDefault();
+  if (k === 'r' || k === 't') { radioKey(k); return; }   // the radio works on every screen
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
   if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
@@ -1034,14 +1066,17 @@ document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.ta
 $('go').onclick = newGame;
 $('pauseBtn').onclick = pause;
 // Fit the whole game to the window: never scroll, just scale down evenly on small screens.
-function fit() {
+let fitK = 1;
+function fit(fresh) {
   const w = $('wrap');
   w.style.transform = '';
-  const k = Math.min(1, innerHeight / w.offsetHeight, innerWidth / w.scrollWidth);
+  let k = Math.min(1, innerHeight / w.offsetHeight, innerWidth / w.scrollWidth);
+  if (!fresh) k = Math.min(k, fitK);                       // during play: only ever shrink, never pump back up
+  fitK = k;
   w.style.transform = k < 1 ? `scale(${k})` : '';
   document.body.classList.toggle('fitted', k < 1);
 }
-addEventListener('resize', fit);
+addEventListener('resize', () => fit(true));
 setInterval(fit, 500);                                       // panels grow as parts of the interface appear
 $('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
