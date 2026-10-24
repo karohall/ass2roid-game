@@ -25,7 +25,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Energy:** faster digging for a while
 - **Hyperfocus:** a steady hand: drinks don't stack (the dose window counts ×1), and the balance meter holds still
 - **Calm:** pushes the balance meter toward Stillness
-- **Recovery:** repairs tools and body after frenzy
+- **Recovery:** repairs the drill after a Frenzy, at once, and the pick axe goes back on its hook (1 Regolith Whey + 1 Legacy Powder)
 - **Sleep:** ends the shift and saves progress
 
 **Secret menu** (unlocked through frenzy): Jizz+, Candygirl, XXX.
@@ -33,11 +33,12 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 ## Frenzy and Stillness (push your luck)
 - **Rule:** *Double check any possible interactions.* The Foundation measures how fast, not just how much.
 - **The balance meter** runs from −100 (Stillness) through 0 (balanced) to +100 (Frenzy), and drifts slowly back toward 0.
-- **Every Milk+ has a direction and a weight:** Strength +30, Calm −30, Stamina and Hyperfocus +10 each. Energy and Recovery get their own weights later.
+- **Every Milk+ has a direction and a weight:** Strength +30, Calm −30, Stamina and Hyperfocus +10 each, Recovery 0. Energy gets its own weight later.
 - **The dose window does the damage.** Each drink's push is multiplied by the number of drinks in the last 20 seconds: ×1, ×1.5, ×2, ×3. Drinking slowly is safe; several in quick succession tips you over. The window is shown on the meter ("next drink ×1.5"), so players learn the rule by watching it.
 - **Reaching the edge tips you into a state:** Frenzy at the top, Stillness at the bottom. In Regolith Prime the edge is ±60, so two quick drinks reach either state, even with the shake in between; deeper layers need ±100.
 - **The meter** uses the guide's dosage scale across both sides: *Get out of our sight → Coward → Meh → We see you → Hell yeah* (Stillness → balanced → Frenzy). Calling Calm "Coward" is the Tourist Guide's tone, and hides that Stillness is a reward too.
-- **In Frenzy:** the screen tilts, the drill digs sideways, digging power doubles, and you can lose ore or damage tools.
+- **In Frenzy:** the screen tilts, the drill digs sideways, digging power doubles, and you can lose drill samples. **Frenzy wears the drill**, about 4% for every second you keep digging, so a full Frenzy of mashing costs about 40%. The drill digs at full speed until it **breaks** at 0%; then the prospector switches to the **pick axe**, which always works but is twice as slow. Strength still counts on the pick axe. **Recovery** repairs the drill.
+- **You can't lose.** The game has a **soft failure** instead: you can mess up (a broken drill, lost samples), but the run is never lost: the pick axe always works. The stakes are in what you find, and in how well you dig.
 - **In Stillness:** everything slows, colours drain to violet and grey, and the drill goes exactly where you point it.
 - **The reward:** each state opens a seam beside you that only answers to that state: **frenzy artefacts** and **Stillness artefacts**, logged as *"Recovered under conditions the Kroeber Foundation does not endorse."*
 

@@ -75,8 +75,8 @@
   /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
   .later { opacity:0; pointer-events:none; transition:opacity 1.2s ease; }
   .later.shown { opacity:1; pointer-events:auto; }
-  .recipe.later:not(.shown) { display:none; }            /* recipes take no space until they appear */
-  .recipe.later.shown { animation:fadein 1.2s ease; }
+  .recipe.later:not(.shown), .row.later:not(.shown) { display:none; }            /* recipes take no space until they appear */
+  .recipe.later.shown:not(.settled) { animation:fadein 1.2s ease; }   /* fade in once; not again when a new layer rebuilds the menu */
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
   body.intro .box:has(#recipes) { border-color:transparent; background:none; }
   .box:has(#recipes) { transition:background-color 1.2s, border-color 1.2s; }
@@ -99,7 +99,7 @@
       <div>Ex Profundo · Prototype 2</div>
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–4: shake, then drink Milk+ · Space: pause</div>
+      <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause</div>
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
@@ -122,6 +122,7 @@
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
       <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
+      <div class="row later" data-reveal="drill"><span>Drill</span><span id="drill">100%</span></div>
     </div>
 
     <div class="box later" data-reveal="pickup">
@@ -164,12 +165,14 @@ const CONFIG = {
   strength:{ boost: 3, maxStacks: 2, durationMs: 45000 },
   calm:    { durationMs: 15000 },
   stamina: { stretch: 1.5 },     // instant: everything already in your system lasts 50% longer
+  recovery: {},                  // instant: repairs the drill
+  drill:   { wearPerSec: 4, pickSlow: 2, warnBelow: 60 },   // Frenzy wears the drill; at 0 it breaks and the pick axe (always works) takes over
   focus:   { durationMs: 30000 },   // steady hand: drinks do not stack (window ×1) and the meter holds still
 
   // Balance meter: −100 Stillness … 0 balanced … +100 Frenzy. Drifts back toward 0.
   // Each drink's push is multiplied by how many drinks you've had in the last windowMs.
   balance: { min: -100, max: 100, decayPerSec: 1.2, windowMs: 20000, windowMult: [1, 1.5, 2, 3] },
-  push:    { strength: 30, calm: -30, stamina: 10, focus: 10 },
+  push:    { strength: 30, calm: -30, stamina: 10, focus: 10, recovery: 0 },
 
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
   stillness: { durationMs: 12000, settleAt: 45, slowMult: 2 },   // everything slows; no drift
@@ -181,6 +184,7 @@ const CONFIG = {
     calm:     { powder: 2 },
     stamina:  { whey: 1, chrome: 1 },
     focus:    { powder: 1, spores: 1 },
+    recovery: { whey: 1, powder: 1 },
   },
 
   // tipAt: how far the balance meter must go to tip into Frenzy or Stillness.
@@ -224,9 +228,9 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 // CONTENT: names and Field Guide copy.
 // ─────────────────────────────────────────────────────────────────────────────
-const VARIANTS = ['strength', 'calm', 'stamina', 'focus'];
-const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus' };
-const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still.' };
+const VARIANTS = ['strength', 'calm', 'stamina', 'focus', 'recovery'];
+const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
+const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown, the label has fossilised. Caution: seeps upward. Fun fact: the Shaker Strata were someone\'s gym bag.' },
@@ -276,8 +280,8 @@ function freshState() {
   return {
     layer: 0, crater: 1, depthOffset: 0,
     inv: { whey: 0, powder: 0, chrome: 0, spores: 0 },
-    bottles: { strength: 0, calm: 0, stamina: 0, focus: 0 },
-    fx: { strength: 0, calm: 0, stamina: 0, focus: 0 }, strStacks: 0,
+    bottles: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 },
+    fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
     guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
     shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
@@ -374,7 +378,9 @@ function power() {
 }
 
 // How much slower digging is: everything slows in Stillness.
-function slowFactor() { return stillness() ? CONFIG.stillness.slowMult : 1; }
+// The drill works at full speed until it breaks; then the pick axe, which always works, is slower.
+const onPick = () => s.drill <= 0;
+function slowFactor() { return (stillness() ? CONFIG.stillness.slowMult : 1) * (onPick() ? CONFIG.drill.pickSlow : 1); }
 
 function driftChance() {
   if (stillness()) return 0;                                 // Stillness: the drill goes exactly where you point it
@@ -403,6 +409,15 @@ function hit(x, y, c) {
   if (c.t === CRUST && power() < layer().crustMinPower) { warn(`The crust does not yield. Digging power ${layer().crustMinPower} required.`); bump(x, y, 2); return; }
   c.hp -= power();
   bump(x, y, 4);
+  // Frenzy wears the drill for every second you keep digging, until it breaks.
+  // Counted from the time between hits, so it's the same on any computer.
+  const sinceHit = Math.min(400, now() - (s.lastHitAt || 0));
+  s.lastHitAt = now();
+  if (frenzy() && !onPick()) {
+    if (!s.drillWorn) say('The drill is complaining.');
+    s.drill = Math.max(0, s.drill - CONFIG.drill.wearPerSec * sinceHit / 1000); s.drillWorn = true;
+    if (onPick()) say('The drill is done. Out comes the pick axe. It always works.');
+  }
   if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('1 drill sample lost to the void.'); }
   if (c.hp > 0) return;
   g[y][x] = { t: AIR, hp: 0, max: 0 };
@@ -465,7 +480,7 @@ function finishShake() {
   say(`${VNAME[v]} ready. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
 }
 
-// One button (and key 1–4) per shake: SHAKE → Shaking… → DRINK.
+// One button (and key 1–5) per shake: SHAKE → Shaking… → DRINK.
 // First press shakes a bottle, second press drinks it instantly. One bottle per shake.
 function press(v) {
   if (!running) return;
@@ -496,6 +511,12 @@ function drink(v) {
     else s.strStacks = 1;
   }
   if (v === 'calm') say('Calm consumed. Noted in your file.');
+  // Recovery acts at once: the drill is good as new.
+  if (v === 'recovery') {
+    s.repaired = true;
+    say(onPick() ? 'Recovery. The drill is repaired; the pick axe goes back on its hook.' : s.drill < 100 ? 'Recovery. The drill is good as new.' : 'Recovery, with nothing to repair. The Foundation notes the waste.');
+    s.drill = 100; return;
+  }
   // Stamina acts at once: everything already in your system lasts 50% longer. No countdown of its own.
   if (v === 'stamina') {
     const k2 = CONFIG.stamina.stretch, running = VARIANTS.filter(k => k !== 'stamina' && active(k));
@@ -562,6 +583,7 @@ $('guide').addEventListener('click', e => {
 // ─────────────────────────────────────────────────────────────────────────────
 function breakthrough() {
   running = false; held = null;
+  s.awaySince = now();                                       // the clock stops while the loading screen is up
   unlock('layer' + s.layer);
   s.depthOffset += (H - 1) * CONFIG.grid.metresPerRow;
   p.y = 1;                                                 // depth now reads as the top of the next layer
@@ -614,6 +636,7 @@ function pickCrater(i) {
   genLayer();
   renderStatic();
   hideMenu();
+  if (s.awaySince) { shiftTimers(now() - s.awaySince); s.awaySince = 0; }
   running = true;
   say(`Rover arrived at ${next.craters[i].label}.`);
   announce(LAYER_INTRO[s.layer]);
@@ -625,7 +648,7 @@ function finishGame() {
   const mins = Math.max(1, Math.round(sec / 60));
   showMenu(`<h1>PROTOTYPE 2 COMPLETE</h1>
     <div>Below you: The Crack. It is not in this prototype.</div>
-    <div class="small">Depth ${s.depthOffset} m · Drill samples ${s.samples} · Milk+ ${s.drinks} · Frenzies ${s.frenzies} · Stillnesses ${s.stills} · Samples lost ${s.lost}</div>
+    <div class="small">Depth ${s.depthOffset} m · Drill samples ${s.samples} · Milk+ ${s.drinks} · Drill ${onPick() ? 'broken (pick axe)' : Math.round(s.drill) + '%'} · Frenzies ${s.frenzies} · Stillnesses ${s.stills} · Samples lost ${s.lost}</div>
     <div>Field Guide: ${s.guide.length} / ${total} cards.</div>
     <div class="small">Shift length: ${mins} minute${mins === 1 ? '' : 's'}. The Foundation has logged your overtime.</div>
     <div class="small">${CONFIG.artefacts.every(a => s.guide.includes(a.id)) ? 'Every altered-state artefact recovered. The Foundation will pretend not to know.' : 'Some slots remain ? ? ?. Some strata only open to those who did not double check.'}</div>
@@ -653,14 +676,18 @@ function pause() {
   menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
 }
 
-function resume() {
-  // Every timer is a timestamp, so shift them all by the time spent paused.
-  const d = now() - pausedAt;
+// Every timer is a timestamp, so freezing time means shifting them all by the time spent away
+// (pause, and the loading screen between layers).
+function shiftTimers(d) {
   for (const v of VARIANTS) if (s.fx[v]) s.fx[v] += d;
-  for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastWarn']) if (s[k]) s[k] += d;
+  for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastWarn', 'lastHitAt']) if (s[k]) s[k] += d;
   s.window = s.window.map(w => w + d);
   if (s.shake) s.shake.until += d;
   lastAct += d; lastFall += d;
+}
+
+function resume() {
+  shiftTimers(now() - pausedAt);
   hideMenu();
   running = true;
   cv.focus();
@@ -780,6 +807,11 @@ function draw() {
   ctx.fillStyle = frenzy() ? '#fff' : '#ddd';
   ctx.fillRect(px0 + 8 - bob, p.y * T + 6 - bob, T - 16 + bob * 2, T - 10 + bob);
   ctx.fillStyle = '#111'; ctx.fillRect(px0 + 13, p.y * T + 12, 14, 6); // visor
+  if (onPick()) {                                            // the pick axe: a handle and a head
+    ctx.strokeStyle = '#ddd'; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(px0 + T - 6, p.y * T + T - 6); ctx.lineTo(px0 + T + 4, p.y * T + 8);
+    ctx.moveTo(px0 + T - 2, p.y * T + 4); ctx.lineTo(px0 + T + 10, p.y * T + 12); ctx.stroke(); ctx.lineWidth = 1;
+  }
   if (shaking()) {
     const k = 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs;
     ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
@@ -805,6 +837,8 @@ const REVEAL = {
   recipe_calm:    () => known('powder') || s.bottles.calm > 0,
   recipe_stamina: () => known('chrome') || s.bottles.stamina > 0,
   recipe_focus:   () => known('spores') || s.bottles.focus > 0,
+  recipe_recovery: () => s.drillWorn || s.bottles.recovery > 0,
+  drill:  () => s.drillWorn,
 };
 const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
@@ -819,6 +853,8 @@ function hint() {
   if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.announceUntil > t) return s.announce;
+  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 5 (${recipeText('recovery')}).`;
+  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 5 (${recipeText('recovery')}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap.';
   if (layer().shakers && !s.mysteries && s.layer === 1) return 'The Shaker Strata: break a fossilised shaker (the little bottles) for a ready Milk+. You don\'t choose which.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
@@ -849,6 +885,8 @@ function renderStatic() {
       <button id="act_${v}">Shake</button>
     </div>`).join('');
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
+  // Rows that were already visible come back at once when the menu is rebuilt for a new layer.
+  document.querySelectorAll('#recipes [data-reveal]').forEach(el => { if (s && REVEAL[el.dataset.reveal]()) el.classList.add('shown', 'settled'); });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
 }
 
@@ -861,6 +899,7 @@ function hud() {
   setText('depth', `${depthNow()} m`);
   setText('samples', s.samples);
   setText('power', power());
+  setText('drill', onPick() ? 'broken · pick axe' : Math.round(s.drill) + '%' + (s.drill < CONFIG.drill.warnBelow ? ' · worn' : ''));
   for (const k of Object.keys(ING)) {
     setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
     setText('iv_' + k, s.inv[k]);
@@ -896,6 +935,7 @@ function hud() {
   cv.className = frenzy() ? 'frenzy' : stillness() ? 'still' : '';
   document.body.classList.toggle('intro', s.drinks === 0);
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
+  document.querySelectorAll('.recipe.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   setText('hint', running ? hint() : '');
   $('pauseBtn').disabled = !running;
   setHTML('legend', [
@@ -937,7 +977,7 @@ addEventListener('keydown', e => {
     }
     held = dirs[k];
   }
-  const i = '1234'.indexOf(k);
+  const i = '12345'.indexOf(k);
   if (i >= 0) press(VARIANTS[i]);
 });
 addEventListener('keyup', e => {

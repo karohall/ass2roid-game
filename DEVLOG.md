@@ -224,3 +224,11 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 - **The side panel is now two columns** (rover, ingredients and Milk+; then the Field Guide, the feed and pause), and **the whole game scales to fit the window,** so nothing needs scrolling, even on a small laptop.
 
 **Open:** can you lose? To decide.
+
+**Decided: soft failure, and Recovery! <3** You can't lose the run, but you can mess up. Every hit in Frenzy wears the drill, a full Frenzy of mashing costs about half its condition, and a worn drill digs slower. It never breaks. **Recovery** (key 5: 1 Regolith Whey + 1 Legacy Powder) repairs it at once. It competes with Strength for Regolith Whey, so repairing has a price. Frenzy finally has a real downside to weigh against its reward. Taught bit by bit: the drill's condition and the Recovery row only appear the first time the drill takes damage, with a hint.
+
+**The drill and the pick axe.** The prospector carries both. The drill is the powerful one and it can break: Frenzy wears it, about 4% for every second you keep digging, so it takes two or three Frenzies to break it. The pick axe always works, at half speed, so you can never get stuck. Recovery repairs the drill. It's a clearer rule than a drill that gradually slows down: the drill works fully until it doesn't, and the panel shows its condition as a warning.
+
+**Found while playing it out:** wear counted per hit barely registered, because in Frenzy (doubled power) most blocks break in one hit and a lot of the time goes to falling. Wear now counts the time between hits, which also makes it the same on any computer.
+
+**Fix: the clock stops on the loading screen.** Playing it out showed that a Frenzy which carries you through a crust kept ticking while you read the loading screen, and was gone by the time you pressed ↓. Now the loading screen freezes every timer, the same way pause does, and you arrive in the next layer still in Frenzy.
