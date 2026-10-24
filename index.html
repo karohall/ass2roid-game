@@ -730,7 +730,6 @@ function resume() {
 }
 
 function newGame() {
-  fitK = 1; setTimeout(() => fit(true), 0);                 // a new shift gets a fresh fit
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
@@ -1075,18 +1074,24 @@ document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.ta
 $('go').onclick = newGame;
 $('pauseBtn').onclick = pause;
 // Fit the whole game to the window: never scroll, just scale down evenly on small screens.
-let fitK = 1;
-function fit(fresh) {
+// Fit the whole game to the window, once. The size is measured for the fullest layout (every part of
+// the interface revealed, the longest hint), so nothing that appears during play can change the scale.
+// Only a window resize refits.
+const LONGEST_HINT = 'Frenzy and Stillness are documented. Certain strata are only accessible in these states. The Foundation does not endorse them. The Foundation has noted their usefulness.';
+function fit() {
   const w = $('wrap');
   w.style.transform = '';
-  let k = Math.min(1, innerHeight / w.offsetHeight, innerWidth / w.scrollWidth);
-  if (!fresh) k = Math.min(k, fitK);                       // during play: only ever shrink, never pump back up
-  fitK = k;
+  const hidden = [...document.querySelectorAll('.later:not(.shown)')];
+  hidden.forEach(el => el.classList.add('shown'));
+  const hint0 = $('hint').textContent; $('hint').textContent = LONGEST_HINT;
+  const height = w.offsetHeight, width = w.scrollWidth;
+  hidden.forEach(el => el.classList.remove('shown'));
+  $('hint').textContent = hint0;
+  const k = Math.min(1, innerHeight / height, innerWidth / width);
   w.style.transform = k < 1 ? `scale(${k})` : '';
   document.body.classList.toggle('fitted', k < 1);
 }
-addEventListener('resize', () => fit(true));
-setInterval(fit, 500);                                       // panels grow as parts of the interface appear
+addEventListener('resize', fit);
 $('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
 // Boot: show a world behind the start screen.
@@ -1094,6 +1099,7 @@ s = freshState();
 genLayer();
 renderStatic(); renderGuide();
 requestAnimationFrame(loop);
+setTimeout(fit, 0);                                           // once, after the first layout
 </script>
 </body>
 </html>
