@@ -270,3 +270,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Parked for Prototype 3: blowing up Näsa's chrome.** In Frenzy with stacked Strength, a slab heats up until it blows open, or blows you up: the drill breaks and you're thrown back up a few rows. *"Näsa™ property damaged. An invoice has been issued."* Love the invoice, and that only the drill breaks.
 
 **The ending: "Congratulations. You are now further down than anyone asked you to be."** (First draft: "You went deep. So, yeah.") The end screen counts up a personal summary of the run like a tally: depth, shift length, drill samples, Milk+, Frenzies, Stillnesses, Field Guide cards, drill breaks. Personal bests were built and then parked: a summary is enough for now, and high scores go to the parking lot.
+
+**Fix: Field Guide text cut off, Pause cropped.** The card area's fixed height was too short for the artefact cards, and found Field Guide names (Regolith Prime, Chrome Filings…) wrap to two lines, so the column grew past the screen. Now every slot has the same two-line height and the card area fits the longest card.
