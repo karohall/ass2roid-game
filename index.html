@@ -70,6 +70,10 @@
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
+  #samples.flash { animation:lostflash .7s ease; }
+  @keyframes lostflash { 0%, 40% { background:#fff; color:#111; } 100% { background:none; } }
+  #hint.flash { animation:hintflash .5s ease; }   /* a drill sample just dropped */
+  @keyframes hintflash { 0%, 40% { background:#111; color:#eee; outline:2px solid #eee; } 100% { background:#eee; color:#111; } }
   .stats { border-collapse:collapse; font-size:13px; min-width:300px; }
   .stats td { padding:2px 8px; border-bottom:1px solid #333; text-align:left; }
   .stats td.num { text-align:right; color:var(--hot); font-weight:bold; }
@@ -138,7 +142,7 @@
   <div id="panel2" class="panel">
     <div class="box" id="radioBox">
       <h3>Radio</h3>
-      <div class="row"><b id="radioName">Testarocco</b><span class="small" id="radioKind">Tape</span></div>
+      <div class="row"><b id="radioName">Testarocca</b><span class="small" id="radioKind">Tape</span></div>
       <div class="small" style="color:var(--text)">Now playing: <span id="radioSong">side A</span></div>
       <div class="small" id="radioFx"></div>
       <div class="small" style="margin-top:4px">R: next station · T: tape</div>
@@ -271,7 +275,7 @@ const ARTEFACT_CARD = {
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
 };
 const RADIO = {
-  tape:  { name: 'Testarocco', kind: 'Tape', fx: 'The rover’s own tape. No effect.', songs: ['side A'] },
+  tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape. No effect.', songs: ['side A'] },
   pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: ['Down in the Shaft', 'Heavy Ore', 'Hard Hat, Hard Body', 'Jackhammer Heart'] },
   disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: ['Amore Orbitale', 'I Dig You (All Night Long)', 'Dolce de Leche+', 'Asteroid Belt Boulevard'] },
   void:  { name: 'Void FM', kind: 'Station', fx: 'No effect. A mood, not a tactic.', songs: ['Ex Profundo', 'Falling Forwards Backwards Into Dimension', 'Parallax for Two Prospectors', 'No Ground Beneath, No Ceiling', 'Kármán Line (Extended Longing Mix)'] },
@@ -454,7 +458,7 @@ function hit(x, y, c) {
     s.drill = Math.max(0, s.drill - CONFIG.drill.wearPerSec * sinceHit / 1000); s.drillWorn = true;
     if (onPick()) { s.drillBreaks++; say('The drill is done. Out comes the pick axe. It always works.'); }
   }
-  if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('1 drill sample lost to the void.'); }
+  if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('The drill rattled a sample loose. Gone for good.'); loseSample(); }
   if (c.hp > 0) return;
   g[y][x] = { t: AIR, hp: 0, max: 0 };
   s.dug++;
@@ -488,6 +492,11 @@ function nasa() {
   clearTimeout(nasa.t1); clearTimeout(nasa.t2);
   nasa.t1 = setTimeout(() => el.classList.add('fading'), CONFIG.nasa.showMs);                 // long enough to read
   nasa.t2 = setTimeout(() => el.classList.add('hidden'), CONFIG.nasa.showMs + 1000);          // then a one-second fade
+}
+
+// A lost drill sample: the hint bar (where the eye is) and the counter flash as it drops.
+function loseSample() {
+  for (const id of ['hint', 'samples']) { const el = $(id); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
 }
 
 function warn(m) { if (now() - s.lastWarn > 1500) { say(m); s.lastWarn = now(); } }
@@ -946,7 +955,7 @@ const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}�
 function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
   const nearCrust = p.y >= H - 8;
-  if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals.' : 'FRENZY! Double digging power. Go go go.';
+  if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
   if (stillness()) return seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.';
   const firstShake = `Shaking ${VNAME[s.shake ? s.shake.v : 'strength']}… No digging until it is ready.`;
   if (shaking() && s.shakesDone === 0) return firstShake;
@@ -962,8 +971,8 @@ function hint() {
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;
-  if (seamWaiting('frenzy')) return 'The ? seam sealed when the frenzy ended. Frenzy again to break in.';
-  if (seamWaiting('still')) return 'The quiet ? seam sealed when the stillness lifted. Find stillness again to break in.';
+  if (seamWaiting('frenzy')) return 'The ? seam has sealed. It responds to Frenzy only.';
+  if (seamWaiting('still')) return 'The quiet ? seam has sealed. It responds to Stillness only.';
   if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
   if (s.meter + CONFIG.push.calm * nextMult() <= -tipAt()) return 'One more quick Calm tips you into Stillness.';
   const ready = VARIANTS.find(v => s.bottles[v] > 0);

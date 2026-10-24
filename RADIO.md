@@ -30,7 +30,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
 
 ## Radio decisions (2026-10-23)
 
-- **All stations are available from the start**, plus the rover cassette (Testarocco). The radio is the game's personality, not a reward.
+- **All stations are available from the start**, plus the rover cassette (Testarocca). The radio is the game's personality, not a reward.
 - **Station effects:** The Pump Zone digs slightly faster. Disco Gravitas calms the meter a little. **Void FM has no effect**: choosing it is choosing a mood, not a tactic. The drift is saved for the ending.
 - **Radio keeps playing between layers**; the loading screen ducks it under the engine.
 
@@ -256,7 +256,7 @@ Throughout: slow somersaults.
 
 | Tape | What it is | Contents |
 |------|------------|----------|
-| **Testarocco** | A nod to OutRun (1986), where you picked the music on the car radio before the drive. The name crosses that game's car with rock. | _To decide_ |
+| **Testarocca** | A nod to OutRun (1986), where you picked the music on the car radio before the drive. The name crosses that game's car with rock. | _To decide_ |
 
 ### Näsa – Big Space™ *(commercial breaks)*
 

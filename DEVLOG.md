@@ -160,7 +160,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 
 **Dolce de Leche+ is finished** (the contrast track on Disco Gravitas). Italo disco becomes hilarious and feels authentic when the bilingual echo is used as a structure. Overall, phonetic spelling works for steering pronunciation ("Letche").
 
-**A nod to OutRun:** the rover has a cassette called **Testarocco**. Pondered the fact that design comes from game history, and isn't just decoration.
+**A nod to OutRun:** the rover has a cassette called **Testarocca**. Pondered the fact that design comes from game history, and isn't just decoration.
 
 **Reflection:** *Speaking of decoration: AI tools are great to help you see. They put words on qualities, but you are the one providing the actual quality.*
 
@@ -245,7 +245,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 
 **We go deeper: a map and a depth gauge, in the walls.** It was hard to know how deep it goes. Instead of adding panels (lesson learned), the empty rock walls on each side of the shaft took the job. The left wall is a map of the whole layer: your tunnel, the hard band, the chrome slabs with their gaps, the crust, and a frame for what is on screen. The right wall is a depth gauge for the whole game, layer by layer, filling up as you go deeper. Both appear after the first dig.
 
-**Radio placeholder.** No sound yet, but the radio has a place and keys. It plays the rover's tape, **Testarocco**, from the start screen, by default: the radio is the game's personality, so it's there before the shift begins. **R** steps through The Pump Zone, Disco Gravitas and Void FM, **T** always returns to the tape, and both work on every screen. The effects are on: The Pump Zone digs about 10% faster, Disco Gravitas calms the meter 50% faster, Void FM and the tape have none. "Now playing" cycles through the song titles.
+**Radio placeholder.** No sound yet, but the radio has a place and keys. It plays the rover's tape, **Testarocca**, from the start screen, by default: the radio is the game's personality, so it's there before the shift begins. **R** steps through The Pump Zone, Disco Gravitas and Void FM, **T** always returns to the tape, and both work on every screen. The effects are on: The Pump Zone digs about 10% faster, Disco Gravitas calms the meter 50% faster, Void FM and the tape have none. "Now playing" cycles through the song titles.
 
 **Fix: the screen zoomed out and back in mid-run.** The fit-to-window scaling reacted every time the feed or a Field Guide card got longer or shorter, so the whole game pumped in and out. Now the feed and the card text have fixed heights, the hint bar is at least three lines, and during play the scaling only ever shrinks. It rescales freshly on a window resize or a new shift.
 
@@ -272,3 +272,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **The ending: "Congratulations. You are now further down than anyone asked you to be."** (First draft: "You went deep. So, yeah.") The end screen counts up a personal summary of the run like a tally: depth, shift length, drill samples, Milk+, Frenzies, Stillnesses, Field Guide cards, drill breaks. Personal bests were built and then parked: a summary is enough for now, and high scores go to the parking lot.
 
 **Fix: Field Guide text cut off, Pause cropped.** The card area's fixed height was too short for the artefact cards, and found Field Guide names (Regolith Prime, Chrome Filings…) wrap to two lines, so the column grew past the screen. Now every slot has the same two-line height and the card area fits the longest card.
+
+**Why are drill samples lost in a Frenzy?** Losing samples was in the rules, but nothing in the game said so: a quiet line in the feed, far from where the eye is. "Lost" said what happened, not why. The Frenzy hint now gives the reason up front: *"Double digging power, but the drill rattles so hard that samples shake loose."* Every sample that drops makes the hint bar flash, because that is where you look while mashing; the counter in the rover panel flashes too, but that one alone would be missed. The sealed-seam hints got drier as well: *"The ? seam has sealed. It responds to Frenzy only."*
