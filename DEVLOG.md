@@ -285,6 +285,8 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 
 **Leaving the window pauses the shift.** Switching tab or clicking outside the game now pauses it.
 
+## 2026-10-25 — A balanced interface
+
 **A ground rule: always clear what to do to go where.** I got stuck twice: floating in space with no idea how to get out, and on the end screen, where only a mouse click on "New game" worked. Now the end screen also takes Enter, and the Drift shows a quiet "Esc: end the drift" at the bottom of space, fading in after the hint bar has gone. The rule for the whole game: every screen and state shows its way on and its way out.
 
 **Line breaks in the hints.** The welcome and the first shake read better broken into lines: *"Welcome, prospector. / Starter ration: 2 Regolith Whey, courtesy of the Foundation. / Press 1 to shake a Strength."*
@@ -312,3 +314,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Reflection: one white surface.** The layout now feels nice and balanced. And the white is efficient: in a grey interface, the hint bar is the only light surface, so the eye goes there first. That is where the game tells you what to do next.
 
 **Pause moves down beside the radio.** It sat just under the Public Service box, level with the meter, crowding its right end. Now Pause lines up with the radio, so the meter has space to the right, and the Public Service box stays where it was.
+
+**Reflection: an interface that grows with you.** Today I landed in an interface that feels balanced and rewarding. As the player keeps discovering the game and learning the different stats, more input is added: the Milk+ menu, the meter, the rover panel, the Field Guide. Nothing arrives before it means something.
