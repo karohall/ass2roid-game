@@ -41,6 +41,7 @@
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
+  #rover .row + .row { font-size:12px; line-height:1.5; }   /* the stats, smaller than the layer name above them */
   #radioBox .label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-right:6px; }
   #legend { width:758px; min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:4px 14px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   .sw { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
@@ -66,7 +67,7 @@
   .ph.on { display:block; }
   body.fitting .ph { display:none !important; }
   .small { font-size:11px; color:var(--dim); }
-  #log { height:132px; overflow:hidden; }                            /* fixed height: newest on top, the rest cut off */
+  #log { height:108px; overflow:hidden; font-size:12px; line-height:1.5; }   /* fixed height: newest on top, the rest cut off */
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
   #guide { display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; }
   #guide .cat { grid-column:1 / -1; font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.08em; margin-top:2px; }
@@ -163,7 +164,7 @@
   </div>
 
   <div id="panel2" class="panel">
-    <div class="box later" data-reveal="dig">
+    <div class="box later" data-reveal="dig" id="rover">
       <h3>Rover panel</h3>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
@@ -270,7 +271,7 @@ const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: '
 const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still, and so does an open ? seam.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
-  powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown, the label has fossilised. Caution: seeps upward. Fun fact: the Shaker Strata were someone\'s gym bag.' },
+  powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown; the label has fossilised. Caution: seeps upward from the Shaker Strata below. Fun fact: the Foundation believes the whole Shaker Strata began as one forgotten gym bag.' },
   chrome: { name: 'Chrome Filings', letter: 'C', card: 'Nutrition Facts: 100% daily iron. Caution: Näsa considers these theirs. Fun fact: they hum when nobody is listening.' },
   spores: { name: 'Crack Spores',   letter: 'S', card: 'Nutrition Facts: redacted. Caution: bioluminescent. Fun fact: they rise from The Crack, which the Belt Authority says is closed.' },
 };
