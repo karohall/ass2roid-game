@@ -290,3 +290,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Line breaks in the hints.** The welcome and the first shake read better broken into lines: *"Welcome, prospector. / Starter ration: 2 Regolith Whey, courtesy of the Foundation. / Press 1 to shake a Strength."*
 
 **Hints stay longer.** They disappeared before I could read them. Announcements now stay long enough to be typed out and read in full: 9 seconds at least, and the longest about 18 (it was 8 for all of them).
+
+**Milk+ keys stay put, gaps show.** The menu went [1], [2], [4]: Recovery (key 3) only appears once the drill is worn, so the gap looked like a mistake. Each Milk+ keeps its key, and now a dim "[3] ? ? ?" holds the place of one still to find, like the unknown ingredients. The placeholders appear once the menu is more than Strength, so the opening stays sparse.
+
+**A full playthrough: 5:57.** 30 drill samples, 26 Milk+, 3 Frenzies, 0 Stillnesses, 8 of 10 Field Guide cards. Shorter than the 10–15 minute target, with three of five layers. Again no Stillness: 32 Legacy Powder left over, enough for 16 Calms. Calm seems to be the drink nobody reaches for. And again no Artefact 2, with nothing telling me there was more to find. So the end screen now says what is still out there: *"Still unrecovered: a Frenzy find in the Chrome Vein; a Stillness find anywhere."* A quiet reason to play again.

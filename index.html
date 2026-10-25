@@ -54,6 +54,9 @@
   .recipe button.ready:hover { background:#fff; color:#111; }
   .recipe .name { line-height:1.25; }
   .recipe .does { font-size:12px; color:var(--text); }
+  .ph { display:none; color:#777; margin-bottom:5px; }   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
+  .ph.on { display:block; }
+  body.fitting .ph { display:none !important; }
   .small { font-size:11px; color:var(--dim); }
   #log { height:132px; overflow:hidden; }                            /* fixed height: newest on top, the rest cut off */
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
@@ -729,8 +732,13 @@ function finishGame(drifted = false) {
     ['Depth', drifted ? depthNow() : s.depthOffset, ' m'], ['Shift length', sec, '', fmt], ['Drill samples', s.samples], ['Milk+ drunk', s.drinks],
     ['Frenzies', s.frenzies], ['Stillnesses', s.stills], ['Field Guide cards', s.guide.length, ' / ' + guideEntries().length], ['Drill broke', s.drillBreaks, s.drillBreaks === 1 ? ' time' : ' times'],
   ];
+  // What's still out there: a quiet reason to play again, without explaining the whole system.
+  const where = a => a.minLayer ? 'in ' + CONFIG.layers[a.minLayer].name.replace(/^The /, 'the ') : 'anywhere';
+  const missing = CONFIG.artefacts.filter(a => !s.guide.includes(a.id)).map(a => `a ${a.kind === 'still' ? 'Stillness' : 'Frenzy'} find ${where(a)}`);
+  const unrecovered = missing.length ? `<div class="small">Still unrecovered: ${missing.join('; ')}.</div>` : '';
   showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>CONGRATULATIONS.</h1><div style="font-size:16px">You are now further down than anyone asked you to be.</div>'}
     <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
+    ${unrecovered}
     <div class="small">${drifted ? 'Prototype 2. The core is still down there.' : 'Prototype 2. Below you: The Crack, which is not in this prototype.'}</div>
     <button id="again">New game (Enter)</button>`);
   $('again').onclick = newGame;
@@ -1075,7 +1083,8 @@ function renderStatic() {
   const L = layer(), crater = L.craters ? L.craters.find(c => c.id === s.crater) : null;
   $('layerName').textContent = `${s.layer + 1}. ${L.name}`;
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
-  $('recipes').innerHTML = VARIANTS.map((v, i) => `
+  $('recipes').innerHTML = VARIANTS.map((v, i) => `${i ? `
+    <div class="ph" id="ph_${v}">[${i + 1}] ? ? ?</div>` : ''}
     <div class="recipe${i ? ' later' : ''}" data-reveal="recipe_${v}">
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}">Shake</button>
@@ -1131,6 +1140,9 @@ function hud() {
   cv.className = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : '';
   document.body.classList.toggle('intro', s.drinks === 0);
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
+  // Once the menu is more than Strength, each Milk+ still to find holds its key's place: [3] ? ? ?
+  const menuGrown = VARIANTS.some((v, i) => i && REVEAL['recipe_' + v]());
+  VARIANTS.forEach((v, i) => i && $('ph_' + v).classList.toggle('on', menuGrown && !REVEAL['recipe_' + v]()));
   document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   // The hint bar types each new hint out, with a block cursor while it types.
   const target = s.drift ? typing.text : running ? hint() : '';   // in the Drift, the last hint stays as it fades
@@ -1209,12 +1221,14 @@ const LONGEST_HINT = 'Frenzy and Stillness are documented. Certain strata are on
 function fit() {
   const w = $('wrap');
   w.style.transform = '';
+  document.body.classList.add('fitting');                   // placeholders give way to the real rows they stand for
   const hidden = [...document.querySelectorAll('.later:not(.shown)')];
   hidden.forEach(el => el.classList.add('shown'));
   const hint0 = $('hint').textContent; $('hint').textContent = LONGEST_HINT;
   const height = w.offsetHeight, width = w.scrollWidth;
   hidden.forEach(el => el.classList.remove('shown'));
   $('hint').textContent = hint0;
+  document.body.classList.remove('fitting');
   const k = Math.min(1, innerHeight / height, innerWidth / width);
   w.style.transform = k < 1 ? `scale(${k})` : '';
   document.body.classList.toggle('fitted', k < 1);
