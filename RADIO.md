@@ -118,7 +118,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Signature | **Down in the Shaft** | Arena-sized, 150 BPM, gang vocals | **Finished** |
 | Driver | **Heavy Ore** | Faster and tighter, more workout and shouting | _Not yet_ |
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
-| Wildcard | **Jackhammer Heart** | Synth metal, sequenced bass, more electronic | _Not yet_ |
+| Wildcard | **Jackhammer Heart** | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm | _In progress_ |
 
 ### Disco Gravitas
 

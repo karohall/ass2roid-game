@@ -322,3 +322,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Reflection: a discovery you can feel.** Watching the confetti replay, four discoveries in a row: amazing, I love it. A small burst of dust around the hint box, a heavier name, and the news typing out is enough to make finding something feel like an event, without leaving the grey-box look.
 
 **A tighter right column, a clearer gym bag.** The rover panel stats and the Public Service feed now use the smaller text, so the right-hand column ends above the meter instead of level with it. And the Legacy Powder card explains its joke: it seeps up from the Shaker Strata below, and the Foundation believes the whole layer began as one forgotten gym bag.
+
+**Jackhammer Heart: drill samples.** Started on the Pump Zone's wildcard song, Jackhammer Heart, with samples of drill sounds. The game's own tool becomes part of the music.
