@@ -1065,7 +1065,7 @@ function hint() {
   if (shaking() && s.shakesDone === 0) return firstShake;
   // The opening steps (shake, drink, dig) come before any announcement.
   if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + '\nReady! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
-  if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation.\nPress 1 to shake a Strength.`;
+  if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   // About to tip over: this outranks announcements and rumours, so it is never hidden.
   if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
