@@ -102,6 +102,9 @@
   body.intro .box:has(#recipes) { border-color:transparent; background:none; }
   .box:has(#recipes) { transition:background-color 1.2s, border-color 1.2s; }
   #hint:empty { visibility:hidden; }
+  #confetti { position:absolute; pointer-events:none; z-index:5; }
+  #confetti i { position:absolute; display:block; }
+  #hint .em { -webkit-text-stroke:.6px currentColor; }   /* a new compound, a new drink: heavier than the bold around it */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .journey { display:flex; align-items:flex-start; width:100%; max-width:400px; margin:4px 0; }
   .journey .step { width:64px; flex:none; font-size:10px; color:var(--dim); text-align:center; line-height:1.2; }
@@ -630,14 +633,40 @@ function guideEntries() {
 
 const isArtefact = id => CONFIG.artefacts.some(a => a.id === id);
 
+// A discovery: dust confetti bursts out from the edges of the hint box, where the news is.
+function celebrate() {
+  const h = $('hint'), box = document.createElement('div'), W0 = h.offsetWidth, H0 = h.offsetHeight;
+  box.id = 'confetti';
+  Object.assign(box.style, { left: h.offsetLeft + 'px', top: h.offsetTop + 'px', width: W0 + 'px', height: H0 + 'px' });
+  const shades = ['#fff', '#eee', '#bbb', '#888'];
+  for (let i = 0; i < 70; i++) {
+    // A point on the box's edge, flying outward from it.
+    const t = Math.random() * 2 * (W0 + H0);
+    const [x, y, nx, ny] = t < W0 ? [t, 0, 0, -1] : t < W0 + H0 ? [W0, t - W0, 1, 0] : t < 2 * W0 + H0 ? [t - W0 - H0, H0, 0, 1] : [0, t - 2 * W0 - H0, -1, 0];
+    const d = 18 + Math.random() * 42, dx = nx * d + (Math.random() - .5) * 30, dy = ny * d + (Math.random() - .5) * 30;
+    const q = document.createElement('i'), w = 2 + Math.random() * 5;
+    Object.assign(q.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: (1 + Math.random() * 2) + 'px', background: shades[i % shades.length] });
+    const r = (Math.random() - .5) * 720;
+    q.animate([
+      { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+      { transform: `translate(${dx}px, ${dy}px) rotate(${r / 2}deg)`, opacity: 1, offset: .45 },
+      { transform: `translate(${dx * 1.2}px, ${dy + 26}px) rotate(${r}deg)`, opacity: 0 },   // then drifts down like dust
+    ], { duration: 1400 + Math.random() * 900, easing: 'cubic-bezier(.2,.7,.4,1)', fill: 'forwards' });
+    box.appendChild(q);
+  }
+  h.parentNode.appendChild(box);
+  setTimeout(() => box.remove(), 2600);
+}
+
 function unlock(id) {
   if (s.guide.includes(id)) return;
   s.guide.push(id);
   const ing = id.startsWith('ing_') && id.slice(4), v = ing && UNLOCKS[ing];
-  if (v) announce(`New compound: ${ING[ing].name}. ${VNAME[v]} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`);
+  // Discoveries: the hint box announces them, bursting into confetti, ahead of everything else.
+  if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}.\n${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
   if (isArtefact(id)) {
     s.artCrater[id] = s.crater;
-    say('Artefact recovered. The Foundation has been notified.');
+    celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}.\nThe Foundation has been notified. It is in your Field Guide.`, 0, true);
   }
   say(`Field Guide updated: ${guideEntries().find(e => e.id === id).title}.`);
   selCard = id;
@@ -875,16 +904,17 @@ function begin() {
 // LOOP
 // ─────────────────────────────────────────────────────────────────────────────
 function say(m) {
-  const d = document.createElement('div'); d.textContent = m;
+  const d = document.createElement('div'); d.textContent = plain(m);
   $('log').prepend(d);
   while ($('log').children.length > 5) $('log').lastChild.remove();
 }
 
 // An announcement stays long enough to be typed out and then read in full: longer texts stay longer.
-function announce(m, extraMs = 0) {
+function announce(m, extraMs = 0, discovery = false) {
   if (!m) return;
   const h = CONFIG.hint, readMs = m.length / h.typeCps * 1000 + m.length * h.readMsPerChar + h.lingerMs;
   s.announce = m; s.announceUntil = now() + Math.max(h.minMs, readMs) + extraMs; say(m);
+  s.discovery = discovery;                                 // a discovery outranks every other hint, even a Frenzy
 }
 
 function update(dt) {
@@ -1057,6 +1087,7 @@ const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}�
 
 function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
+  if (s.discovery && s.announceUntil > t) return s.announce;
   const nearCrust = p.y >= H - 8;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
   if (stillness()) return (seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.')
@@ -1116,6 +1147,14 @@ function radioHud() {
 
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
 const lastHTML = {};
+const EM = '\u0001', EM_END = '\u0002', em = t => EM + t + EM_END;   // emphasis markers: invisible, so the typewriter types through them
+const plain = m => m.replace(/[\u0001\u0002]/g, '');
+// Hint text to HTML: emphasised words get a heavier weight, even while half typed.
+function hintHTML(t) {
+  const esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const open = (esc.split(EM).length - 1) - (esc.split(EM_END).length - 1);
+  return esc.replaceAll(EM, '<span class="em">').replaceAll(EM_END, '</span>') + (open > 0 ? '</span>' : '');
+}
 function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTML[id] = v; } }
 
 function hud() {
@@ -1172,7 +1211,7 @@ function hud() {
     typing.from = performance.now() - (extends_ ? shown / CONFIG.hint.typeCps * 1000 : 0);   // continue, don't erase
   }
   const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps));
-  setText('hint', n < target.length ? target.slice(0, n) + '▌' : target);
+  setHTML('hint', hintHTML(n < target.length ? target.slice(0, n) + '▌' : target));
   $('pauseBtn').disabled = !running;
   setHTML('legend', [
     '<span><i class="sw" style="background:#ddd"></i>You</span>',
@@ -1241,10 +1280,10 @@ function fit() {
   document.body.classList.add('fitting');                   // placeholders give way to the real rows they stand for
   const hidden = [...document.querySelectorAll('.later:not(.shown)')];
   hidden.forEach(el => el.classList.add('shown'));
-  const hint0 = $('hint').textContent; $('hint').textContent = LONGEST_HINT;
+  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;
   const height = w.offsetHeight, width = w.scrollWidth;
   hidden.forEach(el => el.classList.remove('shown'));
-  $('hint').textContent = hint0;
+  $('hint').innerHTML = hint0;
   document.body.classList.remove('fitting');
   const k = Math.min(1, innerHeight / height, innerWidth / width);
   w.style.transform = k < 1 ? `scale(${k})` : '';
