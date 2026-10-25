@@ -139,7 +139,7 @@
       <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
       <div class="row"><span class="small" id="radioFx"></span><span class="small">R: next station · T: tape</span></div>
     </div>
-    <button id="pauseBtn" class="later" data-reveal="dig">Pause (Space)</button>
+    <button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button>
     </div>
     <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
@@ -1042,6 +1042,7 @@ const known = k => s.guide.includes('ing_' + k);
 const REVEAL = {
   drink:  () => s.drinks > 0,
   learning: () => s.drinks > 0 && s.drinks < 3,
+  started: () => $('start').classList.contains('hidden'),   // the shift has begun (Enter)
   dig:    () => s.dug > 0,
   pickup: () => s.pickups > 0,
   guide:  () => s.guide.length > 1,
