@@ -278,3 +278,15 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **The Calm rumour nagged.** "Rumour: Calm, taken quickly, goes somewhere too." was the fallback hint after any Frenzy, so it sat in the hint bar most of the time. Now it shows for 8 seconds as each of the first two Frenzies ends, and never once you have found Stillness. A rumour should be overheard, not repeated.
 
 **Hyperfocus holds a seam open.** Should Hyperfocus give more artefacts? No: it would become the drink to take every time, and artefacts are the reward for the altered states. But it already holds the meter still, so now it holds a seam still too. If a Frenzy or Stillness ends while Hyperfocus lasts, the ? seam stays open until the Hyperfocus wears off: *"Hyperfocus is holding the ? seam open. Dig in before it wears off."* Drink it during the state, and the artefact is still within reach after.
+
+**Drift: the second Calm state.** Calm now has two states. Stillness is the chill one, where you slow down and find artefacts. Drink a Calm *while in Stillness*, and you go past it into **Drift**: the shaft falls away beneath you, the hint bar fades, and only the prospector and the stars remain, turning slowly while The You Show plays. No controls, nothing to do, just watch. Then: *"CONTACT LOST. You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant."* The mood is sublime, existential, calm: a soft death. It is the other way out of the game, and never an accident: only a Calm you chose, and the Stillness hint warns first. I love the Drift sequence.
+
+**Fix: the seam that wasn't there.** The Frenzy hint said "A ? seam opened right next to you", and there was none. Two bugs: a new Frenzy reused an older seam still waiting further up the shaft, and near the crust the seam could open a few rows *above* you, out of reach since you can't climb. Now a new state closes the old seam back into rock and opens a fresh one beside you, level with you or below. This was probably also why Artefact 2 never turned up in the Chrome Vein, even with seven Frenzies.
+
+**Leaving the window pauses the shift.** Switching tab or clicking outside the game now pauses it.
+
+**A ground rule: always clear what to do to go where.** I got stuck twice: floating in space with no idea how to get out, and on the end screen, where only a mouse click on "New game" worked. Now the end screen also takes Enter, and the Drift shows a quiet "Esc: end the drift" at the bottom of space, fading in after the hint bar has gone. The rule for the whole game: every screen and state shows its way on and its way out.
+
+**Line breaks in the hints.** The welcome and the first shake read better broken into lines: *"Welcome, prospector. / Starter ration: 2 Regolith Whey, courtesy of the Foundation. / Press 1 to shake a Strength."*
+
+**Hints stay longer.** They disappeared before I could read them. Announcements now stay long enough to be typed out and read in full: 9 seconds at least, and the longest about 18 (it was 8 for all of them).

@@ -15,7 +15,7 @@
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
-  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; }   /* at least three lines, text at the top */
+  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
   #dosage { width:440px; margin-top:10px; }
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
@@ -90,6 +90,7 @@
   body.intro .box:has(#recipes) { border-color:transparent; background:none; }
   .box:has(#recipes) { transition:background-color 1.2s, border-color 1.2s; }
   #hint:empty { visibility:hidden; }
+  body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .journey { display:flex; align-items:flex-start; width:100%; max-width:400px; margin:4px 0; }
   .journey .step { width:64px; flex:none; font-size:10px; color:var(--dim); text-align:center; line-height:1.2; }
   .journey .dot { width:26px; height:26px; margin:0 auto 4px; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; }
@@ -236,8 +237,9 @@ const CONFIG = {
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
   craterPicker: false,
-  hint:    { typeCps: 60 },
+  hint:    { typeCps: 60, readMsPerChar: 70, lingerMs: 2500, minMs: 9000 },   // announcements: typing + reading time + a pause, never under 9 s
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
+  drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often       // the hint bar types itself out, characters per second
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
@@ -279,12 +281,14 @@ const RADIO = {
   tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape. No effect.', songs: ['side A'] },
   pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: ['Down in the Shaft', 'Heavy Ore', 'Hard Hat, Hard Body', 'Jackhammer Heart'] },
   disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: ['Amore Orbitale', 'I Dig You (All Night Long)', 'Dolce de Leche+', 'Asteroid Belt Boulevard'] },
+  oddity: { name: 'Space oddities', kind: 'Folder', fx: 'Not a station. For special occasions.', songs: ['The You Show'] },
   void:  { name: 'Void FM', kind: 'Station', fx: 'No effect. A mood, not a tactic.', songs: ['Ex Profundo', 'Falling Forwards Backwards Into Dimension', 'Parallax for Two Prospectors', 'No Ground Beneath, No Ceiling', 'Kármán Line (Extended Longing Mix)'] },
 };
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: the tape plays from the start screen, and it keeps playing between games.
 const radio = { on: 'tape', last: 'pump', since: 0, clock: 0 };
 function radioKey(k) {
+  if (s && s.drift) return;                                // The You Show plays to the end
   if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
   else radio.on = radio.on === 'tape' ? radio.last : STATIONS[(STATIONS.indexOf(radio.on) + 1) % STATIONS.length];
   if (radio.on !== 'tape') radio.last = radio.on;
@@ -388,12 +392,20 @@ function genLayer() {
 // unfound artefact of that kind. The seam only answers to that state.
 function openSeam(kind) {
   const a = CONFIG.artefacts.find(a => a.kind === kind && !s.guide.includes(a.id) && s.layer >= a.minLayer);
-  if (!a || s.seamOpen[kind]) return;
-  // Pick a 3×3 spot beside the prospector that doesn't overlap the other state's seam:
-  // the nearer side first, then the far side, then the same again a little lower or higher.
-  const near = p.x >= 5 ? -2 : 2, row = Math.max(2, Math.min(H - 5, p.y));
-  const spots = [0, 3, -3].flatMap(dy => [[p.x + near, row + dy], [p.x - near, row + dy]]);
-  const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 6 &&
+  // An older seam of this kind, sealed somewhere up the shaft, closes back into rock: the new one opens here.
+  if (s.seamOpen[kind]) {
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const c = g[y][x];
+      if ((c.t === SEAM || c.t === ART) && c.kind === kind) { const hp = layer().hp[y < Math.floor(H / 2) ? 0 : 1]; g[y][x] = { t: DIRT, hp, max: hp }; }
+    }
+    s.seamOpen[kind] = false;
+  }
+  if (!a) return;
+  // Pick a 3×3 spot beside the prospector, level with them or below (you can't climb), that
+  // doesn't overlap the other state's seam: the nearer side first, then the far side, a little lower each time; last, with only its bottom row level with them.
+  const near = p.x >= 5 ? -2 : 2;
+  const spots = [0, 1, 2, 3, 4, -1].flatMap(dy => [[p.x + near, p.y + dy], [p.x - near, p.y + dy]]);
+  const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 4 &&   // may reach into the first crust row, never the last
     [-1, 0, 1].every(dy => !g[y0 + dy].some(c => c.t === SLAB)) &&   // never block a slab's gap: you can't climb back up
     [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART, SLAB].includes(c.t) && !c.cache; }));   // never cover the other seam, a slab or the supply cache
   const spot = spots.find(fits);
@@ -477,7 +489,7 @@ function hit(x, y, c) {
     const v = VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
     s.mysteries++;                                         // drunk on the spot: you find out what it was once it's in you
     say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Down it goes.`);
-    s.bottles[v]++; drink(v);
+    s.bottles[v]++; drink(v, true);
   }
   if (c.t === SAMPLE) s.samples += 1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0);
   if (c.t === INGR) gain(c.ing, c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
@@ -550,9 +562,10 @@ function press(v) {
   mix(v);
 }
 
-function drink(v) {
+function drink(v, fromShaker = false) {
   if (!running || s.bottles[v] < 1) return;
   s.bottles[v]--;
+  if (v === 'calm' && stillness() && !fromShaker) return startDrift();   // never by accident: only a Calm you chose
   // First drink ever: the Belt Authority plants the seed before either state is possible.
   if (s.drinks === 0) announce('Frenzy and Stillness are documented. Certain strata are only accessible in these states. The Foundation does not endorse them. The Foundation has noted their usefulness.');
   s.drinks++;
@@ -710,18 +723,18 @@ function pickCrater(i) {
   cv.focus();
 }
 
-function finishGame() {
+function finishGame(drifted = false) {
   const sec = Math.floor(s.timeMs / 1000);
   const stats = [
-    ['Depth', s.depthOffset, ' m'], ['Shift length', sec, '', fmt], ['Drill samples', s.samples], ['Milk+ drunk', s.drinks],
+    ['Depth', drifted ? depthNow() : s.depthOffset, ' m'], ['Shift length', sec, '', fmt], ['Drill samples', s.samples], ['Milk+ drunk', s.drinks],
     ['Frenzies', s.frenzies], ['Stillnesses', s.stills], ['Field Guide cards', s.guide.length, ' / ' + guideEntries().length], ['Drill broke', s.drillBreaks, s.drillBreaks === 1 ? ' time' : ' times'],
   ];
-  showMenu(`<h1>CONGRATULATIONS.</h1>
-    <div style="font-size:16px">You are now further down than anyone asked you to be.</div>
+  showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>CONGRATULATIONS.</h1><div style="font-size:16px">You are now further down than anyone asked you to be.</div>'}
     <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
-    <div class="small">Prototype 2. Below you: The Crack, which is not in this prototype.</div>
-    <button id="again">New game</button>`);
+    <div class="small">${drifted ? 'Prototype 2. The core is still down there.' : 'Prototype 2. Below you: The Crack, which is not in this prototype.'}</div>
+    <button id="again">New game (Enter)</button>`);
   $('again').onclick = newGame;
+  menuKeys = k => { if (k === 'Enter') newGame(); };
   // The stats count up, like a tally.
   const cells = [...document.querySelectorAll('#menu .num')], t0 = performance.now();
   (function count() {
@@ -730,6 +743,56 @@ function finishGame() {
     if (k < 1) requestAnimationFrame(count);
   })();
   setTimeout(() => cells.forEach(c => c.textContent = (c.dataset.fmt ? fmt(+c.dataset.to) : c.dataset.to) + c.dataset.unit), CONFIG.ending.countMs + 100);   // always land on the final numbers
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DRIFT: Stillness overload. Calm on top of Stillness, and the shaft lets go.
+// An ending of its own: no controls, nothing to do, just watch.
+// ─────────────────────────────────────────────────────────────────────────────
+function startDrift() {
+  running = false; held = null; pendingTap = null;
+  s.drift = { t0: performance.now(), radioWas: radio.on, done: false,
+    stars: Array.from({ length: 80 }, () => [Math.random() * cv.width, Math.random() * cv.height, Math.random()]) };
+  radio.on = 'oddity'; radio.since = radio.clock;
+  document.body.classList.add('drifting');
+  say('Calm, on top of Stillness. The shaft lets go.');
+}
+
+function drawDrift() {
+  const e = performance.now() - s.drift.t0, fade = Math.min(1, e / 4000);
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cv.width, cv.height);
+  if (fade < 1) {                                            // the shaft falls away beneath you
+    ctx.save(); ctx.globalAlpha = 1 - fade; ctx.translate(0, fade * fade * cv.height); draw(); ctx.restore();
+  }
+  ctx.globalAlpha = fade;                                    // stars, slowly passing
+  for (const [x, y, z] of s.drift.stars) {
+    const big = z > .8;
+    ctx.fillStyle = big ? '#fff' : '#777';
+    ctx.fillRect(x, (y + e * z * .006) % cv.height, big ? 2 : 1, big ? 2 : 1);
+  }
+  ctx.globalAlpha = 1;
+  // The prospector rises from where they stood to the middle of the sky, turning slowly.
+  const k = Math.min(1, e / 9000), ease = k * k * (3 - 2 * k);
+  const sx = p.x * T + T / 2, sy = (p.y - cam) * T + T / 2;
+  ctx.save();
+  ctx.translate(sx + (cv.width / 2 - sx) * ease, sy + (cv.height * .45 - sy) * ease);
+  ctx.rotate(e / 1000 * .35);
+  ctx.fillStyle = '#ddd'; ctx.fillRect(-12, -14, 24, 30);
+  ctx.fillStyle = '#111'; ctx.fillRect(-7, -8, 14, 6);      // visor
+  ctx.restore();
+  // A quiet way out, once the hint bar has gone: always clear what to do to go where.
+  const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
+  if (q > 0) {
+    ctx.globalAlpha = q * .5; ctx.fillStyle = '#aaa'; ctx.font = '11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Esc: end the drift', cv.width / 2, cv.height - 14);
+    ctx.globalAlpha = 1;
+  }
+  if (e >= CONFIG.drift.durationMs) endDrift();
+}
+
+function endDrift() {
+  if (s.drift.done) return;
+  s.drift.done = true; finishGame(true);
 }
 
 function showMenu(html) { $('menu').innerHTML = html; $('menu').classList.remove('hidden'); }
@@ -770,6 +833,7 @@ function resume() {
 }
 
 function newGame() {
+  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting'); }   // back to what was playing before space
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
@@ -798,7 +862,12 @@ function say(m) {
   while ($('log').children.length > 5) $('log').lastChild.remove();
 }
 
-function announce(m, extraMs = 0) { if (!m) return; s.announce = m; s.announceUntil = now() + 8000 + extraMs; say(m); }
+// An announcement stays long enough to be typed out and then read in full: longer texts stay longer.
+function announce(m, extraMs = 0) {
+  if (!m) return;
+  const h = CONFIG.hint, readMs = m.length / h.typeCps * 1000 + m.length * h.readMsPerChar + h.lingerMs;
+  s.announce = m; s.announceUntil = now() + Math.max(h.minMs, readMs) + extraMs; say(m);
+}
 
 function update(dt) {
   const t = now();
@@ -971,13 +1040,14 @@ function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
   const nearCrust = p.y >= H - 8;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
-  if (stillness()) return seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.';
+  if (stillness()) return (seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.')
+    + (s.bottles.calm || canMix('calm') ? ' One more Calm, and you will drift.' : '');
   if (seamHeld('frenzy') || seamHeld('still')) return `Hyperfocus is holding the ${seamHeld('still') ? 'quiet ' : ''}? seam open. Dig in before it wears off (${Math.ceil((s.fx.focus - t) / 1000)}s).`;
   const firstShake = `Shaking ${VNAME[s.shake ? s.shake.v : 'strength']}… No digging until it is ready.`;
   if (shaking() && s.shakesDone === 0) return firstShake;
   // The opening steps (shake, drink, dig) come before any announcement.
-  if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + ' Ready! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
-  if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
+  if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + '\nReady! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
+  if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation.\nPress 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   if (s.announceUntil > t) return s.announce;
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
@@ -1051,19 +1121,19 @@ function hud() {
   $('tipHi').style.left = `calc(${pct(tipAt())}% - 1px)`;
   const lvl = Math.max(0, Math.min(4, Math.floor(pct(s.meter) / 20)));
   [...$('scale').children].forEach((el, i) => el.className = i === lvl ? 'on' : '');
-  setText('dosageNow', frenzy() ? 'FRENZY' : stillness() ? 'Get out into the vast nothingness of space' : DOSAGE[lvl]);
+  setText('dosageNow', frenzy() ? 'FRENZY' : stillness() || s.drift ? 'Get out into the vast nothingness of space' : DOSAGE[lvl]);
   $('dosageHead').classList.toggle('vast', stillness());
   // The dose window, made visible: what the next drink will be multiplied by, and for how long.
   const win = windowDrinks();
   setHTML('doseWindow', active('focus') && !frenzy() && !stillness() ? 'steady hand: drinks <b>×1</b>'
     : win.length && !frenzy() && !stillness()
     ? `next drink <b>×${nextMult()}</b> · ${Math.ceil((Math.max(...win) + B.windowMs - t) / 1000)}s` : '');
-  cv.className = frenzy() ? 'frenzy' : stillness() ? 'still' : '';
+  cv.className = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : '';
   document.body.classList.toggle('intro', s.drinks === 0);
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
   document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   // The hint bar types each new hint out, with a block cursor while it types.
-  const target = running ? hint() : '';
+  const target = s.drift ? typing.text : running ? hint() : '';   // in the Drift, the last hint stays as it fades
   if (target !== typing.text) {
     const shown = Math.min(typing.text.length, (performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps);
     const extends_ = typing.text && target.startsWith(typing.text);
@@ -1091,7 +1161,7 @@ function loop(t) {
   const dt = Math.min(100, t - (lastFrame || t)); lastFrame = t;
   radio.clock += dt;
   if (running) update(dt);
-  if (g) { draw(); hud(); }
+  if (g) { s.drift ? drawDrift() : draw(); hud(); }
   requestAnimationFrame(loop);
 }
 
@@ -1105,6 +1175,7 @@ addEventListener('keydown', e => {
   if (k === 'r' || k === 't') { radioKey(k); return; }   // the radio works on every screen
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
+  if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); return; }   // the Drift: nothing to do but watch, or Esc
   if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
   if (dirs[k]) {
     e.preventDefault();
@@ -1128,6 +1199,8 @@ document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.ta
 
 $('go').onclick = newGame;
 $('pauseBtn').onclick = pause;
+addEventListener('blur', pause);                             // leaving the window pauses the shift
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
 // Fit the whole game to the window: never scroll, just scale down evenly on small screens.
 // Fit the whole game to the window, once. The size is measured for the fullest layout (every part of
 // the interface revealed, the longest hint), so nothing that appears during play can change the scale.

@@ -8,6 +8,7 @@
 **Platform:** browser (HTML/JavaScript), published on itch.io.
 **Length:** 10–15 minutes to the core, with a clear ending.
 **Goal:** reach the core, and experience all the peak and altered states along the way.
+**Ground rule:** it is always discoverable and clear what to do to go where. Every screen and state shows its way on and its way out (a key, a button, a quiet hint).
 **Currency:** the **A$$ coin**. Drill samples are traded for A$$ coins.
 
 ## Core loop
@@ -41,6 +42,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **You can't lose.** The game has a **soft failure** instead: you can mess up (a broken drill, lost samples), but the run is never lost: the pick axe always works. The stakes are in what you find, and in how well you dig.
 - **States end with the layer.** Breaking through a crust gives a clean slate: Frenzy or Stillness ends and the scale is back to balanced. Milk+ already in your system keeps counting down.
 - **In Stillness:** everything slows, colours drain to violet and grey, and the drill goes exactly where you point it.
+- **Drift (Stillness overload):** drink a Calm *while in Stillness* and you go past it: the shaft lets go, and the prospector drifts out into the vast nothingness of space while The You Show plays (Space oddities). No controls, nothing to do, just watch. It is an ending of its own: *"CONTACT LOST. You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant."* Never by accident: a Calm from a fossil shaker doesn't trigger it, and the Stillness hint warns: *"One more Calm, and you will drift."* Mood: sublime, existential, calm; a soft death.
 - **The reward:** each state opens a seam beside you that only answers to that state: **frenzy artefacts** and **Stillness artefacts**, logged as *"Recovered under conditions the Kroeber Foundation does not endorse."*
 
 ## The layers
@@ -93,7 +95,7 @@ Music: original, or AI-generated or royalty-free under licences that allow it. N
 - **Fonts and colours** from the year-one identity, shifting toward year two.
 
 ## Ending
-**Two ways out.** Stillness overload is itself an ending, and can end the game early (see *Ideas for later*: the space sequence during The You Show). Otherwise:
+**Two ways out.** Drift (Stillness overload) is itself an ending, and can end the game early; in the prototype it is a grey-box placeholder of the space sequence (see *Ideas for later*). Otherwise:
 
 You reach the core. The player receives the challenge coin (*Ex profundo, nova. 1 A$$*) as an image to share.
 
@@ -119,7 +121,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
   - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
   - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.
-- **Stillness overload as a space sequence, and an ending:** the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". It is itself an ending: it can end the game early, before the core. Probably an interface job for later.
+- **Stillness overload as a space sequence, and an ending** (a grey-box Drift is in the game: the shaft falls away, the hint bar fades, and only the prospector and stars remain, turning slowly for 30 seconds): the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". It is itself an ending: it can end the game early, before the core. Probably an interface job for later.
 
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.
