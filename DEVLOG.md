@@ -328,3 +328,7 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **On itch.io.** The game is up, restricted for now. In itch.io's frame the right-hand column dropped below the game: the frame was a few pixels narrower than the game, so the columns wrapped instead of scaling. Now they never wrap; in a narrow window the whole game scales down, centred.
 
 **Milestone: a playable prototype on itch.io (day 6).** The goal of the day: set up a playable prototype on itch.io. Done. The project started on Tuesday 20 October with a game design document; on Sunday 25 October it is a game anyone with the link can play in the browser: three layers, Milk+ and the dose window, Frenzy, Stillness and Drift, two endings, a radio and a Field Guide. Six days, 70 commits.
+
+**Fix: Enter did nothing on itch.io.** On itch.io the game runs in a frame, and after clicking "Run" the keyboard stayed with the itch.io page, so Enter never reached "Begin shift". The game now takes the keyboard as soon as it loads, and any click on it gives the keyboard back.
+
+**The start button says what works.** "Begin shift (Enter)" promised a key that did not always work. Now the button shows "Begin shift (Enter)" only when the game has the keyboard, and "Click to begin shift" when it does not.

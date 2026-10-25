@@ -1306,6 +1306,13 @@ genLayer();
 renderStatic(); renderGuide();
 requestAnimationFrame(loop);
 setTimeout(() => { fittedFor = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4); fit(); }, 0);   // once, after the first layout
+// Take the keyboard at once, also inside a frame (itch.io): Enter begins the shift without a click first.
+window.focus(); $('go').focus({ preventScroll: true });
+// A click anywhere on the game gives the keyboard back to it.
+document.addEventListener('mousedown', () => window.focus());
+// The start button says what works right now: Enter only when the game has the keyboard.
+const startLabel = () => { $('go').textContent = document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift'; };
+addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 </body>
 </html>
