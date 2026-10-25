@@ -324,3 +324,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **A tighter right column, a clearer gym bag.** The rover panel stats and the Public Service feed now use the smaller text, so the right-hand column ends above the meter instead of level with it. And the Legacy Powder card explains its joke: it seeps up from the Shaker Strata below, and the Foundation believes the whole layer began as one forgotten gym bag.
 
 **Jackhammer Heart: drill samples.** Started on the Pump Zone's wildcard song, Jackhammer Heart, with samples of drill sounds. The game's own tool becomes part of the music.
+
+**On itch.io.** The game is up, restricted for now. In itch.io's frame the right-hand column dropped below the game: the frame was a few pixels narrower than the game, so the columns wrapped instead of scaling. Now they never wrap; in a narrow window the whole game scales down, centred.
