@@ -34,7 +34,9 @@
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--hot); font-weight:bold; }
-  #radioBox { width:758px; margin-top:10px; padding:6px 10px; }   /* as long as the meter */
+  #baseRow { width:1074px; display:flex; gap:16px; margin-top:10px; }   /* reaches across all three columns */
+  #radioBox { width:758px; flex:none; padding:6px 10px; }   /* as long as the meter */
+  #pauseBtn { width:300px; flex:none; }
   #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font-weight:bold; color:var(--hot);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
@@ -132,9 +134,12 @@
         <span>Get out</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
       </div>
     </div>
+    <div id="baseRow">                                      <!-- the radio, and Pause beside it under the right-hand column -->
     <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
       <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
       <div class="row"><span class="small" id="radioFx"></span><span class="small">R: next station · T: tape</span></div>
+    </div>
+    <button id="pauseBtn" class="later" data-reveal="dig">Pause (Space)</button>
     </div>
     <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
@@ -175,7 +180,6 @@
       <div id="log"></div>
     </div>
 
-    <button id="pauseBtn" class="later" data-reveal="dig">Pause (Space)</button>
   </div>
 </div>
 

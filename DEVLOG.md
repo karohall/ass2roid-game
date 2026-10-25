@@ -310,3 +310,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Reflection: moving things draws attention.** Moving features around is a very effective way to draw attention, and to show what is important. On the start screen the radio now sits alone in the middle, under the mining window, before anything else has arrived. I appreciate that: the radio is the game's personality, and the tape is already playing before the shift begins. Where something sits says how much it matters, and when it moves, you notice it.
 
 **Reflection: one white surface.** The layout now feels nice and balanced. And the white is efficient: in a grey interface, the hint bar is the only light surface, so the eye goes there first. That is where the game tells you what to do next.
+
+**Pause moves down beside the radio.** It sat just under the Public Service box, level with the meter, crowding its right end. Now Pause lines up with the radio, so the meter has space to the right, and the Public Service box stays where it was.
