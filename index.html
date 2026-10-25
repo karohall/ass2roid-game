@@ -10,18 +10,18 @@
   body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
   #wrap { display:flex; gap:16px; justify-content:center; align-items:flex-start; padding:16px; flex-wrap:wrap; transform-origin:top center; }
   html, body { overflow:hidden; }                                /* the game always fits; a page scrollbar coming and going would shift it */
-  #stage { position:relative; }
-  canvas { display:block; border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
+  #stage { position:relative; width:442px; }                   /* the meter may reach past it, under the Milk+ column */
+  canvas { display:block; width:442px; height:calc(var(--viewH) + 2px); border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
-  #hint { width:440px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
-  #dosage { width:440px; margin-top:10px; }
+  #hint { width:442px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
+  #dosage { width:758px; margin-top:10px; }   /* reaches under the Milk+ column, which ends above it */
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
   #dosageHead.vast > span:first-child { display:none; }                /* Stillness: the label takes the whole row */
   #dosageHead.vast #dosageNow { font-size:16px; letter-spacing:.02em; width:100%; text-align:center; }
-  #meter { height:32px; background:#111; border:2px solid #666; position:relative;
+  #meter { height:22px; background:#111; border:2px solid #666; position:relative;
            background-image:repeating-linear-gradient(90deg, transparent 0 calc(20% - 2px), #444 calc(20% - 2px) 20%); }
   #meterFill { position:absolute; top:0; bottom:0; left:50%; width:0; background:#bbb; transition:left .15s, width .15s; }
   #meterFill.hot { background:#fff; animation:throb .4s ease-in-out infinite alternate; }
@@ -34,7 +34,13 @@
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--hot); font-weight:bold; }
-  #legend { width:440px; display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:8px; }
+  #radioBox { width:758px; margin-top:10px; padding:6px 10px; }   /* as long as the meter */
+  #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font-weight:bold; color:var(--hot);
+                      mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+  #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
+  @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
+  #radioBox .label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-right:6px; }
+  #legend { width:758px; min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:4px 14px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   .sw { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
   .sw.hatch { background:repeating-linear-gradient(45deg,#3a3a3a 0 3px,#2a2a2a 3px 6px); }
   .sw.crust { background:repeating-linear-gradient(45deg,#222 0 2px,#3a3a3a 2px 4px),#222; border:1px solid #777; }
@@ -67,7 +73,7 @@
   .slot.sel { outline:1px solid #fff; }
   .slot.locked { color:#666; font-size:16px; }
   #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; height:104px; overflow:hidden; }   /* fixed: fits the longest card */
-  .overlay { position:absolute; inset:0; height:520px; background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
+  .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
   .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
   .overlay h2 { margin:0; font-size:18px; letter-spacing:.08em; }
   .overlay button { width:auto; text-align:center; padding:8px 20px; }
@@ -86,6 +92,7 @@
   #nasa b { color:#0047ff; letter-spacing:.1em; }
   /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
   .later:not(.shown) { display:none !important; }                    /* hidden parts take no space */
+  #dosage.later:not(.shown) { display:block !important; visibility:hidden; }   /* except the meter: its place is kept, so the radio below never jumps */
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
   #milk { border-color:#777; }                                        /* the shakes stand out */
   #milk h3 { color:var(--text); }
@@ -125,6 +132,10 @@
         <span>Get out</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
       </div>
     </div>
+    <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
+      <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
+      <div class="row"><span class="small" id="radioFx"></span><span class="small">R: next station · T: tape</span></div>
+    </div>
     <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
 
@@ -144,13 +155,6 @@
   </div>
 
   <div id="panel2" class="panel">
-    <div class="box" id="radioBox">
-      <h3>Radio</h3>
-      <div class="row"><b id="radioName">Testarocca</b><span class="small" id="radioKind">Tape</span></div>
-      <div class="small" style="color:var(--text)">Now playing: <span id="radioSong">side A</span></div>
-      <div class="small" id="radioFx"></div>
-      <div class="small" style="margin-top:4px">R: next station · T: tape</div>
-    </div>
     <div class="box later" data-reveal="dig">
       <h3>Rover panel</h3>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
@@ -180,7 +184,7 @@
 // CONFIG: every tunable number lives here.
 // ─────────────────────────────────────────────────────────────────────────────
 const CONFIG = {
-  grid:    { cols: 11, tile: 40, viewRows: 13, metresPerRow: 3 },
+  grid:    { cols: 11, tile: 40, viewRows: 17.5, metresPerRow: 3 },   // 17½ rows: the mining window ends where the Milk+ column does
   dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.1 },
   strength:{ boost: 3, maxStacks: 2, durationMs: 45000 },
   calm:    { durationMs: 15000 },
@@ -309,6 +313,8 @@ const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endo
 const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10;
 const W = CONFIG.grid.cols, T = CONFIG.grid.tile, VIEW = CONFIG.grid.viewRows;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+cv.height = CONFIG.grid.viewRows * CONFIG.grid.tile;
+document.documentElement.style.setProperty('--viewH', cv.height + 'px');   // the overlays cover exactly the mining window
 const $ = id => document.getElementById(id);
 const now = () => performance.now();
 
@@ -1057,6 +1063,9 @@ function hint() {
   if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + '\nReady! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
   if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation.\nPress 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
+  // About to tip over: this outranks announcements and rumours, so it is never hidden.
+  if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
+  if (s.meter + CONFIG.push.calm * nextMult() <= -tipAt()) return 'One more quick Calm tips you into Stillness.';
   if (s.announceUntil > t) return s.announce;
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
@@ -1067,8 +1076,6 @@ function hint() {
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;
   if (seamWaiting('frenzy')) return 'The ? seam has sealed. It responds to Frenzy only.';
   if (seamWaiting('still')) return 'The quiet ? seam has sealed. It responds to Stillness only.';
-  if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
-  if (s.meter + CONFIG.push.calm * nextMult() <= -tipAt()) return 'One more quick Calm tips you into Stillness.';
   const ready = VARIANTS.find(v => s.bottles[v] > 0);
   if (ready && s.drinks === 0) return `${VNAME[ready]} is ready. Press ${VARIANTS.indexOf(ready) + 1} again to drink it, instantly. Or keep it for when it counts.`;
   if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Press 1 to shake a Strength (2 s, no digging meanwhile).';
@@ -1093,6 +1100,13 @@ function renderStatic() {
   // Rows that were already visible come back at once when the menu is rebuilt for a new layer.
   document.querySelectorAll('#recipes [data-reveal]').forEach(el => { if (s && REVEAL[el.dataset.reveal]()) el.classList.add('shown', 'settled'); });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
+}
+
+// The radio plays on every screen, the start screen included: the station and song roll by like a banner.
+function radioHud() {
+  const banner = `${RADIO[radio.on].name} · Now playing: ${nowPlaying()}`;
+  if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
+  setText('radioKind', RADIO[radio.on].kind); setText('radioFx', RADIO[radio.on].fx);
 }
 
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
@@ -1155,8 +1169,6 @@ function hud() {
   const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps));
   setText('hint', n < target.length ? target.slice(0, n) + '▌' : target);
   $('pauseBtn').disabled = !running;
-  setText('radioName', RADIO[radio.on].name); setText('radioKind', RADIO[radio.on].kind);
-  setText('radioSong', nowPlaying()); setText('radioFx', RADIO[radio.on].fx);
   setHTML('legend', [
     '<span><i class="sw" style="background:#ddd"></i>You</span>',
     `<span><i class="sw" style="background:${layer().tint}"></i>Rock</span>`,
@@ -1174,6 +1186,7 @@ function loop(t) {
   radio.clock += dt;
   if (running) update(dt);
   if (g) { s.drift ? drawDrift() : draw(); hud(); }
+  radioHud();
   requestAnimationFrame(loop);
 }
 
@@ -1211,8 +1224,7 @@ document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.ta
 
 $('go').onclick = newGame;
 $('pauseBtn').onclick = pause;
-addEventListener('blur', pause);                             // leaving the window pauses the shift
-document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });   // a hidden tab pauses the shift (a screenshot or another window does not)
 // Fit the whole game to the window: never scroll, just scale down evenly on small screens.
 // Fit the whole game to the window, once. The size is measured for the fullest layout (every part of
 // the interface revealed, the longest hint), so nothing that appears during play can change the scale.

@@ -113,6 +113,6 @@ The whole game is one file, `index.html`, so it uploads as an HTML game.
 1. **Make a zip** with `index.html` at the top level of the zip (not inside a folder).
 2. On itch.io, **create a new project.** Set the kind of project to **HTML**.
 3. **Upload the zip** and mark it to be played in the browser.
-4. **Embed size:** the game is about 1,100 × 950 pixels at full size and scales itself down to fit any smaller window, so it never scrolls. Set the embed close to that size, or turn on the option to launch the game in fullscreen or a new window.
+4. **Embed size:** the game is about 1,100 × 1,030 pixels at full size and scales itself down to fit any smaller window, so it never scrolls. Set the embed close to that size, or turn on the option to launch the game in fullscreen or a new window.
 5. **Visibility:** keep the page **restricted** (or a draft) while testing, and share the link only with your testers.
 6. **Before sending the link,** open it yourself on a laptop and play the first minute.

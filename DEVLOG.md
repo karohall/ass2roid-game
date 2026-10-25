@@ -294,3 +294,15 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Milk+ keys stay put, gaps show.** The menu went [1], [2], [4]: Recovery (key 3) only appears once the drill is worn, so the gap looked like a mistake. Each Milk+ keeps its key, and now a dim "[3] ? ? ?" holds the place of one still to find, like the unknown ingredients. The placeholders appear once the menu is more than Strength, so the opening stays sparse.
 
 **A full playthrough: 5:57.** 30 drill samples, 26 Milk+, 3 Frenzies, 0 Stillnesses, 8 of 10 Field Guide cards. Shorter than the 10–15 minute target, with three of five layers. Again no Stillness: 32 Legacy Powder left over, enough for 16 Calms. Calm seems to be the drink nobody reaches for. And again no Artefact 2, with nothing telling me there was more to find. So the end screen now says what is still out there: *"Still unrecovered: a Frenzy find in the Chrome Vein; a Stillness find anywhere."* A quiet reason to play again.
+
+**A taller mining window.** It was 13 rows; now 18, about as tall as the Milk+ column beside it, so you see further down the shaft. The dosage meter is taller too. The order stays: window, hint bar (closest to the action), meter. The right-hand column is still the tallest, so the game does not shrink on a laptop.
+
+**The radio moves under the meter.** Long and slim: one row for the station and keys, one for what is playing. The right-hand column moves up by the radio's height. The mining window settles at 17½ rows, so its bottom lines up with the Milk+ column.
+
+**The Frenzy warning was hidden.** My third quick Strength tipped me over with no warning. "One more quick Strength tips you into Frenzy" was there, but it ranked below the announcements and the dose-window rumour, and around the first drinks one of those always covered it (announcements now stay up to 18 seconds). The tipping warnings now outrank both.
+
+**A slimmer, wider meter and a radio banner.** The meter is half as tall and stretches out under the Milk+ column. The radio's station and song roll by like a banner, on every screen, the start screen included.
+
+**Alignment and the cut-off bottom.** The game measures its size once, at the start, for the fullest layout. But the legend under the meter is empty then and fills up during play, so the bottom of the game was cut off. The legend now has room for two lines from the start. The meter keeps its place before the first drink, so the radio below it never jumps. And everything lines up: the hint bar is flush with the mining window; the meter, radio and legend all reach across to the right edge of the Milk+ column.
+
+**Pause only when the tab is hidden.** Pausing whenever the window lost focus was inconsistent: some screenshot tools take focus and paused the game, others did not. Now only a hidden tab pauses it (switching tab, minimising, locking the screen). Screenshots and clicking into another window leave it running.
