@@ -31,7 +31,9 @@
   #doseWindow { font-size:12px; color:var(--hot); text-transform:none; letter-spacing:0; }
   #doseWindow b { background:#fff; color:#111; padding:0 4px; }
   @keyframes throb { from { opacity:.65; } to { opacity:1; } }
-  .caret { animation:breathe 1.8s ease-in-out infinite; }   /* the start button waits, breathing slowly: draws the eye without nagging */
+  /* The check engine light, on the start button: it is on. Ignore that it is on. It breathes slowly to draw the eye. */
+  .lamp { display:inline-block; width:9px; height:9px; margin-left:10px; border-radius:50%; vertical-align:1px;
+          background:#ffb347; box-shadow:0 0 6px 1px rgba(255,179,71,.7); animation:breathe 1.8s ease-in-out infinite; }
   @keyframes breathe { 0%, 100% { opacity:1; } 50% { opacity:.2; } }
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
@@ -1351,7 +1353,7 @@ window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
 // The start button says what works right now: Enter only when the game has the keyboard.
-const startLabel = () => { $('go').innerHTML = (document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift') + '<span class="caret">▌</span>'; };
+const startLabel = () => { $('go').innerHTML = (document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift') + '<span class="lamp" title="Check engine light"></span>'; };
 addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 </body>
