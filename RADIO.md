@@ -33,6 +33,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
 - **All stations are available from the start**, plus the rover cassette (Testarocca). The radio is the game's personality, not a reward.
 - **Station effects:** The Pump Zone digs slightly faster. Disco Gravitas calms the meter a little. **Void FM has no effect**: choosing it is choosing a mood, not a tactic. The drift is saved for the ending.
 - **Radio keeps playing between layers**; the loading screen ducks it under the engine.
+- **Bilingual echoes on every station (2026-10-25).** The bilingual echo started with Disco Gravitas (Italian and English). Now each station has its own language flair, echoed in English.
 
 ## Rules (from the GDD)
 

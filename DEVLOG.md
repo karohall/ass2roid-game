@@ -334,3 +334,5 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **The start button says what works.** "Begin shift (Enter)" promised a key that did not always work. Now the button shows "Begin shift (Enter)" only when the game has the keyboard, and "Click to begin shift" when it does not.
 
 **Reflection: a button should not promise what it cannot keep.** The ground rule, always clear what to do to go where, also means being honest about what works right now. On itch.io, Enter sometimes did not reach the game, so a button saying "(Enter)" was a small broken promise. Now the button changes with the situation, and it is always true.
+
+**Bilingual echoes: each station has its own language flair.** The bilingual echo began on Disco Gravitas, a line in Italian echoed in English. Now every station gets one, each with its own language flair.
