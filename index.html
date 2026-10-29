@@ -31,8 +31,8 @@
   #doseWindow { font-size:12px; color:var(--hot); text-transform:none; letter-spacing:0; }
   #doseWindow b { background:#fff; color:#111; padding:0 4px; }
   @keyframes throb { from { opacity:.65; } to { opacity:1; } }
-  .caret { animation:blink 1.06s steps(1) infinite; }   /* the start button waits like the typewriter hints do */
-  @keyframes blink { 50% { opacity:0; } }
+  .caret { animation:breathe 1.8s ease-in-out infinite; }   /* the start button waits, breathing slowly: draws the eye without nagging */
+  @keyframes breathe { 0%, 100% { opacity:1; } 50% { opacity:.2; } }
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--hot); font-weight:bold; }
@@ -250,6 +250,7 @@ const CONFIG = {
     { id: 'art1',   kind: 'frenzy', minLayer: 0 },
     { id: 'art2',   kind: 'frenzy', minLayer: 2 },
     { id: 'still1', kind: 'still',  minLayer: 0 },
+    { id: 'chrome1', kind: 'frenzy', minLayer: 2, seam: false, unrecovered: 'something Näsa would rather you did not melt' },   // melted out of a slab, not found in a seam
   ],
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
@@ -257,7 +258,8 @@ const CONFIG = {
   hint:    { typeCps: 60, readMsPerChar: 70, lingerMs: 2500, minMs: 9000 },   // announcements: typing + reading time + a pause, never under 9 s
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
   drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
-  nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often       // the hint bar types itself out, characters per second
+  nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
+  chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -292,6 +294,7 @@ const UNLOCKS = { powder: 'calm', chrome: 'stamina', spores: 'focus' };
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
   art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa serial number. Näsa denies ownership.`,
+  chrome1: c => `Site KR-1, Crater ${c}, Quadrant 2. A lump of molten chrome™, still warm. Näsa has issued an invoice for it.`,
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
 };
 const RADIO = {
@@ -410,7 +413,7 @@ function genLayer() {
 // Tipping into a state opens a seam right beside the prospector, holding the next
 // unfound artefact of that kind. The seam only answers to that state.
 function openSeam(kind) {
-  const a = CONFIG.artefacts.find(a => a.kind === kind && !s.guide.includes(a.id) && s.layer >= a.minLayer);
+  const a = CONFIG.artefacts.find(a => a.kind === kind && a.seam !== false && !s.guide.includes(a.id) && s.layer >= a.minLayer);
   // An older seam of this kind, sealed somewhere up the shaft, closes back into rock: the new one opens here.
   if (s.seamOpen[kind]) {
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
@@ -482,7 +485,7 @@ function act(dx, dy) {
 
 function hit(x, y, c) {
   if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
-  if (c.t === SLAB) { nasa(); warn('Näsa chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
+  if (c.t === SLAB) { slabHit(x, y, c); return; }
   if ((c.t === SEAM || c.t === ART) && !seamAnswers(c.kind)) {
     warn(c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
     bump(x, y, 2); return;
@@ -524,11 +527,43 @@ function gain(k, n) {
   unlock('ing_' + k);
 }
 
+// Näsa chrome doesn't dig. But in a Frenzy, with Strength stacked, a hit heats it up: keep going and it
+// melts, a new way down. Once it's hot, every hit may blow you up instead. Only the drill breaks.
+function slabHit(x, y, c) {
+  const C = CONFIG.chrome, t = now();
+  if (!frenzy() || onPick()) { nasa(); warn(onPick() ? 'The pick axe bounces off the chrome.' : 'Näsa chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
+  if (s.strStacks < C.stacks) { nasa(); warn('The chrome warms a little, then cools. More Strength might do it.'); bump(x, y, 3); return; }
+  c.heat = Math.max(0, (c.heat || 0) - C.coolPerSec * (t - (c.hotAt || t)) / 1000) + 1; c.hotAt = t;
+  bump(x, y, 6);
+  if (c.heat >= C.riskFrom && Math.random() < C.blowChance) return blowUp(x, y, c);
+  if (c.heat >= C.meltHeat) {
+    g[y][x] = { t: AIR, hp: 0, max: 0 };
+    bump(x, y, 24);
+    say('The chrome gives way. A new way down.');
+    nasa('Näsa™ property damaged. An invoice has been issued.', true);
+    unlock('chrome1');
+    return;
+  }
+  warn(c.heat >= C.riskFrom ? 'The chrome is glowing. It could go either way.' : 'The chrome is heating up.');
+}
+
+// The blast: the drill breaks, and the prospector is thrown back up the shaft. The slab cools.
+function blowUp(x, y, c) {
+  c.heat = 0;
+  bump(x, y, 40);
+  if (!onPick()) { s.drill = 0; s.drillWorn = true; s.drillBreaks++; }
+  for (let i = 0; i < CONFIG.chrome.throwRows && p.y > 2 && g[p.y - 1][p.x].t === AIR; i++) p.y--;
+  s.blasts = (s.blasts || 0) + 1;
+  say('BOOM. The chrome blew. So did the drill. Out comes the pick axe.');
+  nasa('Näsa™ property damaged. An invoice has been issued.', true);
+}
+
 // Näsa intrudes like a pop-up ad, at most every 20 seconds.
-function nasa() {
-  if (now() - s.nasaAt < CONFIG.nasa.everyMs) return;
+function nasa(msg = 'This chrome is the property of Näsa. Big Space™.', force = false) {
+  if (!force && now() - s.nasaAt < CONFIG.nasa.everyMs) return;
   s.nasaAt = now();
   const el = $('nasa');
+  el.innerHTML = '<b>NÄSA™</b> ' + msg;
   el.classList.remove('hidden', 'fading');
   clearTimeout(nasa.t1); clearTimeout(nasa.t2);
   nasa.t1 = setTimeout(() => el.classList.add('fading'), CONFIG.nasa.showMs);                 // long enough to read
@@ -776,7 +811,8 @@ function finishGame(drifted = false) {
   ];
   // What's still out there: a quiet reason to play again, without explaining the whole system.
   const where = a => a.minLayer ? 'in ' + CONFIG.layers[a.minLayer].name.replace(/^The /, 'the ') : 'anywhere';
-  const missing = CONFIG.artefacts.filter(a => !s.guide.includes(a.id)).map(a => `a ${a.kind === 'still' ? 'Stillness' : 'Frenzy'} find ${where(a)}`);
+  const missingText = a => a.unrecovered || `a ${a.kind === 'still' ? 'Stillness' : 'Frenzy'} find ${where(a)}`;
+  const missing = CONFIG.artefacts.filter(a => !s.guide.includes(a.id)).map(missingText);
   const unrecovered = missing.length ? `<div class="small">Still unrecovered: ${missing.join('; ')}.</div>` : '';
   showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>CONGRATULATIONS.</h1><div style="font-size:16px">You are now further down than anyone asked you to be.</div>'}
     <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
@@ -978,6 +1014,8 @@ function draw() {
       ctx.fillStyle = '#ddd'; ctx.fillRect(cx - 6, cy - 7, 12, 16); ctx.fillStyle = '#888'; ctx.fillRect(cx - 4, cy - 11, 8, 4);
     }
     if (c.t === SLAB) {                                      // Näsa chrome, with a shine and a ™
+      const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * (now() - c.hotAt) / 1000) / CONFIG.chrome.meltHeat : 0;
+      if (heat > 0) { ctx.fillStyle = `rgba(255,179,71,${Math.min(.9, heat)})`; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }   // heating up: amber
       ctx.fillStyle = '#e4e9ee'; ctx.fillRect(px + 1, py + 1, T - 2, 6);
       ctx.fillStyle = '#5d6670'; ctx.font = 'bold 11px monospace'; ctx.fillText('™', cx, cy + 3); ctx.font = 'bold 14px monospace';
     }
@@ -1108,7 +1146,7 @@ function hint() {
   if (s.announceUntil > t) return s.announce;
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
-  if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap.';
+  if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not heat.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
