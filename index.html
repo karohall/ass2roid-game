@@ -31,6 +31,8 @@
   #doseWindow { font-size:12px; color:var(--hot); text-transform:none; letter-spacing:0; }
   #doseWindow b { background:#fff; color:#111; padding:0 4px; }
   @keyframes throb { from { opacity:.65; } to { opacity:1; } }
+  .caret { animation:blink 1.06s steps(1) infinite; }   /* the start button waits like the typewriter hints do */
+  @keyframes blink { 50% { opacity:0; } }
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--hot); font-weight:bold; }
@@ -1311,7 +1313,7 @@ window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
 // The start button says what works right now: Enter only when the game has the keyboard.
-const startLabel = () => { $('go').textContent = document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift'; };
+const startLabel = () => { $('go').innerHTML = (document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift') + '<span class="caret">▌</span>'; };
 addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 </body>

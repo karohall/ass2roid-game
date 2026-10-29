@@ -336,3 +336,9 @@ Built on P1-A. Still grey boxes, no images, no sound. Every tunable number is in
 **Reflection: a button should not promise what it cannot keep.** The ground rule, always clear what to do to go where, also means being honest about what works right now. On itch.io, Enter sometimes did not reach the game, so a button saying "(Enter)" was a small broken promise. Now the button changes with the situation, and it is always true.
 
 **Bilingual echoes: each station has its own language flair.** The bilingual echo began on Disco Gravitas, a line in Italian echoed in English. Now every station gets one, each with its own language flair.
+
+## 2026-10-29 — Prototype 3 begins
+
+The plan for Prototype 3: blow up Näsa's chrome, give the radio real sound and let it react to the meter, the full Drift over The You Show, The Crack and the Core ending, Energy, a secret menu proposal, archive photos and the VHS cassette, a sleeker interface with a numbers overlay, the visual direction, and a level overview. Sleep stays parked. One feature at a time, each tested on its own.
+
+**A blinking cursor on the start button.** "Begin shift (Enter)▌" now waits with a blinking cursor, like the typewriter hints do.
