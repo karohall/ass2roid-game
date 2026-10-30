@@ -344,3 +344,7 @@ The plan for Prototype 3: blow up Näsa's chrome, give the radio real sound and 
 **The check engine light on the start button.** First a blinking cursor: it drew the eye, but it was annoying. A slow breathing fade was on brand for space, but still just a cursor. The start screen already says *"1. Check engine light. 2. Ignore that it is on."* So now the check engine light itself sits on the "Begin shift" button, softly breathing. First as an amber dot, but would anyone know it was a check engine light? Now it is the real dashboard symbol, the little engine every driver knows, in amber. It is on. Ignore that it is on.
 
 **Blowing up Näsa's chrome.** In a Frenzy with stacked Strength, hitting a Näsa slab heats it up: it glows amber, and after six or seven hits it melts, a new way down. From the third hit, every hit may blow up instead: the drill breaks, you are thrown back up the shaft, and Näsa pops up: *"Näsa™ property damaged. An invoice has been issued."* The first melt gives a new Field Guide card, Artefact 4: a lump of molten chrome™, still warm. Näsa has issued an invoice for it. The hint over a slab now winks at the rule: *"Näsa™ property. Do not heat."*
+
+## 2026-10-30 — Field research
+
+**Visiting an archaeometry conference** to learn how sediment layers are documented, and the artefacts found in them. Research for the strata of Korova Rock, and for the Field Guide's archive cards: how real finds are recorded, layer by layer.
