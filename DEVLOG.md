@@ -398,3 +398,5 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **An easter egg at 69 m.** Once per run: *"69 m. Nice. The Foundation does not endorse this observation."*
 
 **Fix: two "Frenzy finds".** The molten chrome card sat after the Stillness card, so the Field Guide showed "Frenzy finds" twice. It is now Artefact 3, with the other Frenzy finds; the Stillness glass of Milk+ is Artefact 4.
+
+**Void FM: night vision in The Crack.** Void FM was a mood, not a tactic. In the dark, the mood becomes the tactic: while Void FM plays in The Crack, the circle of light opens up to about twice the size, slowly, like eyes adjusting. It also works in Stillness, when Void FM comes through on its own; a Frenzy cuts to the Pump Zone and the dark closes in again. The radio teases it everywhere: *"A mood, not a tactic. Except in the dark."* And the Crack says so on arrival: *"Void FM listeners report seeing further."*

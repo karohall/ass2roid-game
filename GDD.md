@@ -51,7 +51,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 1. **Regolith Prime:** surface dust. *Its own thing:* the learning layer. The game opens with the first shake.
 2. **The Shaker Strata:** fossilised protein shakers. *Its own thing:* **fossil shakers** in the rock. Break one and you drink it on the spot, contents unknown: a little gamble with the balance meter.
 3. **The Chrome Vein:** metallic, and coveted by Näsa. *Its own thing:* **Näsa chrome slabs™** that can't be dug. Each has a gap to find, so the way down becomes a route, not a straight line. Hitting one brings a Näsa pop-up in Y2K chrome.
-4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (built in Prototype 3):* **darkness.** You only see about three tiles around the prospector, and the Crack Spores glow green through the dark. The toughest rock; the crust needs digging power 7. The Jacked Asses come later.
+4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (built in Prototype 3):* **darkness.** You only see about three tiles around the prospector, and the Crack Spores glow green through the dark. The toughest rock; the crust needs digging power 7. **Void FM gives night vision here:** while it plays, the light reaches about twice as far (also in Stillness, when Void FM comes through; a Frenzy cuts it off). The Jacked Asses come later.
 5. **The Core:** redacted by the Belt Authority. Not a layer: breaking through The Crack's crust is the arrival, and the ending.
 
 Each layer needs more strength, yields new ingredients, has its own Kroeber Fact, and **plays differently**: one thing of its own, so deeper isn't just slower and harder.
@@ -81,7 +81,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 ## The radio
 - **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky): digging goes slightly faster
 - **Disco Gravitas** (heart: Italo and space disco): calms the balance meter a little
-- **Void FM** (consciousness: futurepop at the edge of emptiness): no effect; choosing it is choosing a mood, not a tactic
+- **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 - **Space oddities:** not a station; a folder of songs for special occasions, such as The You Show on Stillness overload
 

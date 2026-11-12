@@ -247,7 +247,7 @@ const CONFIG = {
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
       ] },
     { name: 'The Crack', rows: 60, hp: [36, 42], bandHp: 240, crustHp: 260, crustMinPower: 7, tipAt: 90, tint: '#3d4744',
-      dark: { clear: 1.4, fade: 3.4 },   // darkness: you see about three tiles around you; the Crack Spores glow
+      dark: { clear: 1.4, fade: 3.4, voidClear: 3, voidFade: 6.5 },   // darkness: you see about three tiles around you, twice that on Void FM (night vision); the Crack Spores glow
       yields: { spores: 0.06, whey: 0.05, chrome: 0.02, powder: 0.02 },
       craters: [
         { id: 1, label: 'Crater 1', note: 'A green glow from below. More Crack Spores.', mods: { spores: 1.5, whey: 0.7 } },
@@ -300,7 +300,7 @@ const LAYER_INTRO = [                                          // the loading sc
   '',
   'You have reached the Shaker Strata. Fossilised protein shakers, lids still on.',
   'You have reached the Chrome Vein. Metallic, and coveted by Näsa™. Big Space™.',
-  'You have reached The Crack. It is very dark down here. The Crack Spores are not.',
+  'You have reached The Crack. It is very dark down here. The Crack Spores are not. Void FM listeners report seeing further.',
 ];
 // The first time a compound is found, the hint bar says what it unlocks.
 const UNLOCKS = { powder: 'calm', chrome: 'stamina', spores: 'focus' };
@@ -325,7 +325,7 @@ const RADIO = {
     SONG('Disco Gravitas', 'Dolce de Leche+', 'Disco Gravitas Dolce de Leche Plus')] },
   oddity: { name: 'Space oddities', kind: 'Folder', fx: 'Not a station. For special occasions.', songs: [
     SONG('Space oddities', 'The You Show', 'Too much Calm The You Show')] },
-  void:  { name: 'Void FM', kind: 'Station', fx: 'No effect. A mood, not a tactic.', songs: [
+  void:  { name: 'Void FM', kind: 'Station', fx: 'A mood, not a tactic. Except in the dark.', songs: [
     SONG('Void FM', 'In Profundum Imus (Ex Profundo)', 'Void FM In Profundum Imus (Ex Profundo)'),
     SONG('Void FM', 'Kármán Lines (Extended Mix)', 'Void FM Kármán Lines (Extended Mix)')] },
 };
@@ -1197,10 +1197,14 @@ function draw() {
   else { ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left'; ctx.fillText('0 m', 4, 10); }
 }
 
+// Void FM in the dark: night vision. (Also when Stillness lets Void FM come through; a Frenzy cuts it off.)
+const nightVision = () => !!layer().dark && musicOn() && radioNow().key === 'void';
+
 // The Crack: only a little light around the prospector. The Crack Spores glow green, and an open seam glows white.
 function drawDark(L, y0, y1) {
   const cx = p.x * T + T / 2, cy = p.y * T + T / 2;
-  const glow = ctx.createRadialGradient(cx, cy, L.dark.clear * T, cx, cy, L.dark.fade * T);
+  const k = s.sight = (s.sight || 0) + ((nightVision() ? 1 : 0) - (s.sight || 0)) * .06;   // 0 normal, 1 night vision
+  const glow = ctx.createRadialGradient(cx, cy, (L.dark.clear + (L.dark.voidClear - L.dark.clear) * k) * T, cx, cy, (L.dark.fade + (L.dark.voidFade - L.dark.fade) * k) * T);
   glow.addColorStop(0, 'rgba(0,0,0,0)'); glow.addColorStop(1, 'rgba(0,0,0,.96)');
   ctx.fillStyle = glow; ctx.fillRect(T, y0 * T, (W - 2) * T, (y1 - y0) * T);
   ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 14px monospace';
@@ -1334,7 +1338,7 @@ function radioHud() {
   const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}`;
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
-    : n.note || st.fx + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
+    : n.note || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }
 

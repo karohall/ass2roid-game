@@ -31,7 +31,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
 ## Radio decisions (2026-10-23)
 
 - **All stations are available from the start**, plus the rover cassette (Testarocca). The radio is the game's personality, not a reward.
-- **Station effects:** The Pump Zone digs slightly faster. Disco Gravitas calms the meter a little. **Void FM has no effect**: choosing it is choosing a mood, not a tactic. The drift is saved for the ending.
+- **Station effects:** The Pump Zone digs slightly faster. Disco Gravitas calms the meter a little. **Void FM is a mood, not a tactic. Except in the dark** (2026-11-12): in The Crack it gives night vision, and the light reaches twice as far. The drift is saved for the ending.
 - **Radio keeps playing between layers**; the loading screen ducks it under the engine.
 - **Music first (2026-11-12).** The radio starts off, and the drill won't run without music: pressing R is the first thing the player does. Then a short lesson: each station does something, R for the next, T for the tape.
 - **V for volume (2026-11-12).** V cycles loud, soft and muted, on every screen; the radio panel shows which. Sound is input too, and the player decides how much of it. A muted radio still counts as music for the drill.
