@@ -348,3 +348,9 @@ The plan for Prototype 3: blow up Näsa's chrome, give the radio real sound and 
 ## 2026-10-30 — Field research
 
 **Visiting an archaeometry conference** to learn how sediment layers are documented, and the artefacts found in them. Research for the strata of Korova Rock, and for the Field Guide's archive cards: how real finds are recorded, layer by layer.
+
+**What I learned: how finds are catalogued.** A capital letter and a number sequence for the catalogue number, a measuring tool or scale in the picture, an image of the object, and possibly a close-up. The Field Guide's archive cards will follow the same: catalogue number, photo with a scale, and a close-up where there is a detail worth seeing.
+
+## 2026-11-12 — Back after a break
+
+Back after about two weeks away. Decided: the catalogue letter is the layer the find comes from (A Regolith Prime, B Shaker Strata, C Chrome Vein, D The Crack), then a number in sequence, so the catalogue number also says how deep the find was: *KR-1 C 0002*.

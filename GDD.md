@@ -109,6 +109,8 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - **Climbing upwards (parked).** ↑ climbs one tile, only with solid rock beside you to grip, and slower than moving sideways. It would let you go back for a missed W or seam and make getting stuck at a crust unlikely; the cost is that going down stops being a commitment, which is part of the digging feel. Behind a setting, if tried.
 - **Done in Prototype 3: the start button stands out** with the check engine light: the dashboard's engine symbol in amber after its label, slowly breathing. It pays off the start screen's joke ("1. Check engine light. 2. Ignore that it is on.").
 - **Archive photos for artefacts.** Field Guide artefact cards get realistic museum-archive photos: neutral grey backdrop, flat lighting, scale bar, accession number, catalogue label. Photos appear only in the Field Guide; the rest of the game stays comic ink, so the archive reads as "real" against the drawn world.
+  - **How real finds are catalogued** (archaeometry conference, 2026-10-30): a **capital letter** and a **number sequence** for the catalogue number, a **measuring tool or scale** in the picture, an **image of the object**, and possibly a **close-up**. Each artefact card follows that: catalogue number, photo with scale, and a close-up where there is a detail worth seeing.
+  - **Catalogue number (decided 2026-11-12):** the letter is the layer (A Regolith Prime, B Shaker Strata, C Chrome Vein, D The Crack), then the number in sequence, e.g. *KR-1 C 0002* for the chrome dumbbell.
 - **Field Guide artefact: the VHS cassette.**
   > *Artefact, Site KR-1, Crater 7, Quadrant 2.*
   > VHS cassette, handwritten label: "VICE 2–6. DO NOT TAPE OVER." Recovered from the Shaker Strata, rewound.
