@@ -376,3 +376,7 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **A nice touch: the radio ducks between layers.** I love that the music fades down a bit on the loading screen between layers, and behind the pause and end screens. Like turning the car radio down while you read the map; it comes back up when the shift continues.
 
 **The radio joins mid-broadcast.** Switching station or getting into a Frenzy always started the same song from the top. Now, like a real radio, a station is already playing when you tune in: a random song, from a random place in it. A song that ends gives way to the next from its start.
+
+**Reflection: sound is also input.** Not too much at once: sound adds to everything else on screen, and it can throw you into a frenzy (haha). In a Frenzy that is the point, but everywhere else the sound should stay calm, like the ducking between layers. And the player decides how much: V now cycles the volume between loud, soft and muted.
+
+**Song variation: amazing.** With every station switch landing on a different song, at a different place, the radio feels alive.

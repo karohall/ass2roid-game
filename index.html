@@ -131,7 +131,7 @@
       <div>Ex Profundo · Prototype 2</div>
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause · R: radio · T: tape</div>
+      <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause · R: radio · T: tape · V: volume</div>
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
@@ -147,7 +147,7 @@
     <div id="baseRow">                                      <!-- the radio, and Pause beside it under the right-hand column -->
     <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
       <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
-      <div class="row"><span class="small" id="radioFx"></span><span class="small">R: next station · T: tape</span></div>
+      <div class="row"><span class="small" id="radioFx"></span><span class="small" id="radioKeys">R: next station · T: tape · V: volume</span></div>
     </div>
     <button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button>
     </div>
@@ -322,7 +322,7 @@ const RADIO = {
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
 // It starts on the tape once the tape has a song; while the tape is blank, on the Pump Zone, so Begin shift has music.
-const radio = { on: RADIO.tape.songs[0].file ? 'tape' : 'pump', last: 'pump', since: 0, clock: 0, idx: {} };
+const radio = { on: RADIO.tape.songs[0].file ? 'tape' : 'pump', last: 'pump', since: 0, clock: 0, idx: {}, vol: 0 };
 function radioKey(k) {
   if (s && s.drift) return;                                // The You Show plays to the end
   if (!sound.on) {                                          // the first R turns the radio on, on the station it is set to
@@ -358,6 +358,12 @@ player.addEventListener('ended', () => {
   if (n.song === undefined) radio.idx[n.key] = (radio.idx[n.key] || 0) + 1;   // the next song on this station
   else { player.currentTime = 0; player.play().catch(() => {}); }             // a song that cut in plays again
 });
+// V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
+const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
+function volumeKey() {
+  radio.vol = (radio.vol + 1) % VOLUMES.length;
+  if (running) say(`Radio volume: ${VOLUMES[radio.vol].name}.`);
+}
 function tuneIn() { if (!sound.on) { sound.on = true; soundTick(0); } }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
 const musicOn = () => sound.on && !!songOf(radioNow()).file;
@@ -377,7 +383,7 @@ function soundTick(dt) {
     sound.randomStart = n.song === undefined;
   }
   const want = sound.on ? songOf(n).file || '' : '';
-  const level = CONFIG.radio.volume * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
+  const level = CONFIG.radio.volume * VOLUMES[radio.vol].k * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
   if (n.cut && want !== sound.file) {                                         // the Frenzy: cut, mid-song, no fade
     sound.file = want; sound.vol = level; player.volume = level;
     loadSong(want);
@@ -1264,7 +1270,7 @@ function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
   const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}`;
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
-  setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
+  setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || st.fx + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }
@@ -1366,6 +1372,7 @@ addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   if (k === ' ') e.preventDefault();
   if (k === 'r' || k === 't') { radioKey(k); return; }   // the radio works on every screen
+  if (k === 'v') { volumeKey(); return; }                // and so does the volume
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
   if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); return; }   // the Drift: nothing to do but watch, or Esc
