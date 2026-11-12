@@ -536,6 +536,8 @@ function driftChance() {
 
 function act(dx, dy) {
   if (!musicOn()) { bump(p.x, p.y, 2); return warn(sound.on ? 'The tape is blank. The drill won’t run on silence.' : 'The drill won’t start. It needs music.'); }
+  // The opening, one step at a time: music, then the starter ration, then the first dig.
+  if (s.layer === 0 && s.drinks === 0) return warn('Starter ration first: the Foundation insists. Press 1 to shake a Strength.');
   if (shaking()) return warn('Both hands on the shaker. Digging resumes when it is ready.');
   // Drift: downward digs wander sideways when frenzied.
   if (dy > 0 && Math.random() < driftChance()) { dx = Math.random() < .5 ? -1 : 1; dy = 0; }
@@ -1196,7 +1198,7 @@ function hint() {
   if (!musicOn()) return sound.on ? 'The tape is blank, and the drill won’t run on silence.\nPress R to tune in a station.'
                                   : 'The drill won’t start. Nothing on Korova Rock runs without a soundtrack.\nPress R to tune in the radio.';
   if (!s.radioLessonAt) s.radioLessonAt = t;              // music just came on: how the radio works, for a few seconds
-  if (!s.radioHops && t - s.radioLessonAt < CONFIG.radio.lessonMs) {
+  if (!s.radioHops && !shaking() && !s.bottles.strength && s.drinks === 0 && t - s.radioLessonAt < CONFIG.radio.lessonMs) {   // gives way once the player shakes
     const st = RADIO[radio.on];
     return `The drill runs on music. Each station does something. ${st.name}: ${st.fx.charAt(0).toLowerCase() + st.fx.slice(1)}\nR: next station · T: the rover’s tape.`;
   }
