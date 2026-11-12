@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ASS2ROID: Ex Profundo (Prototype 2)</title>
+<title>ASS2ROID: Ex Profundo (Prototype 3)</title>
 <style>
   :root { --bg:#1b1b1b; --panel:#262626; --line:#444; --text:#ddd; --dim:#888; --hot:#fff; }
   * { box-sizing:border-box; }
@@ -128,7 +128,7 @@
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
     <div id="start" class="overlay">
       <h1>ASS2ROID</h1>
-      <div>Ex Profundo · Prototype 2</div>
+      <div>Ex Profundo · Prototype 3</div>
       <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
       <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
       <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause · R: radio · T: tape · V: volume</div>
@@ -246,15 +246,22 @@ const CONFIG = {
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
       ] },
+    { name: 'The Crack', rows: 60, hp: [36, 42], bandHp: 240, crustHp: 260, crustMinPower: 7, tipAt: 90, tint: '#3d4744',
+      dark: { clear: 1.4, fade: 3.4 },   // darkness: you see about three tiles around you; the Crack Spores glow
+      yields: { spores: 0.06, whey: 0.05, chrome: 0.02, powder: 0.02 },
+      craters: [
+        { id: 1, label: 'Crater 1', note: 'A green glow from below. More Crack Spores.', mods: { spores: 1.5, whey: 0.7 } },
+        { id: 4, label: 'Crater 4', note: 'Cold and quiet. More Regolith Whey.', mods: { whey: 1.5, spores: 0.7 } },
+      ] },
   ],
 
   // Altered-state artefacts: tipping into a state opens a seam beside you holding the
   // next unfound artefact of that kind. The seam only answers to that state.
-  artefacts: [
+  artefacts: [                                           // Frenzy finds first, then Stillness finds: the Field Guide groups them in this order
     { id: 'art1',   kind: 'frenzy', minLayer: 0 },
     { id: 'art2',   kind: 'frenzy', minLayer: 2 },
-    { id: 'still1', kind: 'still',  minLayer: 0 },
     { id: 'chrome1', kind: 'frenzy', minLayer: 2, seam: false, unrecovered: 'something Näsa would rather you did not melt' },   // melted out of a slab, not found in a seam
+    { id: 'still1', kind: 'still',  minLayer: 0 },
   ],
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
@@ -287,11 +294,13 @@ const LAYER_CARD = [
   'Surface dust and compressed grit. Kroeber Fact: the average prospector consumes 3.4 Milk+ before acknowledging the smell. The Foundation does not consider this a problem.',
   'Fossilised protein shakers, lids still on. Kroeber Fact: carbon dating places them in "leg day". The Foundation has stopped asking.',
   'Metallic, and coveted by Näsa™. Kroeber Fact: Näsa has filed 41 claims on this vein. All were written in Comic Sans.',
+  'Bioluminescent, and very dark. Kroeber Fact: the Belt Authority lists it as home of the Jacked Asses. The Foundation has not met them. Yet.',
 ];
 const LAYER_INTRO = [                                          // the loading screen sets the mood; practical hints come in play
   '',
   'You have reached the Shaker Strata. Fossilised protein shakers, lids still on.',
   'You have reached the Chrome Vein. Metallic, and coveted by Näsa™. Big Space™.',
+  'You have reached The Crack. It is very dark down here. The Crack Spores are not.',
 ];
 // The first time a compound is found, the hint bar says what it unlocks.
 const UNLOCKS = { powder: 'calm', chrome: 'stamina', spores: 'focus' };
@@ -901,13 +910,14 @@ function finishGame(drifted = false) {
   const missingText = a => a.unrecovered || `a ${a.kind === 'still' ? 'Stillness' : 'Frenzy'} find ${where(a)}`;
   const missing = CONFIG.artefacts.filter(a => !s.guide.includes(a.id)).map(missingText);
   const unrecovered = missing.length ? `<div class="small">Still unrecovered: ${missing.join('; ')}.</div>` : '';
-  showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>CONGRATULATIONS.</h1><div style="font-size:16px">You are now further down than anyone asked you to be.</div>'}
+  showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>THE CORE.</h1><div style="font-size:16px">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</div><canvas id="coin" width="240" height="240" style="width:120px;height:120px;border:0;background:none;margin:4px auto 0"></canvas><button id="saveCoin" style="width:auto;text-align:center">Save the coin</button>'}
     <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
     ${unrecovered}
-    <div class="small">${drifted ? 'Prototype 2. The core is still down there.' : 'Prototype 2. Below you: The Crack, which is not in this prototype.'}</div>
+    <div class="small">${drifted ? 'Prototype 3. The Core is still down there.' : 'Prototype 3. Ex profundo, nova.'}</div>
     <button id="again">New game (Enter)</button>`);
   $('again').onclick = newGame;
   menuKeys = k => { if (k === 'Enter') newGame(); };
+  if (!drifted) { drawCoin($('coin'), s.depthOffset); $('saveCoin').onclick = () => saveCoin(s.depthOffset); }
   // The stats count up, like a tally.
   const cells = [...document.querySelectorAll('#menu .num')], t0 = performance.now();
   (function count() {
@@ -922,6 +932,38 @@ function finishGame(drifted = false) {
 // DRIFT: Stillness overload. Calm on top of Stillness, and the shaft lets go.
 // An ending of its own: no controls, nothing to do, just watch.
 // ─────────────────────────────────────────────────────────────────────────────
+// The challenge coin, for reaching the Core: drawn in the game's ink, with your depth on it, to keep and share.
+function drawCoin(cv2, depth) {
+  const c = cv2.getContext('2d'), r = 120;                // drawn at 240 px, scaled to any size
+  c.clearRect(0, 0, cv2.width, cv2.height); c.save(); c.scale(cv2.width / 240, cv2.width / 240); c.translate(r, r);
+  const metal = c.createRadialGradient(-r * .3, -r * .35, r * .1, 0, 0, r);
+  metal.addColorStop(0, '#f2f2f2'); metal.addColorStop(.55, '#b9b9b9'); metal.addColorStop(1, '#6f6f6f');
+  c.beginPath(); c.arc(0, 0, r - 4, 0, Math.PI * 2); c.fillStyle = metal; c.fill();
+  c.lineWidth = 4; c.strokeStyle = '#111'; c.stroke();
+  c.beginPath(); c.arc(0, 0, r - 22, 0, Math.PI * 2); c.lineWidth = 2; c.stroke();
+  // Lettering around the rim: EX PROFUNDO, NOVA above; KOROVA ROCK below.
+  const arc = (text, radius, mid, inward) => {
+    const step = .118, start = mid - (text.length - 1) * step / 2 * (inward ? -1 : 1);
+    [...text].forEach((ch, i) => {
+      const a = start + i * step * (inward ? -1 : 1);
+      c.save(); c.rotate(a); c.translate(0, inward ? radius : -radius);   // along the bottom the letters stay upright, reading left to right
+      c.fillText(ch, 0, 0); c.restore();
+    });
+  };
+  c.fillStyle = '#111'; c.font = 'bold 15px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  arc('EX PROFUNDO, NOVA', r - 13, 0, false);
+  arc('KOROVA ROCK', r - 13, 0, true);
+  c.font = 'bold 54px monospace'; c.fillText('1', 0, -14);
+  c.font = 'bold 30px monospace'; c.fillText('A$$', 0, 30);
+  c.font = 'bold 12px monospace'; c.fillText(`KR-1 · ${depth} m`, 0, 60);
+  c.restore();
+}
+function saveCoin(depth) {
+  const big = document.createElement('canvas'); big.width = big.height = 600;
+  drawCoin(big, depth);
+  const a = document.createElement('a'); a.href = big.toDataURL('image/png'); a.download = 'ass2roid-challenge-coin.png'; a.click();
+}
+
 function startDrift() {
   running = false; held = null; pendingTap = null;
   s.drift = { t0: performance.now(), radioWas: radio.on, done: false,
@@ -1047,6 +1089,7 @@ function announce(m, extraMs = 0, discovery = false) {
 function update(dt) {
   const t = now();
   s.timeMs += dt;
+  if (!s.nice && depthNow() === 69) { s.nice = true; announce('69 m. Nice.\nThe Foundation does not endorse this observation.', 0, true); }   // an easter egg, once per run
   // Balance meter: pinned while a state lasts, settles after, otherwise drifts back toward 0.
   const B = CONFIG.balance;
   if (frenzy()) s.meter = B.max;
@@ -1148,9 +1191,25 @@ function draw() {
   }
   ctx.fillStyle = '#bbb';
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
+  if (L.dark) drawDark(L, y0, y1);
   ctx.restore();
   if (s.dug > 0) { drawMap(); drawGauge(); }               // the side walls become a map and a depth gauge
   else { ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left'; ctx.fillText('0 m', 4, 10); }
+}
+
+// The Crack: only a little light around the prospector. The Crack Spores glow green, and an open seam glows white.
+function drawDark(L, y0, y1) {
+  const cx = p.x * T + T / 2, cy = p.y * T + T / 2;
+  const glow = ctx.createRadialGradient(cx, cy, L.dark.clear * T, cx, cy, L.dark.fade * T);
+  glow.addColorStop(0, 'rgba(0,0,0,0)'); glow.addColorStop(1, 'rgba(0,0,0,.96)');
+  ctx.fillStyle = glow; ctx.fillRect(T, y0 * T, (W - 2) * T, (y1 - y0) * T);
+  ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 14px monospace';
+  for (let y = y0; y < y1; y++) for (let x = 1; x < W - 1; x++) {
+    const c = g[y][x], px = x * T + T / 2, py = y * T + T / 2;
+    if (c.t === INGR && c.ing === 'spores') { ctx.shadowColor = '#00ff9f'; ctx.shadowBlur = 14; ctx.fillStyle = '#00ff9f'; ctx.fillText('S', px, py); }
+    else if ((c.t === SEAM || c.t === ART) && seamAnswers(c.kind)) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 10; ctx.fillStyle = '#fff'; ctx.fillText('?', px, py); }
+  }
+  ctx.restore();
 }
 
 // Left wall: the whole layer in miniature. Your tunnel, bands, slabs, the crust, and what's on screen.

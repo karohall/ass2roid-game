@@ -51,8 +51,8 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 1. **Regolith Prime:** surface dust. *Its own thing:* the learning layer. The game opens with the first shake.
 2. **The Shaker Strata:** fossilised protein shakers. *Its own thing:* **fossil shakers** in the rock. Break one and you drink it on the spot, contents unknown: a little gamble with the balance meter.
 3. **The Chrome Vein:** metallic, and coveted by Näsa. *Its own thing:* **Näsa chrome slabs™** that can't be dug. Each has a gap to find, so the way down becomes a route, not a straight line. Hitting one brings a Näsa pop-up in Y2K chrome.
-4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (full game):* **darkness.** You only see around the prospector, and the Crack Spores glow.
-5. **The Core:** redacted by the Belt Authority
+4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (built in Prototype 3):* **darkness.** You only see about three tiles around the prospector, and the Crack Spores glow green through the dark. The toughest rock; the crust needs digging power 7. The Jacked Asses come later.
+5. **The Core:** redacted by the Belt Authority. Not a layer: breaking through The Crack's crust is the arrival, and the ending.
 
 Each layer needs more strength, yields new ingredients, has its own Kroeber Fact, and **plays differently**: one thing of its own, so deeper isn't just slower and harder.
 
@@ -99,15 +99,16 @@ Music: original, or AI-generated or royalty-free under licences that allow it. N
 ## Ending
 **Two ways out.** Drift (Stillness overload) is itself an ending, and can end the game early; in the prototype it is a grey-box placeholder of the space sequence (see *Ideas for later*). Otherwise:
 
-You reach the core. The player receives the challenge coin (*Ex profundo, nova. 1 A$$*) as an image to share.
+You reach the core: *"THE CORE. You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority."* The end screen shows the challenge coin, drawn in the game's ink: *EX PROFUNDO, NOVA* around the top, *1 A$* in the middle with the depth reached, *KOROVA ROCK* along the bottom. "Save the coin" downloads it as an image to share. (Built in Prototype 3.)
 
 ## Microcopy
+- Easter egg, once per run at 69 m: *"69 m. Nice. The Foundation does not endorse this observation."*
 - Loading screen: *"1. Check engine light. 2. Ignore that it is on. 3. See Step 1."*
 - First Milk+: *"Do not spill. Make us proud."*
 
 ## Ideas for later
 - **High scores (parking lot).** Personal bests saved in the browser (fastest shift, most drill samples, most Field Guide cards, most Frenzies, most Stillnesses, with a NEW mark), or a shared leaderboard, which would need a server. For now the end screen keeps a personal summary only.
-- **Blowing up Näsa's chrome (built in Prototype 3).** In a Frenzy, with Strength stacked (two drinks), each hit on a Näsa slab heats it: it glows amber, and after six or seven hits it melts, a new way down. From the third hit on, each hit has a one-in-five chance to blow up instead: the drill breaks and the prospector is thrown up to three rows back up the shaft; the slab cools. Out of Frenzy, with one Strength, or on the pick axe, the chrome won't take heat, and the game says so. The hint over a slab gives the recipe as a prohibition: *"Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt."* Näsa pop-up on both: *"Näsa™ property damaged. An invoice has been issued."* Field Guide find, the first time: Artefact 4, a lump of molten chrome™, still warm.
+- **Blowing up Näsa's chrome (built in Prototype 3).** In a Frenzy, with Strength stacked (two drinks), each hit on a Näsa slab heats it: it glows amber, and after six or seven hits it melts, a new way down. From the third hit on, each hit has a one-in-five chance to blow up instead: the drill breaks and the prospector is thrown up to three rows back up the shaft; the slab cools. Out of Frenzy, with one Strength, or on the pick axe, the chrome won't take heat, and the game says so. The hint over a slab gives the recipe as a prohibition: *"Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt."* Näsa pop-up on both: *"Näsa™ property damaged. An invoice has been issued."* Field Guide find, the first time: Artefact 3, a lump of molten chrome™, still warm.
 - **Climbing upwards (parked).** ↑ climbs one tile, only with solid rock beside you to grip, and slower than moving sideways. It would let you go back for a missed W or seam and make getting stuck at a crust unlikely; the cost is that going down stops being a commitment, which is part of the digging feel. Behind a setting, if tried.
 - **Done in Prototype 3: the start button stands out** with the check engine light: the dashboard's engine symbol in amber after its label, slowly breathing. It pays off the start screen's joke ("1. Check engine light. 2. Ignore that it is on.").
 - **Archive photos for artefacts.** Field Guide artefact cards get realistic museum-archive photos: neutral grey backdrop, flat lighting, scale bar, accession number, catalogue label. Photos appear only in the Field Guide; the rest of the game stays comic ink, so the archive reads as "real" against the drawn world.

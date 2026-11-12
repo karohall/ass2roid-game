@@ -390,3 +390,11 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **New song on the Pump Zone: Presslufthammerherz.** Jackhammer Heart, finished, in German, with the drill samples in the rhythm. It gives the Pump Zone its language flair. And Void FM has its DJ: a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth.
 
 **Developer mode, for testing.** A skip-levels button would be handy while building, but not for players: getting through the layers is the game. So it is hidden. Open the game with `?dev` at the end of the address, and N skips to the next layer. The browser tab says [DEV], so I always know which mode I am in.
+
+**Layer 4: The Crack.** Dark. You only see a small circle of light around the prospector, and the Crack Spores glow green through the dark: the first bioluminescence in the game. *"You have reached The Crack. It is very dark down here. The Crack Spores are not."* The Field Guide card teases the Jacked Asses: *"the Belt Authority lists it as home of the Jacked Asses. The Foundation has not met them. Yet."* They come later; darkness first.
+
+**The Core, and the challenge coin.** The Core is not a layer: breaking through The Crack is the arrival. *"THE CORE. You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority."* The end screen shows the challenge coin, EX PROFUNDO, NOVA, 1 A$$, with your depth on it, and "Save the coin" downloads it to share. The game is now called Prototype 3.
+
+**An easter egg at 69 m.** Once per run: *"69 m. Nice. The Foundation does not endorse this observation."*
+
+**Fix: two "Frenzy finds".** The molten chrome card sat after the Stillness card, so the Field Guide showed "Frenzy finds" twice. It is now Artefact 3, with the other Frenzy finds; the Stillness glass of Milk+ is Artefact 4.
