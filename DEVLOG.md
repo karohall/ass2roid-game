@@ -380,3 +380,5 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **Reflection: sound is also input.** Not too much at once: sound adds to everything else on screen, and it can throw you into a frenzy (haha). In a Frenzy that is the point, but everywhere else the sound should stay calm, like the ducking between layers. And the player decides how much: V now cycles the volume between loud, soft and muted.
 
 **Song variation: amazing.** With every station switch landing on a different song, at a different place, the radio feels alive.
+
+**Where the player learns about V.** The volume key was on the start screen's key list and in the radio panel, but nothing pointed there. Now it is also on the pause screen, where people look when they want to change something: *"♪ V: radio volume (loud)"*, updating live as you press V.

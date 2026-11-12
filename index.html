@@ -360,9 +360,11 @@ player.addEventListener('ended', () => {
 });
 // V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
 const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
+const volumeLabel = () => `♪ V: radio volume (${VOLUMES[radio.vol].name})`;
 function volumeKey() {
   radio.vol = (radio.vol + 1) % VOLUMES.length;
   if (running) say(`Radio volume: ${VOLUMES[radio.vol].name}.`);
+  if ($('pauseVol')) $('pauseVol').textContent = volumeLabel();   // live on the pause screen
 }
 function tuneIn() { if (!sound.on) { sound.on = true; soundTick(0); } }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
@@ -980,7 +982,8 @@ function pause() {
     ${journey(s.layer)}
     <div class="small">${layer().name} · ${depthNow()} m · ${s.samples} drill samples · Field Guide ${s.guide.length} / ${guideEntries().length}</div>
     <div class="small">The Rock will wait. It has waited before.</div>
-    <button id="resume">Resume (Space)</button>`);
+    <button id="resume">Resume (Space)</button>
+    <div class="small" id="pauseVol" style="color:var(--text)">${volumeLabel()}</div>`);   // where people look to change things
   $('resume').onclick = resume;
   menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
 }
