@@ -262,7 +262,7 @@ const CONFIG = {
   drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000 },   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35 },   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
@@ -299,16 +299,27 @@ const ARTEFACT_CARD = {
   chrome1: c => `Site KR-1, Crater ${c}, Quadrant 2. A lump of molten chrome™, still warm. Näsa has issued an invoice for it.`,
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
 };
+// The stations and their songs. Each song is a file in audio/Radio/<station>/, which ships with the game
+// (on itch.io) but stays out of the repository. A song without a file isn't in the list yet.
+const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${name}.mp3` });
 const RADIO = {
-  tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape. No effect.', songs: ['side A'] },
-  pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: ['Down in the Shaft', 'Heavy Ore', 'Hard Hat, Hard Body', 'Jackhammer Heart'] },
-  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: ['Amore Orbitale', 'I Dig You (All Night Long)', 'Dolce de Leche+', 'Asteroid Belt Boulevard'] },
-  oddity: { name: 'Space oddities', kind: 'Folder', fx: 'Not a station. For special occasions.', songs: ['The You Show'] },
-  void:  { name: 'Void FM', kind: 'Station', fx: 'No effect. A mood, not a tactic.', songs: ['Ex Profundo', 'Falling Forwards Backwards Into Dimension', 'Parallax for Two Prospectors', 'No Ground Beneath, No Ceiling', 'Kármán Line (Extended Longing Mix)'] },
+  tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape. Blank for now: R tunes in a station.', songs: [{ title: 'side A (blank)' }] },
+  pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: [
+    SONG('The Pump Zone', 'Down in the Shaft', 'The Pump Zone Down In The Shaft'),
+    SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body')] },
+  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: [
+    SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
+    SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
+    SONG('Disco Gravitas', 'Dolce de Leche+', 'Disco Gravitas Dolce de Leche Plus')] },
+  oddity: { name: 'Space oddities', kind: 'Folder', fx: 'Not a station. For special occasions.', songs: [
+    SONG('Space oddities', 'The You Show', 'Too much Calm The You Show')] },
+  void:  { name: 'Void FM', kind: 'Station', fx: 'No effect. A mood, not a tactic.', songs: [
+    SONG('Void FM', 'In Profundum Imus (Ex Profundo)', 'Void FM In Profundum Imus (Ex Profundo)'),
+    SONG('Void FM', 'Kármán Lines (Extended Mix)', 'Void FM Kármán Lines (Extended Mix)')] },
 };
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: the tape plays from the start screen, and it keeps playing between games.
-const radio = { on: 'tape', last: 'pump', since: 0, clock: 0 };
+const radio = { on: 'tape', last: 'pump', since: 0, clock: 0, idx: {} };
 function radioKey(k) {
   if (s && s.drift) return;                                // The You Show plays to the end
   if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
@@ -317,7 +328,39 @@ function radioKey(k) {
   radio.since = radio.clock;
   if (running) say(`Radio: ${RADIO[radio.on].name}.`);
 }
-const nowPlaying = () => { const st = RADIO[radio.on]; return st.songs[Math.floor((radio.clock - radio.since) / CONFIG.radio.songMs) % st.songs.length]; };
+// What the radio plays right now. The meter cuts in: a Frenzy brings Down in the Shaft, Stillness lets
+// Void FM come through, and the Drift plays The You Show. Otherwise, the station you chose.
+function radioNow() {
+  if (s && s.drift) return { key: 'oddity', song: 0 };
+  if (s && s.inState === 'frenzy') return { key: 'pump', song: 0, note: 'The Frenzy cut in. Down in the Shaft.' };
+  if (s && s.inState === 'still') return { key: 'void', note: 'Void FM is coming through.' };
+  return { key: radio.on };
+}
+const songOf = n => { const st = RADIO[n.key]; return st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
+const nowPlaying = () => songOf(radioNow()).title;
+
+// The sound itself: one player, cross-fading between songs. Browsers only allow sound after the
+// player has pressed a key or clicked, so the radio comes on with the first one: Begin shift.
+const player = new Audio(); player.preload = 'auto';
+const sound = { on: false, file: '', vol: 0 };
+player.addEventListener('ended', () => {
+  const n = radioNow();
+  if (n.song === undefined) radio.idx[n.key] = (radio.idx[n.key] || 0) + 1;   // the next song on this station
+  else { player.currentTime = 0; player.play().catch(() => {}); }             // a song that cut in plays again
+});
+function tuneIn() { if (!sound.on) { sound.on = true; soundTick(0); } }
+function soundTick(dt) {
+  const want = sound.on ? songOf(radioNow()).file || '' : '';
+  const level = CONFIG.radio.volume * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
+  const target = want && want === sound.file ? level : 0;
+  const step = dt / CONFIG.radio.fadeMs;
+  sound.vol = target > sound.vol ? Math.min(target, sound.vol + step) : Math.max(target, sound.vol - step);
+  if (want !== sound.file && sound.vol === 0) {                                // faded out: change song
+    sound.file = want;
+    if (want) { player.src = encodeURI(want); player.play().catch(() => {}); } else player.pause();
+  }
+  player.volume = sound.vol;
+}
 
 const DOSAGE = ['Get out of our sight', 'Coward', 'Meh', 'We see you', 'Hell yeah'];
 const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endorse.';
@@ -1183,9 +1226,10 @@ function renderStatic() {
 
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
-  const banner = `${RADIO[radio.on].name} · Now playing: ${nowPlaying()}`;
+  const n = radioNow(), st = RADIO[n.key], song = songOf(n);
+  const banner = song.file && !sound.on ? `${st.name} · Press any key to tune in` : `${st.name} · Now playing: ${song.title}`;
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
-  setText('radioKind', RADIO[radio.on].kind); setText('radioFx', RADIO[radio.on].fx);
+  setText('radioKind', st.kind); setText('radioFx', n.note || st.fx);
 }
 
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
@@ -1273,7 +1317,7 @@ function loop(t) {
   radio.clock += dt;
   if (running) update(dt);
   if (g) { s.drift ? drawDrift() : draw(); hud(); }
-  radioHud();
+  radioHud(); soundTick(dt);
   requestAnimationFrame(loop);
 }
 
@@ -1283,6 +1327,7 @@ function loop(t) {
 const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowDown: [0, 1], s: [0, 1], ArrowUp: [0, -1], w: [0, -1] };
 addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  tuneIn();                                               // the first key turns the radio on
   if (k === ' ') e.preventDefault();
   if (k === 'r' || k === 't') { radioKey(k); return; }   // the radio works on every screen
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
@@ -1351,7 +1396,7 @@ setTimeout(() => { fittedFor = Math.round(innerWidth / 4) + 'x' + Math.round(inn
 // Take the keyboard at once, also inside a frame (itch.io): Enter begins the shift without a click first.
 window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
-document.addEventListener('mousedown', () => window.focus());
+document.addEventListener('mousedown', () => { window.focus(); tuneIn(); });   // a click also turns the radio on
 // The start button says what works right now: Enter only when the game has the keyboard.
 const startLabel = () => { $('go').innerHTML = (document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift') + ENGINE_LAMP; };
 // The dashboard's check engine symbol: an engine block with its oil cap, the fan on the left, the exhaust on the right.

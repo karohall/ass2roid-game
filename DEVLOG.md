@@ -354,3 +354,5 @@ The plan for Prototype 3: blow up Näsa's chrome, give the radio real sound and 
 ## 2026-11-12 — Back after a break
 
 Back after about two weeks away. Decided: the catalogue letter is the layer the find comes from (A Regolith Prime, B Shaker Strata, C Chrome Vein, D The Crack), then a number in sequence, so the catalogue number also says how deep the find was: *KR-1 C 0002*.
+
+**The radio has real sound.** My own songs now play in the game, per station: Down in the Shaft and Hard Hat, Hard Body on the Pump Zone; Amore Orbitale, Ti Sento nel Profondo and Dolce de Leche+ on Disco Gravitas; In Profundum Imus and Kármán Lines on Void FM. Browsers only allow sound after a key or click, so the radio comes on with Begin shift, which makes it part of the moment. The meter cuts in: a Frenzy brings Down in the Shaft, Stillness lets Void FM come through, and your own station comes back after. The tape stays blank for now. The songs ship with the game on itch.io but stay out of the public repository.

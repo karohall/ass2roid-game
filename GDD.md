@@ -117,7 +117,7 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
   > The series in question ran for five seasons. The Foundation has viewed season six, it was never released on Tellus. The Foundation has no further comment.
 - **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
 - **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
-- **The radio reacts to the balance meter** (the meter itself is now in the game, see *Frenzy and Stillness*):
+- **The radio reacts to the balance meter (built in Prototype 3, with real sound):**
   - In **Stillness**, Void FM comes through early, even near the surface, and The You Show plays.
   - In **Frenzy**, Down in the Shaft plays.
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
