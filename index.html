@@ -673,6 +673,7 @@ function finishShake() {
 // First press shakes a bottle, second press drinks it instantly. One bottle per shake.
 function press(v) {
   if (!running) return;
+  if (!sound.on) return warn('First things first: the radio. Press R.');
   if (s.bottles[v] > 0) return drink(v);
   if (shaking()) return warn('Already shaking. One bottle at a time.');
   if (!canMix(v)) return warn(`Not enough for ${VNAME[v]}: ${recipeText(v)}.`);
@@ -1180,7 +1181,7 @@ const REVEAL = {
   dig:    () => s.dug > 0,
   pickup: () => s.pickups > 0,
   guide:  () => s.guide.length > 1,
-  recipe_strength: () => true,
+  recipe_strength: () => sound.on,                       // the radio first: the Milk+ menu waits for the music
   recipe_calm:    () => known('powder') || s.bottles.calm > 0,
   recipe_stamina: () => known('chrome') || s.bottles.stamina > 0,
   recipe_focus:   () => known('spores') || s.bottles.focus > 0,
@@ -1239,7 +1240,7 @@ function renderStatic() {
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
   $('recipes').innerHTML = VARIANTS.map((v, i) => `${i ? `
     <div class="ph" id="ph_${v}">[${i + 1}] ? ? ?</div>` : ''}
-    <div class="recipe${i ? ' later' : ''}" data-reveal="recipe_${v}">
+    <div class="recipe later" data-reveal="recipe_${v}">
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}">Shake</button>
     </div>`).join('');
