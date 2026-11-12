@@ -12,7 +12,7 @@
 **Currency:** the **A$$ coin**. Drill samples are traded for A$$ coins.
 
 ## Core loop
-**Music first.** Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays. The shift opens with the radio off and the drill dead; pressing R tunes in, the drill catches the beat, and a short lesson explains the stations (R: next station, T: the rover's tape). The blank tape stops the drill too. **Keep:** the radio already works on the start screen, so a player who spots "Press R to tune in" can start the music before the shift begins; the shift then opens straight on the radio lesson. **One step at a time:** the Milk+ menu stays hidden until the radio is on, and the drill waits for the starter ration, so the opening has a clear order: music, then the first shake and drink, then the first dig.
+**Music first.** Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays. The shift opens with the radio off and the drill dead; pressing R tunes in, and the drill catches the beat. The radio panel itself explains the stations ("Each station does something: R for the next") until another station is tried. The blank tape stops the drill too. **Keep:** the radio already works on the start screen, so a player who spots "Press R to tune in" can start the music before the shift begins; the shift then opens straight on the radio lesson. **One step at a time:** the Milk+ menu stays hidden until the radio is on, and the hint bar carries one important thing at a time: first the radio, then the shake (which stays until the first drink, even if the player digs first). Nothing freezes the player.
 
 **Dig → collect ingredients → mix Milk+ → drink → get stronger → handle bigger tools → dig deeper.**
 

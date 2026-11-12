@@ -264,7 +264,7 @@ const CONFIG = {
   drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, lessonMs: 9000 },   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35 },   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
@@ -536,8 +536,6 @@ function driftChance() {
 
 function act(dx, dy) {
   if (!musicOn()) { bump(p.x, p.y, 2); return warn(sound.on ? 'The tape is blank. The drill won’t run on silence.' : 'The drill won’t start. It needs music.'); }
-  // The opening, one step at a time: music, then the starter ration, then the first dig.
-  if (s.layer === 0 && s.drinks === 0) return warn('Starter ration first: the Foundation insists. Press 1 to shake a Strength.');
   if (shaking()) return warn('Both hands on the shaker. Digging resumes when it is ready.');
   // Drift: downward digs wander sideways when frenzied.
   if (dy > 0 && Math.random() < driftChance()) { dx = Math.random() < .5 ? -1 : 1; dy = 0; }
@@ -1197,11 +1195,6 @@ function hint() {
   if (s.discovery && s.announceUntil > t) return s.announce;
   if (!musicOn()) return sound.on ? 'The tape is blank, and the drill won’t run on silence.\nPress R to tune in a station.'
                                   : 'The drill won’t start. Nothing on Korova Rock runs without a soundtrack.\nPress R to tune in the radio.';
-  if (!s.radioLessonAt) s.radioLessonAt = t;              // music just came on: how the radio works, for a few seconds
-  if (!s.radioHops && !shaking() && !s.bottles.strength && s.drinks === 0 && t - s.radioLessonAt < CONFIG.radio.lessonMs) {   // gives way once the player shakes
-    const st = RADIO[radio.on];
-    return `The drill runs on music. Each station does something. ${st.name}: ${st.fx.charAt(0).toLowerCase() + st.fx.slice(1)}\nR: next station · T: the rover’s tape.`;
-  }
   const nearCrust = p.y >= H - 8;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
   if (stillness()) return (seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.')
@@ -1211,7 +1204,7 @@ function hint() {
   if (shaking() && s.shakesDone === 0) return firstShake;
   // The opening steps (shake, drink, dig) come before any announcement.
   if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + '\nReady! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
-  if (s.drinks === 0 && s.dug === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
+  if (s.drinks === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   // About to tip over: this outranks announcements and rumours, so it is never hidden.
   if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
@@ -1257,7 +1250,8 @@ function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
   const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}`;
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
-  setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.' : n.note || st.fx);
+  setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
+    : n.note || st.fx + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }
 
