@@ -382,3 +382,5 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **Song variation: amazing.** With every station switch landing on a different song, at a different place, the radio feels alive.
 
 **Where the player learns about V.** The volume key was on the start screen's key list and in the radio panel, but nothing pointed there. Now it is also on the pause screen, where people look when they want to change something: *"♪ V: radio volume (loud)"*, updating live as you press V.
+
+**Näsa™, everywhere.** "Coveted by Näsa" was missing its trademark. Now Näsa carries its ™ in every text where it is named, and the Chrome Vein intro ends with the slogan: *"Metallic, and coveted by Näsa™. Big Space™."*

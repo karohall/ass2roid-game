@@ -135,7 +135,7 @@
       <button id="go">Begin shift (Enter)</button>
     </div>
     <div id="menu" class="overlay hidden"></div>
-    <div id="nasa" class="hidden"><b>NÄSA™</b> This chrome is the property of Näsa. Big Space™.</div>
+    <div id="nasa" class="hidden"><b>NÄSA™</b> This chrome is the property of Näsa™. Big Space™.</div>
     <div id="hint"></div>
     <div id="dosage" class="later" data-reveal="drink">
       <div id="dosageHead"><span>Dosage scale</span><span id="doseWindow"></span><span id="dosageNow">Meh</span></div>
@@ -280,24 +280,24 @@ const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pu
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown; the label has fossilised. Caution: seeps upward from the Shaker Strata below. Fun fact: the Foundation believes the whole Shaker Strata began as one forgotten gym bag.' },
-  chrome: { name: 'Chrome Filings', letter: 'C', card: 'Nutrition Facts: 100% daily iron. Caution: Näsa considers these theirs. Fun fact: they hum when nobody is listening.' },
+  chrome: { name: 'Chrome Filings', letter: 'C', card: 'Nutrition Facts: 100% daily iron. Caution: Näsa™ considers these theirs. Fun fact: they hum when nobody is listening.' },
   spores: { name: 'Crack Spores',   letter: 'S', card: 'Nutrition Facts: redacted. Caution: bioluminescent. Fun fact: they rise from The Crack, which the Belt Authority says is closed.' },
 };
 const LAYER_CARD = [
   'Surface dust and compressed grit. Kroeber Fact: the average prospector consumes 3.4 Milk+ before acknowledging the smell. The Foundation does not consider this a problem.',
   'Fossilised protein shakers, lids still on. Kroeber Fact: carbon dating places them in "leg day". The Foundation has stopped asking.',
-  'Metallic, and coveted by Näsa. Kroeber Fact: Näsa has filed 41 claims on this vein. All were written in Comic Sans.',
+  'Metallic, and coveted by Näsa™. Kroeber Fact: Näsa has filed 41 claims on this vein. All were written in Comic Sans.',
 ];
 const LAYER_INTRO = [                                          // the loading screen sets the mood; practical hints come in play
   '',
   'You have reached the Shaker Strata. Fossilised protein shakers, lids still on.',
-  'You have reached the Chrome Vein. Metallic, and coveted by Näsa.',
+  'You have reached the Chrome Vein. Metallic, and coveted by Näsa™. Big Space™.',
 ];
 // The first time a compound is found, the hint bar says what it unlocks.
 const UNLOCKS = { powder: 'calm', chrome: 'stamina', spores: 'focus' };
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
-  art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa serial number. Näsa denies ownership.`,
+  art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa™ serial number. Näsa denies ownership.`,
   chrome1: c => `Site KR-1, Crater ${c}, Quadrant 2. A lump of molten chrome™, still warm. Näsa has issued an invoice for it.`,
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
 };
@@ -616,7 +616,7 @@ function gain(k, n) {
 // melts, a new way down. Once it's hot, every hit may blow you up instead. Only the drill breaks.
 function slabHit(x, y, c) {
   const C = CONFIG.chrome, t = now();
-  if (!frenzy() || onPick()) { nasa(); warn(onPick() ? 'The pick axe bounces off the chrome.' : 'Näsa chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
+  if (!frenzy() || onPick()) { nasa(); warn(onPick() ? 'The pick axe bounces off the chrome.' : 'Näsa™ chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
   if (s.strStacks < C.stacks) { nasa(); warn('The chrome warms a little, then cools. More Strength might do it.'); bump(x, y, 3); return; }
   c.heat = Math.max(0, (c.heat || 0) - C.coolPerSec * (t - (c.hotAt || t)) / 1000) + 1; c.hotAt = t;
   bump(x, y, 6);
@@ -644,7 +644,7 @@ function blowUp(x, y, c) {
 }
 
 // Näsa intrudes like a pop-up ad, at most every 20 seconds.
-function nasa(msg = 'This chrome is the property of Näsa. Big Space™.', force = false) {
+function nasa(msg = 'This chrome is the property of Näsa™. Big Space™.', force = false) {
   if (!force && now() - s.nasaAt < CONFIG.nasa.everyMs) return;
   s.nasaAt = now();
   const el = $('nasa');
@@ -1235,7 +1235,7 @@ function hint() {
   if (s.announceUntil > t) return s.announce;
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
-  if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not heat.';
+  if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not heat.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
