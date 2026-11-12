@@ -53,7 +53,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   - **Suno keeps a licence to what you put in:** prompts, lyrics and other submissions can be used by Suno, including to train its models ([Privacy Notice](https://suno.com/privacy)).
   - **Before release:** download the final version of every song while subscribed.
 - DJ voices are made with **ElevenLabs**.
-- **For later (2026-11-12): a DJ who speaks English with a German accent.** Which station is still open; Void FM's DJ is only a draft so far.
+- **For later (2026-11-12): a DJ who speaks English with a German accent.** Which station is still open (Void FM's DJ is the posh goth).
 - Every song and voice clip gets a row in the [licence log](#licence-log) before it goes into the game.
 
 ---
@@ -124,7 +124,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Signature | **Down in the Shaft** | Arena-sized, 150 BPM, gang vocals | **Finished** |
 | Driver | **Heavy Ore** | Faster and tighter, more workout and shouting | _Not yet_ |
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
-| Wildcard | **Jackhammer Heart** | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm | _In progress_ |
+| Wildcard | **Presslufthammerherz** (Jackhammer Heart) | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm. In German: the Pump Zone's language flair | **Finished** |
 
 ### Disco Gravitas
 
@@ -150,7 +150,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **Concept:** **consciousness**. Gazing out and falling in: the deeper you dig, the further away everyone else is.
 - **In-game effect:** none. Choosing Void FM is choosing a mood, not a tactic.
 - **DNA:** futurepop at the edge of emptiness. Space without an object, rather than melancholia. Wide, still, unhurried; feeling is allowed, sorrow is not the point.
-- **DJ (draft):** a calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
+- **DJ:** a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth. A calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
 - **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
 - **Example lines (draft):**
   - *"You are three hundred metres down. Everyone you know is above you. This is Void FM."*

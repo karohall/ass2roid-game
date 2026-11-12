@@ -386,3 +386,5 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **Näsa™, everywhere.** "Coveted by Näsa" was missing its trademark. Now Näsa carries its ™ in every text where it is named, and the Chrome Vein intro ends with the slogan: *"Metallic, and coveted by Näsa™. Big Space™."*
 
 **Forbid exactly the thing that works.** "Do not heat" was a tease with no clue how. Now the slab hint reads, in the driest Foundation voice: *"Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt."* The warning is the recipe. And I love that the Näsa pop-up keeps popping up: so many great things coming together.
+
+**New song on the Pump Zone: Presslufthammerherz.** Jackhammer Heart, finished, in German, with the drill samples in the rhythm. It gives the Pump Zone its language flair. And Void FM has its DJ: a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth.
