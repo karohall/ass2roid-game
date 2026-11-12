@@ -264,7 +264,7 @@ const CONFIG = {
   drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35 },   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75 },   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
@@ -361,12 +361,26 @@ player.addEventListener('ended', () => {
 function tuneIn() { if (!sound.on) { sound.on = true; soundTick(0); } }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
 const musicOn = () => sound.on && !!songOf(radioNow()).file;
+// Like a real radio, a station you switch to is already playing: a random song, from a random place in it.
+// (A song that ends gives way to the next from its start; a song that is pinned, like The You Show, starts at the top.)
+function loadSong(file) {
+  player.src = encodeURI(file);
+  if (sound.randomStart) player.addEventListener('loadedmetadata', () => { player.currentTime = Math.random() * CONFIG.radio.joinBy * player.duration; }, { once: true });
+  sound.randomStart = false;
+  player.play().catch(() => {});
+}
 function soundTick(dt) {
-  const n = radioNow(), want = sound.on ? songOf(n).file || '' : '';
+  const n = radioNow();
+  if (sound.on && n.key !== sound.key) {                                      // a different station: join it mid-broadcast
+    sound.key = n.key;
+    if (n.song === undefined) radio.idx[n.key] = Math.floor(Math.random() * RADIO[n.key].songs.length);
+    sound.randomStart = n.song === undefined;
+  }
+  const want = sound.on ? songOf(n).file || '' : '';
   const level = CONFIG.radio.volume * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
   if (n.cut && want !== sound.file) {                                         // the Frenzy: cut, mid-song, no fade
-    sound.file = want; sound.vol = level;
-    player.src = encodeURI(want); player.volume = level; player.play().catch(() => {});
+    sound.file = want; sound.vol = level; player.volume = level;
+    loadSong(want);
     return;
   }
   const target = want && want === sound.file ? level : 0;
@@ -374,7 +388,7 @@ function soundTick(dt) {
   sound.vol = target > sound.vol ? Math.min(target, sound.vol + step) : Math.max(target, sound.vol - step);
   if (want !== sound.file && sound.vol === 0) {                                // faded out: change song
     sound.file = want;
-    if (want) { player.src = encodeURI(want); player.play().catch(() => {}); } else player.pause();
+    if (want) loadSong(want); else player.pause();
   }
   player.volume = sound.vol;
 }
