@@ -53,6 +53,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   - **Suno keeps a licence to what you put in:** prompts, lyrics and other submissions can be used by Suno, including to train its models ([Privacy Notice](https://suno.com/privacy)).
   - **Before release:** download the final version of every song while subscribed.
 - DJ voices are made with **ElevenLabs**.
+- **For later (2026-11-12): a DJ who speaks English with a German accent.** Which station is still open; Void FM's DJ is only a draft so far.
 - Every song and voice clip gets a row in the [licence log](#licence-log) before it goes into the game.
 
 ---
