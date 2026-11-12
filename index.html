@@ -318,8 +318,9 @@ const RADIO = {
     SONG('Void FM', 'Kármán Lines (Extended Mix)', 'Void FM Kármán Lines (Extended Mix)')] },
 };
 const STATIONS = ['pump', 'disco', 'void'];
-// The radio lives outside the shift: the tape plays from the start screen, and it keeps playing between games.
-const radio = { on: 'tape', last: 'pump', since: 0, clock: 0, idx: {} };
+// The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
+// It starts on the tape once the tape has a song; while the tape is blank, on the Pump Zone, so Begin shift has music.
+const radio = { on: RADIO.tape.songs[0].file ? 'tape' : 'pump', last: 'pump', since: 0, clock: 0, idx: {} };
 function radioKey(k) {
   if (s && s.drift) return;                                // The You Show plays to the end
   if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
