@@ -213,7 +213,7 @@ const CONFIG = {
   push:    { strength: 30, calm: -30, stamina: 10, focus: 10, recovery: 0 },
 
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
-  stillness: { durationMs: 12000, settleAt: 45, slowMult: 2 },   // everything slows; no drift
+  stillness: { durationMs: 12000, settleAt: 45, slowMult: 2, yieldMult: 2 },   // everything slows, and comes out whole: samples and ingredients ×2
   seam:      { hp: 6, artefactHp: 3 },
   calmRumourFrenzies: 2,   // the Calm rumour shows as each of the first two Frenzies ends, never after a Stillness
 
@@ -283,7 +283,7 @@ const CONFIG = {
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'recovery', 'stamina', 'focus'];
 const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
-const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls the meter toward Stillness.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still, and so does an open ? seam.', recovery: 'Repairs the drill after a Frenzy.' };
+const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls toward Stillness, where everything comes out double.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still, and so does an open ? seam.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
   powder: { name: 'Legacy Powder',  letter: 'P', card: 'Nutrition Facts: unknown; the label has fossilised. Caution: seeps upward from the Shaker Strata below. Fun fact: the Foundation believes the whole Shaker Strata began as one forgotten gym bag.' },
@@ -608,8 +608,11 @@ function hit(x, y, c) {
     say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Down it goes.`);
     s.bottles[v]++; drink(v, true);
   }
-  if (c.t === SAMPLE) s.samples += 1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0);
-  if (c.t === INGR) gain(c.ing, c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0));
+  // Stillness mirrors Frenzy: Frenzy rattles samples loose; in Stillness the drill is so precise that everything comes out whole, twice over.
+  const whole = stillness() ? CONFIG.stillness.yieldMult : 1;
+  if (whole > 1 && (c.t === SAMPLE || c.t === INGR) && !s.wholeSaid) { s.wholeSaid = true; say('Extracted whole. In Stillness, everything comes out double.'); }
+  if (c.t === SAMPLE) s.samples += (1 + (Math.random() < CONFIG.dig.sampleBonusChance ? 1 : 0)) * whole;
+  if (c.t === INGR) gain(c.ing, (c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0)) * whole);
   if (c.cache) say('Survey cache. The last crew left this for you.');
   if (c.t === BAND && y === Math.floor(H / 2)) say('Compacted band. Strength is recommended.');
   if (c.t === ART) unlock(c.art);
@@ -1284,7 +1287,7 @@ function hint() {
                                   : 'The drill won’t start. Nothing on Korova Rock runs without a soundtrack.\nPress R to tune in the radio.';
   const nearCrust = p.y >= H - 8;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
-  if (stillness()) return (seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow. The drill goes exactly where you point it.')
+  if (stillness()) return (seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow, and so precise that samples and ingredients come out double.')
     + (s.bottles.calm || canMix('calm') ? ' One more Calm, and you will drift.' : '');
   if (seamHeld('frenzy') || seamHeld('still')) return `Hyperfocus is holding the ${seamHeld('still') ? 'quiet ' : ''}? seam open. Dig in before it wears off (${Math.ceil((s.fx.focus - t) / 1000)}s).`;
   const firstShake = `Shaking ${VNAME[s.shake ? s.shake.v : 'strength']}… No digging until it is ready.`;
