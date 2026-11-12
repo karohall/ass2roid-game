@@ -328,11 +328,11 @@ function radioKey(k) {
   radio.since = radio.clock;
   if (running) say(`Radio: ${RADIO[radio.on].name}.`);
 }
-// What the radio plays right now. The meter cuts in: a Frenzy brings Down in the Shaft, Stillness lets
-// Void FM come through, and the Drift plays The You Show. Otherwise, the station you chose.
+// What the radio plays right now. The meter cuts in: a Frenzy cuts straight to the Pump Zone, Stillness
+// lets Void FM come through, and the Drift plays The You Show. Otherwise, the station you chose.
 function radioNow() {
   if (s && s.drift) return { key: 'oddity', song: 0 };
-  if (s && s.inState === 'frenzy') return { key: 'pump', song: 0, note: 'The Frenzy cut in. Down in the Shaft.' };
+  if (s && s.inState === 'frenzy') return { key: 'pump', cut: true, note: 'The Frenzy cut in. The Pump Zone.' };   // a hard cut, no fade
   if (s && s.inState === 'still') return { key: 'void', note: 'Void FM is coming through.' };
   return { key: radio.on };
 }
@@ -350,8 +350,13 @@ player.addEventListener('ended', () => {
 });
 function tuneIn() { if (!sound.on) { sound.on = true; soundTick(0); } }
 function soundTick(dt) {
-  const want = sound.on ? songOf(radioNow()).file || '' : '';
+  const n = radioNow(), want = sound.on ? songOf(n).file || '' : '';
   const level = CONFIG.radio.volume * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
+  if (n.cut && want !== sound.file) {                                         // the Frenzy: cut, mid-song, no fade
+    sound.file = want; sound.vol = level;
+    player.src = encodeURI(want); player.volume = level; player.play().catch(() => {});
+    return;
+  }
   const target = want && want === sound.file ? level : 0;
   const step = dt / CONFIG.radio.fadeMs;
   sound.vol = target > sound.vol ? Math.min(target, sound.vol + step) : Math.max(target, sound.vol - step);

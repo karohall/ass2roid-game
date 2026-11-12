@@ -118,8 +118,9 @@ You reach the core. The player receives the challenge coin (*Ex profundo, nova. 
 - **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
 - **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
 - **The radio reacts to the balance meter (built in Prototype 3, with real sound):**
-  - In **Stillness**, Void FM comes through early, even near the surface, and The You Show plays.
-  - In **Frenzy**, Down in the Shaft plays.
+  - In **Stillness**, Void FM comes through. (The You Show is saved for the Drift.)
+  - In **Frenzy**, the radio cuts straight to the Pump Zone, whatever song is on: a hard cut, no fade.
+  - When the state ends, your own station comes back.
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
   - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
   - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.
