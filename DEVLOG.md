@@ -388,3 +388,5 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 **Forbid exactly the thing that works.** "Do not heat" was a tease with no clue how. Now the slab hint reads, in the driest Foundation voice: *"Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt."* The warning is the recipe. And I love that the Näsa pop-up keeps popping up: so many great things coming together.
 
 **New song on the Pump Zone: Presslufthammerherz.** Jackhammer Heart, finished, in German, with the drill samples in the rhythm. It gives the Pump Zone its language flair. And Void FM has its DJ: a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth.
+
+**Developer mode, for testing.** A skip-levels button would be handy while building, but not for players: getting through the layers is the game. So it is hidden. Open the game with `?dev` at the end of the address, and N skips to the next layer. The browser tab says [DEV], so I always know which mode I am in.

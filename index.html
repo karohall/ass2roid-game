@@ -1381,6 +1381,7 @@ addEventListener('keydown', e => {
   if (menuKeys) { menuKeys(k); return; }
   if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); return; }   // the Drift: nothing to do but watch, or Esc
   if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
+  if (DEV && k === 'n' && running) { say('Developer mode: skipped to the next layer.'); breakthrough(); return; }
   if (dirs[k]) {
     e.preventDefault();
     if (!running) return;
@@ -1433,6 +1434,11 @@ addEventListener('resize', () => {
   if (size !== fittedFor) { fittedFor = size; fit(); }
 });
 $('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
+
+// Developer mode, for building and testing only: open the game with ?dev in the address.
+// N skips to the next layer. Players never see it.
+const DEV = new URLSearchParams(location.search).has('dev');
+if (DEV) document.title = '[DEV] ' + document.title;
 
 // Boot: show a world behind the start screen.
 s = freshState();
