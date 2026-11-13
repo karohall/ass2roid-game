@@ -406,3 +406,5 @@ Back after about two weeks away. Decided: the catalogue letter is the layer the 
 ## 2026-11-13 — The artefact plan
 
 Checked a batch of artefact ideas against the GDD and the vibe of the game. Out: the popper bottle and the straw. They are real-drug references, and the drug humour stays fictional, with Milk+ and the dosage scale. Kept as a rule: artefacts reward altered states, and each layer's own thing decides where and how. In: a striped sweatband, a moon boot, the VHS cassette, and a redacted card for reaching the Core, with a black bar over everything but the catalogue number. The artefact photos get a licence log too, like the songs.
+
+**Fourth Pump Zone song: Sergeant Rock.** The Pump Zone now rotates through four songs.
