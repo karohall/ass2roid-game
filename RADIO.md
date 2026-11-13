@@ -126,7 +126,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
 | Wildcard | **Presslufthammerherz** (Jackhammer Heart) | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm. In German: the Pump Zone's language flair | **Finished** |
 | (new) | **Sergeant Rock** | Added 2026-11-13 | **Finished** |
-| Secret | **Candy Girl** | Acid techno. The Candygirl recipe is in the lyrics: CC, Crack Spores and Chrome Filings (see the secret menu in the GDD) | _Not yet_ |
+| Secret | **Candygirl (Asylum Mix)** | Acid techno. The Candygirl recipe is chanted in it: one Chrome Filings, one Crack Spores (see the secret menu in the GDD) | **Finished** (2026-11-14) |
 
 ### Disco Gravitas
 
@@ -297,6 +297,7 @@ Throughout: slow somersaults.
 | 5 | I Dig You (All Night Long) | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 6 | Amore Orbitale | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 7 | Dolce de Leche+ | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
+| 8 | Candygirl (Asylum Mix) | The Pump Zone (secret menu) | Suno | Pro | Yes (made on Pro) | No | audio/pump-zone/05-candygirl.ogg | 2026-11-14 |
 
 ## DJ voice log
 

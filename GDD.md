@@ -31,8 +31,8 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Recovery:** repairs the drill after a Frenzy, at once, and the pick axe goes back on its hook (1 Regolith Whey + 1 Legacy Powder)
 - **Sleep:** ends the shift and saves progress
 
-**Secret menu:** Jizz+, Candygirl, XXX. **The songs are the key (2026-11-13):** each secret Milk+ has its recipe sung in a song on the radio, so players who listen know it and nobody else does. No Frenzy unlock: the ingredients gate it.
-- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). Its song is **Candy Girl**, acid techno on The Pump Zone, with the recipe in the lyrics. Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
+**Secret menu:** Jizz+, Candygirl, XXX. **Secret-menu recipes are hidden in songs (2026-11-13):** each secret Milk+ has its recipe sung in a song on the radio, so players who listen know it and nobody else does. No Frenzy unlock: the ingredients gate it. This is a rule for the whole game: **the radio teaches you things** (see The radio).
+- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
   - **Hidden:** it isn't on the menu, with no row or placeholder.
   - **Key 0:** when you hold Crack Spores and Chrome Filings, pressing 0 makes it.
   - **First time:** filed as a discovery: *"Secret menu: Candygirl."*
@@ -145,6 +145,8 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 - **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 - **Space oddities:** not a station; a folder of songs for special occasions, such as The You Show on Stillness overload
+
+**Rule: the radio teaches you things (2026-11-14).** The radio is not only a soundtrack and a set of station effects: it carries knowledge. Secret-menu recipes are hidden in songs (Candygirl's is chanted in Candygirl (Asylum Mix)), and the DJs' slogans and lines can carry more. Listening is a way to play.
 
 Details, music prompts and licence log: [RADIO.md](RADIO.md).
 
