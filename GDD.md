@@ -86,6 +86,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 - **Scope:** about 17 finds is enough. Players find a few per run; the Field Guide is a reason to play again.
 - **The archive cabinet (built):** the Field Guide's artefacts live in a drawer, *"Archive cabinet · 4 of 15 recovered"*. It opens into small numbered tiles, 1–18 and E: found ones lit, the rest dashed, withdrawn numbers struck through (*"Withdrawn by the Foundation. No further comment."*). A new find opens the drawer on its card.
 - **Sealed finds (built):** a framed ◈ in the rock, like a specimen box, bright when its state can open it. Hitting one in the wrong state: *"Sealed in the rock. It only gives way in a Frenzy."* Standing near one, the hint bar says so too.
+- **Finder's fee (built):** the Foundation pays +10 drill samples for every recovered artefact: *"Finder's fee from the Kroeber Foundation: +10 drill samples."* The hint near a sealed find says so: *"An artefact is sealed in the rock here (◈): one for the archive cabinet, and a finder's fee."* Later: a teaser line per locked find, to pull with curiosity.
 - **Card texts still to write** show *"Documentation pending. The Foundation is still writing this card."*
 
 | No. | Find | Where, and in which state | Status |

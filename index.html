@@ -221,7 +221,7 @@ const CONFIG = {
 
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
   stillness: { durationMs: 12000, settleAt: 45, slowMult: 2, yieldMult: 2 },   // everything slows, and comes out whole: samples and ingredients ×2
-  seam:      { hp: 6, artefactHp: 3 },
+  seam:      { hp: 6, artefactHp: 3, finderFee: 10 },   // the Foundation pays a finder's fee in drill samples for every artefact recovered
   calmRumourFrenzies: 2,   // the Calm rumour shows as each of the first two Frenzies ends, never after a Stillness
 
   // Each recipe is ingredient → amount.
@@ -852,7 +852,10 @@ function unlock(id) {
   if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}.\n${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
   if (isArtefact(id)) {
     s.artCrater[id] = s.crater; s.artLayer[id] = s.layer; archiveOpen = true;
-    if (id !== 'core') { celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}.\nThe Foundation has been notified. It is in the archive cabinet.`, 0, true); }
+    if (id !== 'core') {
+      s.samples += CONFIG.seam.finderFee; const el = $('samples'); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');   // the counter flashes as the fee lands
+      celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}.\nFinder's fee from the Kroeber Foundation: +${CONFIG.seam.finderFee} drill samples. It is in the archive cabinet.`, 0, true);
+    }
   }
   say(`Field Guide updated: ${guideEntries().find(e => e.id === id).title}.`);
   selCard = id;
@@ -1375,7 +1378,7 @@ function hint() {
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
   const sealed = near(2, c => c.t === SEALED && !seamAnswers(c.kind));
-  if (sealed) return `Something is sealed in the rock here (◈). It only gives way ${sealed.kind === 'still' ? 'in Stillness' : 'in a Frenzy'}.`;
+  if (sealed) return `An artefact is sealed in the rock here (◈): one for the archive cabinet, and a finder's fee. It only gives way ${sealed.kind === 'still' ? 'in Stillness' : 'in a Frenzy'}.`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
