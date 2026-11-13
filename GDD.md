@@ -35,7 +35,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
   - **Hidden:** it isn't on the menu, with no row or placeholder.
   - **Key 0 (built 2026-11-14):** when you hold Crack Spores and Chrome Filings, pressing 0 shakes it (*"Shaking something that is not on the menu…"*), and it goes down as soon as it is ready. Without the ingredients, 0 does nothing: it's a secret.
-  - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. Crack and chrome. For 15 seconds, ↑ runs you up the tunnel."*
+  - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 15 seconds, ↑ runs you up the tunnel."*
   - **What it does: you can run upwards (2026-11-13; built 2026-11-14).** For 15 seconds, ↑ takes you up through open tunnel, and you hold on instead of falling; the effects line counts it down. Then gravity takes over again. Up: back for a missed W, a seam, or a sealed find you passed. This is where climbing lives: not everyday movement, but a secret you earn, so going down stays a commitment the rest of the time.
   - **Can't be made early:** Crack Spores only exist in The Crack.
 - **Jizz+ and XXX:** later, each in its own song, on its own station.
