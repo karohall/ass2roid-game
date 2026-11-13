@@ -92,23 +92,23 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 | 2 | Chrome dumbbell | Frenzy seam, C | Built |
 | 3 | Molten chrome™ | Melting a Näsa slab, C (Frenzy, stacked Strength) | Built |
 | 4 | Glass of Milk+ | Stillness seam, any layer | Built |
-| 5 | VHS cassette | Sealed, B, Stillness (proposed) | Planned |
-| 6 | Hand stencils | Sealed, D, Stillness (proposed: seen first with night vision) | Planned |
-| 7 | Striped sweatband | Sealed, A, Frenzy (proposed) | Planned |
-| 8 | Bottle of jungle juice | Sealed, D, Frenzy (proposed) | Planned |
+| 5 | VHS cassette | Sealed, B, Stillness | Planned |
+| 6 | Hand stencils | Sealed, D, Stillness (seen first with night vision) | Planned |
+| 7 | Striped sweatband | Sealed, A, Frenzy | Planned |
+| 8 | Bottle of jungle juice | Sealed, D, Frenzy | Planned |
 | 9 | Moon boot | Stillness seam, any layer | Planned |
 | 10 | _Withdrawn_ (was the straw) | | Gap |
 | 11 | _Withdrawn_ | | Gap |
-| 12 | Inspection record | Sealed, A, Stillness (proposed) | Planned |
-| 13 | Rubber duck | Sealed, B, Frenzy (proposed) | Planned |
-| 14 | Parmesan | Sealed, B, Stillness (proposed) | Planned |
+| 12 | Inspection record | Sealed, A, Stillness | Planned |
+| 13 | Rubber duck | Sealed, B, Frenzy | Planned |
+| 14 | Parmesan | Sealed, B, Stillness | Planned |
 | 15 | _Withdrawn_ | | Gap |
-| 16 | Villain item | Sealed, C, Frenzy (proposed) | Planned |
-| 17 | Hockey card, or a Polaroid (to decide) | Sealed, D, Frenzy (proposed) | Planned |
+| 16 | Villain item | Sealed, C, Frenzy | Planned |
+| 17 | Polaroid (it has "roid" in it) | Sealed, D, Frenzy | Planned |
 | 18 | _Withdrawn_ | | Gap |
 | E | The Core: redacted | Reaching the Core | Planned |
 
-**Out:** the straw (its number is withdrawn), the Tamagotchi and the Polaroids (unless a Polaroid replaces the hockey card: it has "roid" in it).
+**Out:** the straw (its number is withdrawn), the Tamagotchi, the hockey card, and the stack of Polaroids (one Polaroid stays, as No. 17). The states are decided: 8 Frenzy finds, 6 Stillness finds.
 
 **The Core card (redacted):** catalogue number *KR-1 E*, and a black bar over everything else. *Redacted by the Belt Authority.* Shown on the end screen beside the challenge coin, and in the Field Guide.
 
@@ -116,7 +116,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 - **Striped sweatband:** A striped terrycloth sweatband, still damp. The stripes match no known team. Sweat of undetermined origin. The Foundation has declined to test it.
 - **Bottle of jungle juice:** A small amber glass bottle, hand-labelled "JUNGLE JUICE". Empty. The bottle has no straw. The Foundation asks: is this really for drinking?!
 - **Moon boot:** A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.
-- _To come:_ hand stencils, inspection record, rubber duck, Parmesan, villain item, hockey card or Polaroid.
+- _To come:_ hand stencils, inspection record, rubber duck, Parmesan, villain item, Polaroid.
 
 **Photos:** museum archive style, neutral grey backdrop, flat lighting, an image of the object and possibly a close-up. The scale bar and any label text are added in Canva, not generated (image models mangle small print and numbers). For the moon boot, check every batch for a second boot.
 
