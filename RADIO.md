@@ -157,7 +157,8 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
   - *"Not endorsed by Näsa. Listened to by wreckers of civilisation."*
   - *"In space no one can hear you cry."* A nod to the Alien tagline, scream turned to cry.
 
-  On the first slogan: A nod to early industrial music: "wreckers of civilisation" is what a British MP called COUM Transmissions, the art group that became Throbbing Gristle, over their 1976 ICA show; the band wore it as a badge.
+  The first one nods to early industrial music: "wreckers of civilisation" is what a British MP called COUM Transmissions, the art group that became Throbbing Gristle, over their 1976 ICA show; the band wore it as a badge.
+- **Slogans are DJ lines too (2026-11-13).** When the DJ voices come in, the DJ says the slogans between songs, a different one each time, as well as reading them in the ticker. Every station can collect its own.
 - **Example lines (draft):**
   - *"You are three hundred metres down. Everyone you know is above you. This is Void FM."*
   - *"If you can hear this, you are deeper than the signal was designed to reach."*
