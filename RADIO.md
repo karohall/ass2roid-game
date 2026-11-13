@@ -153,6 +153,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **DNA:** futurepop at the edge of emptiness. Space without an object, rather than melancholia. Wide, still, unhurried; feeling is allowed, sorrow is not the point.
 - **DJ:** a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth. A calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
 - **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
+- **Slogan (2026-11-13, in the game):** *"Not endorsed by Näsa. Listened to by wreckers of civilisation."* It rolls by in the radio ticker after the song title. A nod to early industrial music: "wreckers of civilisation" is what a British MP called COUM Transmissions, the art group that became Throbbing Gristle, over their 1976 ICA show; the band wore it as a badge.
 - **Example lines (draft):**
   - *"You are three hundred metres down. Everyone you know is above you. This is Void FM."*
   - *"If you can hear this, you are deeper than the signal was designed to reach."*
