@@ -162,8 +162,9 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Signature | **Falling Forwards Backwards Into Dimension** | Anthemic, 130 BPM, builds to an uplifting chorus | _Not yet_ |
 | Driver | **Parallax for Two Prospectors** | More driving, a duet between two distant voices | _Not yet_ |
 | Contrast | **No Ground Beneath, No Ceiling** | Sparse and intimate, almost whispered, slow | _Not yet_ |
-| Wildcard | **Kármán Line (Extended Longing Mix)** | Long instrumental, ambient, made for drifting | _Not yet_ |
+| Wildcard | **Kármán Lines (Extended Mix)** | Long instrumental, ambient, made for drifting | **Finished** |
 | _To decide_ | **Ex Profundo** | Replaces one of the four planned songs (which one: to decide) | **Finished** |
+| (new) | **Stella Solaris** | Rewritten as trip-hop (2026-11-13) | **Finished** |
 
 ### Space oddities *(special occasions)*
 

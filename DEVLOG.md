@@ -418,3 +418,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Why dig there? A finder's fee.** A sealed find was "semi-interesting": it read like an obstacle, not a prize, and getting it costs a Frenzy or a Stillness right there. Now the hint says what it is, *"An artefact is sealed in the rock here (◈): one for the archive cabinet, and a finder's fee"*, and every artefact pays: *"Finder's fee from the Kroeber Foundation: +10 drill samples."* Later, a teaser line per locked find, to pull with curiosity too.
 
 **Stillness ended before I got through.** A Stillness seam and a sealed find right next to me, and the state ran out before I could dig through. Stillness makes everything twice as slow but lasted the same 12 seconds as a Frenzy, which digs at double power: a quarter of the work. Stillness now lasts 20 seconds.
+
+**Stella Solaris: the long way round.** It began as a spoken drift piece, borrowed The You Show's lyrics, became its own story about a dead mother and alien lovers, went through three genres and two titles, and ended up as trip-hop on Void FM.
