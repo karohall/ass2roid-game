@@ -297,7 +297,9 @@ const CONFIG = {
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75 },   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
-  mix: { shakeMs: 2000 },         // shaking a Milk+; no digging meanwhile. Drinking is instant.
+  mix: { shakeMs: 2000 },
+  // The secret menu: not on the Milk+ menu. Its recipes are sung on the radio (Candygirl's in Candygirl (Asylum Mix)).
+  candy: { recipe: { chrome: 1, spores: 1 }, durationMs: 15000 },   // Candygirl, key 0: for a while, ↑ runs you up open tunnel         // shaking a Milk+; no digging meanwhile. Drinking is instant.
 
 };
 
@@ -305,7 +307,7 @@ const CONFIG = {
 // CONTENT: names and Field Guide copy.
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'recovery', 'stamina', 'focus'];
-const VNAME = { strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
+const VNAME = { candy: 'Candygirl', strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
 const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls toward Stillness, where everything comes out double.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don\'t stack; the meter holds still, and so does an open ? seam.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
@@ -357,7 +359,7 @@ const RADIO = {
     SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body'),
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
     SONG('The Pump Zone', 'Sergeant Rock', 'The Pump Zone Sergeant Rock'),
-    SONG('Space oddities', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)')] },   // the file lives with the oddities; it plays on the Pump Zone. The secret menu's recipe is chanted in it
+    SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)')] },   // the secret menu's recipe is chanted in it
   disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
@@ -469,6 +471,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
+const candy = () => s.fx.candy > now();   // Candygirl: running upwards
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
@@ -624,7 +627,7 @@ function act(dx, dy) {
   const nx = p.x + dx, ny = p.y + dy;
   if (ny < 0 || ny >= H || nx < 0 || nx >= W) return;
   const c = g[ny][nx];
-  if (c.t === AIR) { if (dy >= 0) { p.x = nx; p.y = ny; } return; } // No climbing.
+  if (c.t === AIR) { if (dy >= 0 || candy()) { p.x = nx; p.y = ny; } return; } // No climbing, except on Candygirl
   hit(nx, ny, c);
 }
 
@@ -750,6 +753,7 @@ function finishShake() {
   const { v } = s.shake;
   s.shake = null;
   s.shakesDone++;
+  if (v === 'candy') return drinkCandy();
   s.bottles[v]++;
   say(`${VNAME[v]} ready. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
 }
@@ -763,6 +767,25 @@ function press(v) {
   if (shaking()) return warn('Already shaking. One bottle at a time.');
   if (!canMix(v)) return warn(`Not enough for ${VNAME[v]}: ${recipeText(v)}.`);
   mix(v);
+}
+
+// The secret menu. Candygirl isn't on the menu: you know the recipe from the song, or you don't.
+// Holding one Chrome Filings and one Crack Spores, 0 shakes it, and it goes down as soon as it is ready.
+function secretCandy() {
+  if (!running || !sound.on || shaking()) return;
+  const r = CONFIG.candy.recipe;
+  if (!Object.entries(r).every(([k, n]) => s.inv[k] >= n)) return;   // nothing happens: it's a secret
+  for (const [k, n] of Object.entries(r)) s.inv[k] -= n;
+  s.shake = { v: 'candy', until: now() + CONFIG.mix.shakeMs };
+  held = null; pendingTap = null;
+  say('Shaking something that is not on the menu…');
+}
+function drinkCandy() {
+  s.fx.candy = now() + CONFIG.candy.durationMs;
+  if (!s.candyFound) {
+    s.candyFound = true;
+    celebrate(); announce(`Secret menu: ${em('Candygirl')}. Crack and chrome.\nFor ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
+  } else say('Candygirl. Up you go.');
 }
 
 function drink(v, fromShaker = false) {
@@ -1102,7 +1125,7 @@ function pause() {
 // Every timer is a timestamp, so freezing time means shifting them all by the time spent away
 // (pause, and the loading screen between layers).
 function shiftTimers(d) {
-  for (const v of VARIANTS) if (s.fx[v]) s.fx[v] += d;
+  for (const v of [...VARIANTS, 'candy']) if (s.fx[v]) s.fx[v] += d;
   for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastWarn', 'lastHitAt']) if (s[k]) s[k] += d;
   s.window = s.window.map(w => w + d);
   if (s.shake) s.shake.until += d;
@@ -1188,7 +1211,7 @@ function update(dt) {
   }
   if (s.shake && !shaking()) finishShake();
   // Gravity.
-  if (t - lastFall > 90 && p.y + 1 < H && g[p.y + 1][p.x].t === AIR) { p.y++; lastFall = t; }
+  if (!candy() && t - lastFall > 90 && p.y + 1 < H && g[p.y + 1][p.x].t === AIR) { p.y++; lastFall = t; }   // on Candygirl you hold on
   // Queued tap, then held digging.
   if (pendingTap && t - lastAct >= CONFIG.dig.tapMs * slowFactor()) { act(...pendingTap); pendingTap = null; lastAct = t; }
   else if (held && t - lastAct > CONFIG.dig.holdMs * slowFactor()) { act(held[0], held[1]); lastAct = t; }
@@ -1455,6 +1478,7 @@ function hud() {
     b.disabled = !running || (!ready && (shaking() || !canMix(v)));
   }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
+  if (candy()) fx.push(`Candygirl ${Math.ceil((s.fx.candy - t) / 1000)}s`);
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
@@ -1541,6 +1565,7 @@ addEventListener('keydown', e => {
   }
   const i = '12345'.indexOf(k);
   if (i >= 0) press(VARIANTS[i]);
+  if (k === '0') secretCandy();   // the secret menu
 });
 addEventListener('keyup', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;

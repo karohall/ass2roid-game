@@ -420,3 +420,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Stillness ended before I got through.** A Stillness seam and a sealed find right next to me, and the state ran out before I could dig through. Stillness makes everything twice as slow but lasted the same 12 seconds as a Frenzy, which digs at double power: a quarter of the work. Stillness now lasts 20 seconds.
 
 **Stella Solaris: the long way round.** It began as a spoken drift piece, borrowed The You Show's lyrics, became its own story about a dead mother and alien lovers, went through three genres and two titles, and ended up as trip-hop on Void FM.
+
+## 2026-11-14 — The radio teaches you things
+
+**A secret menu you learn by listening.** Candygirl (Asylum Mix) is acid techno on The Pump Zone, and its chant is a recipe: one Chrome Filings, one Crack Spores. Candygirl isn't on the menu. Hold crack and chrome, press 0, and you run upwards for 15 seconds. The climbing we parked came back as a secret you earn. It's a new rule for the game: the radio teaches you things.

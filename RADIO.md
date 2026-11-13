@@ -297,7 +297,7 @@ Throughout: slow somersaults.
 | 5 | I Dig You (All Night Long) | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 6 | Amore Orbitale | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 7 | Dolce de Leche+ | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
-| 8 | Candygirl (Asylum Mix) | The Pump Zone (secret menu) | Suno | Pro | Yes (made on Pro) | No | audio/Radio/Space oddities/Candygirl (Asylum Mix).mp3 | 2026-11-14 |
+| 8 | Candygirl (Asylum Mix) | The Pump Zone (secret menu) | Suno | Pro | Yes (made on Pro) | No | audio/Radio/The Pump Zone/Candygirl (Asylum Mix).mp3 | 2026-11-14 |
 | 9 | Presslufthammerherz | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/The Pump Zone/The Pump Zone Presslufthammerherz.mp3 | 2026-11-12 |
 | 10 | Sergeant Rock | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/The Pump Zone/The Pump Zone Sergeant Rock.mp3 | 2026-11-13 |
 | 11 | Kármán Lines (Extended Mix) | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Kármán Lines (Extended Mix).mp3 | 2026-10-23 |
