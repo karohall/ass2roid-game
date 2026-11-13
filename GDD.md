@@ -78,27 +78,45 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 ### Artefacts (plan, 2026-11-13)
 **Rules:**
 - **Artefacts reward altered states.** Every artefact comes from a Frenzy, a Stillness, or something only a Frenzy can do, never from plain digging.
+- **Sealed finds.** Most artefacts sit sealed in the rock: you can see one, but it only gives way in the right state (Frenzy or Stillness), the way seams answer only to their state.
 - **Each layer's own thing** decides where and how: the fossil shakers, the Näsa chrome, the dark.
-- **Catalogue number:** *KR-1*, the layer letter (A Regolith Prime, B Shaker Strata, C Chrome Vein, D The Crack, E the Core), then one running number. An artefact that can turn up in any layer takes the letter of the layer it was found in.
+- **Catalogue number:** *KR-1*, the layer letter (A Regolith Prime, B Shaker Strata, C Chrome Vein, D The Crack, E the Core), then the find's number. An artefact that can turn up in any layer takes the letter of the layer it was found in.
+- **Gaps are kept.** Unused numbers are *withdrawn* entries in the Field Guide: the gaps tell a story.
 - **Every card** ends: *Recovered under conditions the Kroeber Foundation does not endorse.*
-- **Out:** the popper bottle and the straw (real-drug references; the drug humour stays fictional, with Milk+ and the dosage scale).
+- **Scope:** about 17 finds is enough. Players find a few per run; the Field Guide is a reason to play again.
+- **The Field Guide's artefacts** become small numbered tiles, or an archive cabinet that expands (to try).
 
-| Artefact | Found | Status |
-|---|---|---|
-| Fossilised protein shaker | Frenzy seam, any layer | Built |
-| Chrome dumbbell | Frenzy seam, Chrome Vein | Built |
-| Molten chrome™ | Melting a Näsa slab (Frenzy, stacked Strength) | Built |
-| Glass of Milk+ | Stillness seam, any layer | Built |
-| VHS cassette | Shaker Strata: to place (proposal: inside a fossil shaker broken in Stillness) | Planned |
-| Striped sweatband | Regolith Prime: to place (proposal: a Frenzy seam in Regolith Prime, its first find of its own) | Planned |
-| Moon boot | To place (proposal: a Stillness seam in The Crack, seen first with night vision) | Planned |
-| The Core: redacted | Reaching the Core | Planned |
+| No. | Find | Where, and in which state | Status |
+|---|---|---|---|
+| 1 | Fossilised protein shaker | Frenzy seam, any layer | Built |
+| 2 | Chrome dumbbell | Frenzy seam, C | Built |
+| 3 | Molten chrome™ | Melting a Näsa slab, C (Frenzy, stacked Strength) | Built |
+| 4 | Glass of Milk+ | Stillness seam, any layer | Built |
+| 5 | VHS cassette | Sealed, B, Stillness (proposed) | Planned |
+| 6 | Hand stencils | Sealed, D, Stillness (proposed: seen first with night vision) | Planned |
+| 7 | Striped sweatband | Sealed, A, Frenzy (proposed) | Planned |
+| 8 | Bottle of jungle juice | Sealed, D, Frenzy (proposed) | Planned |
+| 9 | Moon boot | Stillness seam, any layer | Planned |
+| 10 | _Withdrawn_ (was the straw) | | Gap |
+| 11 | _Withdrawn_ | | Gap |
+| 12 | Inspection record | Sealed, A, Stillness (proposed) | Planned |
+| 13 | Rubber duck | Sealed, B, Frenzy (proposed) | Planned |
+| 14 | Parmesan | Sealed, B, Stillness (proposed) | Planned |
+| 15 | _Withdrawn_ | | Gap |
+| 16 | Villain item | Sealed, C, Frenzy (proposed) | Planned |
+| 17 | Hockey card, or a Polaroid (to decide) | Sealed, D, Frenzy (proposed) | Planned |
+| 18 | _Withdrawn_ | | Gap |
+| E | The Core: redacted | Reaching the Core | Planned |
+
+**Out:** the straw (its number is withdrawn), the Tamagotchi and the Polaroids (unless a Polaroid replaces the hockey card: it has "roid" in it).
 
 **The Core card (redacted):** catalogue number *KR-1 E*, and a black bar over everything else. *Redacted by the Belt Authority.* Shown on the end screen beside the challenge coin, and in the Field Guide.
 
 **Draft texts (tone checked: no repeated "The Foundation has stopped asking"; the Stillness finds don't share a joke):**
 - **Striped sweatband:** A striped terrycloth sweatband, still damp. The stripes match no known team. Sweat of undetermined origin. The Foundation has declined to test it.
+- **Bottle of jungle juice:** A small amber glass bottle, hand-labelled "JUNGLE JUICE". Empty. The bottle has no straw. The Foundation asks: is this really for drinking?!
 - **Moon boot:** A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.
+- _To come:_ hand stencils, inspection record, rubber duck, Parmesan, villain item, hockey card or Polaroid.
 
 **Photos:** museum archive style, neutral grey backdrop, flat lighting, an image of the object and possibly a close-up. The scale bar and any label text are added in Canva, not generated (image models mangle small print and numbers). For the moon boot, check every batch for a second boot.
 
