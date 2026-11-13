@@ -73,7 +73,40 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 *Published by the Kroeber Foundation.*
 - One card per layer, ingredient and artefact. Artefacts are shown in museum style: *"Artefact 1, Site KR-1, Crater 5, Quadrant 3."*
 - Empty slots with question marks show the player that something is hidden.
-- A separate section for frenzy finds.
+- Separate sections for Frenzy finds and Stillness finds.
+
+### Artefacts (plan, 2026-11-13)
+**Rules:**
+- **Artefacts reward altered states.** Every artefact comes from a Frenzy, a Stillness, or something only a Frenzy can do, never from plain digging.
+- **Each layer's own thing** decides where and how: the fossil shakers, the Näsa chrome, the dark.
+- **Catalogue number:** *KR-1*, the layer letter (A Regolith Prime, B Shaker Strata, C Chrome Vein, D The Crack, E the Core), then one running number. An artefact that can turn up in any layer takes the letter of the layer it was found in.
+- **Every card** ends: *Recovered under conditions the Kroeber Foundation does not endorse.*
+- **Out:** the popper bottle and the straw (real-drug references; the drug humour stays fictional, with Milk+ and the dosage scale).
+
+| Artefact | Found | Status |
+|---|---|---|
+| Fossilised protein shaker | Frenzy seam, any layer | Built |
+| Chrome dumbbell | Frenzy seam, Chrome Vein | Built |
+| Molten chrome™ | Melting a Näsa slab (Frenzy, stacked Strength) | Built |
+| Glass of Milk+ | Stillness seam, any layer | Built |
+| VHS cassette | Shaker Strata: to place (proposal: inside a fossil shaker broken in Stillness) | Planned |
+| Striped sweatband | Regolith Prime: to place (proposal: a Frenzy seam in Regolith Prime, its first find of its own) | Planned |
+| Moon boot | To place (proposal: a Stillness seam in The Crack, seen first with night vision) | Planned |
+| The Core: redacted | Reaching the Core | Planned |
+
+**The Core card (redacted):** catalogue number *KR-1 E*, and a black bar over everything else. *Redacted by the Belt Authority.* Shown on the end screen beside the challenge coin, and in the Field Guide.
+
+**Draft texts (tone checked: no repeated "The Foundation has stopped asking"; the Stillness finds don't share a joke):**
+- **Striped sweatband:** A striped terrycloth sweatband, still damp. The stripes match no known team. Sweat of undetermined origin. The Foundation has declined to test it.
+- **Moon boot:** A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.
+
+**Photos:** museum archive style, neutral grey backdrop, flat lighting, an image of the object and possibly a close-up. The scale bar and any label text are added in Canva, not generated (image models mangle small print and numbers). For the moon boot, check every batch for a second boot.
+
+**Image licence log.** Every artefact photo gets a row before it goes into the game, like the songs in RADIO.md.
+
+| Artefact | Tool and plan | Licence terms (link, date read) | Commercial use | Notes |
+|---|---|---|---|---|
+| | FLUX.2 Pro | _to check_ | _to check_ | |
 
 ## The rover
 Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a short animation, and you arrive. No driving.
