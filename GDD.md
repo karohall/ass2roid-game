@@ -31,7 +31,14 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Recovery:** repairs the drill after a Frenzy, at once, and the pick axe goes back on its hook (1 Regolith Whey + 1 Legacy Powder)
 - **Sleep:** ends the shift and saves progress
 
-**Secret menu** (unlocked through frenzy): Jizz+, Candygirl, XXX.
+**Secret menu:** Jizz+, Candygirl, XXX. **The songs are the key (2026-11-13):** each secret Milk+ has its recipe sung in a song on the radio, so players who listen know it and nobody else does. No Frenzy unlock: the ingredients gate it.
+- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). Its song is **Candy Girl**, acid techno on The Pump Zone, with the recipe in the lyrics. Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
+  - **Hidden:** it isn't on the menu, with no row or placeholder.
+  - **Key 0:** when you hold Crack Spores and Chrome Filings, pressing 0 makes it.
+  - **First time:** filed as a discovery: *"Secret menu: Candygirl."*
+  - **What it does:** to come from the song.
+  - **Can't be made early:** Crack Spores only exist in The Crack.
+- **Jizz+ and XXX:** later, each in its own song, on its own station.
 
 ## Frenzy and Stillness (push your luck)
 - **Rule:** *Double check any possible interactions.* The Foundation measures how fast, not just how much.

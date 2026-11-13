@@ -126,6 +126,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
 | Wildcard | **Presslufthammerherz** (Jackhammer Heart) | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm. In German: the Pump Zone's language flair | **Finished** |
 | (new) | **Sergeant Rock** | Added 2026-11-13 | **Finished** |
+| Secret | **Candy Girl** | Acid techno. The Candygirl recipe is in the lyrics: CC, Crack Spores and Chrome Filings (see the secret menu in the GDD) | _Not yet_ |
 
 ### Disco Gravitas
 
