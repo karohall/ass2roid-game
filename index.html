@@ -81,6 +81,13 @@
   .slot.found { border-style:solid; border-color:#999; color:var(--hot); }
   .slot.sel { outline:1px solid #fff; }
   .slot.locked { color:#666; font-size:16px; }
+  #guide .drawer { grid-column:1 / -1; text-align:left; font-size:11px; padding:5px 8px; }
+  #guide .tiles { grid-column:1 / -1; display:none; grid-template-columns:repeat(7, 1fr); gap:4px; }
+  #guide .tiles.open, body.fitting #guide .tiles { display:grid; }   /* measured open, so opening it never rescales the game */
+  .tile { border:1px dashed #555; height:24px; display:flex; align-items:center; justify-content:center; font-size:11px; color:#666; cursor:pointer; }
+  .tile.found { border-style:solid; border-color:#999; color:var(--hot); }
+  .tile.gone { border-color:#333; color:#444; text-decoration:line-through; }
+  .tile.sel { outline:1px solid #fff; }
   #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; height:104px; overflow:hidden; }   /* fixed: fits the longest card */
   .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
   .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
@@ -255,13 +262,29 @@ const CONFIG = {
       ] },
   ],
 
-  // Altered-state artefacts: tipping into a state opens a seam beside you holding the
-  // next unfound artefact of that kind. The seam only answers to that state.
-  artefacts: [                                           // Frenzy finds first, then Stillness finds: the Field Guide groups them in this order
-    { id: 'art1',   kind: 'frenzy', minLayer: 0 },
-    { id: 'art2',   kind: 'frenzy', minLayer: 2 },
-    { id: 'chrome1', kind: 'frenzy', minLayer: 2, seam: false, unrecovered: 'something Näsa would rather you did not melt' },   // melted out of a slab, not found in a seam
-    { id: 'still1', kind: 'still',  minLayer: 0 },
+  // The archive: every find has a catalogue number. Artefacts reward altered states: a seam opens in a
+  // Frenzy or Stillness; a sealed find sits in a layer's rock and only gives way in its state; molten chrome
+  // takes a Frenzy. Gaps are kept: withdrawn numbers tell their own story. E is for reaching the Core.
+  artefacts: [
+    { id: 'art1',      no: 1,  name: 'Fossilised protein shaker', kind: 'frenzy', how: 'seam',   minLayer: 0 },
+    { id: 'art2',      no: 2,  name: 'Chrome dumbbell',           kind: 'frenzy', how: 'seam',   minLayer: 2 },
+    { id: 'chrome1',   no: 3,  name: 'Molten chrome™',            kind: 'frenzy', how: 'melt',   layer: 2 },
+    { id: 'still1',    no: 4,  name: 'Glass of Milk+',            kind: 'still',  how: 'seam',   minLayer: 0 },
+    { id: 'vhs',       no: 5,  name: 'VHS cassette',              kind: 'still',  how: 'sealed', layer: 1 },
+    { id: 'stencils',  no: 6,  name: 'Hand stencils',             kind: 'still',  how: 'sealed', layer: 3 },
+    { id: 'sweatband', no: 7,  name: 'Striped sweatband',         kind: 'frenzy', how: 'sealed', layer: 0 },
+    { id: 'juice',     no: 8,  name: 'Bottle of jungle juice',    kind: 'frenzy', how: 'sealed', layer: 3 },
+    { id: 'boot',      no: 9,  name: 'Moon boot',                 kind: 'still',  how: 'seam',   minLayer: 0 },
+    { no: 10, withdrawn: true },
+    { no: 11, withdrawn: true },
+    { id: 'record',    no: 12, name: 'Inspection record',         kind: 'still',  how: 'sealed', layer: 0 },
+    { id: 'duck',      no: 13, name: 'Rubber duck',               kind: 'frenzy', how: 'sealed', layer: 1 },
+    { id: 'parmesan',  no: 14, name: 'Parmesan',                  kind: 'still',  how: 'sealed', layer: 1 },
+    { no: 15, withdrawn: true },
+    { id: 'villain',   no: 16, name: 'Villain item',              kind: 'frenzy', how: 'sealed', layer: 2 },
+    { id: 'polaroid',  no: 17, name: 'Polaroid',                  kind: 'frenzy', how: 'sealed', layer: 3 },
+    { no: 18, withdrawn: true },
+    { id: 'core',      no: 'E', name: 'The Core',                 how: 'core' },
   ],
 
   // false: a loading screen picks a crater at random. true: the player chooses (parked for later).
@@ -304,12 +327,26 @@ const LAYER_INTRO = [                                          // the loading sc
 ];
 // The first time a compound is found, the hint bar says what it unlocks.
 const UNLOCKS = { powder: 'calm', chrome: 'stamina', spores: 'focus' };
+const PENDING = 'Documentation pending. The Foundation is still writing this card.';
 const ARTEFACT_CARD = {
   art1: c => `Site KR-1, Crater ${c}, Quadrant 3. A fossilised protein shaker, lid still on. Contents: unknown, still cold.`,
   art2: c => `Site KR-1, Crater ${c}, Quadrant 1. A chrome dumbbell with a Näsa™ serial number. Näsa denies ownership.`,
   chrome1: c => `Site KR-1, Crater ${c}, Quadrant 2. A lump of molten chrome™, still warm. Näsa has issued an invoice for it.`,
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. It has not moved since it was poured. Nobody remembers pouring it.`,
+  vhs: c => `Site KR-1, Crater ${c}. VHS cassette, handwritten label: "VICE 2–6. DO NOT TAPE OVER." Rewound. The series ran for five seasons. The Foundation has viewed season six. It was never released on Tellus. No further comment.`,
+  stencils: c => `Site KR-1, Crater ${c}. ${PENDING}`,
+  sweatband: c => `Site KR-1, Crater ${c}. A striped terrycloth sweatband, still damp. The stripes match no known team. Sweat of undetermined origin. The Foundation has declined to test it.`,
+  juice: c => `Site KR-1, Crater ${c}. A small amber glass bottle, hand-labelled "JUNGLE JUICE". Empty. The bottle has no straw. The Foundation asks: is this really for drinking?!`,
+  boot: c => `Site KR-1, Crater ${c}. A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.`,
+  record: c => `Site KR-1, Crater ${c}. ${PENDING}`,
+  duck: c => `Site KR-1, Crater ${c}. ${PENDING}`,
+  parmesan: c => `Site KR-1, Crater ${c}. ${PENDING}`,
+  villain: c => `Site KR-1, Crater ${c}. ${PENDING}`,
+  polaroid: c => `Site KR-1, Crater ${c}. ${PENDING}`,
+  core: () => '█████ ███ ████████ ██ ███ ████. ████████ ██████ ███ ███ █████████. ██ ████.<br>Redacted by the Belt Authority.',
 };
+// Catalogue numbers: KR-1, the letter of the layer the find came from, the number. E is the Core.
+const catNo = a => a.no === 'E' ? 'KR-1 E' : `KR-1 ${'ABCD'[s.artLayer[a.id] ?? a.layer ?? 0]} ${String(a.no).padStart(4, '0')}`;
 // The stations and their songs. Each song is a file in audio/Radio/<station>/, which ships with the game
 // (on itch.io) but stays out of the repository. A song without a file isn't in the list yet.
 const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${name}.mp3` });
@@ -418,7 +455,7 @@ const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endo
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────────────────────────────
-const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10;
+const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10, SEALED = 11;
 const W = CONFIG.grid.cols, T = CONFIG.grid.tile, VIEW = CONFIG.grid.viewRows;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 cv.height = CONFIG.grid.viewRows * CONFIG.grid.tile;
@@ -447,7 +484,7 @@ function freshState() {
     bottles: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 },
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
-    guide: [], artCrater: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
+    guide: [], artCrater: {}, artLayer: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
     shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drillBreaks: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
@@ -495,6 +532,16 @@ function genLayer() {
     const gx = 1 + Math.floor(Math.random() * (W - 1 - L.slabs.gap));
     for (let x = 1; x < W - 1; x++) if (x < gx || x >= gx + L.slabs.gap) g[y][x] = { t: SLAB, hp: 1e9, max: 1e9 };
   }
+  // Sealed finds: the layer's artefacts sit in the rock, visible, and only give way in their state.
+  for (const a of CONFIG.artefacts) {
+    if (a.how !== 'sealed' || a.layer !== s.layer || s.guide.includes(a.id)) continue;
+    for (let tries = 0; tries < 200; tries++) {
+      const y = 6 + Math.floor(Math.random() * (H - 14)), x = 1 + Math.floor(Math.random() * (W - 2));
+      if ((L.slabs && L.slabs.rows.some(r => Math.abs(r - y) <= 1)) || g[y][x].t !== DIRT) continue;
+      g[y][x] = { t: SEALED, hp: CONFIG.seam.artefactHp, max: CONFIG.seam.artefactHp, art: a.id, kind: a.kind };
+      break;
+    }
+  }
   // Supply cache left by the last survey: enough Regolith Whey in the row above the crust
   // for the Strength the crust needs. You can't climb back up, so this prevents getting stuck.
   const stacks = Math.ceil((L.crustMinPower - CONFIG.dig.basePower) / CONFIG.strength.boost);
@@ -508,7 +555,7 @@ function genLayer() {
 // Tipping into a state opens a seam right beside the prospector, holding the next
 // unfound artefact of that kind. The seam only answers to that state.
 function openSeam(kind) {
-  const a = CONFIG.artefacts.find(a => a.kind === kind && a.seam !== false && !s.guide.includes(a.id) && s.layer >= a.minLayer);
+  const a = CONFIG.artefacts.find(a => a.how === 'seam' && a.kind === kind && !s.guide.includes(a.id) && s.layer >= a.minLayer);
   // An older seam of this kind, sealed somewhere up the shaft, closes back into rock: the new one opens here.
   if (s.seamOpen[kind]) {
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
@@ -524,7 +571,7 @@ function openSeam(kind) {
   const spots = [0, 1, 2, 3, 4, -1].flatMap(dy => [[p.x + near, p.y + dy], [p.x - near, p.y + dy]]);
   const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 4 &&   // may reach into the first crust row, never the last
     [-1, 0, 1].every(dy => !g[y0 + dy].some(c => c.t === SLAB)) &&   // never block a slab's gap: you can't climb back up
-    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART, SLAB].includes(c.t) && !c.cache; }));   // never cover the other seam, a slab or the supply cache
+    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART, SLAB, SEALED].includes(c.t) && !c.cache; }));   // never cover the other seam, a slab or the supply cache
   const spot = spots.find(fits);
   if (!spot) return;
   const [cx, cy] = spot;
@@ -582,8 +629,8 @@ function act(dx, dy) {
 function hit(x, y, c) {
   if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
   if (c.t === SLAB) { slabHit(x, y, c); return; }
-  if ((c.t === SEAM || c.t === ART) && !seamAnswers(c.kind)) {
-    warn(c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
+  if ((c.t === SEAM || c.t === ART || c.t === SEALED) && !seamAnswers(c.kind)) {
+    warn(c.t === SEALED ? `Sealed in the rock. It only gives way ${c.kind === 'still' ? 'in Stillness' : 'in a Frenzy'}.` : c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
     bump(x, y, 2); return;
   }
   if (c.t === CRUST && power() < layer().crustMinPower) { warn(`The crust does not yield. Digging power ${layer().crustMinPower} required.`); bump(x, y, 2); return; }
@@ -616,7 +663,7 @@ function hit(x, y, c) {
   if (c.t === INGR) gain(c.ing, (c.cache ? CONFIG.recipes.strength.whey : 1 + (Math.random() < CONFIG.dig.ingredientBonusChance ? 1 : 0)) * whole);
   if (c.cache) say('Survey cache. The last crew left this for you.');
   if (c.t === BAND && y === Math.floor(H / 2)) say('Compacted band. Strength is recommended.');
-  if (c.t === ART) unlock(c.art);
+  if (c.t === ART || c.t === SEALED) unlock(c.art);
 }
 
 function gain(k, n) {
@@ -763,13 +810,14 @@ function guideEntries() {
   return [
     ...CONFIG.layers.map((L, i) => ({ id: 'layer' + i, cat: 'Layers', label: L.name.replace('The ', ''), title: L.name, body: LAYER_CARD[i] })),
     ...Object.keys(ING).map(k => ({ id: 'ing_' + k, cat: 'Ingredients', label: ING[k].name, title: ING[k].name, body: ING[k].card })),
-    ...CONFIG.artefacts.map((a, i) => ({ id: a.id, cat: a.kind === 'still' ? 'Stillness finds' : 'Frenzy finds',
-      label: 'Artefact ' + (i + 1), title: 'Artefact ' + (i + 1),
-      body: ARTEFACT_CARD[a.id](s.artCrater[a.id] || 5) + '<br><i>' + ENDORSE + '</i>', state: a.kind })),
+    ...CONFIG.artefacts.filter(a => !a.withdrawn).map(a => ({ id: a.id, cat: 'Archive', art: a, label: String(a.no),
+      title: `${catNo(a)} · ${a.name}`,
+      body: ARTEFACT_CARD[a.id](s.artCrater[a.id] || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
   ];
 }
 
 const isArtefact = id => CONFIG.artefacts.some(a => a.id === id);
+let archiveOpen = false;                                    // the archive cabinet's drawer
 
 // A discovery: dust confetti bursts out from the edges of the hint box, where the news is.
 function celebrate() {
@@ -803,8 +851,8 @@ function unlock(id) {
   // Discoveries: the hint box announces them, bursting into confetti, ahead of everything else.
   if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}.\n${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
   if (isArtefact(id)) {
-    s.artCrater[id] = s.crater;
-    celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}.\nThe Foundation has been notified. It is in your Field Guide.`, 0, true);
+    s.artCrater[id] = s.crater; s.artLayer[id] = s.layer; archiveOpen = true;
+    if (id !== 'core') { celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}.\nThe Foundation has been notified. It is in the archive cabinet.`, 0, true); }
   }
   say(`Field Guide updated: ${guideEntries().find(e => e.id === id).title}.`);
   selCard = id;
@@ -815,21 +863,33 @@ function renderGuide() {
   const entries = guideEntries();
   let html = '', cat = '';
   for (const e of entries) {
+    if (e.art) continue;                                    // artefacts live in the archive cabinet, below
     if (e.cat !== cat) { cat = e.cat; html += `<div class="cat">${cat}</div>`; }
     const found = s.guide.includes(e.id);
     html += `<div class="slot ${found ? 'found' : 'locked'} ${selCard === e.id ? 'sel' : ''}" data-id="${e.id}">${found ? e.label : '?'}</div>`;
   }
+  // The archive cabinet: a drawer of numbered tiles, gaps and all.
+  const arts = CONFIG.artefacts, found = arts.filter(a => !a.withdrawn && s.guide.includes(a.id)).length, total = arts.filter(a => !a.withdrawn).length;
+  html += `<div class="cat">Archive</div><button class="drawer" id="drawer">${archiveOpen ? '▾' : '▸'} Archive cabinet · ${found} of ${total} recovered</button>`;
+  html += `<div class="tiles${archiveOpen ? ' open' : ''}">` + arts.map(a => {
+    const id = a.id || 'gap' + a.no, got = !a.withdrawn && s.guide.includes(a.id);
+    return `<div class="tile ${a.withdrawn ? 'gone' : got ? 'found' : 'locked'} ${selCard === id ? 'sel' : ''}" data-id="${id}" title="${a.withdrawn ? 'Withdrawn' : got ? a.name : 'Not yet recovered'}">${a.no}</div>`;
+  }).join('') + '</div>';
   $('guide').innerHTML = html;
+  const gap = /^gap/.test(selCard || '');
+  if (gap) { $('cardDetail').innerHTML = `<b style="color:var(--text)">No. ${selCard.slice(3)}</b><br>Withdrawn by the Foundation. No further comment.`; return; }
   const e = entries.find(e => e.id === selCard);
   if (!e) $('cardDetail').innerHTML = 'Select a card. Empty slots are things you have not found yet.';
   else if (s.guide.includes(e.id)) $('cardDetail').innerHTML = `<b style="color:var(--text)">${e.title}</b><br>${e.body}`;
   else $('cardDetail').innerHTML = e.state
-    ? `<b style="color:var(--text)">? ? ?</b><br><i>${ENDORSE}</i><br>Requires ${e.state === 'still' ? 'reduced' : 'elevated'} compound state.`
+    ? `<b style="color:var(--text)">No. ${e.art.no} · ? ? ?</b><br><i>${ENDORSE}</i><br>Requires ${e.state === 'still' ? 'reduced' : 'elevated'} compound state.`
+    : e.art ? `<b style="color:var(--text)">KR-1 E · ? ? ?</b><br>For those who reach the Core.`
     : `<b style="color:var(--text)">? ? ?</b><br>Not yet documented.`;
 }
 
 $('guide').addEventListener('click', e => {
-  const el = e.target.closest('.slot'); if (!el) return;
+  if (e.target.closest('#drawer')) { archiveOpen = !archiveOpen; renderGuide(); cv.focus(); return; }
+  const el = e.target.closest('.slot, .tile'); if (!el) return;
   selCard = el.dataset.id; renderGuide(); cv.focus();
 });
 
@@ -904,17 +964,16 @@ function pickCrater(i) {
 }
 
 function finishGame(drifted = false) {
+  if (!drifted) unlock('core');                             // the redacted card, for reaching the Core
   const sec = Math.floor(s.timeMs / 1000);
   const stats = [
     ['Depth', drifted ? depthNow() : s.depthOffset, ' m'], ['Shift length', sec, '', fmt], ['Drill samples', s.samples], ['Milk+ drunk', s.drinks],
     ['Frenzies', s.frenzies], ['Stillnesses', s.stills], ['Field Guide cards', s.guide.length, ' / ' + guideEntries().length], ['Drill broke', s.drillBreaks, s.drillBreaks === 1 ? ' time' : ' times'],
   ];
   // What's still out there: a quiet reason to play again, without explaining the whole system.
-  const where = a => a.minLayer ? 'in ' + CONFIG.layers[a.minLayer].name.replace(/^The /, 'the ') : 'anywhere';
-  const missingText = a => a.unrecovered || `a ${a.kind === 'still' ? 'Stillness' : 'Frenzy'} find ${where(a)}`;
-  const missing = CONFIG.artefacts.filter(a => !s.guide.includes(a.id)).map(missingText);
-  const unrecovered = missing.length ? `<div class="small">Still unrecovered: ${missing.join('; ')}.</div>` : '';
-  showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>THE CORE.</h1><div style="font-size:16px">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</div><canvas id="coin" width="240" height="240" style="width:120px;height:120px;border:0;background:none;margin:4px auto 0"></canvas><button id="saveCoin" style="width:auto;text-align:center">Save the coin</button>'}
+  const finds = CONFIG.artefacts.filter(a => !a.withdrawn), missing = finds.filter(a => !s.guide.includes(a.id));
+  const unrecovered = missing.length ? `<div class="small">Still unrecovered: ${missing.length} of ${finds.length} finds in the archive cabinet.</div>` : '';
+  showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>THE CORE.</h1><div style="font-size:16px">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</div><canvas id="coin" width="240" height="240" style="width:120px;height:120px;border:0;background:none;margin:4px auto 0"></canvas><div class="small">Archive: KR-1 E, the Core. Redacted.</div><button id="saveCoin" style="width:auto;text-align:center">Save the coin</button>'}
     <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
     ${unrecovered}
     <div class="small">${drifted ? 'Prototype 3. The Core is still down there.' : 'Prototype 3. Ex profundo, nova.'}</div>
@@ -1093,6 +1152,10 @@ function announce(m, extraMs = 0, discovery = false) {
 function update(dt) {
   const t = now();
   s.timeMs += dt;
+  if (!s.powerTaught && power() > CONFIG.dig.basePower && !(s.announceUntil > t)) {
+    s.powerTaught = true;
+    announce(`Digging power ${power()}: each hit takes more rock. Strength adds ${CONFIG.strength.boost} and stacks; a Frenzy doubles it.\nEach layer's crust needs a minimum: the rover panel shows it.`);
+  }
   if (!s.nice && depthNow() === 69) { s.nice = true; announce('69 m. Nice.\nThe Foundation does not endorse this observation.', 0, true); }   // an easter egg, once per run
   // Balance meter: pinned while a state lasts, settles after, otherwise drifts back toward 0.
   const B = CONFIG.balance;
@@ -1142,7 +1205,7 @@ function draw() {
     const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
     if (c.t === AIR) continue;
     ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
+    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
     ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
     if (c.t === SHAKER) {                                    // a little sealed bottle
@@ -1159,6 +1222,12 @@ function draw() {
       ctx.strokeStyle = c.t === CRUST ? '#444' : '#2a2a2a'; ctx.beginPath();
       for (let i = 0; i < T; i += c.t === CRUST ? 5 : 8) { ctx.moveTo(px + i, py + T); ctx.lineTo(px + i + 8, py); }
       ctx.stroke();
+    }
+    if (c.t === SEALED) {                                    // a sealed find: a dim ◈ in the rock, bright when its state can open it
+      const open = seamAnswers(c.kind);
+      if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
+      ctx.strokeStyle = open ? '#fff' : '#bdbdbd'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 5.5, py + 5.5, T - 11, T - 11); ctx.lineWidth = 1;   // framed, like a specimen box
+      ctx.fillStyle = open ? '#fff' : '#cfcfcf'; ctx.font = open ? 'bold 22px monospace' : 'bold 18px monospace'; ctx.fillText('◈', cx, cy); ctx.font = 'bold 14px monospace';
     }
     if (c.t === SEAM || c.t === ART) {
       const open = seamAnswers(c.kind);                      // lights up only in its own state, or while Hyperfocus holds it
@@ -1215,7 +1284,7 @@ function drawDark(L, y0, y1) {
   for (let y = y0; y < y1; y++) for (let x = 1; x < W - 1; x++) {
     const c = g[y][x], px = x * T + T / 2, py = y * T + T / 2;
     if (c.t === INGR && c.ing === 'spores') { ctx.shadowColor = '#00ff9f'; ctx.shadowBlur = 14; ctx.fillStyle = '#00ff9f'; ctx.fillText('S', px, py); }
-    else if ((c.t === SEAM || c.t === ART) && seamAnswers(c.kind)) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 10; ctx.fillStyle = '#fff'; ctx.fillText('?', px, py); }
+    else if ((c.t === SEAM || c.t === ART || c.t === SEALED) && seamAnswers(c.kind)) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 10; ctx.fillStyle = '#fff'; ctx.fillText('?', px, py); }
   }
   ctx.restore();
 }
@@ -1279,6 +1348,8 @@ const REVEAL = {
   recipe_recovery: () => s.drillWorn || s.bottles.recovery > 0,
   drill:  () => s.drillWorn,
 };
+// The first tile within r of the prospector that matches.
+const near = (r, f) => { for (let y = Math.max(0, p.y - r); y <= Math.min(H - 1, p.y + r); y++) for (let x = Math.max(0, p.x - r); x <= Math.min(W - 1, p.x + r); x++) if (f(g[y][x])) return g[y][x]; return null; };
 const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
 function hint() {
@@ -1303,6 +1374,8 @@ function hint() {
   if (s.announceUntil > t) return s.announce;
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
+  const sealed = near(2, c => c.t === SEALED && !seamAnswers(c.kind));
+  if (sealed) return `Something is sealed in the rock here (◈). It only gives way ${sealed.kind === 'still' ? 'in Stillness' : 'in a Frenzy'}.`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
@@ -1362,7 +1435,8 @@ function hud() {
   const t = now();
   setText('depth', `${depthNow()} m`);
   setText('samples', s.samples);
-  setText('power', power());
+  const need = layer().crustMinPower;   // digging power, against what this layer's crust needs
+  setHTML('power', `${power()} <span class="small">· crust needs ${need} ${power() >= need ? '✓' : '✗'}</span>`);
   setText('drill', onPick() ? 'broken · pick axe' : Math.round(s.drill) + '%' + (s.drill < CONFIG.drill.warnBelow ? ' · worn' : ''));
   for (const k of Object.keys(ING)) {
     setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
@@ -1418,6 +1492,7 @@ function hud() {
     '<span><i class="sw" style="background:#ddd"></i>You</span>',
     `<span><i class="sw" style="background:${layer().tint}"></i>Rock</span>`,
     '<span>◆ Drill sample</span>',
+    '<span>◈ Sealed find</span>',
     ...Object.keys(ING).filter(known).map(k => `<span><b>${ING[k].letter}</b> ${ING[k].name}</span>`),
     '<span><i class="sw hatch"></i>Hard band</span>',
     ...(layer().shakers ? ['<span>▮ Fossil shaker</span>'] : []),

@@ -84,7 +84,9 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 - **Gaps are kept.** Unused numbers are *withdrawn* entries in the Field Guide: the gaps tell a story.
 - **Every card** ends: *Recovered under conditions the Kroeber Foundation does not endorse.*
 - **Scope:** about 17 finds is enough. Players find a few per run; the Field Guide is a reason to play again.
-- **The Field Guide's artefacts** become small numbered tiles, or an archive cabinet that expands (to try).
+- **The archive cabinet (built):** the Field Guide's artefacts live in a drawer, *"Archive cabinet · 4 of 15 recovered"*. It opens into small numbered tiles, 1–18 and E: found ones lit, the rest dashed, withdrawn numbers struck through (*"Withdrawn by the Foundation. No further comment."*). A new find opens the drawer on its card.
+- **Sealed finds (built):** a framed ◈ in the rock, like a specimen box, bright when its state can open it. Hitting one in the wrong state: *"Sealed in the rock. It only gives way in a Frenzy."* Standing near one, the hint bar says so too.
+- **Card texts still to write** show *"Documentation pending. The Foundation is still writing this card."*
 
 | No. | Find | Where, and in which state | Status |
 |---|---|---|---|
@@ -92,21 +94,21 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 | 2 | Chrome dumbbell | Frenzy seam, C | Built |
 | 3 | Molten chrome™ | Melting a Näsa slab, C (Frenzy, stacked Strength) | Built |
 | 4 | Glass of Milk+ | Stillness seam, any layer | Built |
-| 5 | VHS cassette | Sealed, B, Stillness | Planned |
-| 6 | Hand stencils | Sealed, D, Stillness (seen first with night vision) | Planned |
-| 7 | Striped sweatband | Sealed, A, Frenzy | Planned |
-| 8 | Bottle of jungle juice | Sealed, D, Frenzy | Planned |
-| 9 | Moon boot | Stillness seam, any layer | Planned |
+| 5 | VHS cassette | Sealed, B, Stillness | Built |
+| 6 | Hand stencils | Sealed, D, Stillness (seen first with night vision) | Built |
+| 7 | Striped sweatband | Sealed, A, Frenzy | Built |
+| 8 | Bottle of jungle juice | Sealed, D, Frenzy | Built |
+| 9 | Moon boot | Stillness seam, any layer | Built |
 | 10 | _Withdrawn_ (was the straw) | | Gap |
 | 11 | _Withdrawn_ | | Gap |
-| 12 | Inspection record | Sealed, A, Stillness | Planned |
-| 13 | Rubber duck | Sealed, B, Frenzy | Planned |
-| 14 | Parmesan | Sealed, B, Stillness | Planned |
+| 12 | Inspection record | Sealed, A, Stillness | Built |
+| 13 | Rubber duck | Sealed, B, Frenzy | Built |
+| 14 | Parmesan | Sealed, B, Stillness | Built |
 | 15 | _Withdrawn_ | | Gap |
-| 16 | Villain item | Sealed, C, Frenzy | Planned |
-| 17 | Polaroid (it has "roid" in it) | Sealed, D, Frenzy | Planned |
+| 16 | Villain item | Sealed, C, Frenzy | Built |
+| 17 | Polaroid (it has "roid" in it) | Sealed, D, Frenzy | Built |
 | 18 | _Withdrawn_ | | Gap |
-| E | The Core: redacted | Reaching the Core | Planned |
+| E | The Core: redacted | Reaching the Core | Built |
 
 **Out:** the straw (its number is withdrawn), the Tamagotchi, the hockey card, and the stack of Polaroids (one Polaroid stays, as No. 17). The states are decided: 8 Frenzy finds, 6 Stillness finds.
 
