@@ -424,3 +424,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 ## 2026-11-14 — The radio teaches you things
 
 **A secret menu you learn by listening.** Candygirl (Asylum Mix) is acid techno on The Pump Zone, and its chant is a recipe: one Chrome Filings, one Crack Spores. Candygirl isn't on the menu. Hold crack and chrome, press 0, and you run upwards for 15 seconds. The climbing we parked came back as a secret you earn. It's a new rule for the game: the radio teaches you things.
+
+**Playtest: the balance is there.** It feels so much more well balanced now. I find myself wanting to go into Stillness and Frenzy, and going out of my way for Legacy Powder, which I did not do before. Stillness doubling everything, the finder's fee for sealed finds and Candygirl's climb all give the states, and the ingredients for them, a reason.
