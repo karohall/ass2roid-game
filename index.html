@@ -88,7 +88,7 @@
   .tile.found { border-style:solid; border-color:#999; color:var(--hot); }
   .tile.gone { border-color:#333; color:#444; text-decoration:line-through; }
   .tile.sel { outline:1px solid #fff; }
-  #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; height:104px; overflow:hidden; }   /* fixed: fits the longest card */
+  #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; height:104px; overflow:hidden; }   /* fixed: fit() sets it to the longest card */
   .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
   .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
   .overlay h2 { margin:0; font-size:18px; letter-spacing:.08em; }
@@ -814,7 +814,7 @@ function guideEntries() {
     ...Object.keys(ING).map(k => ({ id: 'ing_' + k, cat: 'Ingredients', label: ING[k].name, title: ING[k].name, body: ING[k].card })),
     ...CONFIG.artefacts.filter(a => !a.withdrawn).map(a => ({ id: a.id, cat: 'Archive', art: a, label: String(a.no),
       title: `${catNo(a)} · ${a.name}`,
-      body: ARTEFACT_CARD[a.id](s.artCrater[a.id] || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
+      body: ARTEFACT_CARD[a.id]((s && s.artCrater[a.id]) || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
   ];
 }
 
@@ -1564,6 +1564,10 @@ function fit() {
   const hidden = [...document.querySelectorAll('.later:not(.shown)')];
   hidden.forEach(el => el.classList.add('shown'));
   const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;
+  // The card box is as tall as the longest card, so no card is ever cut off and choosing one never moves the page.
+  const cd = $('cardDetail'), card0 = cd.innerHTML; cd.style.height = 'auto'; let tallest = 0;
+  for (const e of guideEntries()) { cd.innerHTML = `<b>${e.title}</b><br>${e.body}`; tallest = Math.max(tallest, cd.offsetHeight); }
+  cd.style.height = tallest + 'px'; cd.innerHTML = card0;
   const height = w.offsetHeight, width = w.offsetWidth;
   hidden.forEach(el => el.classList.remove('shown'));
   $('hint').innerHTML = hint0;
