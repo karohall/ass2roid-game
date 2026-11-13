@@ -220,7 +220,7 @@ const CONFIG = {
   push:    { strength: 30, calm: -30, stamina: 10, focus: 10, recovery: 0 },
 
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
-  stillness: { durationMs: 12000, settleAt: 45, slowMult: 2, yieldMult: 2 },   // everything slows, and comes out whole: samples and ingredients ×2
+  stillness: { durationMs: 20000, settleAt: 45, slowMult: 2, yieldMult: 2 },   // everything slows (so it lasts longer than a Frenzy), and comes out whole: samples and ingredients ×2
   seam:      { hp: 6, artefactHp: 3, finderFee: 10 },   // the Foundation pays a finder's fee in drill samples for every artefact recovered
   calmRumourFrenzies: 2,   // the Calm rumour shows as each of the first two Frenzies ends, never after a Stillness
 

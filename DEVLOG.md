@@ -416,3 +416,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **What is digging power?** It was a bare number in the rover panel. Now the panel shows it against what matters, *"Digging power 4 · crust needs 4 ✓"*, and the first time it rises, a hint explains it: each hit takes more rock; Strength adds 3 and stacks; a Frenzy doubles it; each layer's crust needs a minimum.
 
 **Why dig there? A finder's fee.** A sealed find was "semi-interesting": it read like an obstacle, not a prize, and getting it costs a Frenzy or a Stillness right there. Now the hint says what it is, *"An artefact is sealed in the rock here (◈): one for the archive cabinet, and a finder's fee"*, and every artefact pays: *"Finder's fee from the Kroeber Foundation: +10 drill samples."* Later, a teaser line per locked find, to pull with curiosity too.
+
+**Stillness ended before I got through.** A Stillness seam and a sealed find right next to me, and the state ran out before I could dig through. Stillness makes everything twice as slow but lasted the same 12 seconds as a Frenzy, which digs at double power: a quarter of the work. Stillness now lasts 20 seconds.
