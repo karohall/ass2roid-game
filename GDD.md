@@ -98,7 +98,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 
 | No. | Find | Where, and in which state | Status |
 |---|---|---|---|
-| 1 | Fossilised protein shaker | Frenzy seam, any layer | Built |
+| 1 | Dolph’s shaker (was the fossilised protein shaker; renamed 2026-11-14 so it isn't one of the Shaker Strata's own) | Frenzy seam, any layer | Built |
 | 2 | Chrome dumbbell | Frenzy seam, C | Built |
 | 3 | Molten chrome™ | Melting a Näsa slab, C (Frenzy, stacked Strength) | Built |
 | 4 | Glass of Milk+ | Stillness seam, any layer | Built |
