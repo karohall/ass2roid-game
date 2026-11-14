@@ -41,7 +41,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Jizz+ (idea, 2026-11-14):** Disco Gravitas, sung by a saucy bartender or barista. **It lets you shake two bottles at the same time.** Proposed: for a while, one shake makes two bottles of the Milk+ you choose; you pay the ingredients for both, but shake only once. It saves time, and two bottles at hand tempt you to drink them in quick succession: the dose window does the rest. **Recipe (proposed): W + W + P**, two Regolith Whey and one Legacy Powder: the milkiest thing on the menu, and the first three-ingredient recipe. It works from layer 2, so it lasts three layers (a two-ingredient recipe would have needed The Crack, too close to the end). Unless the song decides otherwise.
 - **XXX (2026-11-14): the uncensored version.** Void FM, the station of consciousness. **Recipe: S + S**, two Crack Spores: pure Crack, so only at the bottom. For a while:
   - **X-ray:** the rock goes see-through. Seams, sealed finds and artefacts show across the whole layer, even in the dark. The last chance to fill the archive cabinet before the Core.
-  - **Uncensored:** everything the Belt Authority blacked out reads in full: the Crack Spores' nutrition facts, what The Crack really is, why numbers were withdrawn. Reach the Core under XXX, and the Core card is uncensored too.
+  - **Uncensored:** everything the Belt Authority blacked out reads in full: the Crack Spores' nutrition facts, what The Crack really is, why numbers were withdrawn. Reach the Core under XXX, and the Core card is uncensored too: the Core's compound is *Solanum tuberosum*, the potato.
   - **To write:** the uncensored texts. Lots of work, but hilarious.
 - **The recipe slots:** four ingredients give ten two-ingredient recipes. Taken: WW Strength, PP Calm, WC Stamina, PS Hyperfocus, WP Recovery, CS Candygirl, SS XXX. Free: CC and WS. Jizz+ takes three (WWP).
 
@@ -75,7 +75,7 @@ Korova minerals in the menu's format (Nutrition Facts, Caution, Fun fact). One s
 2. The Shaker Strata: **Legacy Powder**
 3. The Chrome Vein: **Chrome Filings**
 4. The Crack: **Crack Spores**
-5. The Core: **[REDACTED COMPOUND]**
+5. The Core: **[REDACTED COMPOUND]**. Decided (2026-11-14): *Solanum tuberosum*, the potato. Only revealed under XXX; everywhere else it stays [REDACTED COMPOUND].
 
 In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from the Shaker Strata) mixes Calm.
 
