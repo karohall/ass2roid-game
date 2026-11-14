@@ -416,9 +416,10 @@ function radioKey(k) {
 function radioNow() {
   if (s && s.drift) return { key: 'oddity', song: 0 };
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
+  if (s && candy()) return { key: 'pump', song: 0, track: RADIO.pump.rare[0], cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
 }
-const songOf = n => { const st = RADIO[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
+const songOf = n => { const st = RADIO[n.key]; if (n.track) return n.track; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
 // A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
 function pickRare(key) { const r = (RADIO[key].rare || []).filter(x => !x.unlock || radio.unlocked[x.unlock]); radio.rare[key] = r.length && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
@@ -590,6 +591,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
+const CANDY_TILES = ['#c94f95', '#3fae78', '#4a86c9'];   // pink, green, blue: the rock on Candygirl (samples and ingredients stay grey, to be found)
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
@@ -1550,7 +1552,7 @@ function draw() {
     const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
     if (c.t === AIR) continue;
     ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
+    ctx.fillStyle = (s && candy() && [DIRT, BAND, SHAKER, SEALED, GRAFFITI].includes(c.t) && CANDY_TILES[(x + y + Math.floor(now() / 300)) % 3]) || { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
     ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
     if (c.t === GRAFFITI) {                                  // scratches: someone wrote here
