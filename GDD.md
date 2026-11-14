@@ -162,7 +162,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a short animation, and you arrive. No driving.
 
 ## The radio
-- **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky, with a German accent): digging goes slightly faster
+- **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky, with a German accent, on air since 2026-11-14: he talks between songs, greets the shift, cheers the Frenzy, knows when you've been on Void FM, and once in a while lets slip that a song isn't on the menu): digging goes slightly faster
 - **Disco Gravitas** (heart: Italo and space disco): calms the balance meter a little
 - **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing

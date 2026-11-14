@@ -296,7 +296,7 @@ const CONFIG = {
   drift:   { durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2 },   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.35 },   // Coach Rocky talks in 1 break in 3 on the Pump Zone; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },
@@ -389,11 +389,13 @@ function radioKey(k) {
   }
   if (s && running && onPick()) { say('No power for the radio. Only the tape: the deck runs on its own battery.'); return; }   // the radio died with the drill
   if (s) s.radioHops = (s.radioHops || 0) + 1;             // tried another station: the radio lesson is learned
+  const was = radio.on;
   if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
   else radio.on = radio.on === 'tape' ? radio.last : STATIONS[(STATIONS.indexOf(radio.on) + 1) % STATIONS.length];
   if (radio.on !== 'tape') radio.last = radio.on;
   radio.since = radio.clock;
   if (running) say(`Radio: ${RADIO[radio.on].name}.`);
+  if (was === 'void' && radio.on === 'pump') rocky(DJ.void);   // he knows
 }
 // What the radio plays right now. The meter cuts in: a Frenzy cuts straight to the Pump Zone, Stillness
 // lets Void FM come through, and the Drift plays The You Show. Otherwise, the station you chose.
@@ -408,6 +410,31 @@ const songOf = n => { const st = RADIO[n.key]; return n.song === undefined && ra
 // A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
 function pickRare(key) { const r = RADIO[key].rare; radio.rare[key] = r && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
+// Coach Rocky, the Pump Zone's DJ (an ElevenLabs voice). His clips are in audio/Radio/The Pump Zone/Coach Rocky/.
+// He talks between songs now and then, and at a few moments, as if he is watching. Only on the Pump Zone,
+// never in the Drift or on the tape. The music ducks under him.
+const ROCKY = name => `audio/Radio/The Pump Zone/Coach Rocky/${name}.mp3`;
+const DJ = {
+  breaks: ['Hydrate dominate excavate', 'No pain no gain', 'Heartrate', 'Näsa jab', 'Never leave a brother hanging', 'Side effects are not bad'].map(ROCKY),
+  morning: ROCKY('Good morning Korova'),                       // Begin shift
+  frenzy: ROCKY('Frenzy is not a problem'),                     // a Frenzy cuts in
+  void: ROCKY('If you switch to Void FM I will know.'),         // back from Void FM
+  secret: ROCKY('There is one song on this station that is not on the menu. I did not tell you that.'),   // rare: the radio teaches you things (Candygirl)
+};
+const dj = new Audio(); dj.preload = 'auto'; let djLast = '';
+const djTalking = () => !!dj.src && !dj.paused && !dj.ended;
+const rockyOnAir = () => sound.on && radioNow().key === 'pump' && !(s && s.drift);
+function rocky(file) {
+  if (!rockyOnAir() || djTalking()) return;
+  dj.src = encodeURI(file); djLast = file;
+  dj.play().catch(() => {});
+}
+function rockyBreak() {
+  if (Math.random() >= CONFIG.radio.djChance) return;
+  if (Math.random() < CONFIG.radio.djSecret) return rocky(DJ.secret);
+  const pool = DJ.breaks.filter(x => x !== djLast);
+  rocky(pool[Math.floor(Math.random() * pool.length)]);
+}
 
 // The sound itself: one player, cross-fading between songs. Browsers only allow sound after the
 // player has pressed a key or clicked, so the radio comes on with the first one: Begin shift.
@@ -418,7 +445,8 @@ player.addEventListener('ended', () => {
   const n = radioNow();
   if (n.song === undefined && radio.rare[n.key]) radio.rare[n.key] = null;     // a rare song gives way to the rotation
   else if (n.song === undefined) { radio.idx[n.key] = (radio.idx[n.key] || 0) + 1; pickRare(n.key); }   // the next song on this station
-  else { player.currentTime = 0; player.play().catch(() => {}); }             // a song that cut in plays again
+  else { player.currentTime = 0; player.play().catch(() => {}); return; }     // a song that cut in plays again
+  if (n.key === 'pump') rockyBreak();                                        // between songs, Coach Rocky may have a word
 });
 // V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
 const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
@@ -447,7 +475,11 @@ function soundTick(dt) {
     sound.randomStart = n.song === undefined;
   }
   const want = sound.on ? songOf(n).file || '' : '';
-  const level = CONFIG.radio.volume * VOLUMES[radio.vol].k * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
+  const menuK = VOLUMES[radio.vol].k * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
+  if (s && running && !s.rockyMorning && sound.on) { s.rockyMorning = true; rocky(DJ.morning); }          // the shift's first sound: good morning (only if the Pump Zone is on)
+  if (djTalking() && !rockyOnAir()) dj.pause();                                                           // off the Pump Zone, Coach Rocky goes quiet
+  dj.volume = menuK;
+  const level = CONFIG.radio.volume * menuK * (djTalking() ? CONFIG.radio.djDuck : 1);                    // the music ducks under Coach Rocky
   if (n.cut && want !== sound.file) {                                         // the Frenzy: cut, mid-song, no fade
     sound.file = want; sound.vol = level; player.volume = level;
     loadSong(want);
@@ -1321,6 +1353,7 @@ function update(dt) {
   else if (s.meter >= tipAt()) {
     s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
     say('FRENZY. The Rock is speaking. Do not answer.');
+    rocky(DJ.frenzy);
     openSeam('frenzy');
   } else if (s.meter <= -tipAt()) {
     s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;

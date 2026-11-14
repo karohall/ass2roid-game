@@ -438,3 +438,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **The tape gets its moment.** Testarocca, the rover's tape, was blank all game. Now it has a song, and a reason: the radio runs on the drill's power, so when the drill breaks, the radio dies with it. Only the tape deck still plays, on its own battery, while you're on the pick axe. Recovery brings the radio back. A broken drill now sounds different, and Recovery is a little more tempting.
 
 **Renamed:** Sergeant Rock is now Drill Instructor. And Alea Iacta Est, early industrial, joins Void FM; its ticker always carries the *wreckers of civilisation*.
+
+**Coach Rocky is on air.** Ten clips, made with ElevenLabs, in his German accent. Most of them fill the breaks between songs on the Pump Zone. A few are tied to moments: he says good morning when the shift begins, tells you the Frenzy is not a problem, and knows when you've been listening to Void FM. One is rare, and it gives away that one song on the station isn't on the menu. The radio teaches you things. The music ducks under him, so he never cuts a song off.

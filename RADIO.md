@@ -110,6 +110,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **In-game effect:** digging goes slightly faster.
 - **DNA:** 80s metal and gym, distorted guitars, mining lyrics, sweat and innuendo.
 - **DJ: Coach Rocky.** Speaks English with a German accent. An overly positive aerobics instructor and gym coach in one. Loud, encouraging, counts reps, and takes everything completely seriously. *"You know what you want, and if you don't, Rocky does."*
+- **On air (2026-11-14):** Coach Rocky talks on the Pump Zone. Six clips take turns between songs (about one break in three, never the same clip twice in a row). Three are tied to moments, so he seems to be watching: *Good morning Korova* at Begin shift, *Frenzy is not a problem* when a Frenzy cuts in, and *If you switch to Void FM I will know* when you tune back from Void FM. One is rare: *There is one song on this station that is not on the menu. I did not tell you that.* The radio teaches you things: it points at Candygirl. The song ducks to 35% under him and comes back up. He stays quiet on every other station, in the Drift, and on the tape when the drill is broken. The clips are in `audio/Radio/The Pump Zone/Coach Rocky/`; see the DJ voice log.
 - **Example lines:**
   - *"Good morning, Korova Rock! Are you warm? Are you hydrated? Are you digging? Let's GO!"*
   - *"Four more! Three more! Two more! The rock does not respect hesitation!"*
@@ -324,7 +325,16 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 
 | # | Station | Line | ElevenLabs voice | Settings | File | Date added |
 |---|---------|------|------------------|----------|------|------------|
-|   |         |      |                  |          |      |            |
+| 1 | The Pump Zone | Good morning Korova (begin shift: the first time the radio plays in a shift, if it's on the pump zone) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Good morning Korova.mp3 | 2026-11-14 |
+| 2 | The Pump Zone | Hydrate dominate excavate (between songs) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Hydrate dominate excavate.mp3 | 2026-11-14 |
+| 3 | The Pump Zone | No pain no gain (between songs) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/No pain no gain.mp3 | 2026-11-14 |
+| 4 | The Pump Zone | Heartrate (between songs) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Heartrate.mp3 | 2026-11-14 |
+| 5 | The Pump Zone | Näsa jab (between songs) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Näsa jab.mp3 | 2026-11-14 |
+| 6 | The Pump Zone | Never leave a brother hanging (between songs) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Never leave a brother hanging.mp3 | 2026-11-14 |
+| 7 | The Pump Zone | Side effects are not bad (between songs) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Side effects are not bad.mp3 | 2026-11-14 |
+| 8 | The Pump Zone | Frenzy is not a problem (a frenzy cuts in) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Frenzy is not a problem.mp3 | 2026-11-14 |
+| 9 | The Pump Zone | If you switch to Void FM I will know. (tuning from void fm back to the pump zone) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/If you switch to Void FM I will know..mp3 | 2026-11-14 |
+| 10 | The Pump Zone | There is one song on this station that is not on the menu. I did not tell you that. (rare, between songs: hints at candygirl) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/There is one song on this station that is not on the menu. I did not tell you that..mp3 | 2026-11-14 |
 
 ---
 
