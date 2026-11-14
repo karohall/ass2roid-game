@@ -450,3 +450,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **The state changes the sound, not the station.** The radio switching in Frenzy and Stillness took away the station you chose, and with voices on the stations it felt like being interrupted. Now you keep your station and the room changes around it: Stillness muffles and slows the music, as if through rock; a Frenzy speeds it up and roughs it up. The DJs still break in at those moments, on whatever you're listening to.
 
 **The voices go through a radio.** There was too big a difference between the songs and the voices: the clips were clean and close, the songs produced. Now the voices are narrowed, compressed, a little warm, with a short room around them, and the music ducks less under them.
+
+**Timed, not labelled.** The STILL and FRENZY labels on the sealed boxes were too small to read, so they're gone. Instead the hint is timed and reads the situation: it announces a sealed find as it comes into view, says which state it wants and how to get there with what you have, joins the tip-over warning when one more drink would open it, counts down while it's open, and says plainly when you're in the wrong state.
+
+**The chrome gamble, at a readable pace.** My drill broke in what felt like an instant, trying to melt Näsa's chrome in a Frenzy. Holding ↓, all six hits came in a second. Now the chrome heats at most every half second, so you see it glow and choose. The odds stay: blowing up is half the fun, since the radio dies and Testarocca kicks in.
