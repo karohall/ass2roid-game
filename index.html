@@ -1404,6 +1404,8 @@ function update(dt) {
   if (running && !s.drift) {                                 // a sealed find coming into view: said once, as you approach
     const seen = near(5, c => c.t === SEALED && !c.seen && !seamAnswers(c.kind));
     if (seen) { seen.seen = true; announce(`A sealed artefact ahead (◈). It waits for ${STATE_OF[seen.kind].name}.`); }
+    // The secret menu unlocks as soon as you hold its ingredients: a rumour, once the news before it has been read.
+    if (!s.candyRumour && !s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) { s.candyRumour = true; announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. Crack and chrome, shaken with 0.'); }
   }
   s.timeMs += dt;
   if (!s.powerTaught && power() > CONFIG.dig.basePower && !(s.announceUntil > t)) {

@@ -464,3 +464,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **How do you mix a secret?** It wasn't clear to me how one mixes secret menu items. Now the Milk+ menu says it, once you've found the ingredients: hold the right ones and press 0. It tells you how, never what. And 0 answers when you're holding the wrong things. Also: the drill wears half as fast in Regolith Prime, since Recovery's Chrome is a layer away.
 
 **Not like that.** The [0] line in the Milk+ menu didn't feel right. Dropped, and 0 is silent again. The drill's gentler wear in Regolith Prime stays. How to teach the secret menu is open.
+
+**The secret menu, by rumour.** It unlocks as soon as you hold the ingredients: the Belt Authority log passes on a rumour, *crack and chrome, shaken with 0.* Rumours are already how the game tells you things it officially doesn't.
