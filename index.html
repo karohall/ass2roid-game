@@ -1043,8 +1043,10 @@ function unlock(id) {
   renderGuide();
 }
 
-// A recovered artefact's photo: archive/<number>-<id>.jpg. A find without a photo simply has none.
-const artImg = a => a && a.no !== 'E' ? `archive/${String(a.no).padStart(2, '0')}-${a.id}.jpg` : null;
+// A recovered artefact's photo: archive/<number>-<id>.webp. A find without a photo simply has none.
+// The inspection record shows its redacted copy (12a) until XXX uncovers it (12).
+const ART_PHOTO = { record: '12a-record-redacted' };
+const artImg = a => a && a.no !== 'E' ? `archive/${ART_PHOTO[a.id] || String(a.no).padStart(2, '0') + '-' + a.id}.webp` : null;
 const cardHTML = e => (artImg(e.art) ? `<img class="artimg" src="${artImg(e.art)}" width="96" height="72" alt="" data-big="${artImg(e.art)}" onerror="this.remove()">` : '')
   + `<b style="color:var(--text)">${e.title}</b><br>${e.body}`;
 function showArt(src, title) {
