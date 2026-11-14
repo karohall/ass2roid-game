@@ -466,3 +466,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Not like that.** The [0] line in the Milk+ menu didn't feel right. Dropped, and 0 is silent again. The drill's gentler wear in Regolith Prime stays. How to teach the secret menu is open.
 
 **The secret menu, by rumour.** It unlocks as soon as you hold the ingredients: the Belt Authority log passes on a rumour, *crack and chrome, shaken with 0.* Rumours are already how the game tells you things it officially doesn't.
+
+**Things you find hint at the secret menu.** Graffiti in the rock, one piece in the Chrome Vein, one in The Crack. Graffiti could have meant tiny writing again, so the tile only shows scratches, and the words come up in the hint bar when you dig it out. The first one opens a redacted card in the Field Guide, *Not on the menu*, and every piece you find fills in a word. The rumour gives the last one: you order it with 0.
+
+**The radio starts from the top.** When it first comes on, the song plays from the beginning.

@@ -250,12 +250,14 @@ const CONFIG = {
       ] },
     { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 90, tint: '#4f5358',
       slabs: { rows: [8, 15, 22, 37, 44, 51], gap: 2 },   // Näsa chrome: can't be dug, find the gap
+      graffiti: ['chrome'],        // scratched into the rock: a piece of the secret menu
       yields: { chrome: 0.05, whey: 0.05, powder: 0.02, spores: 0.0175 },   // Whey doubled: the toughest rock needs Strength
       craters: [
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
       ] },
     { name: 'The Crack', rows: 60, hp: [36, 42], bandHp: 240, crustHp: 260, crustMinPower: 7, tipAt: 90, tint: '#3d4744',
+      graffiti: ['crack'],
       dark: { clear: 1.4, fade: 3.4, voidClear: 3, voidFade: 6.5 },   // darkness: you see about three tiles around you, twice that on Void FM (night vision); the Crack Spores glow
       yields: { spores: 0.06, whey: 0.05, chrome: 0.02, powder: 0.02 },
       craters: [
@@ -527,9 +529,10 @@ function loadSong(file) {
 function soundTick(dt) {
   const n = radioNow();
   if (sound.on && n.key !== sound.key) {                                      // a different station: join it mid-broadcast
+    const first = !sound.key;                                                  // the radio's first song starts from the top
     sound.key = n.key;
     if (n.song === undefined) { radio.idx[n.key] = Math.floor(Math.random() * RADIO[n.key].songs.length); pickRare(n.key); }
-    sound.randomStart = n.song === undefined;
+    sound.randomStart = n.song === undefined && !first;
   }
   const want = sound.on ? songOf(n).file || '' : '';
   const menuK = VOLUMES[radio.vol].k * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
@@ -563,7 +566,7 @@ const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endo
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────────────────────────────
-const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10, SEALED = 11;
+const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10, SEALED = 11, GRAFFITI = 12;
 const W = CONFIG.grid.cols, T = CONFIG.grid.tile, VIEW = CONFIG.grid.viewRows;
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 cv.height = CONFIG.grid.viewRows * CONFIG.grid.tile;
@@ -593,7 +596,7 @@ function freshState() {
     bottles: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 },
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
-    guide: [], artCrater: {}, artLayer: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
+    guide: [], clues: {}, artCrater: {}, artLayer: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
     shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drillBreaks: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
@@ -651,6 +654,16 @@ function genLayer() {
       break;
     }
   }
+  // Graffiti: a few scratches in the rock, each a piece of the secret menu. Near the middle, so a dig down passes it.
+  for (const clue of L.graffiti || []) {
+    if (s.clues[clue]) continue;
+    for (let tries = 0; tries < 200; tries++) {
+      const y = 10 + Math.floor(Math.random() * (H - 20)), x = 3 + Math.floor(Math.random() * (W - 6));
+      if ((L.slabs && L.slabs.rows.some(r => Math.abs(r - y) <= 1)) || g[y][x].t !== DIRT) continue;
+      g[y][x] = { t: GRAFFITI, hp: g[y][x].hp, max: g[y][x].max, clue };
+      break;
+    }
+  }
   // Supply cache left by the last survey: enough Regolith Whey in the row above the crust
   // for the Strength the crust needs. You can't climb back up, so this prevents getting stuck.
   const stacks = Math.ceil((L.crustMinPower - CONFIG.dig.basePower) / CONFIG.strength.boost);
@@ -680,7 +693,7 @@ function openSeam(kind) {
   const spots = [0, 1, 2, 3, 4, -1].flatMap(dy => [[p.x + near, p.y + dy], [p.x - near, p.y + dy]]);
   const fits = ([x0, y0]) => x0 >= 2 && x0 <= W - 3 && y0 >= 2 && y0 <= H - 4 &&   // may reach into the first crust row, never the last
     [-1, 0, 1].every(dy => !g[y0 + dy].some(c => c.t === SLAB)) &&   // never block a slab's gap: you can't climb back up
-    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART, SLAB, SEALED].includes(c.t) && !c.cache; }));   // never cover the other seam, a slab or the supply cache
+    [-1, 0, 1].every(dy => [-1, 0, 1].every(dx => { const c = g[y0 + dy][x0 + dx]; return ![SEAM, ART, SLAB, SEALED, GRAFFITI].includes(c.t) && !c.cache; }));   // never cover the other seam, a slab or the supply cache
   const spot = spots.find(fits);
   if (!spot) return;
   const [cx, cy] = spot;
@@ -759,6 +772,7 @@ function hit(x, y, c) {
   g[y][x] = { t: AIR, hp: 0, max: 0 };
   s.dug++;
   bump(x, y, 10);
+  if (c.t === GRAFFITI) clue(c.clue, CLUE_FOUND[c.clue]);
   if (c.t === SHAKER) {
     const odds = layer().shakerOdds; let r = Math.random(), v = VARIANTS[VARIANTS.length - 1];
     for (const k of VARIANTS) { r -= odds ? odds[k] || 0 : 1 / VARIANTS.length; if (r < 0) { v = k; break; } }   // weighted: mostly Strength
@@ -890,6 +904,7 @@ function drinkCandy() {
   s.fx.candy = now() + CONFIG.candy.durationMs;
   if (!s.candyFound) {
     s.candyFound = true; radio.unlocked.candy = true;   // its song joins the Pump Zone, now and then
+    for (const k in SECRET.candy.clues) s.clues[k] = true; unlock('secret_candy'); renderGuide();   // the card, complete
     celebrate(); announce(`Secret menu: ${em('Candygirl')}. C&C: Crack and chrome.\nFor ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
   } else say('Candygirl. Up you go.');
 }
@@ -937,6 +952,29 @@ function drink(v, fromShaker = false) {
 // ─────────────────────────────────────────────────────────────────────────────
 // FIELD GUIDE
 // ─────────────────────────────────────────────────────────────────────────────
+// The secret menu in the Field Guide: a redacted card that appears with the first clue you find,
+// and fills in, piece by piece, from graffiti in the rock and a rumour.
+const SECRET = {
+  candy: { clues: { crack: 'Crack', chrome: 'chrome', zero: '0' },
+           text: c => `${c.crack} and ${c.chrome}, shaken with ${c.zero}.` },
+};
+const CLUE_FOUND = {
+  chrome: 'Scratched into the rock: “…AND CHROME.” The rest is scraped away.',
+  crack:  'Scratched into the rock: “CRACK AND…” The rest is too far into the dark to read.',
+};
+function secretCard() {
+  const known = Object.fromEntries(Object.entries(SECRET.candy.clues).map(([k, w]) => [k, s.clues[k] ? w : '█'.repeat(Math.max(1, w.length))]));
+  const done = Object.keys(SECRET.candy.clues).every(k => s.clues[k]);
+  return { id: 'secret_candy', cat: 'Not on the menu', label: s.candyFound ? 'Candygirl' : '█████████', title: s.candyFound ? 'Candygirl' : 'Not on the menu',
+    body: SECRET.candy.text(known) + (s.candyFound ? ` For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.` : done ? ' Not endorsed.' : '<br><i>Redacted. Some of it is written in the rock.</i>') };
+}
+function clue(k, line) {
+  if (s.clues[k]) return;
+  s.clues[k] = true;
+  if (line) { celebrate(); announce(line + (s.guide.includes('secret_candy') ? '\nThe Field Guide fills in a word.' : '\nThe Field Guide has a new card: Not on the menu.'), 0, true); }
+  if (s.guide.includes('secret_candy')) renderGuide();
+  else if (line) unlock('secret_candy');                  // the card appears with the first thing you find
+}
 function guideEntries() {
   return [
     ...CONFIG.layers.map((L, i) => ({ id: 'layer' + i, cat: 'Layers', label: L.name.replace('The ', ''), title: L.name, body: LAYER_CARD[i] })),
@@ -944,6 +982,7 @@ function guideEntries() {
     ...CONFIG.artefacts.filter(a => !a.withdrawn).map(a => ({ id: a.id, cat: 'Archive', art: a, label: String(a.no),
       title: `${catNo(a)} · ${a.name}`,
       body: ARTEFACT_CARD[a.id]((s && s.artCrater[a.id]) || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
+    ...(s && s.guide.includes('secret_candy') ? [secretCard()] : []),   // only once found: not a ? slot
   ];
 }
 
@@ -1404,8 +1443,10 @@ function update(dt) {
   if (running && !s.drift) {                                 // a sealed find coming into view: said once, as you approach
     const seen = near(5, c => c.t === SEALED && !c.seen && !seamAnswers(c.kind));
     if (seen) { seen.seen = true; announce(`A sealed artefact ahead (◈). It waits for ${STATE_OF[seen.kind].name}.`); }
+    const marks = near(4, c => c.t === GRAFFITI && !c.seen);
+    if (marks && s.announceUntil < t) { marks.seen = true; announce('Scratches in the rock nearby. Someone left a message. Dig it out to read it.'); }
     // The secret menu unlocks as soon as you hold its ingredients: a rumour, once the news before it has been read.
-    if (!s.candyRumour && !s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) { s.candyRumour = true; announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. Crack and chrome, shaken with 0.'); }
+    if (!s.candyRumour && !s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) { s.candyRumour = true; clue('zero'); announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. You order it with 0.' + (s.guide.includes('secret_candy') ? '\nThe Field Guide fills in a word.' : '')); }
   }
   s.timeMs += dt;
   if (!s.powerTaught && power() > CONFIG.dig.basePower && !(s.announceUntil > t)) {
@@ -1463,9 +1504,16 @@ function draw() {
     const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
     if (c.t === AIR) continue;
     ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
+    ctx.fillStyle = { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
     ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
+    if (c.t === GRAFFITI) {                                  // scratches: someone wrote here
+      ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 2; ctx.beginPath();
+      ctx.moveTo(px + 9, py + 13); ctx.lineTo(px + 31, py + 10);
+      ctx.moveTo(px + 8, py + 21); ctx.lineTo(px + 27, py + 19); ctx.moveTo(px + 29, py + 18); ctx.lineTo(px + 33, py + 17);
+      ctx.moveTo(px + 10, py + 29); ctx.lineTo(px + 22, py + 28);
+      ctx.stroke(); ctx.lineWidth = 1;
+    }
     if (c.t === SHAKER) {                                    // a little sealed bottle
       ctx.fillStyle = '#ddd'; ctx.fillRect(cx - 6, cy - 7, 12, 16); ctx.fillStyle = '#888'; ctx.fillRect(cx - 4, cy - 11, 8, 4);
     }
