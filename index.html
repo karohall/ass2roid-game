@@ -241,6 +241,7 @@ const CONFIG = {
       craters: null },
     { name: 'The Shaker Strata', rows: 60, hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
       shakers: 0.02,               // fossilised shakers: break one for a ready, random Milk+
+      shakerOdds: { strength: 0.5, calm: 0.15, recovery: 0.15, stamina: 0.1, focus: 0.1 },   // they lean Strength: the layer is short on Whey
       yields: { powder: 0.05, whey: 0.025, chrome: 0.025 },
       craters: [
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
@@ -758,7 +759,8 @@ function hit(x, y, c) {
   s.dug++;
   bump(x, y, 10);
   if (c.t === SHAKER) {
-    const v = VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
+    const odds = layer().shakerOdds; let r = Math.random(), v = VARIANTS[VARIANTS.length - 1];
+    for (const k of VARIANTS) { r -= odds ? odds[k] || 0 : 1 / VARIANTS.length; if (r < 0) { v = k; break; } }   // weighted: mostly Strength
     s.mysteries++;                                         // drunk on the spot: you find out what it was once it's in you
     say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Down it goes.`);
     s.bottles[v]++; drink(v, true);
