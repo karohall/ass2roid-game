@@ -1805,6 +1805,7 @@ function renderStatic() {
   // Rows that were already visible come back at once when the menu is rebuilt for a new layer.
   document.querySelectorAll('#recipes [data-reveal]').forEach(el => { if (s && REVEAL[el.dataset.reveal]()) el.classList.add('shown', 'settled'); });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
+  placeMeter();
 }
 
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
@@ -1959,7 +1960,27 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 // the interface revealed, the longest hint), so nothing that appears during play can change the scale.
 // Only a window resize refits.
 const LONGEST_HINT = 'Frenzy and Stillness are documented. Certain strata are only accessible in these states. The Foundation does not endorse them. The Foundation has noted their usefulness.';
+// The meter reaches under the Milk+ column: it must start below the column's end, with every row the menu can grow
+// (Candygirl included). Measured with them all shown, at the page's own scale.
+function placeMeter() {
+  const dz = $('dosage'), rows = [...document.querySelectorAll('#panel .later:not(.shown)')], saved = [];
+  const put = (el, t) => { if (el) { saved.push([el, el.textContent]); el.textContent = t; } };
+  // The worst case: every ingredient known (full names wrap), the longest effects line, every row shown.
+  for (const v of VARIANTS) put($('rc_' + v), Object.entries(CONFIG.recipes[v]).map(([k, n]) => n + '× ' + ING[k].name).join(' + '));
+  for (const k in ING) put($('in_' + k), '[' + ING[k].letter + '] ' + ING[k].name);
+  put($('effects'), 'Active: Strength ×2 45s · Stamina 45s · FRENZY 12s');   // a long but real one
+  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it, so the meter sits the same every time
+  rows.forEach(el => el.classList.add('shown')); document.body.classList.add('fitting'); dz.style.marginTop = '';
+  const m = parseFloat($('wrap').style.transform.split('scale(')[1]) || 1;   // the page's scale
+  const gap = ($('panel').getBoundingClientRect().bottom - dz.getBoundingClientRect().top) / m + 10;
+  if (gap > 0) dz.style.marginTop = (10 + gap) + 'px';
+  rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
+  $('hint').innerHTML = hint0;
+  if (!fitting) document.body.classList.remove('fitting');
+}
+let fitting = false;
 function fit() {
+  fitting = true;
   const w = $('wrap');
   w.style.transform = '';
   document.body.classList.add('fitting');                   // placeholders give way to the real rows they stand for
@@ -1970,10 +1991,11 @@ function fit() {
   const cd = $('cardDetail'), card0 = cd.innerHTML; cd.style.height = 'auto'; let tallest = 0;
   for (const e of guideEntries()) { cd.innerHTML = cardHTML(e).replace(/ src="[^"]*"/, ''); tallest = Math.max(tallest, cd.offsetHeight); }   // with room for its photo, without loading it
   cd.style.height = tallest + 'px'; cd.innerHTML = card0;
+  placeMeter();
   const height = w.offsetHeight, width = w.offsetWidth;
   hidden.forEach(el => el.classList.remove('shown'));
   $('hint').innerHTML = hint0;
-  document.body.classList.remove('fitting');
+  document.body.classList.remove('fitting'); fitting = false;
   const k = Math.min(1, innerHeight / height, innerWidth / width);
   // The columns never wrap: in a narrow window (like an itch.io frame) the whole game scales down, centred.
   w.style.transform = `translateX(${Math.max(0, (innerWidth - width * k) / 2)}px) scale(${k})`;
