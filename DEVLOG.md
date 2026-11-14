@@ -460,3 +460,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Recovery is Powder + Chrome now.** Not Whey + Powder. Metal mends the drill, and the Whey goes to Strength.
 
 **Candygirl is hidden.** The song only plays once you've found the drink on the secret menu. Then it turns up on the Pump Zone now and then: a reward for finding it.
+
+**How do you mix a secret?** It wasn't clear to me how one mixes secret menu items. Now the Milk+ menu says it, once you've found the ingredients: hold the right ones and press 0. It tells you how, never what. And 0 answers when you're holding the wrong things. Also: the drill wears half as fast in Regolith Prime, since Recovery's Chrome is a layer away.
