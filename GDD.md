@@ -52,7 +52,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
     5. Withdrawn numbers 10, 11, 15 and 18: *Withdrawn by the Foundation. No further comment.* Each reveals what it was (No. 10 was the straw).
   - **Checklist: extras** (evasive, for more laughs):
     - VHS cassette: *The Foundation has viewed season six… No further comment.*
-    - Striped sweatband: *Sweat of undetermined origin. The Foundation has declined to test it.*
+    - ~~Striped sweatband~~ (withdrawn 2026-11-14; as a withdrawn number, XXX can reveal what it was).
     - Moon boot: *Size undisclosed… The Foundation considers the matter closed.*
     - The Crack's layer card: *…home of the Jacked Asses. The Foundation has not met them. Yet.*
     - The Shaker Strata's layer card: *…The Foundation has stopped asking.*
@@ -136,7 +136,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 | 4 | Glass of Milk+ | Stillness seam, any layer | Built |
 | 5 | VHS cassette | Sealed, B, Stillness | Built |
 | 6 | Hand stencils | Sealed, D, Stillness (seen first with night vision) | Built; card written 2026-11-14 |
-| 7 | Striped sweatband | Sealed, A, Frenzy | Built |
+| 7 | _Withdrawn_ (was the striped sweatband, 2026-11-14) | | Gap |
 | 8 | Bottle of jungle juice | Sealed, D, Frenzy | Built |
 | 9 | Moon boot | Stillness seam, any layer | Built |
 | 10 | _Withdrawn_ (was the straw) | | Gap |
@@ -176,7 +176,21 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 
 | Artefact | Tool and plan | Licence terms (link, date read) | Commercial use | Notes |
 |---|---|---|---|---|
-| | FLUX.2 Pro | _to check_ | _to check_ | |
+| 1. Dolph's shaker | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/01-art1.webp, added 2026-11-14 |
+| 2. Chrome dumbbell | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/02-art2.webp, added 2026-11-14 |
+| 3. Molten chrome™ | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/03-chrome1.webp, added 2026-11-14 |
+| 4. Glass of Milk+ | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/04-still1.webp, added 2026-11-14 |
+| 5. VHS cassette | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/05-vhs.webp, added 2026-11-14 |
+| 6. Hand stencils | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/06-stencils.webp, added 2026-11-14 |
+| 8. Bottle of jungle juice | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/08-juice.webp, added 2026-11-14 |
+| 9. Moon boot | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/09-boot.webp, added 2026-11-14 |
+| 12. Inspection record | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/12-record.webp, archive/12a-record-redacted.webp, added 2026-11-14 |
+| 13. Rubber duck | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/13-duck.webp, added 2026-11-14 |
+| 14. Parmesan | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/14-parmesan.webp, added 2026-11-14 |
+| 16. Signet ring | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/16-villain.webp, added 2026-11-14 |
+| 17. Polaroid | FLUX.2 Pro (AI-generated); ruler and label added in Canva | [BFL Developer Terms](https://bfl.ai/legal/developer-terms-of-service), read 2026-11-14 | Yes, as far as found: BFL claims no ownership of outputs and allows commercial use; **confirm the ownership clause, and the terms of the platform used** | archive/17-polaroid.webp, added 2026-11-14 |
+
+The photos are in the repository (`archive/`), unlike the audio. **To confirm:** which platform ran FLUX.2 Pro (BFL's own site or API, or another service), since that platform's terms apply too. The search on 2026-11-14 found BFL's own API terms (no ownership claimed over outputs) and secondary sources saying Pro outputs may be used commercially, but not a Pro-specific output clause in BFL's own words.
 
 ## The rover
 Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a short animation, and you arrive. No driving.

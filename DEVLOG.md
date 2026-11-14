@@ -476,3 +476,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Every archive card has its text.** The last six: hand stencils that glow, an inspection record with redactions, a rubber duck that came by a current that doesn't exist, a four-thousand-year-old Parmesan held as collateral, a signet ring that signed every Näsa claim, and a Polaroid nobody has managed to shake into developing. The redactions wait for XXX.
 
 **The archive gets photos.** Fourteen finds, photographed on grey like museum objects. The originals were big, so the game uses small copies: 600 KB for all of them instead of 20 MB. A thumbnail sits beside each card; click it to see the find properly.
+
+**No. 7 is withdrawn.** The striped sweatband is gone from the archive, a gap like 10, 11, 15 and 18. The photos, made with FLUX.2 Pro and finished in Canva with a museum ruler, are in the repository with a row each in the image licence log.

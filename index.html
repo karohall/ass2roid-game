@@ -285,7 +285,7 @@ const CONFIG = {
     { id: 'still1',    no: 4,  name: 'Glass of Milk+',            kind: 'still',  how: 'seam',   minLayer: 0 },
     { id: 'vhs',       no: 5,  name: 'VHS cassette',              kind: 'still',  how: 'sealed', layer: 1 },
     { id: 'stencils',  no: 6,  name: 'Hand stencils',             kind: 'still',  how: 'sealed', layer: 3 },
-    { id: 'sweatband', no: 7,  name: 'Striped sweatband',         kind: 'frenzy', how: 'sealed', layer: 0 },
+    { no: 7, withdrawn: true },                                   // was the striped sweatband (withdrawn 2026-11-14)
     { id: 'juice',     no: 8,  name: 'Bottle of jungle juice',    kind: 'frenzy', how: 'sealed', layer: 3 },
     { id: 'boot',      no: 9,  name: 'Moon boot',                 kind: 'still',  how: 'seam',   minLayer: 0 },
     { no: 10, withdrawn: true },
@@ -353,7 +353,6 @@ const ARTEFACT_CARD = {
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. Nobody remembers pouring it. The Foundation considers it a health hazard, solely because it has not evaporated, spoiled or moved. It does not appear to be radioactive. The Foundation is confused.`,
   vhs: c => `Site KR-1, Crater ${c}. VHS cassette, handwritten label, mostly scribble. After three readings, the Foundation has settled on "VICE 2–6. DO NOT TAPE OVER." Rewound. The series ran for five seasons. The Foundation has viewed season six. It was never released on Tellus. No further comment.`,
   stencils: c => `Site KR-1, Crater ${c}. Hand stencils, pigment blown around open hands pressed to the shaft wall. At least eleven hands, of different sizes. The pigment still glows faintly. One hand has six fingers. The Foundation has counted twice.`,
-  sweatband: c => `Site KR-1, Crater ${c}. A striped terrycloth sweatband, still damp. The stripes match no known team. Sweat of undetermined origin. The Foundation has declined to test it.`,
   juice: c => `Site KR-1, Crater ${c}. A small amber glass bottle, hand-labelled "JUNGLE JUICE". Empty. The bottle has no straw. The Foundation asks: is this really for drinking?!`,
   boot: c => `Site KR-1, Crater ${c}. A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.`,
   record: c => `Site KR-1, Crater ${c}. Belt Authority Form 7B, carbon copy. Shaft declared safe for prospecting. Reason for inspection: ████████████. Inspector: ████. Findings: none. Additional findings: ███████████████████. The word "none" has been crossed out twice. The language of the form has been compared with every known language family on Tellus. It has no relatives. The Foundation suspects the Belt Authority invented it.`,   // redacted: the hidden texts come with XXX
