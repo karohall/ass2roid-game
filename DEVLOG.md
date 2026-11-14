@@ -458,3 +458,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **I use so much Whey.** 33 Legacy Powder, 4 Regolith Whey. Whey is in three of the five everyday drinks, and the Shaker Strata has half the Whey of the layer above, right when the crust starts needing stacked Strength. First fix: the fossilised shakers lean Strength, half of them. Next to decide: a Recovery that doesn't cost Whey.
 
 **Recovery is Powder + Chrome now.** Not Whey + Powder. Metal mends the drill, and the Whey goes to Strength.
+
+**Candygirl is hidden.** The song only plays once you've found the drink on the secret menu. Then it turns up on the Pump Zone now and then: a reward for finding it.

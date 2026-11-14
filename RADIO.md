@@ -126,7 +126,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
 | Wildcard | **Presslufthammerherz** (Jackhammer Heart) | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm. In German: the Pump Zone's language flair | **Finished** |
 | Driver | **Drill Instructor** | Added 2026-11-13 as Sergeant Rock, renamed 2026-11-14; replaces Heavy Ore, which is out | **Finished** |
-| Secret | **Candygirl (Asylum Mix)** | Acid techno. The Candygirl recipe is chanted in it: one Chrome Filings, one Crack Spores (see the secret menu in the GDD). **Not in the rotation (2026-11-14):** it turns up at random, 1 time in 5 when the Pump Zone picks a song (tuning in, a song ending) | **Finished** (2026-11-14) |
+| Secret | **Candygirl (Asylum Mix)** | Acid techno. The Candygirl recipe is chanted in it: one Chrome Filings, one Crack Spores (see the secret menu in the GDD). **Hidden (2026-11-14):** it only plays once you've found Candygirl on the secret menu; then it turns up 1 time in 5 when the Pump Zone picks a song (tuning in, a song ending), and stays unlocked between shifts | **Finished** (2026-11-14) |
 
 ### Disco Gravitas
 

@@ -364,7 +364,7 @@ const RADIO = {
     SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body'),
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
     SONG('The Pump Zone', 'Drill Instructor', 'The Pump Zone Drill Instructor')],
-    rare: [SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)')] },   // not in the rotation: it turns up now and then. The secret menu's recipe is chanted in it
+    rare: [{ ...SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)'), unlock: 'candy' }] },   // hidden: only once you've found Candygirl on the secret menu, and then now and then
   disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
@@ -380,7 +380,7 @@ const RADIO = {
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
 // It starts on the Pump Zone, so Begin shift has music. The tape belongs to the broken drill (and to T).
-const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, vol: 0 };
+const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, vol: 0, unlocked: {} };   // unlocked: hidden songs you've earned; the radio keeps them between shifts
 function radioKey(k) {
   if (s && s.drift) return;                                // The You Show plays to the end
   if (!sound.on) {                                          // the first R turns the radio on, on the station it is set to
@@ -408,7 +408,7 @@ function radioNow() {
 }
 const songOf = n => { const st = RADIO[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
 // A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
-function pickRare(key) { const r = RADIO[key].rare; radio.rare[key] = r && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
+function pickRare(key) { const r = (RADIO[key].rare || []).filter(x => !x.unlock || radio.unlocked[x.unlock]); radio.rare[key] = r.length && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
 // The DJs (ElevenLabs voices). Each has a folder of clips in its station's folder. They talk between songs now
 // and then, and at a few moments, as if they are watching. Only on their own station, never in the Drift or
@@ -888,7 +888,7 @@ function secretCandy() {
 function drinkCandy() {
   s.fx.candy = now() + CONFIG.candy.durationMs;
   if (!s.candyFound) {
-    s.candyFound = true;
+    s.candyFound = true; radio.unlocked.candy = true;   // its song joins the Pump Zone, now and then
     celebrate(); announce(`Secret menu: ${em('Candygirl')}. C&C: Crack and chrome.\nFor ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
   } else say('Candygirl. Up you go.');
 }
