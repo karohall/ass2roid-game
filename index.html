@@ -591,7 +591,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
-const CANDY_TILES = ['#c94f95', '#3fae78', '#4a86c9'];   // pink, green, blue: the rock on Candygirl (samples and ingredients stay grey, to be found)
+const CANDY_TILES = ['#e8a9c9', '#a9dcc2', '#aac5ea'];   // pastel pink, green, blue: the rock on Candygirl (samples, ingredients, shakers, sealed finds and graffiti keep their colours, to be found)
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
@@ -1552,7 +1552,7 @@ function draw() {
     const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
     if (c.t === AIR) continue;
     ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = (s && candy() && [DIRT, BAND, SHAKER, SEALED, GRAFFITI].includes(c.t) && CANDY_TILES[(x + y + Math.floor(now() / 300)) % 3]) || { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
+    ctx.fillStyle = (s && candy() && [DIRT, BAND].includes(c.t) && CANDY_TILES[(x + y + Math.floor(now() / 300)) % 3]) || { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
     ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
     if (c.t === GRAFFITI) {                                  // scratches: someone wrote here
