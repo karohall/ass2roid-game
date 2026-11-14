@@ -53,7 +53,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
   - **Suno keeps a licence to what you put in:** prompts, lyrics and other submissions can be used by Suno, including to train its models ([Privacy Notice](https://suno.com/privacy)).
   - **Before release:** download the final version of every song while subscribed.
 - DJ voices are made with **ElevenLabs**.
-- **For later (2026-11-12): a DJ who speaks English with a German accent.** Which station is still open (Void FM's DJ is the posh goth).
+- **A DJ who speaks English with a German accent (2026-11-12): Coach Rocky, on The Pump Zone (decided 2026-11-14).** Fits Presslufthammerherz, the station's German flair.
 - Every song and voice clip gets a row in the [licence log](#licence-log) before it goes into the game.
 
 ---
@@ -109,7 +109,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **Concept:** the **body**. Gym meets the mine: sweat, reps, heavy lifting and heavier digging.
 - **In-game effect:** digging goes slightly faster.
 - **DNA:** 80s metal and gym, distorted guitars, mining lyrics, sweat and innuendo.
-- **DJ: Coach Rocky.** An overly positive aerobics instructor and gym coach in one. Loud, encouraging, counts reps, and takes everything completely seriously. *"You know what you want, and if you don't, Rocky does."*
+- **DJ: Coach Rocky.** Speaks English with a German accent. An overly positive aerobics instructor and gym coach in one. Loud, encouraging, counts reps, and takes everything completely seriously. *"You know what you want, and if you don't, Rocky does."*
 - **Example lines:**
   - *"Good morning, Korova Rock! Are you warm? Are you hydrated? Are you digging? Let's GO!"*
   - *"Four more! Three more! Two more! The rock does not respect hesitation!"*
@@ -122,10 +122,9 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Role | Song | What varies | Status |
 |------|------|-------------|--------|
 | Signature | **Down in the Shaft** | Arena-sized, 150 BPM, gang vocals | **Finished** |
-| Driver | **Heavy Ore** | Faster and tighter, more workout and shouting | _Not yet_ |
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
 | Wildcard | **Presslufthammerherz** (Jackhammer Heart) | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm. In German: the Pump Zone's language flair | **Finished** |
-| (new) | **Sergeant Rock** | Added 2026-11-13 | **Finished** |
+| Driver | **Sergeant Rock** | Added 2026-11-13; replaces Heavy Ore (2026-11-14), which is out | **Finished** |
 | Secret | **Candygirl (Asylum Mix)** | Acid techno. The Candygirl recipe is chanted in it: one Chrome Filings, one Crack Spores (see the secret menu in the GDD). **Not in the rotation (2026-11-14):** it turns up at random, 1 time in 5 when the Pump Zone picks a song (tuning in, a Frenzy cutting in, a song ending) | **Finished** (2026-11-14) |
 
 ### Disco Gravitas

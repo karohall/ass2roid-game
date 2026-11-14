@@ -35,8 +35,8 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). It stays out of the Pump Zone's rotation and turns up at random: 1 time in 5 when the station picks a song (2026-11-14). Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
   - **Hidden:** it isn't on the menu, with no row or placeholder.
   - **Key 0 (built 2026-11-14):** when you hold Crack Spores and Chrome Filings, pressing 0 shakes it (*"Shaking something that is not on the menu…"*), and it goes down as soon as it is ready. Without the ingredients, 0 does nothing: it's a secret.
-  - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 15 seconds, ↑ runs you up the tunnel."*
-  - **What it does: you can run upwards (2026-11-13; built 2026-11-14).** For 15 seconds, ↑ takes you up through open tunnel, and you hold on instead of falling; the effects line counts it down. Then gravity takes over again. Up: back for a missed W, a seam, or a sealed find you passed. This is where climbing lives: not everyday movement, but a secret you earn, so going down stays a commitment the rest of the time.
+  - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 45 seconds, ↑ runs you up the tunnel."*
+  - **What it does: you can run upwards (2026-11-13; built 2026-11-14).** For 45 seconds (2026-11-14; was 15), ↑ takes you up through open tunnel, and you hold on instead of falling; the effects line counts it down. Then gravity takes over again. Up: back for a missed W, a seam, or a sealed find you passed. This is where climbing lives: not everyday movement, but a secret you earn, so going down stays a commitment the rest of the time.
   - **Can't be made early:** Crack Spores only exist in The Crack.
 - **Jizz+ and XXX:** later, each in its own song, on its own station.
 
@@ -113,7 +113,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 | 13 | Rubber duck | Sealed, B, Frenzy | Built |
 | 14 | Parmesan | Sealed, B, Stillness | Built |
 | 15 | _Withdrawn_ | | Gap |
-| 16 | Villain item | Sealed, C, Frenzy | Built |
+| 16 | Signet ring (the villain item) | Sealed, C, Frenzy | Built |
 | 17 | Polaroid (it has "roid" in it) | Sealed, D, Frenzy | Built |
 | 18 | _Withdrawn_ | | Gap |
 | E | The Core: redacted | Reaching the Core | Built |
@@ -126,7 +126,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 - **Striped sweatband:** A striped terrycloth sweatband, still damp. The stripes match no known team. Sweat of undetermined origin. The Foundation has declined to test it.
 - **Bottle of jungle juice:** A small amber glass bottle, hand-labelled "JUNGLE JUICE". Empty. The bottle has no straw. The Foundation asks: is this really for drinking?!
 - **Moon boot:** A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.
-- _To come:_ hand stencils, inspection record, rubber duck, Parmesan, villain item, Polaroid.
+- _To come:_ hand stencils, inspection record, rubber duck, Parmesan, signet ring, Polaroid.
 
 **Photos:** museum archive style, neutral grey backdrop, flat lighting, an image of the object and possibly a close-up. The scale bar and any label text are added in Canva, not generated (image models mangle small print and numbers). For the moon boot, check every batch for a second boot.
 
@@ -140,7 +140,7 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a short animation, and you arrive. No driving.
 
 ## The radio
-- **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky): digging goes slightly faster
+- **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky, with a German accent): digging goes slightly faster
 - **Disco Gravitas** (heart: Italo and space disco): calms the balance meter a little
 - **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
