@@ -318,6 +318,7 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 | 11 | Kármán Lines (Extended Mix) | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Kármán Lines (Extended Mix).mp3 | 2026-10-23 |
 | 12 | Stella Solaris | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Stella Solaris.mp3 | 2026-11-13 |
 | 13 | Alea Iacta Est | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Alea Iacta Est.mp3 | 2026-11-14 |
+| 14 | Testarocca | Tape (the rover's own) | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Tape/Testarocca.mp3 | 2026-11-14 |
 
 ## DJ voice log
 
