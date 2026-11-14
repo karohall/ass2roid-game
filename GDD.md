@@ -135,20 +135,28 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 | 3 | Molten chrome™ | Melting a Näsa slab, C (Frenzy, stacked Strength) | Built |
 | 4 | Glass of Milk+ | Stillness seam, any layer | Built |
 | 5 | VHS cassette | Sealed, B, Stillness | Built |
-| 6 | Hand stencils | Sealed, D, Stillness (seen first with night vision) | Built |
+| 6 | Hand stencils | Sealed, D, Stillness (seen first with night vision) | Built; card written 2026-11-14 |
 | 7 | Striped sweatband | Sealed, A, Frenzy | Built |
 | 8 | Bottle of jungle juice | Sealed, D, Frenzy | Built |
 | 9 | Moon boot | Stillness seam, any layer | Built |
 | 10 | _Withdrawn_ (was the straw) | | Gap |
 | 11 | _Withdrawn_ | | Gap |
-| 12 | Inspection record | Sealed, A, Stillness | Built |
-| 13 | Rubber duck | Sealed, B, Frenzy | Built |
-| 14 | Parmesan | Sealed, B, Stillness | Built |
+| 12 | Inspection record | Sealed, A, Stillness | Built; card written 2026-11-14 (redacted: reason, inspector, additional findings) |
+| 13 | Rubber duck | Sealed, B, Frenzy | Built; card written 2026-11-14 |
+| 14 | Parmesan | Sealed, B, Stillness | Built; card written 2026-11-14 (the bartender at the Milk+ bar: plants Jizz+'s bartender) |
 | 15 | _Withdrawn_ | | Gap |
-| 16 | Signet ring (the villain item) | Sealed, C, Frenzy | Built |
-| 17 | Polaroid (it has "roid" in it) | Sealed, D, Frenzy | Built |
+| 16 | Signet ring (the villain item) | Sealed, C, Frenzy | Built; card written 2026-11-14 (redacted: the initials, the person behind Näsa) |
+| 17 | Polaroid (it has "roid" in it) | Sealed, D, Frenzy | Built; card written 2026-11-14 |
 | 18 | _Withdrawn_ | | Gap |
 | E | The Core: redacted | Reaching the Core | Built |
+
+**All archive cards are written (2026-11-14).** Stillness finds (6, 12, 14) are quieter and stranger, found in a slow, cold state; Frenzy finds (13, 16, 17) a little wilder, found while the screen tilts. The redactions (No. 12's reason, inspector and additional findings; No. 16's initials) stay blacked out until XXX; the hidden texts are the user's to write.
+
+**Real-world background** (not in the game; where the cards come from):
+- **Hand stencils:** real cave art was made the same way, pigment blown around a hand pressed to the rock (Cueva de las Manos in Argentina, the caves of Sulawesi). Some rock art shows six-fingered or six-toed prints.
+- **Rubber duck:** the Friendly Floatees, about 29,000 bath toys lost from a container ship in the North Pacific in 1992. Oceanographers tracked where they washed up to study ocean currents.
+- **Parmesan:** an Italian bank, Credito Emiliano, accepts wheels of Parmigiano Reggiano as collateral for loans, and ages them in its own warehouses.
+- **Polaroid:** shaking an instant photo doesn't help it develop; Polaroid itself has advised against it.
 
 **Out:** the straw (its number is withdrawn), the Tamagotchi, the hockey card, and the stack of Polaroids (one Polaroid stays, as No. 17). The states are decided: 8 Frenzy finds, 6 Stillness finds.
 

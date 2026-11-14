@@ -472,3 +472,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **The radio starts from the top.** When it first comes on, the song plays from the beginning.
 
 **The Drift opens up.** I loved the Drift and wanted the night sky to become bigger and melt the panels away. But the Drift turned out to be an excellent moment to look at the archive cards, so only the Milk+ column and the meter melt, and the sky grows into their space. The Field Guide stays. You can steer now too, a little: the arrows give small pushes, and you drift on. The prospector stays longer before dissolving, and there's one sun, rising from below, instead of two.
+
+**Every archive card has its text.** The last six: hand stencils that glow, an inspection record with redactions, a rubber duck that came by a current that doesn't exist, a four-thousand-year-old Parmesan held as collateral, a signet ring that signed every Näsa claim, and a Polaroid nobody has managed to shake into developing. The redactions wait for XXX.
