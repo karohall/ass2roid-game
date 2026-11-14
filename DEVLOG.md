@@ -484,3 +484,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Candygirl has a soundtrack and a colour.** Just like Testarocca with the broken drill, the drink cuts the radio to its own song. And the rock goes pink, green and blue while it lasts.
 
 **Found, then on the menu.** Once you have found Candygirl it appears at the bottom of the Milk+ menu as [0]. And the rock on Candygirl is pastel now, with light yellow joining the pink, green and blue.
+
+**Is this a risk for photosensitive players?** I asked, and the honest answer was: probably under the line, but close enough to fix. The Candygirl stripes now glide instead of stepping, the pastels are too close in brightness to count as flashes, the colour fades in and out, and players with "reduce motion" switched on get still stripes. Also: the archive photos no longer all load when the page opens, only when a card is opened.
