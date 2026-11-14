@@ -32,7 +32,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Sleep:** ends the shift and saves progress
 
 **Secret menu:** Jizz+, Candygirl, XXX. **Secret-menu recipes are hidden in songs (2026-11-13):** each secret Milk+ has its recipe sung in a song on the radio, so players who listen know it and nobody else does. No Frenzy unlock: the ingredients gate it. This is a rule for the whole game: **the radio teaches you things** (see The radio).
-- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). It stays out of the Pump Zone's rotation and turns up at random: 1 time in 5 when the station picks a song (2026-11-14). Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
+- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). It stays out of the Pump Zone's rotation and turns up at random: 1 time in 5 when the station picks a song (2026-11-14).
   - **Hidden:** it isn't on the menu, with no row or placeholder.
   - **Key 0 (built 2026-11-14):** when you hold Crack Spores and Chrome Filings, pressing 0 shakes it (*"Shaking something that is not on the menu…"*), and it goes down as soon as it is ready. Without the ingredients, 0 does nothing: it's a secret.
   - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 45 seconds, ↑ runs you up the tunnel."*
@@ -80,7 +80,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 1. **Regolith Prime:** surface dust. *Its own thing:* the learning layer. The game opens with the first shake.
 2. **The Shaker Strata:** fossilised protein shakers. *Its own thing:* **fossil shakers** in the rock. Break one and you drink it on the spot, contents unknown: a little gamble with the balance meter.
 3. **The Chrome Vein:** metallic, and coveted by Näsa. *Its own thing:* **Näsa chrome slabs™** that can't be dug. Each has a gap to find, so the way down becomes a route, not a straight line. Hitting one brings a Näsa pop-up in Y2K chrome.
-4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (built in Prototype 3):* **darkness.** You only see about three tiles around the prospector, and the Crack Spores glow green through the dark. The toughest rock; the crust needs digging power 7. **Void FM gives night vision here:** while it plays, the light reaches about twice as far (also in Stillness, when Void FM comes through; a Frenzy cuts it off). The Jacked Asses come later.
+4. **The Crack:** bioluminescent; home of the Jacked Asses. *Its own thing (built in Prototype 3):* **darkness.** You only see about three tiles around the prospector, and the Crack Spores glow green through the dark. The toughest rock; the crust needs digging power 7. **Void FM gives night vision here:** while it plays, the light reaches about twice as far (only when you choose Void FM: Stillness no longer switches to it). The Jacked Asses come later.
 5. **The Core:** redacted by the Belt Authority. Not a layer: breaking through The Crack's crust is the arrival, and the ending.
 
 Each layer needs more strength, yields new ingredients, has its own Kroeber Fact, and **plays differently**: one thing of its own, so deeper isn't just slower and harder.
@@ -206,9 +206,11 @@ You reach the core: *"THE CORE. You are now further down than anyone asked you t
 - **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
 - **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
 - **The radio reacts to the balance meter (built in Prototype 3, with real sound):**
-  - In **Stillness**, Void FM comes through. (The You Show is saved for the Drift.)
-  - In **Frenzy**, the radio cuts straight to the Pump Zone, whatever song is on: a hard cut, no fade.
-  - When the state ends, your own station comes back.
+  - **The state changes the sound, not the station (2026-11-14).** The station switch overrode your choice; with DJs and personalities on each station, it felt like being interrupted. Now you keep your station, and the room changes around it:
+  - In **Stillness**, the music goes muffled and slower, lower like a slowed tape, as if heard through rock. As it lifts, the sound returns slowly. The Broadcaster comes through on any station: *"Space is not scary, it is restful."* (The You Show is saved for the Drift.)
+  - In **Frenzy**, the music speeds up, thinner and a little distorted. Coach Rocky breaks in on any station: *"Frenzy is not a problem."*
+  - The radio panel says so: *"The Frenzy speeds the signal up."* / *"Stillness: the signal sounds far away, as if through rock."*
+  - *Before (Prototype 3, until 2026-11-14):* Stillness switched to Void FM, and a Frenzy cut hard to the Pump Zone.
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
   - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
   - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.

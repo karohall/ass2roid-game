@@ -296,7 +296,8 @@ const CONFIG = {
   drift:   { durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.35 },   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
+             states: { normal: { rate: 1, lowpass: 20000, highpass: 10, drive: 0 }, still: { rate: 0.88, lowpass: 650, highpass: 10, drive: 0 }, frenzy: { rate: 1.08, lowpass: 20000, highpass: 220, drive: 0.35 } } },   // Frenzy and Stillness change the sound, not the station   // the voices sit lower and the music ducks less (to 60%)   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },
@@ -397,13 +398,11 @@ function radioKey(k) {
   if (running) say(`Radio: ${RADIO[radio.on].name}.`);
   if (was === 'void' && radio.on === 'pump') rocky(DJS.pump.fromVoid);   // he knows
 }
-// What the radio plays right now. The meter cuts in: a Frenzy cuts straight to the Pump Zone, Stillness
-// lets Void FM come through, and the Drift plays The You Show. Otherwise, the station you chose.
+// What the radio plays right now: the station you chose. The Drift plays The You Show, and a broken drill
+// leaves only the tape. Frenzy and Stillness don't switch the station: they change how it sounds (stateSound).
 function radioNow() {
   if (s && s.drift) return { key: 'oddity', song: 0 };
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
-  if (s && s.inState === 'frenzy') return { key: 'pump', cut: true, note: 'The Frenzy cut in. The Pump Zone.' };   // a hard cut, no fade
-  if (s && s.inState === 'still') return { key: 'void', note: 'Void FM is coming through.' };
   return { key: radio.on };
 }
 const songOf = n => { const st = RADIO[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
@@ -420,7 +419,7 @@ const DJS = {
   pump: {
     breaks: ['Hydrate dominate excavate', 'No pain no gain', 'Heartrate', 'Näsa jab', 'Never leave a brother hanging', 'Side effects are not bad'].map(ROCKY),
     hello: ROCKY('Good morning Korova'),                          // Begin shift, if the shift starts on the Pump Zone
-    frenzy: ROCKY('Frenzy is not a problem'),                     // a Frenzy cuts in
+    frenzy: ROCKY('Frenzy is not a problem'),                     // a Frenzy starts: he breaks in on any station
     fromVoid: ROCKY('If you switch to Void FM I will know.'),     // back from Void FM
     secret: ROCKY('There is one song on this station that is not on the menu. I did not tell you that.'),   // rare: the radio teaches you things (Candygirl)
   },
@@ -428,19 +427,61 @@ const DJS = {
     breaks: ['Dante fact', 'Galaxy fact', 'Sappho fact', 'Static fact', 'Some of the stars you see may already be gone. And yet they shine.',
              'This is Void FM. We are not sponsored by Naesa... Nothing is.'].map(VOICE),
     hello: VOICE('Welcome to the never-ending show'),             // the first time you tune in to Void FM in a shift
-    still: VOICE('Space is not scary, it is restful'),            // Stillness lets Void FM come through
+    still: VOICE('Space is not scary, it is restful'),            // Stillness starts: he comes through on any station
     deep: VOICE('You are four hundred metres below the surface of a rock that is drifting through nothing. Here is a song about that.'),   // between songs, around 400 m down, once a shift
   },
 };
 const dj = new Audio(); dj.preload = 'auto'; let djLast = '', djOn = '';
 const djTalking = () => !!dj.src && !dj.paused && !dj.ended;
-const djOnAir = key => sound.on && radioNow().key === key && !(s && s.drift);
-function djSay(key, file) {
+const djOnAir = key => sound.on && !(s && s.drift) && (key === '*' ? radioNow().key !== 'tape' : radioNow().key === key);   // '*': breaking in on any station
+function djSay(key, file, any) {
+  if (any) key = '*';
   if (!djOnAir(key) || djTalking()) return;
   dj.src = encodeURI(file); djLast = file; djOn = key;
   dj.play().catch(() => {});
 }
 const rocky = file => djSay('pump', file);
+// The radio's sound, through Web Audio. Songs and voices share one bus, so the state changes both.
+// Stillness: muffled and slower, as if through rock. Frenzy: faster, thinner, a little distorted.
+// The voices go through a radio first (narrow band, compressed, a little saturation, a short room), so they sit with the songs.
+// (Not on file://, where the browser won't let Web Audio read the files; there only the speed changes.)
+const bus = {};
+const drive = k => { const c = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 512 - 1; c[i] = (1 + k) * x / (1 + k * Math.abs(x)); } return c; };
+function soundGraph() {
+  if (bus.ac || location.protocol === 'file:' || !window.AudioContext) return;
+  try {
+    const ac = bus.ac = new AudioContext(), node = (type, o) => Object.assign(ac[type](), o);
+    bus.lp = node('createBiquadFilter', { type: 'lowpass' }); bus.lp.frequency.value = 20000;
+    bus.hp = node('createBiquadFilter', { type: 'highpass' }); bus.hp.frequency.value = 10;
+    bus.dry = ac.createGain(); bus.wet = ac.createGain(); bus.wet.gain.value = 0;
+    const crush = node('createWaveShaper', { curve: drive(25), oversample: '2x' });
+    bus.lp.connect(bus.hp); bus.hp.connect(bus.dry); bus.hp.connect(crush); crush.connect(bus.wet);
+    bus.dry.connect(ac.destination); bus.wet.connect(ac.destination);
+    ac.createMediaElementSource(player).connect(bus.lp);
+    // The voice chain.
+    const vhp = node('createBiquadFilter', { type: 'highpass' }), vlp = node('createBiquadFilter', { type: 'lowpass' });
+    vhp.frequency.value = 280; vlp.frequency.value = 4200;
+    const comp = ac.createDynamicsCompressor(); comp.threshold.value = -28; comp.ratio.value = 6;
+    const warm = node('createWaveShaper', { curve: drive(3) }), vout = ac.createGain(); vout.gain.value = CONFIG.radio.djLevel;
+    const room = ac.createConvolver(), roomGain = ac.createGain(); roomGain.gain.value = 0.25;
+    const len = ac.sampleRate * 0.7, ir = ac.createBuffer(2, len, ac.sampleRate);
+    for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+    room.buffer = ir;
+    ac.createMediaElementSource(dj).connect(vhp); vhp.connect(vlp); vlp.connect(comp); comp.connect(warm); warm.connect(vout);
+    vout.connect(bus.lp); vout.connect(room); room.connect(roomGain); roomGain.connect(bus.lp);
+  } catch (e) { bus.ac = null; }
+}
+function stateSound() {
+  const st = s && running && !s.drift ? s.inState : null, A = CONFIG.radio.states;
+  const want = st === 'still' ? A.still : st === 'frenzy' ? A.frenzy : A.normal;
+  player.preservesPitch = false;                                             // slower is lower, like a tape
+  player.playbackRate += (want.rate - player.playbackRate) * 0.05;
+  if (Math.abs(player.playbackRate - want.rate) < 0.002) player.playbackRate = want.rate;
+  if (!bus.ac || bus.st === want) return;
+  bus.st = want; const t = bus.ac.currentTime, k = st ? 0.25 : 1.2;          // in fast, out slowly: sound returns one thing at a time
+  bus.lp.frequency.setTargetAtTime(want.lowpass, t, k); bus.hp.frequency.setTargetAtTime(want.highpass, t, k);
+  bus.wet.gain.setTargetAtTime(want.drive, t, k); bus.dry.gain.setTargetAtTime(1 - want.drive * 0.5, t, k);
+}
 function djBreak(key) {
   const d = DJS[key]; if (!d) return;
   if (key === 'void' && s && !s.djDeep && Math.abs(depthNow() - 400) <= 75) { s.djDeep = true; return djSay(key, d.deep); }   // here is a song about that
@@ -470,7 +511,7 @@ function volumeKey() {
   if (running) say(`Radio volume: ${VOLUMES[radio.vol].name}.`);
   if ($('pauseVol')) $('pauseVol').textContent = volumeLabel();   // live on the pause screen
 }
-function tuneIn() { if (!sound.on) { sound.on = true; soundTick(0); } }
+function tuneIn() { if (!sound.on) { sound.on = true; soundGraph(); soundTick(0); } if (bus.ac && bus.ac.state === 'suspended') bus.ac.resume(); }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
 const musicOn = () => sound.on && !!songOf(radioNow()).file;
 // Like a real radio, a station you switch to is already playing: a random song, from a random place in it.
@@ -497,6 +538,7 @@ function soundTick(dt) {
   }
   if (djTalking() && !djOnAir(djOn)) dj.pause();                                                          // off their station, the DJ goes quiet
   dj.volume = menuK;
+  stateSound();
   const level = CONFIG.radio.volume * menuK * (djTalking() ? CONFIG.radio.djDuck : 1);                    // the music ducks under the DJ
   if (n.cut && want !== sound.file) {                                         // the Frenzy: cut, mid-song, no fade
     sound.file = want; sound.vol = level; player.volume = level;
@@ -1371,11 +1413,11 @@ function update(dt) {
   else if (s.meter >= tipAt()) {
     s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
     say('FRENZY. The Rock is speaking. Do not answer.');
-    rocky(DJS.pump.frenzy);
+    djSay('pump', DJS.pump.frenzy, true);   // Coach Rocky breaks in, whatever you're listening to
     openSeam('frenzy');
   } else if (s.meter <= -tipAt()) {
     s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;
-    djSay('void', DJS.void.still);   // Void FM comes through: space is not scary
+    djSay('void', DJS.void.still, true);   // the Broadcaster comes through: space is not scary
     say('STILLNESS. Everything has slowed down. You do not mind.');
     openSeam('still');
   } else if (!active('focus')) {                     // Hyperfocus: the meter holds still
@@ -1478,7 +1520,7 @@ function draw() {
   else { ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left'; ctx.fillText('0 m', 4, 10); }
 }
 
-// Void FM in the dark: night vision. (Also when Stillness lets Void FM come through; a Frenzy cuts it off.)
+// Void FM in the dark: night vision.
 const nightVision = () => !!layer().dark && musicOn() && radioNow().key === 'void';
 
 // The Crack: only a little light around the prospector. The Crack Spores glow green, and an open seam glows white.
@@ -1625,7 +1667,7 @@ function radioHud() {
   const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
-    : n.note || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
+    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }
 

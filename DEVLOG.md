@@ -446,3 +446,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **A space, not just a game.** With two DJs talking, the game feels more and more like a room. A place you're in.
 
 **Sealed finds say which state they want.** The hint about a sealed artefact was inconsistent: rumours and announcements could hide it, and it only showed within two tiles. Now the box itself is labelled STILL or FRENZY, the hint shows within three tiles, ahead of rumours, and says how to get there. In the right state, it tells you to dig in now.
+
+**The state changes the sound, not the station.** The radio switching in Frenzy and Stillness took away the station you chose, and with voices on the stations it felt like being interrupted. Now you keep your station and the room changes around it: Stillness muffles and slows the music, as if through rock; a Frenzy speeds it up and roughs it up. The DJs still break in at those moments, on whatever you're listening to.
+
+**The voices go through a radio.** There was too big a difference between the songs and the voices: the clips were clean and close, the songs produced. Now the voices are narrowed, compressed, a little warm, with a short room around them, and the music ducks less under them.
