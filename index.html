@@ -230,7 +230,7 @@ const CONFIG = {
     calm:     { powder: 2 },
     stamina:  { whey: 1, chrome: 1 },
     focus:    { powder: 1, spores: 1 },
-    recovery: { whey: 1, powder: 1 },
+    recovery: { powder: 1, chrome: 1 },   // metal to mend the drill; no Whey (2026-11-14)
   },
 
   // tipAt: how far the balance meter must go to tip into Frenzy or Stillness.
@@ -1606,6 +1606,8 @@ const REVEAL = {
 };
 // The first tile within r of the prospector that matches.
 const near = (r, f) => { for (let y = Math.max(0, p.y - r); y <= Math.min(H - 1, p.y + r); y++) for (let x = Math.max(0, p.x - r); x <= Math.min(W - 1, p.x + r); x++) if (f(g[y][x])) return g[y][x]; return null; };
+// Recovery before Chrome is known: say where it comes from, not a ?.
+const repairText = () => known('chrome') ? recipeText('recovery') : '1× Legacy Powder + something metal, from deeper down';
 const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
 // Sealed finds: the hint says which state, and how to get there with what you have right now.
@@ -1646,8 +1648,8 @@ function hint() {
   if (tipS) return sealed && sealed.kind === 'still' ? 'One more quick Calm tips you into Stillness, and the sealed artefact (◈) gives way.' : 'One more quick Calm tips you into Stillness.';
   if (sealed) return `An artefact is sealed in the rock here (◈). ${sealedHow(sealed.kind)}`;
   if (s.announceUntil > t) return s.announce;
-  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
-  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
+  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${repairText()}).`;
+  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${repairText()}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';

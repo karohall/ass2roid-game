@@ -60,7 +60,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
     - The first drink: *The Foundation does not endorse them. The Foundation has noted their usefulness.*
     - The footer on every artefact card: *Recovered under conditions the Kroeber Foundation does not endorse.* Under XXX: what the conditions were.
   - **Places to add redactions,** so XXX has more to reveal: the six pending archive cards (the inspection record and the signet ring suit it best), a blacked-out line now and then in the Belt Authority Public Service log, and Näsa's fine print (*"Terms: █████"*).
-- **The recipe slots:** four ingredients give ten two-ingredient recipes. Taken: WW Strength, PP Calm, WC Stamina, PS Hyperfocus, WP Recovery, CS Candygirl, SS XXX. Free: CC and WS. Jizz+ takes three (WWP).
+- **The recipe slots:** four ingredients give ten two-ingredient recipes. Taken: WW Strength, PP Calm, WC Stamina, PS Hyperfocus, PC Recovery, CS Candygirl, SS XXX. Free: CC, WS and WP. **Recovery moved from WP to PC (2026-11-14):** Chrome Filings, metal to mend the drill, and no Whey, which three everyday drinks already wanted. It also uses up the Legacy Powder that piles up in the Shaker Strata. Chrome is only found from the Shaker Strata down; before that, the hint says Recovery needs *"something metal, from deeper down"*. Jizz+ takes three (WWP).
 
 ## Frenzy and Stillness (push your luck)
 - **Rule:** *Double check any possible interactions.* The Foundation measures how fast, not just how much.
