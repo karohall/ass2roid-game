@@ -263,6 +263,20 @@ What the player sees while The You Show plays (about 4 minutes). No controls, no
 
 Throughout: slow somersaults.
 
+**Built (2026-11-14).** The Drift now lasts the whole song and follows the song's own clock, so each shot lands on its section. Section times are estimated from the song's loudness and live in CONFIG.drift.sections; adjust them if a shot lands early or late:
+
+| Section | Starts at | What we see in the game |
+|---|---|---|
+| Intro | 0:00 | The shaft falls away; the prospector rises to the middle. A wormhole of violet rings opens, pulling inward; the prospector shrinks into it, a white flash, and it closes. They come out the other side into deep space. |
+| Verse 1 | 0:32 | Nebulae (magenta, blue, teal) and spiral galaxies come out one by one; a comet crosses, slowly. The whole sky turns. |
+| Pre-Chorus | 1:10 | *(continues)* |
+| Verse 2 | 1:40 | The prospector starts to dissolve: cosmic dust leaves the body and trails behind. |
+| Chorus | 2:12 | *(continues: more dust, less prospector)* |
+| Bridge | 3:12 | Nothing of the prospector is left. Space sparkles. |
+| Outro | 3:46 | A warm sunrise rises from below, and a beam of light from within: rays from where the prospector was. The galaxies turn warm. |
+
+The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canvas drops Stillness's blue tint in the Drift, so space has its own colours. Developer mode: O drifts off at once; ] skips 15 seconds.
+
 ### The rover's tape deck
 
 - **Concept:** the rover has a tape deck as well as the radio. Tapes are physical things the prospector carries, not stations.

@@ -291,7 +291,9 @@ const CONFIG = {
   craterPicker: false,
   hint:    { typeCps: 60, readMsPerChar: 70, lingerMs: 2500, minMs: 9000 },   // announcements: typing + reading time + a pause, never under 9 s
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
-  drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
+  // Stillness overload: Calm on top of Stillness. The Drift lasts as long as The You Show (4:16), shot by shot
+  // against the song (storyboard in RADIO.md). Sections in seconds into the song; durationMs only if the song can't play.
+  drift:   { durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2 },   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
@@ -408,6 +410,7 @@ const nowPlaying = () => songOf(radioNow()).title;
 const player = new Audio(); player.preload = 'auto';
 const sound = { on: false, file: '', vol: 0 };
 player.addEventListener('ended', () => {
+  if (s && s.drift && !s.drift.done) { endDrift(); return; }   // The You Show is over: so is the Drift
   const n = radioNow();
   if (n.song === undefined && radio.rare[n.key]) radio.rare[n.key] = null;     // a rare song gives way to the rotation
   else if (n.song === undefined) { radio.idx[n.key] = (radio.idx[n.key] || 0) + 1; pickRare(n.key); }   // the next song on this station
@@ -1060,43 +1063,159 @@ function saveCoin(depth) {
 
 function startDrift() {
   running = false; held = null; pendingTap = null;
-  s.drift = { t0: performance.now(), radioWas: radio.on, done: false,
-    stars: Array.from({ length: 80 }, () => [Math.random() * cv.width, Math.random() * cv.height, Math.random()]) };
+  const R = Math.random, W0 = cv.width, H0 = cv.height;
+  const hues = [280, 320, 190, 220, 340];
+  s.drift = { t0: performance.now(), radioWas: radio.on, done: false, last: 0, lastAt: performance.now(), frame: performance.now(),
+    stars: Array.from({ length: 180 }, () => [R() * W0 * 1.6 - W0 * .3, R() * H0 * 1.6 - H0 * .3, R(), R() * 6.3]),
+    // Deep space: nebulae and galaxies come out one by one once you are through the wormhole.
+    nebulae: Array.from({ length: 5 }, (_, i) => ({ x: R() * W0, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
+    galaxies: Array.from({ length: 3 }, (_, i) => ({ x: [70, W0 - 80, W0 * .6][i], y: [90, H0 * .7, 40][i], r: [55, 70, 30][i], tilt: .35 + R() * .4, rot: R() * 6.3,
+      at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
+    sparkles: Array.from({ length: 140 }, () => [R() * W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
+    dust: [] };
   radio.on = 'oddity'; radio.since = radio.clock;
   document.body.classList.add('drifting');
   say('Calm, on top of Stillness. The shaft lets go.');
 }
 
+// Seconds into The You Show: the song's own clock while it plays, so every shot lands on its section.
+function driftTime() {
+  const d = s.drift, now0 = performance.now();
+  if (sound.file === RADIO.oddity.songs[0].file && !player.paused && player.currentTime > 0) { d.last = player.currentTime; d.lastAt = now0; return d.last; }
+  return d.last + (now0 - d.lastAt) / 1000;                 // before the song starts, or if it can't play
+}
+const ramp = (a, b, t) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+const smooth = k => k * k * (3 - 2 * k);
+
 function drawDrift() {
-  const e = performance.now() - s.drift.t0, fade = Math.min(1, e / 4000);
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cv.width, cv.height);
+  const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
+  const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
+  const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W0, H0);
+  const fade = Math.min(1, e / 4000);
   if (fade < 1) {                                            // the shaft falls away beneath you
-    ctx.save(); ctx.globalAlpha = 1 - fade; ctx.translate(0, fade * fade * cv.height); draw(); ctx.restore();
+    ctx.save(); ctx.globalAlpha = 1 - fade; ctx.translate(0, fade * fade * H0); draw(); ctx.restore();
   }
-  ctx.globalAlpha = fade;                                    // stars, slowly passing
-  for (const [x, y, z] of s.drift.stars) {
-    const big = z > .8;
-    ctx.fillStyle = big ? '#fff' : '#777';
-    ctx.fillRect(x, (y + e * z * .006) % cv.height, big ? 2 : 1, big ? 2 : 1);
+  const space = smooth(ramp(16, 26, t));                     // through the wormhole: deep space opens up
+  const sun = smooth(ramp(S.outro, S.outro + 24, t));        // the outro: a sunrise from within
+
+  // Stars, turning slowly around you: the somersault is the whole sky's too.
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * .012); ctx.translate(-cx, -cy);
+  for (const [x, y, z, ph] of d.stars) {
+    const tw = .55 + .45 * Math.sin(t * (1 + z * 2) + ph);
+    ctx.globalAlpha = fade * (.35 + .65 * space) * tw * (1 - sun * .5);
+    ctx.fillStyle = z > .85 ? '#fff' : z > .5 ? '#bbb' : '#666';
+    ctx.fillRect(x, y, z > .85 ? 2 : 1, z > .85 ? 2 : 1);
   }
-  ctx.globalAlpha = 1;
-  // The prospector rises from where they stood to the middle of the sky, turning slowly.
-  const k = Math.min(1, e / 9000), ease = k * k * (3 - 2 * k);
-  const sx = p.x * T + T / 2, sy = (p.y - cam) * T + T / 2;
-  ctx.save();
-  ctx.translate(sx + (cv.width / 2 - sx) * ease, sy + (cv.height * .45 - sy) * ease);
-  ctx.rotate(e / 1000 * .35);
-  ctx.fillStyle = '#ddd'; ctx.fillRect(-12, -14, 24, 30);
-  ctx.fillStyle = '#111'; ctx.fillRect(-7, -8, 14, 6);      // visor
   ctx.restore();
+
+  // Nebulae and galaxies: more of them as the song goes on, all still and vast.
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  for (const n of d.nebulae) {
+    const a = space * smooth(ramp(n.at, n.at + 12, t)) * (.32 + sun * .12);
+    if (a <= 0) continue;
+    const gr = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+    gr.addColorStop(0, `hsla(${n.hue + sun * 40}, 80%, 60%, ${a})`); gr.addColorStop(1, 'hsla(0,0%,0%,0)');
+    ctx.fillStyle = gr; ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+  }
+  for (const gx of d.galaxies) {
+    const a = space * smooth(ramp(gx.at, gx.at + 10, t));
+    if (a <= 0) continue;
+    for (const [r, th] of gx.dots) {
+      const ang = th + gx.rot + t * .02, x = gx.x + Math.cos(ang) * r * gx.r, y = gx.y + Math.sin(ang) * r * gx.r * gx.tilt;
+      ctx.globalAlpha = a * (1 - r) * (.6 + sun * .4); ctx.fillStyle = sun > .3 ? '#ffd9b0' : '#cfd8ff';
+      ctx.fillRect(x, y, 1, 1);
+    }
+    ctx.globalAlpha = a * .6; const core = ctx.createRadialGradient(gx.x, gx.y, 0, gx.x, gx.y, gx.r * .3);
+    core.addColorStop(0, '#fff'); core.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = core; ctx.fillRect(gx.x - gx.r, gx.y - gx.r, gx.r * 2, gx.r * 2);
+  }
+  // Verse 1: a comet crosses, slowly.
+  const cm = ramp(S.verse1 + 8, S.verse1 + 34, t);
+  if (cm > 0 && cm < 1) {
+    const x = -40 + cm * (W0 + 80), y = 60 + cm * 70;
+    const tail = ctx.createLinearGradient(x, y, x - 70, y - 18); tail.addColorStop(0, 'rgba(220,240,255,.8)'); tail.addColorStop(1, 'rgba(220,240,255,0)');
+    ctx.globalAlpha = Math.sin(cm * Math.PI); ctx.strokeStyle = tail; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 70, y - 18); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.fillRect(x - 1, y - 1, 3, 3);
+  }
+  ctx.restore();
+
+  // The intro: an actual wormhole opens, the prospector goes through, and it closes behind them.
+  const open = smooth(ramp(2, 9, t)), shut = smooth(ramp(15, 21, t)), WR = 150 * open * (1 - shut);
+  if (WR > 1) {
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.translate(cx, cy);
+    for (let i = 0; i < 22; i++) {
+      const k = 1 - ((i / 22 + t * .09) % 1), r = WR * k * k;   // rings pulled inward, forever
+      ctx.save(); ctx.rotate(i * .29 + t * .4);
+      ctx.globalAlpha = (1 - k) * .9 * open; ctx.strokeStyle = `hsl(${250 + 90 * k}, 85%, ${55 + 25 * (1 - k)}%)`; ctx.lineWidth = 1 + 2 * (1 - k);
+      ctx.beginPath(); ctx.ellipse(0, 0, r, r * .82, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    }
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, WR * .5); glow.addColorStop(0, `rgba(255,255,255,${.7 * open})`); glow.addColorStop(1, 'rgba(120,80,255,0)');
+    ctx.globalAlpha = 1; ctx.fillStyle = glow; ctx.fillRect(-WR, -WR, WR * 2, WR * 2);
+    ctx.restore();
+  }
+  const flash = Math.max(0, 1 - Math.abs(t - 17) / 1.5);   // the passage
+  if (flash > 0) { ctx.globalAlpha = flash * .6; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W0, H0); ctx.globalAlpha = 1; }
+
+  // The prospector: rises to the middle, shrinks into the wormhole, comes out the other side, and drifts, turning.
+  const rise = smooth(Math.min(1, e / 8000)), sx = p.x * T + T / 2, sy = (p.y - cam) * T + T / 2;
+  const into = smooth(ramp(8, 16, t)), out = smooth(ramp(18, 27, t));
+  const scale = t < 17 ? 1 - into * .95 : .05 + out * .95;
+  const px = (t < 17 ? sx + (cx - sx) * rise : cx + Math.sin(t * .05) * 30) , py = (t < 17 ? sy + (cy - sy) * rise : cy + Math.sin(t * .037) * 18);
+  const gone = smooth(ramp(S.verse2, S.bridge, t));         // Verse 2 to the bridge: dissolving into cosmic dust
+  const ang = e / 1000 * .35;
+  if (gone > 0 && gone < 1) {                                // dust leaves the body and trails behind
+    const n = Math.round(dt * (40 + gone * 160));
+    for (let i = 0; i < n && d.dust.length < 1800; i++) {
+      const lx = (Math.random() - .5) * 24 * scale, ly = (Math.random() - .5) * 30 * scale;
+      d.dust.push({ x: px + lx * Math.cos(ang) - ly * Math.sin(ang), y: py + lx * Math.sin(ang) + ly * Math.cos(ang),
+        vx: -6 - Math.random() * 14, vy: 3 + (Math.random() - .3) * 10, age: 0, life: 7 + Math.random() * 9,
+        c: ['#fff', '#e8dcff', '#bfe8ff', '#ffd6f0'][Math.floor(Math.random() * 4)] });
+    }
+  }
+  if (gone < 1) {
+    ctx.save(); ctx.translate(px, py); ctx.rotate(ang); ctx.scale(scale, scale); ctx.globalAlpha = 1 - gone;
+    ctx.fillStyle = '#ddd'; ctx.fillRect(-12, -14, 24, 30);
+    ctx.fillStyle = '#111'; ctx.fillRect(-7, -8, 14, 6);    // visor
+    ctx.restore(); ctx.globalAlpha = 1;
+  }
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  d.dust = d.dust.filter(q => (q.age += dt) < q.life);
+  for (const q of d.dust) {
+    q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 1 - dt * .05;
+    ctx.globalAlpha = (1 - q.age / q.life) * .9; ctx.fillStyle = q.c; ctx.fillRect(q.x, q.y, 1.5, 1.5);
+  }
+  // The bridge: nothing of you left. Space sparkles.
+  const spark = smooth(ramp(S.bridge - 4, S.bridge + 6, t)) * (1 - sun * .6);
+  if (spark > 0) for (const [x, y, ph, sp] of d.sparkles) {
+    const a = Math.pow(Math.max(0, Math.sin(t * sp + ph)), 10) * spark;
+    if (a < .02) continue;
+    ctx.globalAlpha = a; ctx.fillStyle = '#fff';
+    ctx.fillRect(x - 3, y, 7, 1); ctx.fillRect(x, y - 3, 1, 7);
+  }
+  // The outro: the black meets a sunrise, a beam of light from within. Cosmic love from the ancient galaxies.
+  if (sun > 0) {
+    const hz = ctx.createRadialGradient(cx, H0 + 40, 0, cx, H0 + 40, 60 + 420 * sun);
+    hz.addColorStop(0, `rgba(255,235,190,${.95 * sun})`); hz.addColorStop(.35, `rgba(255,160,110,${.55 * sun})`);
+    hz.addColorStop(.7, `rgba(220,90,160,${.25 * sun})`); hz.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.globalAlpha = 1; ctx.fillStyle = hz; ctx.fillRect(0, 0, W0, H0);
+    ctx.translate(cx, cy); ctx.rotate(t * .02);
+    for (let i = 0; i < 12; i++) {                           // rays from where the prospector was
+      ctx.rotate(Math.PI / 6);
+      const ray = ctx.createLinearGradient(0, 0, 0, -H0); ray.addColorStop(0, `rgba(255,220,170,${.22 * sun})`); ray.addColorStop(1, 'rgba(255,220,170,0)');
+      ctx.fillStyle = ray; ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(-18 * sun, -H0); ctx.lineTo(18 * sun, -H0); ctx.lineTo(2, 0); ctx.fill();
+    }
+    const core = ctx.createRadialGradient(0, 0, 0, 0, 0, 40 * sun); core.addColorStop(0, `rgba(255,250,235,${sun})`); core.addColorStop(1, 'rgba(255,200,150,0)');
+    ctx.fillStyle = core; ctx.fillRect(-40, -40, 80, 80);
+  }
+  ctx.restore(); ctx.globalAlpha = 1;
   // A quiet way out, once the hint bar has gone: always clear what to do to go where.
   const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
   if (q > 0) {
-    ctx.globalAlpha = q * .5; ctx.fillStyle = '#aaa'; ctx.font = '11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    ctx.fillText('Esc: end the drift', cv.width / 2, cv.height - 14);
+    ctx.globalAlpha = q * .5; ctx.fillStyle = sun > .5 ? '#333' : '#aaa'; ctx.font = '11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText('Esc: end the drift', cx, H0 - 14);
     ctx.globalAlpha = 1;
   }
-  if (e >= CONFIG.drift.durationMs) endDrift();
+  if (e >= CONFIG.drift.durationMs + 5000 || (t * 1000 >= CONFIG.drift.durationMs && player.paused)) endDrift();   // if the song can't end it
 }
 
 function endDrift() {
@@ -1502,7 +1621,7 @@ function hud() {
   setHTML('doseWindow', active('focus') && !frenzy() && !stillness() ? 'steady hand: drinks <b>×1</b>'
     : win.length && !frenzy() && !stillness()
     ? `next drink <b>×${nextMult()}</b> · ${Math.ceil((Math.max(...win) + B.windowMs - t) / 1000)}s` : '');
-  cv.className = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : '';
+  cv.className = s.drift ? '' : frenzy() ? 'frenzy' : stillness() ? 'still' : '';   // the Drift drops Stillness's tint: space has its own colours
   document.body.classList.toggle('intro', s.drinks === 0);
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
   // Once the menu is more than Strength, each Milk+ still to find holds its key's place: [3] ? ? ?
@@ -1553,8 +1672,9 @@ addEventListener('keydown', e => {
   if (k === 'v') { volumeKey(); return; }                // and so does the volume
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
-  if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); return; }   // the Drift: nothing to do but watch, or Esc
+  if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); if (DEV && k === ']') player.currentTime += 15; return; }   // developer mode: ] skips 15 s of the Drift   // the Drift: nothing to do but watch, or Esc
   if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
+  if (DEV && k === 'o' && running) { startDrift(); return; }   // developer mode: O drifts off at once
   if (DEV && k === 'n' && running) { say('Developer mode: skipped to the next layer.'); breakthrough(); return; }
   if (dirs[k]) {
     e.preventDefault();

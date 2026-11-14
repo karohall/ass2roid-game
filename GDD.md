@@ -38,7 +38,8 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
   - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 45 seconds, ↑ runs you up the tunnel."*
   - **What it does: you can run upwards (2026-11-13; built 2026-11-14).** For 45 seconds (2026-11-14; was 15), ↑ takes you up through open tunnel, and you hold on instead of falling; the effects line counts it down. Then gravity takes over again. Up: back for a missed W, a seam, or a sealed find you passed. This is where climbing lives: not everyday movement, but a secret you earn, so going down stays a commitment the rest of the time.
   - **Can't be made early:** Crack Spores only exist in The Crack.
-- **Jizz+ and XXX:** later, each in its own song, on its own station.
+- **Jizz+ (idea, 2026-11-14):** Disco Gravitas, sung by a saucy bartender or barista. **It lets you shake two bottles at the same time.** Proposed: for a while, one shake makes two bottles of the Milk+ you choose; you pay the ingredients for both, but shake only once. It saves time, and two bottles at hand tempt you to drink them in quick succession: the dose window does the rest. Recipe: to come from the song.
+- **XXX:** later, in its own song, on its own station (Void FM is the one left).
 
 ## Frenzy and Stillness (push your luck)
 - **Rule:** *Double check any possible interactions.* The Foundation measures how fast, not just how much.
@@ -190,7 +191,7 @@ You reach the core: *"THE CORE. You are now further down than anyone asked you t
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
   - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
   - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.
-- **Stillness overload as a space sequence, and an ending** (a grey-box Drift is in the game: the shaft falls away, the hint bar fades, and only the prospector and stars remain, turning slowly for 30 seconds): the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". It is itself an ending: it can end the game early, before the core. Probably an interface job for later.
+- **Stillness overload as a space sequence, and an ending** (built 2026-11-14: the full sequence over The You Show, shot by shot, see RADIO.md): the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". It is itself an ending: it can end the game early, before the core. Probably an interface job for later.
 
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.
