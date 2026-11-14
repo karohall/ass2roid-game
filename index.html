@@ -591,7 +591,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
-const CANDY_TILES = ['#e8a9c9', '#a9dcc2', '#aac5ea', '#f0e3a4'];   // pastel pink, green, blue, yellow: the rock on Candygirl (samples, ingredients, shakers, sealed finds and graffiti keep their colours, to be found)
+const CANDY_TILES = ['#e8a9c9', '#a9dcc2', '#aac5ea', '#ece5c4'];   // pastel pink, green, blue, yellow: the rock on Candygirl (samples, ingredients, shakers, sealed finds and graffiti keep their colours, to be found)
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
