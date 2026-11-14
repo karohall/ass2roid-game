@@ -224,7 +224,11 @@ You reach the core: *"THE CORE. You are now further down than anyone asked you t
 - **Tool upgrades, paid in A$$ coins** (parked; the drill samples stay in the game until then):
   - **Version 1:** buying a stronger drill bit isn't optional. Its effect depends on how many A$$ coins the player got for the drill samples they collected.
   - **Version 2, a later stage:** a shop where the player chooses what to upgrade, e.g. depth or accuracy.
-- **Stillness overload as a space sequence, and an ending** (built 2026-11-14: the full sequence over The You Show, shot by shot, see RADIO.md): the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". It is itself an ending: it can end the game early, before the core. Probably an interface job for later.
+- **Stillness overload as a space sequence, and an ending** (built 2026-11-14: the full sequence over The You Show, shot by shot, see RADIO.md): the player drifts off the mining shaft and out into deep space, doing slow somersaults for the duration of The You Show (about 4 minutes). The point is to just watch: no controls, no task, a reward for buying in. Storyboard, shot by shot against the song: RADIO.md, "Stillness overload sequence". It is itself an ending: it can end the game early, before the core.
+  - **The sky grows (2026-11-14).** After the shaft falls away, the night sky spreads past the mining window into the space the Milk+ column and the dosage meter leave as they melt away. The Field Guide stays: the Drift turned out to be an excellent moment to read the archive cards. The radio stays too.
+  - **You can steer, a little (2026-11-14).** After the wormhole, the arrow keys give small pushes: you keep drifting, slowly easing off, and never leave the sky. Holding a key never flings you. The way-out line says so: *"Arrows: drift · Esc: end the drift."* (It was "no controls"; now almost none.)
+  - **The prospector stays longer (2026-11-14).** The dissolve into cosmic dust runs from the chorus to the outro (it was verse 2 to the bridge, too quick).
+  - **One sun, rising from below (2026-11-14).** The outro had a glow below and a second sun in the middle; now one sun rises from below the frame, its rays turning.
 
 ## Out of scope (for now)
 Driving the rover, combat, multiplayer, an account or login system, real music, mobile optimisation.

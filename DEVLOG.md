@@ -470,3 +470,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Things you find hint at the secret menu.** Graffiti in the rock, one piece in the Chrome Vein, one in The Crack. Graffiti could have meant tiny writing again, so the tile only shows scratches, and the words come up in the hint bar when you dig it out. The first one opens a redacted card in the Field Guide, *Not on the menu*, and every piece you find fills in a word. The rumour gives the last one: you order it with 0.
 
 **The radio starts from the top.** When it first comes on, the song plays from the beginning.
+
+**The Drift opens up.** I loved the Drift and wanted the night sky to become bigger and melt the panels away. But the Drift turned out to be an excellent moment to look at the archive cards, so only the Milk+ column and the meter melt, and the sky grows into their space. The Field Guide stays. You can steer now too, a little: the arrows give small pushes, and you drift on. The prospector stays longer before dissolving, and there's one sun, rising from below, instead of two.

@@ -120,6 +120,11 @@
   #confetti i { position:absolute; display:block; }
   #hint .em { -webkit-text-stroke:.35px currentColor; }   /* a new compound, a new drink: heavier than the bold around it */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
+  #sky { position:fixed; left:0; top:0; width:100vw; height:100vh; border:0; background:none; transition:none; z-index:0; pointer-events:none; display:none; }   /* not the mining window's canvas size */
+  #wrap { position:relative; z-index:1; }
+  body.wide #sky { display:block; }
+  body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
+  body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   .journey { display:flex; align-items:flex-start; width:100%; max-width:400px; margin:4px 0; }
   .journey .step { width:64px; flex:none; font-size:10px; color:var(--dim); text-align:center; line-height:1.2; }
   .journey .dot { width:26px; height:26px; margin:0 auto 4px; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; }
@@ -130,6 +135,7 @@
 </style>
 </head>
 <body class="intro">
+<canvas id="sky"></canvas>
 <div id="wrap">
   <div id="stage">
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
@@ -297,7 +303,7 @@ const CONFIG = {
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
   // Stillness overload: Calm on top of Stillness. The Drift lasts as long as The You Show (4:16), shot by shot
   // against the song (storyboard in RADIO.md). Sections in seconds into the song; durationMs only if the song can't play.
-  drift:   { durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
+  drift:   { nudge: 6, durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
@@ -568,7 +574,9 @@ const ENDORSE = 'Recovered under conditions the Kroeber Foundation does not endo
 // ─────────────────────────────────────────────────────────────────────────────
 const AIR = 0, DIRT = 1, SAMPLE = 2, INGR = 3, BAND = 4, CRUST = 5, SEAM = 6, ART = 7, ROCK = 8, SHAKER = 9, SLAB = 10, SEALED = 11, GRAFFITI = 12;
 const W = CONFIG.grid.cols, T = CONFIG.grid.tile, VIEW = CONFIG.grid.viewRows;
-const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const cv = document.getElementById('c'), gameCtx = cv.getContext('2d');
+let ctx = gameCtx;                                         // the Drift borrows it to draw on the sky
+const sky = document.getElementById('sky'), skyCtx = sky.getContext('2d');
 cv.height = CONFIG.grid.viewRows * CONFIG.grid.tile;
 document.documentElement.style.setProperty('--viewH', cv.height + 'px');   // the overlays cover exactly the mining window
 const $ = id => document.getElementById(id);
@@ -1205,15 +1213,15 @@ function startDrift() {
   const R = Math.random, W0 = cv.width, H0 = cv.height;
   const hues = [280, 320, 190, 220, 340];
   s.drift = { t0: performance.now(), radioWas: radio.on, done: false, last: 0, lastAt: performance.now(), frame: performance.now(),
-    stars: Array.from({ length: 180 }, () => [R() * W0 * 1.6 - W0 * .3, R() * H0 * 1.6 - H0 * .3, R(), R() * 6.3]),
+    stars: Array.from({ length: 520 }, () => [R() * W0 * 4 - W0 * 1.5, R() * H0 * 2 - H0 * .5, R(), R() * 6.3]),   // wide: the sky grows past the mining window
     // Deep space: nebulae and galaxies come out one by one once you are through the wormhole.
-    nebulae: Array.from({ length: 5 }, (_, i) => ({ x: R() * W0, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
+    nebulae: Array.from({ length: 5 }, (_, i) => ({ x: R() * W0 * 2.2 - W0 * .6, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
     galaxies: Array.from({ length: 3 }, (_, i) => ({ x: [70, W0 - 80, W0 * .6][i], y: [90, H0 * .7, 40][i], r: [55, 70, 30][i], tilt: .35 + R() * .4, rot: R() * 6.3,
       at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
-    sparkles: Array.from({ length: 140 }, () => [R() * W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
-    dust: [] };
+    sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
+    dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
   radio.on = 'oddity'; radio.since = radio.clock;
-  document.body.classList.add('drifting');
+  document.body.classList.add('drifting', 'wide');
   say('Calm, on top of Stillness. The shaft lets go.');
 }
 
@@ -1226,11 +1234,25 @@ function driftTime() {
 const ramp = (a, b, t) => Math.max(0, Math.min(1, (t - a) / (b - a)));
 const smooth = k => k * k * (3 - 2 * k);
 
+const lerp = (a, b, k) => a + (b - a) * k;
+function skyBegin() {
+  if (sky.width !== innerWidth || sky.height !== innerHeight) { sky.width = innerWidth; sky.height = innerHeight; }
+  const W0 = cv.width, H0 = cv.height, r = cv.getBoundingClientRect(), b = r.width / (W0 + 2);   // b: the page's scale
+  const grow = smooth(ramp(5000, 17000, performance.now() - s.drift.t0));
+  const pr = $('panel').getBoundingClientRect(), br = $('baseRow').getBoundingClientRect();
+  const from = { x: r.left + b, y: r.top + b, w: W0 * b, h: H0 * b };                       // the mining window
+  const to = { x: r.left + b, y: r.top + b, w: pr.right - r.left - 2 * b, h: br.top - r.top - 10 * b };   // it, the Milk+ column and the meter
+  const box = { x: lerp(from.x, to.x, grow), y: lerp(from.y, to.y, grow), w: lerp(from.w, to.w, grow), h: lerp(from.h, to.h, grow) };
+  const k = lerp(b, to.h / H0, grow);
+  skyCtx.setTransform(1, 0, 0, 1, 0, 0); skyCtx.clearRect(0, 0, sky.width, sky.height);
+  skyCtx.save(); skyCtx.beginPath(); skyCtx.rect(box.x, box.y, box.w, box.h); skyCtx.clip();
+  skyCtx.setTransform(k, 0, 0, k, box.x + box.w / 2 - W0 * k / 2, box.y + box.h / 2 - H0 * k / 2);
+}
 function drawDrift() {
   const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
   const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
   const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W0, H0);
+  ctx.fillStyle = '#000'; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0);
   const fade = Math.min(1, e / 4000);
   if (fade < 1) {                                            // the shaft falls away beneath you
     ctx.save(); ctx.globalAlpha = 1 - fade; ctx.translate(0, fade * fade * H0); draw(); ctx.restore();
@@ -1238,6 +1260,12 @@ function drawDrift() {
   const space = smooth(ramp(16, 26, t));                     // through the wormhole: deep space opens up
   const sun = smooth(ramp(S.outro, S.outro + 24, t));        // the outro: a sunrise from within
 
+  // Steering: each arrow is a small push. It keeps drifting, slowly easing off, and never leaves the sky.
+  const vmax = CONFIG.drift.nudge * 5; d.vx = Math.max(-vmax, Math.min(vmax, d.vx)); d.vy = Math.max(-vmax, Math.min(vmax, d.vy));   // small adjustments: holding a key never flings you
+  d.ox += d.vx * dt; d.oy += d.vy * dt; d.vx *= 1 - dt * .35; d.vy *= 1 - dt * .35;
+  const lim = [W0 * 1.1, H0 * .35];
+  if (Math.abs(d.ox) > lim[0]) { d.ox = Math.sign(d.ox) * lim[0]; d.vx *= -.3; }
+  if (Math.abs(d.oy) > lim[1]) { d.oy = Math.sign(d.oy) * lim[1]; d.vy *= -.3; }
   // Stars, turning slowly around you: the somersault is the whole sky's too.
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * .012); ctx.translate(-cx, -cy);
   for (const [x, y, z, ph] of d.stars) {
@@ -1293,14 +1321,14 @@ function drawDrift() {
     ctx.restore();
   }
   const flash = Math.max(0, 1 - Math.abs(t - 17) / 1.5);   // the passage
-  if (flash > 0) { ctx.globalAlpha = flash * .6; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W0, H0); ctx.globalAlpha = 1; }
+  if (flash > 0) { ctx.globalAlpha = flash * .6; ctx.fillStyle = '#fff'; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.globalAlpha = 1; }
 
   // The prospector: rises to the middle, shrinks into the wormhole, comes out the other side, and drifts, turning.
   const rise = smooth(Math.min(1, e / 8000)), sx = p.x * T + T / 2, sy = (p.y - cam) * T + T / 2;
   const into = smooth(ramp(8, 16, t)), out = smooth(ramp(18, 27, t));
   const scale = t < 17 ? 1 - into * .95 : .05 + out * .95;
-  const px = (t < 17 ? sx + (cx - sx) * rise : cx + Math.sin(t * .05) * 30) , py = (t < 17 ? sy + (cy - sy) * rise : cy + Math.sin(t * .037) * 18);
-  const gone = smooth(ramp(S.verse2, S.bridge, t));         // Verse 2 to the bridge: dissolving into cosmic dust
+  const px = (t < 17 ? sx + (cx - sx) * rise : cx + Math.sin(t * .05) * 30 + d.ox), py = (t < 17 ? sy + (cy - sy) * rise : cy + Math.sin(t * .037) * 18 + d.oy);   // after the wormhole, where you steer
+  const gone = smooth(ramp(S.chorus, S.outro + 10, t));     // the chorus to the outro: dissolving into cosmic dust, slowly (2026-11-14: was verse 2 to the bridge, too quick)
   const ang = e / 1000 * .35;
   if (gone > 0 && gone < 1) {                                // dust leaves the body and trails behind
     const n = Math.round(dt * (40 + gone * 160));
@@ -1333,25 +1361,26 @@ function drawDrift() {
   }
   // The outro: the black meets a sunrise, a beam of light from within. Cosmic love from the ancient galaxies.
   if (sun > 0) {
-    const hz = ctx.createRadialGradient(cx, H0 + 40, 0, cx, H0 + 40, 60 + 420 * sun);
+    const sunY = H0 + 90 - (H0 * .42 + 90) * sun;              // one sun, rising from below (2026-11-14: was a glow below and a second sun in the middle)
+    const hz = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, 60 + 420 * sun);
     hz.addColorStop(0, `rgba(255,235,190,${.95 * sun})`); hz.addColorStop(.35, `rgba(255,160,110,${.55 * sun})`);
     hz.addColorStop(.7, `rgba(220,90,160,${.25 * sun})`); hz.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.globalAlpha = 1; ctx.fillStyle = hz; ctx.fillRect(0, 0, W0, H0);
-    ctx.translate(cx, cy); ctx.rotate(t * .02);
-    for (let i = 0; i < 12; i++) {                           // rays from where the prospector was
+    ctx.globalAlpha = 1; ctx.fillStyle = hz; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0);
+    ctx.translate(cx, sunY); ctx.rotate(t * .02);
+    for (let i = 0; i < 12; i++) {                           // rays from the rising sun
       ctx.rotate(Math.PI / 6);
       const ray = ctx.createLinearGradient(0, 0, 0, -H0); ray.addColorStop(0, `rgba(255,220,170,${.22 * sun})`); ray.addColorStop(1, 'rgba(255,220,170,0)');
       ctx.fillStyle = ray; ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(-18 * sun, -H0); ctx.lineTo(18 * sun, -H0); ctx.lineTo(2, 0); ctx.fill();
     }
-    const core = ctx.createRadialGradient(0, 0, 0, 0, 0, 40 * sun); core.addColorStop(0, `rgba(255,250,235,${sun})`); core.addColorStop(1, 'rgba(255,200,150,0)');
-    ctx.fillStyle = core; ctx.fillRect(-40, -40, 80, 80);
+    const core = ctx.createRadialGradient(0, 0, 0, 0, 0, 40 + 20 * sun); core.addColorStop(0, `rgba(255,250,235,${sun})`); core.addColorStop(1, 'rgba(255,200,150,0)');
+    ctx.fillStyle = core; ctx.fillRect(-60, -60, 120, 120);
   }
   ctx.restore(); ctx.globalAlpha = 1;
   // A quiet way out, once the hint bar has gone: always clear what to do to go where.
   const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
   if (q > 0) {
     ctx.globalAlpha = q * .5; ctx.fillStyle = sun > .5 ? '#333' : '#aaa'; ctx.font = '11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    ctx.fillText('Esc: end the drift', cx, H0 - 14);
+    ctx.fillText(t > 18 ? 'Arrows: drift · Esc: end the drift' : 'Esc: end the drift', cx, H0 - 14);
     ctx.globalAlpha = 1;
   }
   if (e >= CONFIG.drift.durationMs + 5000 || (t * 1000 >= CONFIG.drift.durationMs && player.paused)) endDrift();   // if the song can't end it
@@ -1359,7 +1388,7 @@ function drawDrift() {
 
 function endDrift() {
   if (s.drift.done) return;
-  s.drift.done = true; finishGame(true);
+  s.drift.done = true; document.body.classList.remove('wide'); finishGame(true);
 }
 
 function showMenu(html) { $('menu').innerHTML = html; $('menu').classList.remove('hidden'); }
@@ -1401,7 +1430,7 @@ function resume() {
 }
 
 function newGame() {
-  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting'); }   // back to what was playing before space
+  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting', 'wide'); }   // back to what was playing before space
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
@@ -1831,7 +1860,11 @@ function loop(t) {
   const dt = Math.min(100, t - (lastFrame || t)); lastFrame = t;
   radio.clock += dt;
   if (running) update(dt);
-  if (g) { s.drift ? drawDrift() : draw(); hud(); }
+  if (g) {
+    if (s.drift && !s.drift.done) { ctx = skyCtx; skyBegin(); drawDrift(); skyCtx.restore(); ctx = gameCtx; }   // the Drift draws on the sky
+    else if (s.drift) drawDrift(); else draw();
+    hud();
+  }
   radioHud(); soundTick(dt);
   requestAnimationFrame(loop);
 }
@@ -1847,7 +1880,7 @@ addEventListener('keydown', e => {
   if (k === 'v') { volumeKey(); return; }                // and so does the volume
   if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
   if (menuKeys) { menuKeys(k); return; }
-  if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); if (DEV && k === ']') player.currentTime += 15; return; }   // developer mode: ] skips 15 s of the Drift   // the Drift: nothing to do but watch, or Esc
+  if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); const nd = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1], a: [-1, 0], d: [1, 0], w: [0, -1], s: [0, 1] }[k]; if (nd) { s.drift.vx += nd[0] * CONFIG.drift.nudge; s.drift.vy += nd[1] * CONFIG.drift.nudge; e.preventDefault(); } if (DEV && k === ']') player.currentTime += 15; return; }   // developer mode: ] skips 15 s of the Drift   // the Drift: nothing to do but watch, or Esc
   if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
   if (DEV && k === 'o' && running) { startDrift(); return; }   // developer mode: O drifts off at once
   if (DEV && k === 'n' && running) { say('Developer mode: skipped to the next layer.'); breakthrough(); return; }
