@@ -1731,7 +1731,7 @@ function hint() {
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${repairText()}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${repairText()}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
-  if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
+  if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view: break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;
