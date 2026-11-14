@@ -164,7 +164,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 ## The radio
 - **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky, with a German accent, on air since 2026-11-14: he talks between songs, greets the shift, cheers the Frenzy, knows when you've been on Void FM, and once in a while lets slip that a song isn't on the menu): digging goes slightly faster
 - **Disco Gravitas** (heart: Italo and space disco): calms the balance meter a little
-- **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision
+- **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision. The Broadcaster, on air since 2026-11-14, welcomes you to the never-ending show, tells you facts about the dark between songs, and calms Stillness: space is not scary, it is restful
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 - **Space oddities:** not a station; a folder of songs for special occasions, such as The You Show on Stillness overload
 

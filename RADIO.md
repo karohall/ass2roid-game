@@ -153,6 +153,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **In-game effect:** none. Choosing Void FM is choosing a mood, not a tactic.
 - **DNA:** futurepop at the edge of emptiness. Space without an object, rather than melancholia. Wide, still, unhurried; feeling is allowed, sorrow is not the point.
 - **DJ:** a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth. A calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
+- **On air (2026-11-14): The Broadcaster.** Nine clips. Six take turns between songs, like Coach Rocky's: the station ID (*not sponsored by Naesa… Nothing is.*), the stars that may already be gone, and facts about Dante, Sappho, galaxies and static. Three are moments: *Welcome to the never-ending show* the first time you tune in to Void FM in a shift; *Space is not scary, it is restful* when Stillness lets Void FM come through; and, once a shift, between songs around 400 m down, *You are four hundred metres below the surface of a rock that is drifting through nothing. Here is a song about that.* The song ducks under him; he goes quiet off Void FM and in the Drift. The clips are in `audio/Radio/Void FM/The Broadcaster/`; see the DJ voice log.
 - **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
 - **Slogans (2026-11-13, in the game):** they take turns in the radio ticker after the song title, a different one with each song. A song can keep one of its own: Alea Iacta Est, early industrial, always gets the wreckers; Stella Solaris, about a dead mother, always gets the cry.
   - *"Not endorsed by Näsa. Listened to by wreckers of civilisation."*
@@ -335,6 +336,15 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 | 8 | The Pump Zone | Frenzy is not a problem (a frenzy cuts in) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/Frenzy is not a problem.mp3 | 2026-11-14 |
 | 9 | The Pump Zone | If you switch to Void FM I will know. (tuning from void fm back to the pump zone) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/If you switch to Void FM I will know..mp3 | 2026-11-14 |
 | 10 | The Pump Zone | There is one song on this station that is not on the menu. I did not tell you that. (rare, between songs: hints at candygirl) | Coach Rocky | _To fill_ | audio/Radio/The Pump Zone/Coach Rocky/There is one song on this station that is not on the menu. I did not tell you that..mp3 | 2026-11-14 |
+| 11 | Void FM | Welcome to the never-ending show (the first time you tune in to Void FM in a shift, or Begin shift on Void FM) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Welcome to the never-ending show.mp3 | 2026-11-14 |
+| 12 | Void FM | Space is not scary, it is restful (Stillness lets Void FM come through) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Space is not scary, it is restful.mp3 | 2026-11-14 |
+| 13 | Void FM | You are four hundred metres below the surface of a rock that is drifting through nothing. Here is a song about that. (between songs, around 400 m down, once a shift) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/You are four hundred metres below the surface of a rock that is drifting through nothing. Here is a song about that..mp3 | 2026-11-14 |
+| 14 | Void FM | This is Void FM. We are not sponsored by Naesa... Nothing is. (between songs) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/This is Void FM. We are not sponsored by Naesa... Nothing is..mp3 | 2026-11-14 |
+| 15 | Void FM | Some of the stars you see may already be gone. And yet they shine. (between songs) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Some of the stars you see may already be gone. And yet they shine..mp3 | 2026-11-14 |
+| 16 | Void FM | Dante fact (between songs) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Dante fact.mp3 | 2026-11-14 |
+| 17 | Void FM | Galaxy fact (between songs) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Galaxy fact.mp3 | 2026-11-14 |
+| 18 | Void FM | Sappho fact (between songs) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Sappho fact.mp3 | 2026-11-14 |
+| 19 | Void FM | Static fact (between songs) | The Broadcaster | _To fill_ | audio/Radio/Void FM/The Broadcaster/Static fact.mp3 | 2026-11-14 |
 
 ---
 
