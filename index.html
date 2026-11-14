@@ -120,6 +120,9 @@
   #confetti i { position:absolute; display:block; }
   #hint .em { -webkit-text-stroke:.35px currentColor; }   /* a new compound, a new drink: heavier than the bold around it */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
+  .artimg { float:left; width:96px; height:72px; object-fit:cover; margin:2px 8px 2px 0; border:1px solid var(--line); cursor:zoom-in; }   /* the find's photo, beside its card */
+  #artBig { position:fixed; inset:0; z-index:5; background:rgba(0,0,0,.85); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:zoom-out; }
+  #artBig img { max-width:min(800px, 90vw); max-height:80vh; border:1px solid var(--line); }
   #sky { position:fixed; left:0; top:0; width:100vw; height:100vh; border:0; background:none; transition:none; z-index:0; pointer-events:none; display:none; }   /* not the mining window's canvas size */
   #wrap { position:relative; z-index:1; }
   body.wide #sky { display:block; }
@@ -1040,6 +1043,15 @@ function unlock(id) {
   renderGuide();
 }
 
+// A recovered artefact's photo: archive/<number>-<id>.jpg. A find without a photo simply has none.
+const artImg = a => a && a.no !== 'E' ? `archive/${String(a.no).padStart(2, '0')}-${a.id}.jpg` : null;
+const cardHTML = e => (artImg(e.art) ? `<img class="artimg" src="${artImg(e.art)}" width="96" height="72" alt="" data-big="${artImg(e.art)}" onerror="this.remove()">` : '')
+  + `<b style="color:var(--text)">${e.title}</b><br>${e.body}`;
+function showArt(src, title) {
+  const o = document.createElement('div'); o.id = 'artBig';
+  o.innerHTML = `<img src="${src}" alt=""><div class="small">${title} · click or Esc to close</div>`;
+  o.onclick = () => o.remove(); document.body.appendChild(o);
+}
 function renderGuide() {
   const entries = guideEntries();
   let html = '', cat = '';
@@ -1061,13 +1073,14 @@ function renderGuide() {
   if (gap) { $('cardDetail').innerHTML = `<b style="color:var(--text)">No. ${selCard.slice(3)}</b><br>Withdrawn by the Foundation. No further comment.`; return; }
   const e = entries.find(e => e.id === selCard);
   if (!e) $('cardDetail').innerHTML = 'Select a card. Empty slots are things you have not found yet.';
-  else if (s.guide.includes(e.id)) $('cardDetail').innerHTML = `<b style="color:var(--text)">${e.title}</b><br>${e.body}`;
+  else if (s.guide.includes(e.id)) $('cardDetail').innerHTML = cardHTML(e);
   else $('cardDetail').innerHTML = e.state
     ? `<b style="color:var(--text)">No. ${e.art.no} · ? ? ?</b><br><i>${ENDORSE}</i><br>Requires ${e.state === 'still' ? 'reduced' : 'elevated'} compound state.`
     : e.art ? `<b style="color:var(--text)">KR-1 E · ? ? ?</b><br>For those who reach the Core.`
     : `<b style="color:var(--text)">? ? ?</b><br>Not yet documented.`;
 }
 
+$('cardDetail').addEventListener('click', e => { const im = e.target.closest('.artimg'); if (im) showArt(im.dataset.big, im.closest('#cardDetail').querySelector('b').textContent); });
 $('guide').addEventListener('click', e => {
   if (e.target.closest('#drawer')) { archiveOpen = !archiveOpen; renderGuide(); cv.focus(); return; }
   const el = e.target.closest('.slot, .tile'); if (!el) return;
@@ -1874,6 +1887,7 @@ function loop(t) {
 // ─────────────────────────────────────────────────────────────────────────────
 const dirs = { ArrowLeft: [-1, 0], a: [-1, 0], ArrowRight: [1, 0], d: [1, 0], ArrowDown: [0, 1], s: [0, 1], ArrowUp: [0, -1], w: [0, -1] };
 addEventListener('keydown', e => {
+  if ($('artBig')) { if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') { $('artBig').remove(); e.preventDefault(); } return; }   // the photo first
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   if (k === ' ') e.preventDefault();
   if (k === 'r' || k === 't') { radioKey(k); return; }   // the radio works on every screen
@@ -1922,7 +1936,7 @@ function fit() {
   const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;
   // The card box is as tall as the longest card, so no card is ever cut off and choosing one never moves the page.
   const cd = $('cardDetail'), card0 = cd.innerHTML; cd.style.height = 'auto'; let tallest = 0;
-  for (const e of guideEntries()) { cd.innerHTML = `<b>${e.title}</b><br>${e.body}`; tallest = Math.max(tallest, cd.offsetHeight); }
+  for (const e of guideEntries()) { cd.innerHTML = cardHTML(e); tallest = Math.max(tallest, cd.offsetHeight); }   // with its photo beside it
   cd.style.height = tallest + 'px'; cd.innerHTML = card0;
   const height = w.offsetHeight, width = w.offsetWidth;
   hidden.forEach(el => el.classList.remove('shown'));

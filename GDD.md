@@ -150,6 +150,8 @@ In Prototype 1, Regolith Whey mixes Strength, and Legacy Powder (seeping up from
 | 18 | _Withdrawn_ | | Gap |
 | E | The Core: redacted | Reaching the Core | Built |
 
+**Every find has a photo (2026-11-14).** A thumbnail beside the card text; a click shows it large (Esc or a click closes). The game uses web copies in `archive/<number>-<id>.jpg` (800 px wide, about 25–110 KB each); the originals are in `images/Archive images/`. Same framing for all: the object centred on a plain grey background.
+
 **All archive cards are written (2026-11-14).** Stillness finds (6, 12, 14) are quieter and stranger, found in a slow, cold state; Frenzy finds (13, 16, 17) a little wilder, found while the screen tilts. The redactions (No. 12's reason, inspector and additional findings; No. 16's initials) stay blacked out until XXX; the hidden texts are the user's to write.
 
 **Real-world background** (not in the game; where the cards come from):

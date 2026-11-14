@@ -474,3 +474,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **The Drift opens up.** I loved the Drift and wanted the night sky to become bigger and melt the panels away. But the Drift turned out to be an excellent moment to look at the archive cards, so only the Milk+ column and the meter melt, and the sky grows into their space. The Field Guide stays. You can steer now too, a little: the arrows give small pushes, and you drift on. The prospector stays longer before dissolving, and there's one sun, rising from below, instead of two.
 
 **Every archive card has its text.** The last six: hand stencils that glow, an inspection record with redactions, a rubber duck that came by a current that doesn't exist, a four-thousand-year-old Parmesan held as collateral, a signet ring that signed every Näsa claim, and a Polaroid nobody has managed to shake into developing. The redactions wait for XXX.
+
+**The archive gets photos.** Fourteen finds, photographed on grey like museum objects. The originals were big, so the game uses small copies: 600 KB for all of them instead of 20 MB. A thumbnail sits beside each card; click it to see the find properly.
