@@ -1433,7 +1433,9 @@ function draw() {
       const open = seamAnswers(c.kind);
       if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
       ctx.strokeStyle = open ? '#fff' : '#bdbdbd'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 5.5, py + 5.5, T - 11, T - 11); ctx.lineWidth = 1;   // framed, like a specimen box
-      ctx.fillStyle = open ? '#fff' : '#cfcfcf'; ctx.font = open ? 'bold 22px monospace' : 'bold 18px monospace'; ctx.fillText('◈', cx, cy); ctx.font = 'bold 14px monospace';
+      ctx.fillStyle = open ? '#fff' : '#cfcfcf'; ctx.font = open ? 'bold 22px monospace' : 'bold 18px monospace'; ctx.fillText('◈', cx, open ? cy : cy - 3);
+      if (!open) { ctx.font = 'bold 8px monospace'; ctx.fillText(c.kind === 'still' ? 'STILL' : 'FRENZY', cx, py + T - 9); }   // the state it waits for, on the box itself
+      ctx.font = 'bold 14px monospace';
     }
     if (c.t === SEAM || c.t === ART) {
       const open = seamAnswers(c.kind);                      // lights up only in its own state, or while Hyperfocus holds it
@@ -1564,6 +1566,8 @@ function hint() {
   if (!musicOn()) return sound.on ? 'The tape is blank, and the drill won’t run on silence.\nPress R to tune in a station.'
                                   : 'The drill won’t start. Nothing on Korova Rock runs without a soundtrack.\nPress R to tune in the radio.';
   const nearCrust = p.y >= H - 8;
+  const openArt = near(4, c => c.t === SEALED && seamAnswers(c.kind));
+  if (openArt && (frenzy() || stillness())) return `${frenzy() ? 'FRENZY!' : 'STILLNESS.'} The sealed artefact (◈) gives way now. Dig into it before the ${frenzy() ? 'Frenzy' : 'Stillness'} ends.`;
   if (frenzy()) return seamWaiting('frenzy') ? 'FRENZY! A ? seam opened right next to you. Dig into it before it seals. The drill rattles so hard that samples shake loose.' : 'FRENZY! Double digging power, but the drill rattles so hard that samples shake loose. Go go go.';
   if (stillness()) return (seamWaiting('still') ? 'STILLNESS. A quiet ? seam opened beside you. It only answers now. Dig in, slowly.' : 'STILLNESS. Everything is slow, and so precise that samples and ingredients come out double.')
     + (s.bottles.calm || canMix('calm') ? ' One more Calm, and you will drift.' : '');
@@ -1577,11 +1581,11 @@ function hint() {
   // About to tip over: this outranks announcements and rumours, so it is never hidden.
   if (s.meter + CONFIG.push.strength * nextMult() >= tipAt()) return 'One more quick Strength tips you into Frenzy.';
   if (s.meter + CONFIG.push.calm * nextMult() <= -tipAt()) return 'One more quick Calm tips you into Stillness.';
+  const sealed = near(3, c => c.t === SEALED && !seamAnswers(c.kind));
+  if (sealed) return `An artefact is sealed in the rock here (◈). It only gives way ${sealed.kind === 'still' ? 'in Stillness: drink Calm until you tip over' : 'in a Frenzy: drink Strength until you tip over'}. One for the archive cabinet, and a finder's fee.`;
   if (s.announceUntil > t) return s.announce;
   if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${recipeText('recovery')}).`;
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${recipeText('recovery')}).`;
-  const sealed = near(2, c => c.t === SEALED && !seamAnswers(c.kind));
-  if (sealed) return `An artefact is sealed in the rock here (◈): one for the archive cabinet, and a finder's fee. It only gives way ${sealed.kind === 'still' ? 'in Stillness' : 'in a Frenzy'}.`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view (the little bottle): break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';

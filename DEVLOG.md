@@ -442,3 +442,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Coach Rocky is on air.** Ten clips, made with ElevenLabs, in his German accent. Most of them fill the breaks between songs on the Pump Zone. A few are tied to moments: he says good morning when the shift begins, tells you the Frenzy is not a problem, and knows when you've been listening to Void FM. One is rare, and it gives away that one song on the station isn't on the menu. The radio teaches you things. The music ducks under him, so he never cuts a song off.
 
 **The Broadcaster is on air.** Void FM's voice: slow, calm, late-night. Between songs, facts about Dante, Sappho, galaxies and static, and the stars that may already be gone. He welcomes you to the never-ending show the first time you tune in, tells you during Stillness that space is not scary, it is restful, and once a shift, around 400 m down, reminds you where you are: below the surface of a rock drifting through nothing. Here is a song about that. Coach Rocky and the Broadcaster share one system now: any station can get a DJ.
+
+**A space, not just a game.** With two DJs talking, the game feels more and more like a room. A place you're in.
+
+**Sealed finds say which state they want.** The hint about a sealed artefact was inconsistent: rumours and announcements could hide it, and it only showed within two tiles. Now the box itself is labelled STILL or FRENZY, the hint shows within three tiles, ahead of rumours, and says how to get there. In the right state, it tells you to dig in now.
