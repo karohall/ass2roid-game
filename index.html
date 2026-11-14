@@ -355,7 +355,8 @@ const catNo = a => a.no === 'E' ? 'KR-1 E' : `KR-1 ${'ABCD'[s.artLayer[a.id] ?? 
 // (on itch.io) but stays out of the repository. A song without a file isn't in the list yet.
 const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${name}.mp3` });
 const RADIO = {
-  tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape. Blank for now: R tunes in a station.', songs: [{ title: 'side A (blank)' }] },
+  tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
+    SONG('Tape', 'Testarocca', 'Testarocca')] },
   pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: [
     SONG('The Pump Zone', 'Down in the Shaft', 'The Pump Zone Down In The Shaft'),
     SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body'),
@@ -376,8 +377,8 @@ const RADIO = {
 };
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
-// It starts on the tape once the tape has a song; while the tape is blank, on the Pump Zone, so Begin shift has music.
-const radio = { on: RADIO.tape.songs[0].file ? 'tape' : 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, vol: 0 };
+// It starts on the Pump Zone, so Begin shift has music. The tape belongs to the broken drill (and to T).
+const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, vol: 0 };
 function radioKey(k) {
   if (s && s.drift) return;                                // The You Show plays to the end
   if (!sound.on) {                                          // the first R turns the radio on, on the station it is set to
@@ -386,6 +387,7 @@ function radioKey(k) {
     if (running) say(musicOn() ? 'The drill coughs, then catches the beat.' : 'Radio on. The tape is blank.');
     return;
   }
+  if (s && running && onPick()) { say('No power for the radio. Only the tape: the deck runs on its own battery.'); return; }   // the radio died with the drill
   if (s) s.radioHops = (s.radioHops || 0) + 1;             // tried another station: the radio lesson is learned
   if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
   else radio.on = radio.on === 'tape' ? radio.last : STATIONS[(STATIONS.indexOf(radio.on) + 1) % STATIONS.length];
@@ -397,6 +399,7 @@ function radioKey(k) {
 // lets Void FM come through, and the Drift plays The You Show. Otherwise, the station you chose.
 function radioNow() {
   if (s && s.drift) return { key: 'oddity', song: 0 };
+  if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
   if (s && s.inState === 'frenzy') return { key: 'pump', cut: true, note: 'The Frenzy cut in. The Pump Zone.' };   // a hard cut, no fade
   if (s && s.inState === 'still') return { key: 'void', note: 'Void FM is coming through.' };
   return { key: radio.on };
@@ -618,7 +621,7 @@ function power() {
 // How much slower digging is: everything slows in Stillness.
 // The drill works at full speed until it breaks; then the pick axe, which always works, is slower.
 const onPick = () => s.drill <= 0;
-function slowFactor() { return (stillness() ? CONFIG.stillness.slowMult : 1) * (onPick() ? CONFIG.drill.pickSlow : 1) * (radio.on === 'pump' ? CONFIG.radio.pumpDigSpeed : 1); }
+function slowFactor() { return (stillness() ? CONFIG.stillness.slowMult : 1) * (onPick() ? CONFIG.drill.pickSlow : 1) * (radio.on === 'pump' && !onPick() ? CONFIG.radio.pumpDigSpeed : 1); }
 
 function driftChance() {
   if (stillness()) return 0;                                 // Stillness: the drill goes exactly where you point it
@@ -655,7 +658,7 @@ function hit(x, y, c) {
   if (frenzy() && !onPick()) {
     if (!s.drillWorn) say('The drill is complaining.');
     s.drill = Math.max(0, s.drill - CONFIG.drill.wearPerSec * sinceHit / 1000); s.drillWorn = true;
-    if (onPick()) { s.drillBreaks++; say('The drill is done. Out comes the pick axe. It always works.'); }
+    if (onPick()) { s.drillBreaks++; say('The drill is done, and the radio with it. Out comes the pick axe; the tape deck runs on its own battery.'); }
   }
   if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('The drill rattled a sample loose. Gone for good.'); loseSample(); }
   if (c.hp > 0) return;
@@ -1565,7 +1568,7 @@ function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
   const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
-  setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
+  setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }

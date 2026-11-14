@@ -434,3 +434,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Energy is cut; the secret menu fills up.** Energy felt too similar to Strength and Frenzy, so it's out: the menu stays at five, and new things happen on the secret menu. With four ingredients there are exactly ten two-ingredient recipes, and there turned out to be slots for everything, a beautiful coincidence. Jizz+ (Disco Gravitas) moves to three ingredients, two Whey and a Powder, so it works from layer 2 instead of arriving just before the end. And XXX (Void FM) is the uncensored version: the rock goes see-through, and everything the Belt Authority redacted reads in full, the Core card included. Lots of work, but hilarious.
 
 **[REDACTED COMPOUND] is decided.** At the bottom of Korova Rock, under everything the Belt Authority blacked out, is *Solanum tuberosum*: the potato. Only XXX shows it.
+
+**The tape gets its moment.** Testarocca, the rover's tape, was blank all game. Now it has a song, and a reason: the radio runs on the drill's power, so when the drill breaks, the radio dies with it. Only the tape deck still plays, on its own battery, while you're on the pick axe. Recovery brings the radio back. A broken drill now sounds different, and Recovery is a little more tempting.
+
+**Renamed:** Sergeant Rock is now Drill Instructor. And Alea Iacta Est, early industrial, joins Void FM; its ticker always carries the *wreckers of civilisation*.

@@ -281,11 +281,12 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 ### The rover's tape deck
 
 - **Concept:** the rover has a tape deck as well as the radio. Tapes are physical things the prospector carries, not stations.
+- **The broken drill plays the tape (2026-11-14).** The radio runs on the drill's power: when the drill breaks, the radio dies with it, and the rover cuts straight to the tape, which runs on its own battery. The radio panel: *"The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back."* R and T stay on the tape: *"No power for the radio. Only the tape."* Recovery repairs the drill, and the station you were on comes back. The Pump Zone's speed only counts while it actually plays. The tape plays even over a Frenzy: no power is no power. The game now starts on the Pump Zone; T still plays the tape any time.
 - **Tapes so far:**
 
 | Tape | What it is | Contents |
 |------|------------|----------|
-| **Testarocca** | A nod to OutRun (1986), where you picked the music on the car radio before the drive. The name crosses that game's car with rock. | _To decide_ |
+| **Testarocca** | A nod to OutRun (1986), where you picked the music on the car radio before the drive. The name crosses that game's car with rock. | **Testarocca** (2026-11-14), in audio/Radio/Tape/ |
 
 ### Näsa – Big Space™ *(commercial breaks)*
 
