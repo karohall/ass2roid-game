@@ -482,3 +482,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Melting chrome, fixed twice over.** After the pacing change it was very hard: the slab cooled between every hit, and the Frenzy's rocking kept pulling me off it. Now it only cools when you stop, and the Frenzy holds you steady over chrome.
 
 **Candygirl has a soundtrack and a colour.** Just like Testarocca with the broken drill, the drink cuts the radio to its own song. And the rock goes pink, green and blue while it lasts.
+
+**Found, then on the menu.** Once you have found Candygirl it appears at the bottom of the Milk+ menu as [0]. And the rock on Candygirl is pastel now, with light yellow joining the pink, green and blue.

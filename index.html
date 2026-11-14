@@ -591,7 +591,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
-const CANDY_TILES = ['#e8a9c9', '#a9dcc2', '#aac5ea'];   // pastel pink, green, blue: the rock on Candygirl (samples, ingredients, shakers, sealed finds and graffiti keep their colours, to be found)
+const CANDY_TILES = ['#e8a9c9', '#a9dcc2', '#aac5ea', '#f0e3a4'];   // pastel pink, green, blue, yellow: the rock on Candygirl (samples, ingredients, shakers, sealed finds and graffiti keep their colours, to be found)
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
@@ -906,6 +906,7 @@ function press(v) {
 
 // The secret menu. Candygirl isn't on the menu: you know the recipe from the song, or you don't.
 // Holding one Chrome Filings and one Crack Spores, 0 shakes it, and it goes down as soon as it is ready.
+const candyRecipe = () => Object.entries(CONFIG.candy.recipe).map(([k, n]) => `${n}× ${ING[k].name}`).join(' + ');
 function secretCandy() {
   if (!running || !sound.on || shaking()) return;
   const r = CONFIG.candy.recipe;
@@ -1552,7 +1553,7 @@ function draw() {
     const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
     if (c.t === AIR) continue;
     ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = (s && candy() && [DIRT, BAND].includes(c.t) && CANDY_TILES[(x + y + Math.floor(now() / 300)) % 3]) || { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
+    ctx.fillStyle = (s && candy() && [DIRT, BAND].includes(c.t) && CANDY_TILES[(x + y + Math.floor(now() / 300)) % CANDY_TILES.length]) || { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
     ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
     if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
     if (c.t === GRAFFITI) {                                  // scratches: someone wrote here
@@ -1701,6 +1702,7 @@ const REVEAL = {
   recipe_stamina: () => known('chrome') || s.bottles.stamina > 0,
   recipe_focus:   () => known('spores') || s.bottles.focus > 0,
   recipe_recovery: () => s.drillWorn || s.bottles.recovery > 0,
+  recipe_candy:   () => !!s.candyFound,                    // the secret menu shows once you have found it
   drill:  () => s.drillWorn,
 };
 // The first tile within r of the prospector that matches.
@@ -1775,8 +1777,13 @@ function renderStatic() {
     <div class="recipe later" data-reveal="recipe_${v}">
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}">Shake</button>
-    </div>`).join('');
+    </div>`).join('') + `
+    <div class="recipe later" data-reveal="recipe_candy">
+      <div class="name"><b>[0] Candygirl</b><br><span class="does">Not on the menu. Runs you up the tunnel.</span><br><span class="small">${candyRecipe()}</span></div>
+      <button id="act_candy">Shake</button>
+    </div>`;   // the secret menu: only once found
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
+  $('act_candy').onclick = () => { secretCandy(); cv.focus(); };
   // Rows that were already visible come back at once when the menu is rebuilt for a new layer.
   document.querySelectorAll('#recipes [data-reveal]').forEach(el => { if (s && REVEAL[el.dataset.reveal]()) el.classList.add('shown', 'settled'); });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
@@ -1822,6 +1829,7 @@ function hud() {
     b.className = ready ? 'ready' : '';
     b.disabled = !running || (!ready && (shaking() || !canMix(v)));
   }
+  { const b = $('act_candy'), mine = shaking() && s.shake.v === 'candy'; setText('act_candy', mine ? 'Shaking…' : 'Shake'); b.disabled = !running || shaking() || !Object.entries(CONFIG.candy.recipe).every(([k, n]) => s.inv[k] >= n); }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
   if (candy()) fx.push(`Candygirl ${Math.ceil((s.fx.candy - t) / 1000)}s`);
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
