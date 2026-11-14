@@ -231,7 +231,7 @@ const CONFIG = {
 
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
   stillness: { durationMs: 20000, settleAt: 45, slowMult: 2, yieldMult: 2 },   // everything slows (so it lasts longer than a Frenzy), and comes out whole: samples and ingredients ×2
-  seam:      { hp: 6, artefactHp: 3, finderFee: 10 },   // the Foundation pays a finder's fee in drill samples for every artefact recovered
+  seam:      { sealedNear: 6, hp: 6, artefactHp: 3, finderFee: 10 },   // the Foundation pays a finder's fee in drill samples for every artefact recovered
   calmRumourFrenzies: 2,   // the Calm rumour shows as each of the first two Frenzies ends, never after a Stillness
 
   // Each recipe is ingredient → amount.
@@ -713,6 +713,10 @@ function openSeam(kind) {
     s.seamOpen[kind] = false;
   }
   if (!a) return;
+  // Tipping beside a sealed find of this state: that is what you came for, so no seam opens to compete with it.
+  // The seam's artefact waits for the next time you tip somewhere else.
+  const r = CONFIG.seam.sealedNear;   // (not near(): this function has its own near, below)
+  for (let y = Math.max(0, p.y - r); y <= Math.min(H - 1, p.y + r); y++) for (let x = 0; x < W; x++) if (Math.abs(x - p.x) <= r && g[y][x].t === SEALED && g[y][x].kind === kind) return;
   // Pick a 3×3 spot beside the prospector, level with them or below (you can't climb), that
   // doesn't overlap the other state's seam: the nearer side first, then the far side, a little lower each time; last, with only its bottom row level with them.
   const near = p.x >= 5 ? -2 : 2;

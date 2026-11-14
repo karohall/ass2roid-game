@@ -486,3 +486,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Found, then on the menu.** Once you have found Candygirl it appears at the bottom of the Milk+ menu as [0]. And the rock on Candygirl is pastel now, with light yellow joining the pink, green and blue.
 
 **Is this a risk for photosensitive players?** I asked, and the honest answer was: probably under the line, but close enough to fix. The Candygirl stripes now glide instead of stepping, the pastels are too close in brightness to count as flashes, the colour fades in and out, and players with "reduce motion" switched on get still stripes. Also: the archive photos no longer all load when the page opens, only when a card is opened.
+
+**Distracted by the seam.** I went into Stillness for a sealed find, got distracted by the ? seam that opened beside me, and the Stillness ran out before I reached the find. Now, if you tip near a sealed find of that state, no seam opens: the state goes to what you came for.
