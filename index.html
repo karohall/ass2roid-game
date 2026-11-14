@@ -750,7 +750,8 @@ function act(dx, dy) {
   if (!musicOn()) { bump(p.x, p.y, 2); return warn(sound.on ? 'The tape is blank. The drill won’t run on silence.' : 'The drill won’t start. It needs music.'); }
   if (shaking()) return warn('Both hands on the shaker. Digging resumes when it is ready.');
   // Drift: downward digs wander sideways when frenzied.
-  if (dy > 0 && Math.random() < driftChance()) { dx = Math.random() < .5 ? -1 : 1; dy = 0; }
+  // Not on Näsa chrome: melting it takes a steady drill, so the Frenzy holds you over it.
+  if (dy > 0 && !(g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) && Math.random() < driftChance()) { dx = Math.random() < .5 ? -1 : 1; dy = 0; }
   const nx = p.x + dx, ny = p.y + dy;
   if (ny < 0 || ny >= H || nx < 0 || nx >= W) return;
   const c = g[ny][nx];
@@ -814,7 +815,8 @@ function slabHit(x, y, c) {
   if (!frenzy() || onPick()) { nasa(); warn(onPick() ? 'The pick axe bounces off the chrome.' : 'Näsa™ chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
   if (s.strStacks < C.stacks) { nasa(); warn('The chrome warms a little, then cools. More Strength might do it.'); bump(x, y, 3); return; }
   if (c.hotAt && t - c.hotAt < C.heatEveryMs) { bump(x, y, 2); return; }   // one heat step per half second: holding ↓ can't rush it, so you can watch it glow and choose
-  c.heat = Math.max(0, (c.heat || 0) - C.coolPerSec * (t - (c.hotAt || t)) / 1000) + 1; c.hotAt = t;
+  const cooling = Math.max(0, t - (c.hotAt || t) - C.heatEveryMs * 2);   // it only cools once you stop hitting it
+  c.heat = Math.max(0, (c.heat || 0) - C.coolPerSec * cooling / 1000) + 1; c.hotAt = t;
   bump(x, y, 6);
   if (c.heat >= C.riskFrom && Math.random() < C.blowChance) return blowUp(x, y, c);
   if (c.heat >= C.meltHeat) {
@@ -1561,7 +1563,7 @@ function draw() {
       ctx.fillStyle = '#ddd'; ctx.fillRect(cx - 6, cy - 7, 12, 16); ctx.fillStyle = '#888'; ctx.fillRect(cx - 4, cy - 11, 8, 4);
     }
     if (c.t === SLAB) {                                      // Näsa chrome, with a shine and a ™
-      const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * (now() - c.hotAt) / 1000) / CONFIG.chrome.meltHeat : 0;
+      const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * Math.max(0, now() - c.hotAt - CONFIG.chrome.heatEveryMs * 2) / 1000) / CONFIG.chrome.meltHeat : 0;
       if (heat > 0) { ctx.fillStyle = `rgba(255,179,71,${Math.min(.9, heat)})`; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }   // heating up: amber
       ctx.fillStyle = '#e4e9ee'; ctx.fillRect(px + 1, py + 1, T - 2, 6);
       ctx.fillStyle = '#5d6670'; ctx.font = 'bold 11px monospace'; ctx.fillText('™', cx, cy + 3); ctx.font = 'bold 14px monospace';

@@ -478,3 +478,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **The archive gets photos.** Fourteen finds, photographed on grey like museum objects. The originals were big, so the game uses small copies: 600 KB for all of them instead of 20 MB. A thumbnail sits beside each card; click it to see the find properly.
 
 **No. 7 is withdrawn.** The striped sweatband is gone from the archive, a gap like 10, 11, 15 and 18. The photos, made with FLUX.2 Pro and finished in Canva with a museum ruler, are in the repository with a row each in the image licence log.
+
+**Melting chrome, fixed twice over.** After the pacing change it was very hard: the slab cooled between every hit, and the Frenzy's rocking kept pulling me off it. Now it only cools when you stop, and the Frenzy holds you steady over chrome.
