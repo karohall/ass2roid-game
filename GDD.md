@@ -43,6 +43,23 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
   - **X-ray:** the rock goes see-through. Seams, sealed finds and artefacts show across the whole layer, even in the dark. The last chance to fill the archive cabinet before the Core.
   - **Uncensored:** everything the Belt Authority blacked out reads in full: the Crack Spores' nutrition facts, what The Crack really is, why numbers were withdrawn. Reach the Core under XXX, and the Core card is uncensored too: the Core's compound is *Solanum tuberosum*, the potato.
   - **To write:** the uncensored texts. Lots of work, but hilarious.
+  - **How it looks:** the black bars stay but go see-through, so you read through them; a small XXX stamp on the card. You can tell what was hidden.
+  - **Checklist: the essentials** (redacted outright, and the archive's gaps):
+    1. The Core card (KR-1 E): `█████ ███…` *Redacted by the Belt Authority.* Under XXX: the potato (decided).
+    2. The Core end screen: *What you found here is redacted by the Belt Authority.*
+    3. Crack Spores card, Nutrition Facts: *redacted*.
+    4. Crack Spores card, Fun fact: *…The Crack, which the Belt Authority says is closed.*
+    5. Withdrawn numbers 10, 11, 15 and 18: *Withdrawn by the Foundation. No further comment.* Each reveals what it was (No. 10 was the straw).
+  - **Checklist: extras** (evasive, for more laughs):
+    - VHS cassette: *The Foundation has viewed season six… No further comment.*
+    - Striped sweatband: *Sweat of undetermined origin. The Foundation has declined to test it.*
+    - Moon boot: *Size undisclosed… The Foundation considers the matter closed.*
+    - The Crack's layer card: *…home of the Jacked Asses. The Foundation has not met them. Yet.*
+    - The Shaker Strata's layer card: *…The Foundation has stopped asking.*
+    - Regolith Whey card: *it was milk once, according to the label.*
+    - The first drink: *The Foundation does not endorse them. The Foundation has noted their usefulness.*
+    - The footer on every artefact card: *Recovered under conditions the Kroeber Foundation does not endorse.* Under XXX: what the conditions were.
+  - **Places to add redactions,** so XXX has more to reveal: the six pending archive cards (the inspection record and the signet ring suit it best), a blacked-out line now and then in the Belt Authority Public Service log, and Näsa's fine print (*"Terms: █████"*).
 - **The recipe slots:** four ingredients give ten two-ingredient recipes. Taken: WW Strength, PP Calm, WC Stamina, PS Hyperfocus, WP Recovery, CS Candygirl, SS XXX. Free: CC and WS. Jizz+ takes three (WWP).
 
 ## Frenzy and Stillness (push your luck)

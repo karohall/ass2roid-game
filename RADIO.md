@@ -171,6 +171,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Wildcard | **Kármán Lines (Extended Mix)** | Long instrumental, ambient, made for drifting | **Finished** |
 | _To decide_ | **Ex Profundo** | Replaces one of the four planned songs (which one: to decide) | **Finished** |
 | (new) | **Stella Solaris** | Rewritten as trip-hop (2026-11-13) | **Finished** |
+| (new) | **Alea Iacta Est** | Added 2026-11-14 | **Finished** |
 
 ### Space oddities *(special occasions)*
 
@@ -315,6 +316,7 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 | 10 | Sergeant Rock | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/The Pump Zone/The Pump Zone Sergeant Rock.mp3 | 2026-11-13 |
 | 11 | Kármán Lines (Extended Mix) | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Kármán Lines (Extended Mix).mp3 | 2026-10-23 |
 | 12 | Stella Solaris | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Stella Solaris.mp3 | 2026-11-13 |
+| 13 | Alea Iacta Est | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Alea Iacta Est.mp3 | 2026-11-14 |
 
 ## DJ voice log
 
