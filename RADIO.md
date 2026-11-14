@@ -124,7 +124,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Signature | **Down in the Shaft** | Arena-sized, 150 BPM, gang vocals | **Finished** |
 | Contrast | **Hard Hat, Hard Body** | Slower, sultry power ballad, breathy vocals | **Finished** |
 | Wildcard | **Presslufthammerherz** (Jackhammer Heart) | Synth metal, sequenced bass, more electronic; drill sounds sampled into the rhythm. In German: the Pump Zone's language flair | **Finished** |
-| Driver | **Sergeant Rock** | Added 2026-11-13; replaces Heavy Ore (2026-11-14), which is out | **Finished** |
+| Driver | **Drill Instructor** | Added 2026-11-13 as Sergeant Rock, renamed 2026-11-14; replaces Heavy Ore, which is out | **Finished** |
 | Secret | **Candygirl (Asylum Mix)** | Acid techno. The Candygirl recipe is chanted in it: one Chrome Filings, one Crack Spores (see the secret menu in the GDD). **Not in the rotation (2026-11-14):** it turns up at random, 1 time in 5 when the Pump Zone picks a song (tuning in, a Frenzy cutting in, a song ending) | **Finished** (2026-11-14) |
 
 ### Disco Gravitas
@@ -313,7 +313,7 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 | 7 | Dolce de Leche+ | Disco Gravitas | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | | |
 | 8 | Candygirl (Asylum Mix) | The Pump Zone (secret menu) | Suno | Pro | Yes (made on Pro) | No | audio/Radio/The Pump Zone/Candygirl (Asylum Mix).mp3 | 2026-11-14 |
 | 9 | Presslufthammerherz | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/The Pump Zone/The Pump Zone Presslufthammerherz.mp3 | 2026-11-12 |
-| 10 | Sergeant Rock | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/The Pump Zone/The Pump Zone Sergeant Rock.mp3 | 2026-11-13 |
+| 10 | Drill Instructor (was Sergeant Rock) | The Pump Zone | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/The Pump Zone/The Pump Zone Sergeant Rock.mp3 | 2026-11-13 |
 | 11 | Kármán Lines (Extended Mix) | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Kármán Lines (Extended Mix).mp3 | 2026-10-23 |
 | 12 | Stella Solaris | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Stella Solaris.mp3 | 2026-11-13 |
 | 13 | Alea Iacta Est | Void FM | Suno | Pro: song assigned to you | Yes, once downloaded | Not required | audio/Radio/Void FM/Void FM Alea Iacta Est.mp3 | 2026-11-14 |
