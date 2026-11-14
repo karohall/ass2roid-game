@@ -1474,15 +1474,9 @@ function draw() {
     if (c.t === SEALED) {                                    // a sealed find: a dim ◈ in the rock, bright when its state can open it
       const open = seamAnswers(c.kind);
       if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
-      if (open) {                                             // its state is here: a bright specimen box
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 5.5, py + 5.5, T - 11, T - 11); ctx.lineWidth = 1;
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 22px monospace'; ctx.fillText('◈', cx, cy);
-      } else {                                                // waiting: the ◈, and a specimen label with the state it waits for
-        ctx.strokeStyle = '#111'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 3.5, py + 3.5, T - 7, T - 7); ctx.lineWidth = 1;
-        ctx.fillStyle = '#111'; ctx.font = 'bold 18px monospace'; ctx.fillText('◈', cx, py + 15);
-        ctx.fillRect(px + 3, py + T - 15, T - 6, 12);
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 10px monospace'; ctx.fillText(c.kind === 'still' ? 'STILL' : 'FRENZY', cx, py + T - 9);
-      }
+      ctx.strokeStyle = open ? '#fff' : '#bdbdbd'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 5.5, py + 5.5, T - 11, T - 11); ctx.lineWidth = 1;   // framed, like a specimen box
+      ctx.fillStyle = open ? '#fff' : '#cfcfcf'; ctx.font = open ? 'bold 22px monospace' : 'bold 18px monospace'; ctx.fillText('◈', cx, open ? cy : cy - 3);
+      if (!open) { ctx.font = 'bold 8px monospace'; ctx.fillText(c.kind === 'still' ? 'STILL' : 'FRENZY', cx, py + T - 9); }   // the state it waits for, on the box itself
       ctx.font = 'bold 14px monospace';
     }
     if (c.t === SEAM || c.t === ART) {
