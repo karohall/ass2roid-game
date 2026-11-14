@@ -371,8 +371,8 @@ const RADIO = {
   void:  { name: 'Void FM', kind: 'Station', fx: 'A mood, not a tactic. Except in the dark.', ident: ['Not endorsed by Näsa. Listened to by wreckers of civilisation.', 'In space no one can hear you cry.'], songs: [
     SONG('Void FM', 'In Profundum Imus (Ex Profundo)', 'Void FM In Profundum Imus (Ex Profundo)'),
     SONG('Void FM', 'Kármán Lines (Extended Mix)', 'Void FM Kármán Lines (Extended Mix)'),
-    SONG('Void FM', 'Stella Solaris', 'Void FM Stella Solaris'),
-    SONG('Void FM', 'Alea Iacta Est', 'Void FM Alea Iacta Est')] },
+    { ...SONG('Void FM', 'Stella Solaris', 'Void FM Stella Solaris'), ident: 1 },   // a song about a dead mother: in space no one can hear you cry
+    { ...SONG('Void FM', 'Alea Iacta Est', 'Void FM Alea Iacta Est'), ident: 0 }] },   // early industrial: always the wreckers of civilisation
 };
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
@@ -1563,7 +1563,7 @@ function renderStatic() {
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
-  const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
+  const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried

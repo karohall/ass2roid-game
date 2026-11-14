@@ -153,7 +153,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 - **DNA:** futurepop at the edge of emptiness. Space without an object, rather than melancholia. Wide, still, unhurried; feeling is allowed, sorrow is not the point.
 - **DJ:** a sleepy, laissez-faire, posh goth gentleman, 80s Victorian goth. A calm, slow late-night voice who talks about depth and distance as if they were the same thing. Never in a hurry.
 - **Station ID:** *"Welcome to the never-ending show"* (spoken by the DJ when the signal first comes through)
-- **Slogans (2026-11-13, in the game):** they take turns in the radio ticker after the song title, a different one with each song.
+- **Slogans (2026-11-13, in the game):** they take turns in the radio ticker after the song title, a different one with each song. A song can keep one of its own: Alea Iacta Est, early industrial, always gets the wreckers; Stella Solaris, about a dead mother, always gets the cry.
   - *"Not endorsed by Näsa. Listened to by wreckers of civilisation."*
   - *"In space no one can hear you cry."* A nod to the Alien tagline, scream turned to cry.
 
@@ -171,7 +171,7 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Wildcard | **Kármán Lines (Extended Mix)** | Long instrumental, ambient, made for drifting | **Finished** |
 | _To decide_ | **Ex Profundo** | Replaces one of the four planned songs (which one: to decide) | **Finished** |
 | (new) | **Stella Solaris** | Rewritten as trip-hop (2026-11-13) | **Finished** |
-| (new) | **Alea Iacta Est** | Added 2026-11-14 | **Finished** |
+| (new) | **Alea Iacta Est** | Early industrial, added 2026-11-14. Its ticker always carries the *wreckers of civilisation* slogan | **Finished** |
 
 ### Space oddities *(special occasions)*
 
