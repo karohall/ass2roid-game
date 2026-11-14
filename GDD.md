@@ -25,7 +25,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 
 - **Strength:** more digging power, for harder layers
 - **Stamina:** drink it any time: everything already in your system (other Milk+, Frenzy or Stillness) lasts 50% longer
-- **Energy:** faster digging for a while
+- **Energy (cut, 2026-11-14):** was "faster digging for a while". Too close to Strength (more rock per hit) and Frenzy (double power, mashing). The menu stays at five; new things happen on the secret menu.
 - **Hyperfocus:** a steady hand: drinks don't stack (the dose window counts ×1), the balance meter holds still, and so does an open seam: if a Frenzy or Stillness ends while Hyperfocus lasts, its seam stays open until the Hyperfocus wears off
 - **Calm:** pushes the balance meter toward Stillness
 - **Recovery:** repairs the drill after a Frenzy, at once, and the pick axe goes back on its hook (1 Regolith Whey + 1 Legacy Powder)
@@ -38,13 +38,17 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
   - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 45 seconds, ↑ runs you up the tunnel."*
   - **What it does: you can run upwards (2026-11-13; built 2026-11-14).** For 45 seconds (2026-11-14; was 15), ↑ takes you up through open tunnel, and you hold on instead of falling; the effects line counts it down. Then gravity takes over again. Up: back for a missed W, a seam, or a sealed find you passed. This is where climbing lives: not everyday movement, but a secret you earn, so going down stays a commitment the rest of the time.
   - **Can't be made early:** Crack Spores only exist in The Crack.
-- **Jizz+ (idea, 2026-11-14):** Disco Gravitas, sung by a saucy bartender or barista. **It lets you shake two bottles at the same time.** Proposed: for a while, one shake makes two bottles of the Milk+ you choose; you pay the ingredients for both, but shake only once. It saves time, and two bottles at hand tempt you to drink them in quick succession: the dose window does the rest. Recipe: to come from the song.
-- **XXX:** later, in its own song, on its own station (Void FM is the one left).
+- **Jizz+ (idea, 2026-11-14):** Disco Gravitas, sung by a saucy bartender or barista. **It lets you shake two bottles at the same time.** Proposed: for a while, one shake makes two bottles of the Milk+ you choose; you pay the ingredients for both, but shake only once. It saves time, and two bottles at hand tempt you to drink them in quick succession: the dose window does the rest. **Recipe (proposed): W + W + P**, two Regolith Whey and one Legacy Powder: the milkiest thing on the menu, and the first three-ingredient recipe. It works from layer 2, so it lasts three layers (a two-ingredient recipe would have needed The Crack, too close to the end). Unless the song decides otherwise.
+- **XXX (2026-11-14): the uncensored version.** Void FM, the station of consciousness. **Recipe: S + S**, two Crack Spores: pure Crack, so only at the bottom. For a while:
+  - **X-ray:** the rock goes see-through. Seams, sealed finds and artefacts show across the whole layer, even in the dark. The last chance to fill the archive cabinet before the Core.
+  - **Uncensored:** everything the Belt Authority blacked out reads in full: the Crack Spores' nutrition facts, what The Crack really is, why numbers were withdrawn. Reach the Core under XXX, and the Core card is uncensored too.
+  - **To write:** the uncensored texts. Lots of work, but hilarious.
+- **The recipe slots:** four ingredients give ten two-ingredient recipes. Taken: WW Strength, PP Calm, WC Stamina, PS Hyperfocus, WP Recovery, CS Candygirl, SS XXX. Free: CC and WS. Jizz+ takes three (WWP).
 
 ## Frenzy and Stillness (push your luck)
 - **Rule:** *Double check any possible interactions.* The Foundation measures how fast, not just how much.
 - **The balance meter** runs from −100 (Stillness) through 0 (balanced) to +100 (Frenzy), and drifts slowly back toward 0.
-- **Every Milk+ has a direction and a weight:** Strength +30, Calm −30, Stamina and Hyperfocus +10 each, Recovery 0. Energy gets its own weight later.
+- **Every Milk+ has a direction and a weight:** Strength +30, Calm −30, Stamina and Hyperfocus +10 each, Recovery 0.
 - **The dose window does the damage.** Each drink's push is multiplied by the number of drinks in the last 20 seconds: ×1, ×1.5, ×2, ×3. Drinking slowly is safe; several in quick succession tips you over. The window is shown on the meter ("next drink ×1.5"), so players learn the rule by watching it.
 - **Reaching the edge tips you into a state:** Frenzy at the top, Stillness at the bottom. In Regolith Prime the edge is ±80: two quick drinks reach *Hell yeah*, and a third (or a nudge from another Milk+) tips you over. The Shaker Strata needs ±100; the Chrome Vein ±90, so two quick Strengths and a Stamina tip you over (its rock is the toughest, and Artefact 2 is only found there).
 - **The meter** uses the guide's dosage scale across both sides: *Get out of our sight → Coward → Meh → We see you → Hell yeah* (Stillness → balanced → Frenzy). Calling Calm "Coward" is the Tourist Guide's tone, and hides that Stillness is a reward too.
