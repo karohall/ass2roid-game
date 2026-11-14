@@ -780,7 +780,7 @@ function act(dx, dy) {
 }
 
 function hit(x, y, c) {
-  if (c.t === ROCK) { warn('Belt Authority bedrock. Do not.'); return; }
+  if (c.t === ROCK) { warn('Belt Authority bedrock: the wall of the shaft. Do not dig the walls.'); return; }
   if (c.t === SLAB) { slabHit(x, y, c); return; }
   if ((c.t === SEAM || c.t === ART || c.t === SEALED) && !seamAnswers(c.kind)) {
     warn(c.t === SEALED ? `Sealed in the rock. ${sealedHow(c.kind)}` : c.kind === 'still' ? 'This seam only answers to stillness.' : 'This seam does not respond to sober tools.');
