@@ -32,7 +32,7 @@ Mixed from ingredients found in the layers. Each one is a temporary effect:
 - **Sleep:** ends the shift and saves progress
 
 **Secret menu:** Jizz+, Candygirl, XXX. **Secret-menu recipes are hidden in songs (2026-11-13):** each secret Milk+ has its recipe sung in a song on the radio, so players who listen know it and nobody else does. No Frenzy unlock: the ingredients gate it. This is a rule for the whole game: **the radio teaches you things** (see The radio).
-- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
+- **Candygirl = CC: 1 Crack Spores + 1 Chrome Filings** ("crack 'n' chrome"). The recipe, one Chrome Filings and one Crack Spores, is chanted in the song of the same name: **Candygirl (Asylum Mix)**, acid techno on The Pump Zone (2026-11-14). It stays out of the Pump Zone's rotation and turns up at random: 1 time in 5 when the station picks a song (2026-11-14). Since a Frenzy cuts to The Pump Zone, many players will hear it mid-Frenzy.
   - **Hidden:** it isn't on the menu, with no row or placeholder.
   - **Key 0 (built 2026-11-14):** when you hold Crack Spores and Chrome Filings, pressing 0 shakes it (*"Shaking something that is not on the menu…"*), and it goes down as soon as it is ready. Without the ingredients, 0 does nothing: it's a secret.
   - **First time:** a discovery, with confetti: *"Secret menu: Candygirl. C&C: Crack and chrome. For 15 seconds, ↑ runs you up the tunnel."*

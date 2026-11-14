@@ -294,7 +294,7 @@ const CONFIG = {
   drift:   { durationMs: 30000 },  // Stillness overload: Calm on top of Stillness. Stands in for The You Show (about 4 minutes)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3 },   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75 },   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
+  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2 },   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },
@@ -358,8 +358,8 @@ const RADIO = {
     SONG('The Pump Zone', 'Down in the Shaft', 'The Pump Zone Down In The Shaft'),
     SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body'),
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
-    SONG('The Pump Zone', 'Sergeant Rock', 'The Pump Zone Sergeant Rock'),
-    SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)')] },   // the secret menu's recipe is chanted in it
+    SONG('The Pump Zone', 'Sergeant Rock', 'The Pump Zone Sergeant Rock')],
+    rare: [SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)')] },   // not in the rotation: it turns up now and then. The secret menu's recipe is chanted in it
   disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
@@ -374,7 +374,7 @@ const RADIO = {
 const STATIONS = ['pump', 'disco', 'void'];
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
 // It starts on the tape once the tape has a song; while the tape is blank, on the Pump Zone, so Begin shift has music.
-const radio = { on: RADIO.tape.songs[0].file ? 'tape' : 'pump', last: 'pump', since: 0, clock: 0, idx: {}, vol: 0 };
+const radio = { on: RADIO.tape.songs[0].file ? 'tape' : 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, vol: 0 };
 function radioKey(k) {
   if (s && s.drift) return;                                // The You Show plays to the end
   if (!sound.on) {                                          // the first R turns the radio on, on the station it is set to
@@ -398,7 +398,9 @@ function radioNow() {
   if (s && s.inState === 'still') return { key: 'void', note: 'Void FM is coming through.' };
   return { key: radio.on };
 }
-const songOf = n => { const st = RADIO[n.key]; return st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
+const songOf = n => { const st = RADIO[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
+// A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
+function pickRare(key) { const r = RADIO[key].rare; radio.rare[key] = r && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
 
 // The sound itself: one player, cross-fading between songs. Browsers only allow sound after the
@@ -407,7 +409,8 @@ const player = new Audio(); player.preload = 'auto';
 const sound = { on: false, file: '', vol: 0 };
 player.addEventListener('ended', () => {
   const n = radioNow();
-  if (n.song === undefined) radio.idx[n.key] = (radio.idx[n.key] || 0) + 1;   // the next song on this station
+  if (n.song === undefined && radio.rare[n.key]) radio.rare[n.key] = null;     // a rare song gives way to the rotation
+  else if (n.song === undefined) { radio.idx[n.key] = (radio.idx[n.key] || 0) + 1; pickRare(n.key); }   // the next song on this station
   else { player.currentTime = 0; player.play().catch(() => {}); }             // a song that cut in plays again
 });
 // V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
@@ -433,7 +436,7 @@ function soundTick(dt) {
   const n = radioNow();
   if (sound.on && n.key !== sound.key) {                                      // a different station: join it mid-broadcast
     sound.key = n.key;
-    if (n.song === undefined) radio.idx[n.key] = Math.floor(Math.random() * RADIO[n.key].songs.length);
+    if (n.song === undefined) { radio.idx[n.key] = Math.floor(Math.random() * RADIO[n.key].songs.length); pickRare(n.key); }
     sound.randomStart = n.song === undefined;
   }
   const want = sound.on ? songOf(n).file || '' : '';
