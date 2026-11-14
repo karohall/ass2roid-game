@@ -167,7 +167,6 @@
       <div id="recipes"></div>
       <div class="small later" data-reveal="learning" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
       <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
-      <div class="small later" data-reveal="secret" style="margin-top:6px;color:var(--text)">[0] Secret menu. Not on the Milk+ menu: hold the right ingredients and press 0.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
@@ -881,7 +880,7 @@ function press(v) {
 function secretCandy() {
   if (!running || !sound.on || shaking()) return;
   const r = CONFIG.candy.recipe;
-  if (!Object.entries(r).every(([k, n]) => s.inv[k] >= n)) { warn('Secret menu: not with what you’re holding.'); return; }   // how, never what
+  if (!Object.entries(r).every(([k, n]) => s.inv[k] >= n)) return;   // nothing happens: it's a secret
   for (const [k, n] of Object.entries(r)) s.inv[k] -= n;
   s.shake = { v: 'candy', until: now() + CONFIG.mix.shakeMs };
   held = null; pendingTap = null;
@@ -1605,7 +1604,6 @@ const REVEAL = {
   recipe_focus:   () => known('spores') || s.bottles.focus > 0,
   recipe_recovery: () => s.drillWorn || s.bottles.recovery > 0,
   drill:  () => s.drillWorn,
-  secret: () => known('chrome') && known('spores'),       // the secret menu shows itself once its ingredients exist (Candygirl: Chrome + Spores)
 };
 // The first tile within r of the prospector that matches.
 const near = (r, f) => { for (let y = Math.max(0, p.y - r); y <= Math.min(H - 1, p.y + r); y++) for (let x = Math.max(0, p.x - r); x <= Math.min(W - 1, p.x + r); x++) if (f(g[y][x])) return g[y][x]; return null; };
