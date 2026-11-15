@@ -325,6 +325,7 @@ const CONFIG = {
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },
   // The secret menu: not on the Milk+ menu. Its recipes are sung on the radio (Candygirl's in Candygirl (Asylum Mix)).
+  jizz:  { recipe: { whey: 2, powder: 1 }, durationMs: 45000, song: null },   // Jizz+, key 9, Disco Gravitas: for a while every shake makes two bottles (you pay for both). song: its track, once unlocked in Suno
   candy: { recipe: { chrome: 1, spores: 1 }, durationMs: 45000, glide: 1 },   // glide: the stripes move about one tile a second   // Candygirl, key 0: for a while, ↑ runs you up open tunnel         // shaking a Milk+; no digging meanwhile. Drinking is instant.
 
 };
@@ -333,7 +334,7 @@ const CONFIG = {
 // CONTENT: names and Field Guide copy.
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'recovery', 'stamina', 'focus'];
-const VNAME = { candy: 'Candygirl', strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
+const VNAME = { candy: 'Candygirl', jizz: 'Jizz+', strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
 const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls toward Stillness, where everything comes out double.', stamina: 'Everything in your system lasts 50% longer.', focus: 'Drinks don’t move the meter, and an open ? seam stays open.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
@@ -345,7 +346,7 @@ const LAYER_CARD = [
   'Surface dust and compressed grit. Kroeber Fact: the average prospector consumes 3.4 Milk+ before acknowledging the smell. The Foundation does not consider this a problem.',
   'Fossilised protein shakers, lids still on. Kroeber Fact: carbon dating places them in "leg day". The Foundation has stopped asking.',
   'Metallic, and coveted by Näsa™. Kroeber Fact: Näsa has filed 41 claims on this vein. All were written in Comic Sans.',
-  'Bioluminescent, and very dark. Kroeber Fact: the Belt Authority lists it as home of the Jacked Asses. The Foundation has not met them. Yet.',
+  'Bioluminescent, and very dark. Kroeber Fact: the Belt Authority has closed it twice. It keeps opening.',
 ];
 const LAYER_INTRO = [                                          // the loading screen sets the mood; practical hints come in play
   '',
@@ -426,6 +427,7 @@ function radioNow() {
   if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
   if (s && s.drift) return { key: 'oddity', song: 0 };
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
+  if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Jizz+. Doubles, darling.' };   // once the song is unlocked
   if (s && candy()) return { key: 'pump', song: 0, track: RADIO.pump.rare[0], cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
 }
@@ -611,6 +613,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
+const jizz = () => s.fx.jizz > now();     // Jizz+: every shake, two bottles
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
 // Safe for photosensitive players (2026-11-14): the four pastels lie within 7% brightness of each other (no change counts as
 // a flash), the stripes glide slowly instead of stepping, the colour fades in and out over a second, and with the
@@ -951,19 +954,21 @@ const shaking = () => s.shake && s.shake.until > now();
 
 function mix(v) {
   if (!running || shaking() || !canMix(v)) return;
-  for (const [k, n] of Object.entries(CONFIG.recipes[v])) s.inv[k] -= n;
-  s.shake = { v, until: now() + CONFIG.mix.shakeMs };
+  const two = jizz() && Object.entries(CONFIG.recipes[v]).every(([k, n]) => s.inv[k] >= n * 2);   // Jizz+: two bottles in one shake, if you can pay for both
+  for (const [k, n] of Object.entries(CONFIG.recipes[v])) s.inv[k] -= n * (two ? 2 : 1);
+  s.shake = { v, two, until: now() + CONFIG.mix.shakeMs };
   held = null; pendingTap = null;
   say(`Shaking ${VNAME[v]}…`);
 }
 
 function finishShake() {
-  const { v } = s.shake;
+  const { v, two } = s.shake;
   s.shake = null;
   s.shakesDone++;
   if (v === 'candy') return drinkCandy();
-  s.bottles[v]++;
-  say(`${VNAME[v]} ready. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
+  if (v === 'jizz') return drinkJizz();
+  s.bottles[v] += two ? 2 : 1;
+  say(two ? `Two bottles of ${VNAME[v]}, one shake. Press ${VARIANTS.indexOf(v) + 1} to drink.` : `${VNAME[v]} ready. Press ${VARIANTS.indexOf(v) + 1} to drink.`);
 }
 
 // One button (and key 1–5) per shake: SHAKE → Shaking… → DRINK.
@@ -980,6 +985,24 @@ function press(v) {
 // The secret menu. Candygirl isn't on the menu: you know the recipe from the song, or you don't.
 // Holding one Chrome Filings and one Crack Spores, 0 shakes it, and it goes down as soon as it is ready.
 const candyRecipe = () => Object.entries(CONFIG.candy.recipe).map(([k, n]) => `${n}× ${ING[k].name}`).join(' + ');
+// Jizz+: the bartender at the Milk+ bar pours doubles. Two Regolith Whey and one Legacy Powder, 9.
+const jizzRecipe = () => Object.entries(CONFIG.jizz.recipe).map(([k, n]) => `${n}× ${ING[k].name}`).join(' + ');
+function secretJizz() {
+  if (!running || !sound.on || shaking()) return;
+  const r = CONFIG.jizz.recipe;
+  if (!Object.entries(r).every(([k, n]) => s.inv[k] >= n)) return;   // nothing happens: it's a secret
+  for (const [k, n] of Object.entries(r)) s.inv[k] -= n;
+  s.shake = { v: 'jizz', until: now() + CONFIG.mix.shakeMs };
+  held = null; pendingTap = null;
+  say('Shaking something the bartender recommends…');
+}
+function drinkJizz() {
+  s.fx.jizz = now() + CONFIG.jizz.durationMs;
+  if (!s.jizzFound) {
+    s.jizzFound = true; radio.unlocked.jizz = true; unlock('secret_jizz'); renderGuide();
+    celebrate(); announce(`Secret menu: ${em('Jizz+')}. Two whey and a powder, poured by the bartender. For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles.`, 0, true);
+  } else say('Jizz+. Doubles, darling.');
+}
 function secretCandy() {
   if (!running || !sound.on || shaking()) return;
   const r = CONFIG.candy.recipe;
@@ -1074,7 +1097,8 @@ function guideEntries() {
     ...CONFIG.artefacts.filter(a => !a.withdrawn).map(a => ({ id: a.id, cat: 'Archive', art: a, label: String(a.no),
       title: `${catNo(a)} · ${a.name}`,
       body: ARTEFACT_CARD[a.id]((s && s.artCrater[a.id]) || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
-    ...(s && s.guide.includes('secret_candy') ? [secretCard()] : []),   // only once found: not a ? slot
+    ...(s && s.guide.includes('secret_candy') ? [secretCard()] : []),
+    ...(s && s.guide.includes('secret_jizz') ? [{ id: 'secret_jizz', cat: 'Secret menu', label: 'Jizz+', title: 'Jizz+', body: `Two Regolith Whey and one Legacy Powder, shaken with 9. Poured by the bartender at the Milk+ bar. For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles; you pay for both.` }] : []),   // only once found: not a ? slot
   ];
 }
 
@@ -1513,7 +1537,7 @@ function pause() {
 // Every timer is a timestamp, so freezing time means shifting them all by the time spent away
 // (pause, and the loading screen between layers).
 function shiftTimers(d) {
-  for (const v of [...VARIANTS, 'candy']) if (s.fx[v]) s.fx[v] += d;
+  for (const v of [...VARIANTS, 'candy', 'jizz']) if (s.fx[v]) s.fx[v] += d;
   for (const k of ['frenzyUntil', 'stillUntil', 'announceUntil', 'lastWarn', 'lastHitAt']) if (s[k]) s[k] += d;
   s.window = s.window.map(w => w + d);
   if (s.shake) s.shake.until += d;
@@ -1577,6 +1601,9 @@ function update(dt) {
     const marks = near(4, c => c.t === GRAFFITI && !c.seen);
     if (marks && s.announceUntil < t) { marks.seen = true; announce('Scratches in the rock nearby. Someone left a message. Dig it out to read it.'); }
     // The secret menu unlocks as soon as you hold its ingredients: a rumour, once the news before it has been read.
+    if (!s.jizzFound && !s.jizzRumour && s.layer >= 1 && radioNow().key === 'disco' && s.inv.whey >= 2 && s.inv.powder >= 1 && s.announceUntil < t) {
+      s.jizzRumour = true; announce('Rumour: the bartender at the Milk+ bar pours doubles. Two whey and a powder, and ask for 9.');
+    }
     // The secret menu's rumour: once, when you first hold its ingredients. And once more in The Crack, the whole recipe this time,
     // if you still haven't had Candygirl: the last layer is the last chance.
     const lastLayer = s.layer === CONFIG.layers.length - 1;
@@ -1811,7 +1838,8 @@ const REVEAL = {
   recipe_stamina: () => known('chrome') || s.bottles.stamina > 0,
   recipe_focus:   () => known('spores') || s.bottles.focus > 0,
   recipe_recovery: () => s.drillWorn || s.bottles.recovery > 0,
-  recipe_candy:   () => !!s.candyFound,                    // the secret menu shows once you have found it
+  recipe_candy:   () => !!s.candyFound,
+  recipe_jizz:    () => !!s.jizzFound,                    // the secret menu shows once you have found it
   drill:  () => s.drillWorn,
   blast:  () => !!(s.chargeRumour || s.chargesSet),
 };
@@ -1890,12 +1918,17 @@ function renderStatic() {
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}">Shake</button>
     </div>`).join('') + `
+    <div class="recipe later" data-reveal="recipe_jizz">
+      <div class="name"><b>[9] Jizz+</b><br><span class="small">${jizzRecipe()}</span></div>
+      <button id="act_jizz">Shake</button>
+    </div>
     <div class="recipe later" data-reveal="recipe_candy">
       <div class="name"><b>[0] Candygirl</b><br><span class="small">${candyRecipe()}</span></div>
       <button id="act_candy">Shake</button>
     </div>`;   // the secret menu: only once found
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
   $('act_candy').onclick = () => { secretCandy(); cv.focus(); };
+  $('act_jizz').onclick = () => { secretJizz(); cv.focus(); };
   // Rows that were already visible come back at once when the menu is rebuilt for a new layer.
   document.querySelectorAll('#recipes [data-reveal]').forEach(el => { if (s && REVEAL[el.dataset.reveal]()) el.classList.add('shown', 'settled'); });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
@@ -1945,9 +1978,11 @@ function hud() {
     b.className = ready ? 'ready' : '';
     b.disabled = !running || (!ready && (shaking() || !canMix(v)));
   }
+  { const b = $('act_jizz'), mine = shaking() && s.shake.v === 'jizz'; setText('act_jizz', mine ? 'Shaking…' : 'Shake'); b.disabled = !running || shaking() || !Object.entries(CONFIG.jizz.recipe).every(([k, n]) => s.inv[k] >= n); }
   { const b = $('act_candy'), mine = shaking() && s.shake.v === 'candy'; setText('act_candy', mine ? 'Shaking…' : 'Shake'); b.disabled = !running || shaking() || !Object.entries(CONFIG.candy.recipe).every(([k, n]) => s.inv[k] >= n); }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
   if (candy()) fx.push(`Candygirl ${Math.ceil((s.fx.candy - t) / 1000)}s`);
+  if (jizz()) fx.push(`Jizz+ ${Math.ceil((s.fx.jizz - t) / 1000)}s`);
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
@@ -2042,6 +2077,7 @@ addEventListener('keydown', e => {
   const i = '12345'.indexOf(k);
   if (i >= 0) press(VARIANTS[i]);
   if (k === '0') secretCandy();   // the secret menu
+  if (k === '9') secretJizz();
 });
 addEventListener('keyup', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
