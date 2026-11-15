@@ -268,14 +268,13 @@ const CONFIG = {
       ] },
     { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 90, tint: '#4f5358',
       slabs: { rows: [8, 15, 22, 37, 44, 51], gap: 2 },   // Näsa chrome: can't be dug, find the gap
-      graffiti: ['chrome'],        // scratched into the rock: a piece of the secret menu
+      graffiti: ['chrome', 'crack'],   // scratched into the rock: the secret menu's recipe, both pieces here, where Crack Spores first turn up (2026-11-15: CRACK was in The Crack, too late to use)
       yields: { chrome: 0.05, whey: 0.05, powder: 0.02, spores: 0.0175 },   // Whey doubled: the toughest rock needs Strength
       craters: [
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
       ] },
     { name: 'The Crack', rows: 60, hp: [36, 42], bandHp: 240, crustHp: 260, crustMinPower: 7, tipAt: 90, tint: '#3d4744',
-      graffiti: ['crack'],
       dark: { clear: 1.4, fade: 3.4, voidClear: 3, voidFade: 6.5 },   // darkness: you see about three tiles around you, twice that on Void FM (night vision); the Crack Spores glow
       yields: { spores: 0.06, whey: 0.05, chrome: 0.02, powder: 0.02 },
       craters: [
@@ -1052,7 +1051,7 @@ const SECRET = {
 };
 const CLUE_FOUND = {
   chrome: 'Scratched into the rock: “…AND CHROME.” The rest is scraped away.',
-  crack:  'Scratched into the rock: “CRACK AND…” The rest is too far into the dark to read.',
+  crack:  'Scratched into the rock: “CRACK AND…” The rest runs under the Näsa chrome.',
 };
 function secretCard() {
   const known = Object.fromEntries(Object.entries(SECRET.candy.clues).map(([k, w]) => [k, s.clues[k] ? w : '█'.repeat(Math.max(1, w.length))]));
