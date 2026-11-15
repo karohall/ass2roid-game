@@ -51,6 +51,8 @@
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
   #rover .row + .row { font-size:12px; line-height:1.5; }   /* the stats, smaller than the layer name above them */
+  #radioFx { white-space:pre-line; min-height:2.8em; }   /* two lines, always: the station's effect, then the lesson; the box never changes height */
+  #radioKeys { white-space:nowrap; flex:none; margin-left:12px; align-self:flex-start; }
   #radioBox .label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-right:6px; }
   #legend { width:758px; min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:4px 14px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   .sw { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
@@ -376,7 +378,7 @@ const catNo = a => a.no === 'E' ? 'KR-1 E' : `KR-1 ${'ABCD'[s.artLayer[a.id] ?? 
 // (on itch.io) but stays out of the repository. A song without a file isn't in the list yet.
 const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${name}.mp3` });
 const RADIO = {
-  tape:  { name: 'Testarocca', kind: 'Tape', fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
+  tape:  { name: 'Tape', kind: 'Tape', ident: ['Side A'], fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
     SONG('Tape', 'Testarocca', 'Testarocca')] },
   pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: [
     SONG('The Pump Zone', 'Down in the Shaft', 'The Pump Zone Down In The Shaft'),
@@ -1881,7 +1883,7 @@ function radioHud() {
   const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
-    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : ' Each station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
+    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + (s && s.radioHops ? '' : '\nEach station does something: R for the next.'));   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }
 
