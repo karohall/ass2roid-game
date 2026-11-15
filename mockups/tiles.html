@@ -124,7 +124,11 @@ function body(c, shape, fill) { c.beginPath(); shape(c); c.lineJoin = 'miter'; c
 const AVATAR = {
   block: { name: 'The block, outlined', why: 'Chosen. Today’s prospector, cut to the grid: chamfered, an ink outline, a glint on the visor. In The Crack, a headlamp on the brow.',
     draw(c, X, Y, o) { body(c, c => cham(c, X + 8, Y + 6, 24, 30, 4), o.fill); c.fillStyle = C.ink; c.fillRect(X + 13, Y + 12, 14, 6); c.fillStyle = C.steel; c.fillRect(X + 15, Y + 13, 5, 1);
-      if (o.dark) { c.fillStyle = C.ink; c.fillRect(X + 17, Y + 6.5, 6, 4); c.save(); c.shadowColor = '#fff'; c.shadowBlur = 10; c.fillStyle = '#fff'; c.fillRect(X + 18, Y + 7.5, 4, 2); c.restore(); } } },   // in The Crack: a headlamp on the brow
+      if (o.dark) {   // in The Crack: a headlamp on the brow. No outline: a halo of light says it glows.
+        // On the crown, so the light shows against the dark.
+        const lx = X + 20, ly = Y + 5, R = 13, h = c.createRadialGradient(lx, ly, 0, lx, ly, R);
+        h.addColorStop(0, 'rgba(255,255,255,.95)'); h.addColorStop(.3, 'rgba(255,255,255,.4)'); h.addColorStop(1, 'rgba(255,255,255,0)');
+        c.fillStyle = h; c.fillRect(lx - R, ly - R, R * 2, R * 2); c.save(); c.shadowColor = '#fff'; c.shadowBlur = 6; c.fillStyle = '#fff'; c.fillRect(lx - 2.5, ly - 1.5, 5, 3); c.restore(); } } },
   lamp: { name: 'Helmet and lamp', why: 'A helmet over a narrower suit, a headlamp on the brow. The lamp is the light in The Crack: the dark pool has a source.',
     draw(c, X, Y, o) { body(c, c => { cham(c, X + 11, Y + 19, 18, 17, 3); cham(c, X + 8, Y + 4, 24, 17, 6); }, o.fill); c.fillStyle = C.ink; c.fillRect(X + 12, Y + 11, 16, 6);
       c.save(); c.shadowColor = '#fff'; c.shadowBlur = o.dark ? 12 : 5; c.fillStyle = '#fff'; c.fillRect(X + 18, Y + 5, 4, 3); c.restore(); } },
