@@ -508,3 +508,16 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Jizz+ is on the secret menu.** Key 9, two whey and a powder, and for 45 seconds every shake makes two bottles. The song is locked in Suno for now; until it can teach the recipe, the bartender's rumour does, on Disco Gravitas. **XXX is parked:** a lot of new content for a small addition, and the redactions are better kept. The Belt Authority benefits from being CIA. **The Jacked Asses are dropped:** another storyline.
 
 **No orphans.** My issue with the line breaks was orphans: one word alone on a last line. The browser now balances the last lines of every paragraph (text-wrap: pretty), and the Milk+ menu's name, description and recipe are separate paragraphs so it works there too.
+
+## 2026-11-15 — Prototype 3 locked
+
+Prototype 3 is done (tag `prototype-3`). What it became:
+- **Four layers and two endings:** The Crack in the dark, the Core with its redacted card and challenge coin, and the Drift: drifting off into space, the sky growing, steering a little, one sun rising.
+- **Näsa chrome to melt or blast,** and blasting charges bought with drill samples. Blasting permit: pending.
+- **A real radio:** three stations, the tape (Side A), two DJs (Coach Rocky and the Broadcaster), cross-fades, and Frenzy and Stillness changing how the music sounds rather than what plays. The radio teaches you things.
+- **A secret menu:** Candygirl (crack and chrome, 0; up the tunnel; an underground rave in The Crack) and Jizz+ (two whey and a powder, 9; doubles), found through graffiti, rumours and a redacted Field Guide card.
+- **The archive:** fourteen finds with photos and cards, five withdrawn numbers, seams and sealed finds that answer only to their state.
+- **Balance:** Recovery from powder and chrome, shakers leaning Strength, Hyperfocus that holds the meter, a gentler drill in the first layer.
+- **Accessibility:** no flashes, reduce motion respected, no orphans.
+
+**Prototype 4 begins with the interface:** the rover's control panel from the GDD, starting with a whole-screen mockup. Waiting for songs: Jizz+ (locked in Suno) and the new Stella Solaris for the Drift.
