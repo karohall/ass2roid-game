@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Group 1 · the world: the side walls. Left, the map: an instrument, flat and exact. Right, the depth gauge: a drill core,
-   the real rock of every layer you have reached. Built on world.js, the same rock as the tiles. */
+/* Group 1 · the world: the side walls, round 2. No map. The left wall is bedrock; the right wall is the depth gauge:
+   four layers as four clear segments, the one you are in framed, its number on a plate. Built on world.js. */
 :root { --ink:#0b0c0e; --panel:#15171a; --steel:#969da4; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --faint:#5f656b; --fluo:#00ff73; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 Inter, sans-serif; text-wrap: pretty; }
@@ -22,121 +22,103 @@ body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 Int
 .windows { display: grid; grid-template-columns: repeat(2, minmax(0, 440px)); gap: 32px 24px; }
 .win { display: flex; flex-direction: column; gap: 8px; } .win canvas { width: 100%; height: auto; display: block; }
 .win b { font: 600 11px 'Chakra Petch'; letter-spacing: .2em; text-transform: uppercase; } .win p { margin: 0; font: 12px/1.5 Inter; color: var(--steel); }
-.close { display: grid; grid-template-columns: 80px 1fr 80px 1fr; gap: 24px; align-items: start; }
-.close canvas { width: 80px; height: 720px; display: block; }
-.close ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.close { display: grid; grid-template-columns: 80px 1fr; gap: 32px; align-items: start; }
+.close canvas { width: 80px; height: 1520px; display: block; }
+.close ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; max-width: 520px; }
 .close li b { display: block; font: 600 13px Inter; } .close li span { display: block; font: 12px/1.5 Inter; color: var(--steel); margin-top: 2px; }
 </style>
 </head>
 <body>
 <div class="doc">
-  <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 1 · the side walls</div><h1>The world: side walls</h1>
-    <p>The two walls of the shaft become instruments once you start digging. Left, the map: the whole layer, flat and exact. Right, the depth gauge: a drill core with the real rock of every layer you have reached, and unsurveyed rock below.</p></header>
+  <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 1 · the side walls · round 2</div><h1>The world: side walls</h1>
+    <p>The left wall is bedrock, the edge of the shaft. The right wall is the depth gauge: the four layers of the dig as four clear segments, the one you are in framed and numbered, the metres at the top.</p></header>
   <section class="sec"><h2>In the window<small>The mining window at full size, in four moments of a shift.</small></h2><div class="windows" id="windows"></div></section>
-  <section class="sec"><h2>Up close<small>The top of both walls in The Chrome Vein, twice the size.</small></h2><div class="close" id="close"></div></section>
+  <section class="sec"><h2>Up close<small>The depth gauge in The Chrome Vein, twice the size.</small></h2><div class="close" id="close"></div></section>
 </div>
 <script src="world.js"></script>
 <script>
 const W = 11, VIEW = 19, ROWS = 60, CW = 9, KEYS = ['regolith', 'strata', 'chrome', 'crack'];
 const rng = s => () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 
-// A layer, as the game would make it: bands, crust, slabs with a gap (Chrome Vein), finds, seams, and your tunnel.
+// A layer, as the game makes it: two rows of hard band mid-layer, two rows of crust at the floor, slabs with a gap (Chrome Vein), finds, seams, your tunnel.
 function makeLayer(m, depth, sd, open) {
-  const r = rng(sd), g = Array.from({ length: ROWS }, (_, y) => Array.from({ length: CW }, () => y < 2 ? 'air' : 'rock'));
-  [13, 29, 45].forEach(y => g[y].fill('band'));
+  const r = rng(sd), g = Array.from({ length: ROWS }, (_, y) => Array.from({ length: CW }, () => y < 2 || y === ROWS - 1 ? 'air' : 'rock'));
+  g[30].fill('band'); g[31].fill('band'); g[ROWS - 3].fill('crust'); g[ROWS - 2].fill('crust');
   if (m === 'chrome') [8, 22, 37, 51].forEach(y => { const gap = 1 + Math.floor(r() * 6); g[y].fill('slab'); g[y][gap] = g[y][gap + 1] = 'rock'; g[y].gap = gap; });
-  for (let k = 0; k < 7; k++) { const x = Math.floor(r() * 8), y = 3 + Math.floor(r() * 55); if (g[y][x] === 'rock' && g[y][x + 1] === 'rock') g[y][x] = g[y][x + 1] = 'crust'; }
   const F = { regolith: ['whey', 'whey', 'sample', 'powder'], strata: ['whey', 'powder', 'shaker', 'sample'], chrome: ['chromeI', 'chromeI', 'powder', 'sample'], crack: ['spores', 'spores', 'spores', 'chromeI'] }[m];
-  for (let y = 3; y < ROWS - 1; y++) for (let x = 0; x < CW; x++) if (g[y][x] === 'rock' && r() < .07) g[y][x] = F[Math.floor(r() * F.length)];
-  for (let k = 0; k < 4; k++) { const x = Math.floor(r() * CW), y = 6 + Math.floor(r() * 50); if (!['slab', 'band'].includes(g[y][x])) g[y][x] = 'seam'; }
-  if (m === 'chrome') { g[18][1] = 'graffiti'; g[33][7] = 'graffiti2'; }
+  for (let y = 3; y < ROWS - 3; y++) for (let x = 0; x < CW; x++) if (g[y][x] === 'rock' && r() < .07) g[y][x] = F[Math.floor(r() * F.length)];
+  for (let k = 0; k < 4; k++) { const x = Math.floor(r() * CW), y = 6 + Math.floor(r() * 48); if (g[y][x] === 'rock') g[y][x] = 'seam'; }
+  if (m === 'chrome') { g[18][1] = 'graffiti'; g[34][7] = 'graffiti2'; }
   let x = 4, y = 1; const path = [[x, y]];
   while (y < depth) { const nx = g[y + 1]; if (nx && nx.gap !== undefined && x !== nx.gap && x !== nx.gap + 1) x += x < nx.gap ? 1 : -1; else if (r() < .7) y++; else x = Math.max(0, Math.min(CW - 1, x + (r() < .5 ? -1 : 1))); path.push([x, y]); }
   path.forEach(([a, b]) => g[b][a] = 'air');
-  if (open) { const ox = x > 4 ? x - 2 : x + 2, oy = Math.min(ROWS - 2, y + 2); g[oy][ox] = 'seamOpen'; }
+  if (open) { const ox = x > 4 ? x - 2 : x + 2, oy = Math.min(ROWS - 4, y + 2); g[oy][ox] = 'seamOpen'; }
   return { m, g, px: x, py: y, layer: KEYS.indexOf(m), cam: Math.max(0, Math.min(ROWS - VIEW, y - 9)) };
 }
 const depthM = L => L.layer * (ROWS - 1) * 3 + Math.max(0, L.py - 1) * 3;
 
-function cham2(c, x, y, w, h, k) { c.beginPath(); cham(c, x, y, w, h, k); }
-function frame(c, x0) { c.fillStyle = C.ink; c.fillRect(x0, 0, T, VIEW * T); cham2(c, x0 + 2.5, 2.5, T - 5, VIEW * T - 5, 6); c.strokeStyle = 'rgba(150,157,164,.42)'; c.lineWidth = 1; c.stroke(); }
+const withDim = (key, k, fn) => { const P0 = LAYERS[key].P, saved = P0.dim; P0.dim = (saved ?? 1) * k; P = P0; fn(); P0.dim = saved; if (saved === undefined) delete P0.dim; };
 const micro = (c, t, x, y, col = '#5f656b') => { c.save(); c.font = '600 8px "IBM Plex Sans"'; c.letterSpacing = '1.5px'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = col; c.fillText(t, x + .75, y); c.restore(); };
+const num = (c, t, x, y, size, col) => { c.save(); c.font = `700 ${size}px "Chakra Petch"`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = col; c.fillText(t, x, y); c.restore(); };
 
-// Left wall: the map. Flat, exact, the grid of the rows like the grout between tiles.
-const MAPCOL = { rock: '#1b1e21', band: '#30353a', crust: '#3c4147', slab: '#b9bcc8', air: '#7d848b' };
-function drawMap(c, L) {
-  frame(c, 0); micro(c, 'MAP', T / 2, 14);
-  const mx = 6, mw = 28, my = 24, mh = VIEW * T - 48, cw = mw / CW, rh = mh / ROWS;
-  for (let y = 0; y < ROWS; y++) for (let x = 0; x < CW; x++) { const k = L.g[y][x]; if (k === 'air' && y < 2) continue;
-    const open = k === 'seamOpen'; c.fillStyle = open ? C.fluo : MAPCOL[k] || MAPCOL.rock; if (open) { c.save(); c.shadowColor = C.fluo; c.shadowBlur = 5; }
-    c.fillRect(mx + x * cw, my + y * rh, cw + .02, rh - 1); if (open) c.restore(); }
-  // The part of the layer on screen: corner brackets, a faint wash.
-  const vy = my + L.cam * rh, vh = VIEW * rh, bx = mx - 2.5, bw = mw + 5, k = 5; c.fillStyle = 'rgba(201,204,201,.05)'; c.fillRect(bx, vy, bw, vh);
-  c.strokeStyle = C.concrete; c.lineWidth = 1.25; c.beginPath();
-  c.moveTo(bx, vy + k); c.lineTo(bx, vy); c.lineTo(bx + k, vy); c.moveTo(bx + bw - k, vy); c.lineTo(bx + bw, vy); c.lineTo(bx + bw, vy + k);
-  c.moveTo(bx, vy + vh - k); c.lineTo(bx, vy + vh); c.lineTo(bx + k, vy + vh); c.moveTo(bx + bw - k, vy + vh); c.lineTo(bx + bw, vy + vh); c.lineTo(bx + bw, vy + vh - k); c.stroke();
-  // You: the lightest thing on the wall, outlined in ink, with a pointer at your row.
-  const ux = mx + L.px * cw, uy = my + L.py * rh; c.fillStyle = '#fff'; c.strokeStyle = C.ink; c.lineWidth = 1.5; c.strokeRect(ux - 1.5, uy - 1.5, cw + 3, rh + 2); c.fillRect(ux - 1.5, uy - 1.5, cw + 3, rh + 2);
-  c.beginPath(); c.moveTo(1, uy + rh / 2 - 3.5); c.lineTo(4.5, uy + rh / 2); c.lineTo(1, uy + rh / 2 + 3.5); c.closePath(); c.fill();
-}
+// The core of a layer: its own rock, from the tile lab, in a strip.
+function core(c, key, x, y, w, h, dim) { if (h <= 0) return; withDim(key, dim, () => { const b = 2;
+  for (let j = 0; j < h; j += b) for (let i = 0; i < w; i += b) { c.fillStyle = rgb(quant(rockTone(i * 5 + 300, j * 5 + y * 3) + (vhash(i, j + Math.round(y), 4) - .5) * P.jitter * .6)); c.fillRect(x + i, y + j, b, Math.min(b, h - j)); } }); }
 
-// Right wall: the depth gauge, a drill core. Reached layers show their real rock; below you is dimmed; unreached is unsurveyed.
-function core(c, key, x, y, w, h, dim) { P = LAYERS[key].P; const saved = P.dim; P.dim = (saved ?? 1) * dim; const b = 2;
-  for (let j = 0; j < h; j += b) for (let i = 0; i < w; i += b) { c.fillStyle = rgb(quant(rockTone(i * 5 + 300, j * 5 + y * 3) + (vhash(i, j + y, 4) - .5) * P.jitter * .6)); c.fillRect(x + i, y + j, b, Math.min(b, h - j)); }
-  P.dim = saved; if (saved === undefined) delete P.dim; }
+// Right wall: the depth gauge. Four layers, four segments, clear gaps. The one you are in is framed; its number on a plate.
 function drawGauge(c, L) {
-  const x0 = (W - 1) * T; frame(c, x0);
-  c.save(); c.font = '700 13px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = C.text; c.fillText(String(depthM(L)), x0 + T / 2, 14); c.restore(); micro(c, 'M', x0 + T / 2, 25);
-  const cx = x0 + 11, cwid = 16, top = 34, h = VIEW * T - 34 - 30, seg = h / 4, done = (L.layer * (ROWS - 1) + Math.min(L.py, ROWS - 1)) / (4 * (ROWS - 1)), you = top + h * done;
-  KEYS.forEach((key, i) => { const y = top + i * seg + 1, sh = seg - 2;
-    if (i < L.layer) core(c, key, cx, y, cwid, sh, .85);
-    else if (i === L.layer) { const cut = Math.max(0, Math.min(sh, you - y)); core(c, key, cx, y, cwid, cut, 1); core(c, key, cx, y + cut, cwid, sh - cut, .38); }
-    else { c.fillStyle = '#121417'; c.fillRect(cx, y, cwid, sh); c.save(); c.beginPath(); c.rect(cx, y, cwid, sh); c.clip(); c.strokeStyle = 'rgba(150,157,164,.22)'; c.lineWidth = 1;
-      for (let k = -cwid; k < sh; k += 5) { c.beginPath(); c.moveTo(cx, y + k + cwid); c.lineTo(cx + cwid, y + k); c.stroke(); } c.restore(); }
-    c.save(); c.font = '600 9px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = i === L.layer ? C.text : i < L.layer ? '#5f656b' : '#3d4247'; c.fillText(String(i + 1), x0 + 33, y + sh / 2); c.restore(); });
-  // You are here: a bar across the core, a pointer from the left.
-  c.fillStyle = C.ink; c.fillRect(cx - 4, you - 2.5, cwid + 8, 5); c.fillStyle = '#fff'; c.fillRect(cx - 3, you - 1.25, cwid + 6, 2.5);
-  c.beginPath(); c.moveTo(x0 + 3, you - 3.5); c.lineTo(x0 + 6.5, you); c.lineTo(x0 + 3, you + 3.5); c.closePath(); c.fill();
-  micro(c, '▼', x0 + T / 2 - .75, top + h + 12, '#5f656b');   // the end, below the deepest layer
+  const x0 = (W - 1) * T; c.fillStyle = C.ink; c.fillRect(x0, 0, T, VIEW * T); c.beginPath(); cham(c, x0 + 2.5, 2.5, T - 5, VIEW * T - 5, 6); c.strokeStyle = 'rgba(150,157,164,.42)'; c.lineWidth = 1; c.stroke();
+  num(c, String(depthM(L)), x0 + T / 2, 15, 13, C.text); micro(c, 'M', x0 + T / 2, 27);
+  const cx = x0 + 9, cw = 22, top = 40, bottom = VIEW * T - 26, gap = 8, seg = (bottom - top - gap * 3) / 4;
+  const within = Math.min(L.py, ROWS - 1) / (ROWS - 1);
+  KEYS.forEach((key, i) => { const y = top + i * (seg + gap), cur = i === L.layer;
+    if (i < L.layer) core(c, key, cx, y, cw, seg, .8);
+    else if (cur) { const cut = seg * within; core(c, key, cx, y, cw, cut, 1.1); core(c, key, cx, y + cut, cw, seg - cut, .35); }
+    else { c.fillStyle = '#121417'; c.fillRect(cx, y, cw, seg); c.save(); c.beginPath(); c.rect(cx, y, cw, seg); c.clip(); c.strokeStyle = 'rgba(150,157,164,.2)'; c.lineWidth = 1;
+      for (let k = -cw; k < seg; k += 6) { c.beginPath(); c.moveTo(cx, y + k + cw); c.lineTo(cx + cw, y + k); c.stroke(); } c.restore(); }
+    if (cur) { c.strokeStyle = C.concrete; c.lineWidth = 1.5; c.strokeRect(cx - 2.25, y - 2.25, cw + 4.5, seg + 4.5); }
+    // The number, on an ink plate, in the middle of its segment (above the marker if they would meet).
+    let ny = y + seg / 2; if (cur) { const you = y + seg * within; if (Math.abs(ny - you) < 16) ny = you > ny ? you - 18 : you + 18; }
+    c.fillStyle = 'rgba(11,12,14,.9)'; c.fillRect(cx + cw / 2 - 8, ny - 8, 16, 16);
+    if (cur) { c.strokeStyle = C.concrete; c.lineWidth = 1; c.strokeRect(cx + cw / 2 - 7.5, ny - 7.5, 15, 15); }
+    num(c, String(i + 1), cx + cw / 2, ny + .5, 11, cur ? C.text : i < L.layer ? '#969da4' : '#5f656b'); });
+  // You are here: a white bar across the core, outlined in ink.
+  if (L.started !== false) { const y = top + L.layer * (seg + gap) + seg * within; c.fillStyle = C.ink; c.fillRect(cx - 5, y - 3, cw + 10, 6); c.fillStyle = '#fff'; c.fillRect(cx - 4, y - 1.5, cw + 8, 3); }
+  micro(c, '▼', x0 + T / 2 - .75, bottom + 12);   // the end, below the deepest layer
 }
 
-// The whole mining window.
+// The whole mining window. The left wall is always bedrock: the layer's own rock, dimmed further.
 function windowCanvas(L, dug) {
   const cv = document.createElement('canvas'); cv.width = W * T * 2; cv.height = VIEW * T * 2; const c = cv.getContext('2d'); c.scale(2, 2);
   P = LAYERS[L.m].P; c.save(); c.translate(0, -L.cam * T);
   for (let y = L.cam; y < L.cam + VIEW; y++) for (let x = 0; x < CW; x++) { if (x === L.px && y === L.py) { SOLID.air(c, x + 1, y); continue; } tile(c, L.g[y][x], x + 1, y); }
-  if (!dug) { const saved = P.dim; P.dim = (saved ?? 1) * .45; for (let y = L.cam; y < L.cam + VIEW; y++) { rock(c, 0, y); rock(c, W - 1, y); } P.dim = saved; if (saved === undefined) delete P.dim; }
-  c.restore();
-  if (L.m === 'crack') {   // the dark: light around the prospector, the spores and an open seam glowing beyond
+  withDim(L.m, .5, () => { for (let y = L.cam; y < L.cam + VIEW; y++) { rock(c, 0, y); if (!dug) rock(c, W - 1, y); } });
+  c.restore(); P = LAYERS[L.m].P;
+  if (L.m === 'crack') {   // the dark: light around the headlamp; spores and an open seam glow beyond
     const sx = (L.px + 1.5) * T, sy = (L.py - L.cam + .5) * T, g = c.createRadialGradient(sx, sy, T * 1.3, sx, sy, T * 3.6); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.93)');
     c.fillStyle = g; c.fillRect(T, 0, CW * T, VIEW * T); c.save(); c.translate(0, -L.cam * T);
     for (let y = L.cam; y < L.cam + VIEW; y++) for (let x = 0; x < CW; x++) { const k = L.g[y][x]; if (k === 'spores' || k === 'seamOpen') FIND[k](c, x + 1, y); } c.restore(); }
-  P = LAYERS[L.m].P; prospector(c, L.px + 1, L.py - L.cam, 'block', { dark: L.m === 'crack' });
-  if (dug) { drawMap(c, L); drawGauge(c, L); }
-  else { c.fillStyle = 'rgba(11,12,14,.85)'; c.fillRect((W - 1) * T + 4, 4, T - 8, 26); c.save(); c.font = '700 12px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = C.text; c.fillText('0', (W - .5) * T, 13); c.restore(); micro(c, 'M', (W - .5) * T, 23); }
+  prospector(c, L.px + 1, L.py - L.cam, 'block', { dark: L.m === 'crack' });
+  if (dug) drawGauge(c, L);
+  else { c.fillStyle = 'rgba(11,12,14,.88)'; c.fillRect((W - 1) * T + 4, 4, T - 8, 30); num(c, '0', (W - .5) * T, 15, 13, C.text); micro(c, 'M', (W - .5) * T, 27); }
   return cv;
 }
 
 Promise.all([document.fonts.load('700 13px "Chakra Petch"'), document.fonts.load('600 8px "IBM Plex Sans"'), document.fonts.ready]).then(() => {
   const S = [
-    [makeLayer('regolith', 1, 3), false, 'Before the first dig', 'The walls are bedrock: the layer’s own rock, dimmed, so they read as the edge of the shaft. Only the depth shows: 0 m.'],
-    [makeLayer('regolith', 34, 5), true, 'Regolith Prime · digging', 'The walls turn into instruments. The map fills in as the layer is known; the gauge shows the surface rock in its core, dug above you, dimmed below.'],
-    [makeLayer('chrome', 30, 11, true), true, 'The Chrome Vein · slabs and an open seam', 'Slabs cross the map in chrome, with their gaps: plan the way down. An open seam shows in fluo on the map as well as in the rock.'],
-    [makeLayer('crack', 22, 21, true), true, 'The Crack · the dark', 'The window goes dark around the headlamp; the instruments stay lit. Three layers of rock in the core above you, the end below.'],
+    [makeLayer('regolith', 1, 3), false, 'Before the first dig', 'Both walls are bedrock: the layer’s own rock, dimmed, the edge of the shaft. Only the depth shows: 0 m.'],
+    [makeLayer('regolith', 24, 5), true, 'Regolith Prime · digging', 'The right wall becomes the gauge. Layer 1 framed: its rock dug above you, dimmed below. Layers 2 to 4 unsurveyed.'],
+    [makeLayer('chrome', 30, 11, true), true, 'The Chrome Vein · the hard band', 'Layer 3 framed, the two above it in their own rock. The hard band in stripes, Näsa slabs as chrome tiles.'],
+    [makeLayer('crack', 55, 21, true), true, 'The Crack · above the crust', 'The dark around the headlamp; the gauge stays lit. The crust below asks for digging power 7.'],
   ];
   const Wn = document.getElementById('windows');
   for (const [L, dug, name, why] of S) { const d = document.createElement('div'); d.className = 'win'; d.append(windowCanvas(L, dug)); d.insertAdjacentHTML('beforeend', `<b>${name}</b><p>${why}</p>`); Wn.append(d); }
-  // Up close: the top half of both walls from the Chrome Vein window.
-  const big = windowCanvas(S[2][0], true), crop = sx => { const cv = document.createElement('canvas'); cv.width = 80 * 2; cv.height = 360 * 2 * 2; const c = cv.getContext('2d'); c.imageSmoothingEnabled = false; c.drawImage(big, sx * 2, 0, 80, 360 * 2, 0, 0, 160, 1440); return cv; };
-  const Cl = document.getElementById('close');
-  const li = a => '<ul>' + a.map(([b, s]) => `<li><b>${b}</b><span>${s}</span></li>`).join('') + '</ul>';
-  Cl.append(crop(0)); Cl.insertAdjacentHTML('beforeend', li([['The map', 'The whole layer, nine columns by sixty rows. A fine grid between the rows, like the grout between tiles.'],
-    ['What it shows', 'Your tunnel in steel, hard bands and crust in darker greys, slabs in chrome with their gaps. Never what is hidden in the rock.'],
-    ['Open now', 'An open seam glows fluo, here as in the window: the one colour that calls.'], ['On screen', 'Concrete corner brackets mark the part of the layer in the window.'],
-    ['You', 'White, outlined in ink, the lightest thing on the wall; a pointer in the margin at your row.']]));
-  Cl.append(crop(400)); Cl.insertAdjacentHTML('beforeend', li([['Depth', 'Metres, in Chakra Petch, at the top of the gauge.'], ['The core', 'Each layer you reach shows its own rock, from the tile lab: dug above you, dimmed below.'],
-    ['Unsurveyed', 'Layers you have not reached are hatched. Their rock appears when you arrive: a small reward for getting there.'],
-    ['You are here', 'A white bar across the core, a pointer in the margin, level with the map’s.'], ['Layer numbers', 'Beside the core: the current one bright, the others faint.'], ['The end', 'A small ▼ below the deepest layer.']]));
+  const big = windowCanvas(S[2][0], true), cv = document.createElement('canvas'); cv.width = 160; cv.height = 1520; const c = cv.getContext('2d'); c.imageSmoothingEnabled = false; c.drawImage(big, 800, 0, 80, 1520, 0, 0, 160, 1520);
+  const Cl = document.getElementById('close'); Cl.append(cv);
+  Cl.insertAdjacentHTML('beforeend', '<ul>' + [['Depth', 'Metres, in Chakra Petch, at the top.'], ['Four layers, four segments', 'Wide gaps between them, so the layers read as separate places, not one bar.'],
+    ['The layer you are in', 'Framed in concrete, its number on a framed plate. Its rock shows dug above you and dimmed below.'], ['Layers behind you', 'Their own rock from the tile lab, a record of the dig; the number in steel.'],
+    ['Layers ahead', 'Unsurveyed: hatched, the number faint. Their rock appears when you arrive.'], ['You are here', 'A white bar across the core, outlined in ink.'], ['The end', 'A small ▼ below the deepest layer.']]
+    .map(([b, s]) => `<li><b>${b}</b><span>${s}</span></li>`).join('') + '</ul>');
 });
 </script>
 </body>

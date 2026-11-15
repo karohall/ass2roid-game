@@ -5,12 +5,13 @@ const C = { ink: '#0b0c0e', concrete: '#c9ccc9', steel: '#b4bac0',   /* steel li
 // ── The rock: the tile lab's engine ──
 const STANDARD = { grout: 4, bevel: 1, tileBevel: 1 };   // from Regolith: the standard for every layer
 const LAYERS = {
-  regolith: { name: 'Regolith Prime', P: {"cells":6,"grout":4,"scale":20,"angle":66,"stretch":4.1,"detail":0.5,"base":115,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0,"veins":0.66,"bands":0,"bandSize":34,"bevel":1,"tileBevel":1} },
-  strata:   { name: 'The Shaker Strata', P: {"cells":8,"grout":2,"scale":20,"angle":151,"stretch":1,"detail":0,"base":94,"contrast":160,"levels":16,"jitter":40,"cool":0,"streaks":0.24,"veins":1,"bands":0.38,"bandSize":4,"bevel":1,"tileBevel":1,"dim":0.72} },   /* dimmed to 72%: texture untouched, the plates read */
-  chrome:   { name: 'The Chrome Vein', P: {"cells":9,"grout":4,"scale":20,"angle":145,"stretch":8,"detail":1,"base":110,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0.92,"veins":0,"bands":0,"bandSize":30,"bevel":1,"tileBevel":1} },
-  crack:    { name: 'The Crack', P: {"cells":20,"grout":4,"scale":20,"angle":91,"stretch":8,"detail":1,"base":32,"contrast":200,"levels":16,"jitter":40,"cool":5,"streaks":1,"veins":1,"bands":0,"bandSize":4,"bevel":1,"tileBevel":1} },
+  regolith: { name: 'Regolith Prime', P: {"cells":6,"grout":4,"scale":20,"angle":66,"stretch":4.1,"detail":0.5,"base":115,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0,"veins":0.66,"bands":0,"bandSize":34,"bevel":1,"tileBevel":1,"dim":0.72,"crust":1} },
+  strata:   { name: 'The Shaker Strata', P: {"cells":8,"grout":2,"scale":20,"angle":151,"stretch":1,"detail":0,"base":94,"contrast":160,"levels":16,"jitter":40,"cool":0,"streaks":0.24,"veins":1,"bands":0.38,"bandSize":4,"bevel":1,"tileBevel":1,"dim":0.72,"crust":4} },
+  chrome:   { name: 'The Chrome Vein', P: {"cells":9,"grout":4,"scale":20,"angle":145,"stretch":8,"detail":1,"base":110,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0.92,"veins":0,"bands":0,"bandSize":30,"bevel":1,"tileBevel":1,"dim":0.72,"crust":7} },
+  crack:    { name: 'The Crack', P: {"cells":20,"grout":4,"scale":20,"angle":91,"stretch":8,"detail":1,"base":32,"contrast":200,"levels":16,"jitter":40,"cool":5,"streaks":1,"veins":1,"bands":0,"bandSize":4,"bevel":1,"tileBevel":1,"crust":7} },
 };
 for (const k in LAYERS) Object.assign(LAYERS[k].P, STANDARD);
+// dim: every layer but The Crack at 72%, texture untouched, so the plates read. crust: the digging power the layer's crust needs (CONFIG crustMinPower).
 let P, seed = 7;
 const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k + seed, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 function vnoise(x, y, k) { const ix = Math.floor(x), iy = Math.floor(y), tx = x - ix, ty = y - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
@@ -55,8 +56,10 @@ const FIND = {
   sample: (c, x, y) => { plate(c, x, y, C.concrete); diamond(c, x, y, 7, C.concrete); },
   shaker: (c, x, y) => { plate(c, x, y, C.concrete); const X = x * T, Y = y * T; c.fillStyle = C.concrete; c.beginPath(); c.moveTo(X + 18.5, Y + 10); c.lineTo(X + 21.5, Y + 10); c.lineTo(X + 21.5, Y + 14); c.lineTo(X + 24, Y + 17); c.lineTo(X + 24, Y + 31); c.lineTo(X + 16, Y + 31); c.lineTo(X + 16, Y + 17); c.lineTo(X + 18.5, Y + 14); c.closePath(); c.fill(); },
   spores: (c, x, y) => { plate(c, x, y, SPORE, { glow: true }); label(c, x, y, 'S', SPORE, true); },
-  band: (c, x, y) => { plate(c, x, y, C.steel, { tint: .06 }); hatch(c, x, y, hexA(C.steel, .75), 6); },
-  crust: (c, x, y) => { plate(c, x, y, C.steel); hatch(c, x, y, hexA(C.steel, .55), 8, true); },
+  // Hard band: stripes, a compressed stratum. Two full rows mid-layer; the stripes run on from tile to tile. Slow: Strength, or blast it.
+  band: (c, x, y) => { plate(c, x, y, C.steel, { tint: .06 }); c.fillStyle = hexA(C.steel, .8); for (let k = 0; k < 4; k++) c.fillRect(x * T + 8, y * T + 11 + k * 5.5, T - 16, 2.5); },
+  // Crust: the floor of the layer, two full rows. It shows the digging power it needs; a double border, armoured.
+  crust: (c, x, y) => { plate(c, x, y, C.steel); c.strokeStyle = hexA(C.steel, .6); c.lineWidth = 1; c.strokeRect(x * T + 9.5, y * T + 9.5, T - 19, T - 19); label(c, x, y, String(P.crust ?? 4), C.steel, false, 15); },
   seam: (c, x, y) => { plate(c, x, y, C.steel, { dashed: true }); label(c, x, y, '?', C.steel); },
   seamOpen: (c, x, y) => { plate(c, x, y, C.fluo, { glow: true }); label(c, x, y, '?', C.fluo, true); },
   sealed: (c, x, y) => { plate(c, x, y, C.steel, { dashed: true }); diamond(c, x, y, 10, C.steel, true); diamond(c, x, y, 4.5, C.steel); },
@@ -108,6 +111,11 @@ let YOU = 'block';
 const SOLID = {
   air: (c, x, y) => { c.fillStyle = '#08090a'; c.fillRect(x * T, y * T, T, T); },
   you: (c, x, y) => { SOLID.air(c, x, y); prospector(c, x, y, YOU, { dark: P === LAYERS.crack.P }); },
-  slab: (c, x, y) => { const g = c.createLinearGradient(0, y * T, 0, y * T + T); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s)); c.fillStyle = g; c.fillRect(x * T, y * T, T, T); c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans"'; c.fillText('™', x * T + T - 10, y * T + 9); },
+  // Näsa slab: a tile like the rock, in its own grout, chrome inside, bevelled; ™ in Näsa blue.
+  slab: (c, x, y) => { const X = x * T, Y = y * T, g0 = 2; c.fillStyle = '#060708'; c.fillRect(X, Y, T, T);
+    const g = c.createLinearGradient(0, Y + g0, 0, Y + T - g0); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s));
+    c.fillStyle = g; c.fillRect(X + g0, Y + g0, T - 2 * g0, T - 2 * g0); c.fillStyle = 'rgba(255,255,255,.7)'; c.fillRect(X + g0, Y + g0, T - 2 * g0, 1.5); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(X + g0, Y + T - g0 - 2, T - 2 * g0, 2);
+    c.fillStyle = 'rgba(255,255,255,.5)'; c.fillRect(X + g0, Y + g0, 1.5, T - 2 * g0); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(X + T - g0 - 1.5, Y + g0, 1.5, T - 2 * g0);
+    c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans"'; c.fillText('™', X + T - 11, Y + 11); },
 };
 function tile(c, kind, gx, gy) { if (SOLID[kind]) return SOLID[kind](c, gx, gy); rock(c, gx, gy); if (FIND[kind]) FIND[kind](c, gx, gy); }

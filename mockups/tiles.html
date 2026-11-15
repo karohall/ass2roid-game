@@ -36,7 +36,7 @@ body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 Int
 <div class="doc">
   <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 1 · round 4</div><h1>The world: tiles</h1>
     <p>The rock from the tile lab, with your settings per layer. Every find sits on a plate made the same way: ink, a faint tint, a 1 px border and the symbol, all in the colour of its role. Only the colour changes.</p></header>
-  <section class="sec"><h2>Materials<small>Your four settings. Gap 4, block depth 1, tile depth 1 for every layer.</small></h2><div class="grid2" id="layers"></div></section>
+  <section class="sec"><h2>Materials<small>Your four settings. Gap 4, block depth 1, tile depth 1 for every layer. All but The Crack dimmed to 72%, so the plates read.</small></h2><div class="grid2" id="layers"></div></section>
   <section class="sec"><h2>Overlays<small>One plate, four roles. Concrete: what you collect. Steel: what you read or work through. Fluo: what is open now. The spore colour: the spores, and nothing else.</small></h2><div class="sheet" id="sheet"></div></section>
   <section class="sec"><h2>Crack Spores<small>Fluo now means “open now”, so the spores need a colour of their own. Three, in the dark where it matters.</small></h2><div class="grid3" id="spores"></div></section>
   <section class="sec"><h2>Prospector<small>Five suggestions. All have an ink outline, so they hold against light rock. Each one shown in every state the game puts it in.</small></h2><div class="avatars" id="avatars"></div></section>
@@ -59,7 +59,7 @@ document.fonts.ready.then(() => {
   for (const m of Object.keys(LAYERS)) add(L, patch(m, KEY, m === 'crack' ? dark : null), LAYERS[m].name, WHY[m]);
   // The overlay sheet, on the Chrome Vein.
   const S = document.getElementById('sheet');
-  const SHEET = [['rock', 'Rock', 'high contrast, free'], ['slab', 'Näsa slab', 'chrome, no plate'], ['band', 'Hard band', 'steel: hatching'], ['crust', 'Crust', 'steel: cross-hatch'],
+  const SHEET = [['rock', 'Rock', 'high contrast, free'], ['slab', 'Näsa slab', 'a chrome tile, no plate'], ['band', 'Hard band', 'stripes: slow, two rows mid-layer'], ['crust', 'Crust', 'the power it needs: the floor'],
     ['sample', 'Drill sample', 'concrete: collect'], ['whey', 'Regolith Whey', 'concrete: collect'], ['powder', 'Legacy Powder', 'concrete: collect'], ['chromeI', 'Chrome Filings', 'concrete: collect'], ['shaker', 'Fossil shaker', 'concrete: collect'],
     ['graffiti', 'Graffiti, tag', 'spray on a steel plate'], ['graffiti2', 'Graffiti, star', 'spray on a steel plate'], ['charge', 'Charge', 'concrete, amber spark'],
     ['seam', 'Seam', 'steel, dashed: closed'], ['seamOpen', 'Seam, open', 'fluo: open now'], ['sealed', 'Sealed find', 'steel, dashed: closed'], ['sealedOpen', 'Sealed, open', 'fluo: open now'], ['spores', 'Crack Spores', 'their own colour'], ['you', 'Prospector', 'no plate: the lightest']];
