@@ -379,6 +379,8 @@ const catNo = a => a.no === 'E' ? 'KR-1 E' : `KR-1 ${'ABCD'[s.artLayer[a.id] ?? 
 // The stations and their songs. Each song is a file in audio/Radio/<station>/, which ships with the game
 // (on itch.io) but stays out of the repository. A song without a file isn't in the list yet.
 const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${name}.mp3` });
+// Candygirl (Asylum Mix) belongs to the drink alone: it plays when you drink Candygirl, never in the Pump Zone's rotation (2026-11-15).
+const CANDY_SONG = SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)');
 const RADIO = {
   tape:  { name: 'Tape', kind: 'Tape', ident: ['Side A'], fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
     SONG('Tape', 'Testarocca', 'Testarocca')] },
@@ -387,7 +389,7 @@ const RADIO = {
     SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body'),
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
     SONG('The Pump Zone', 'Drill Instructor', 'The Pump Zone Drill Instructor')],
-    rare: [{ ...SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)'), unlock: 'candy' }] },   // hidden: only once you've found Candygirl on the secret menu, and then now and then
+  },
   disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
@@ -429,7 +431,7 @@ function radioNow() {
   if (s && s.drift) return { key: 'oddity', song: 0 };
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
   if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Jizz+. Doubles, darling.' };   // once the song is unlocked
-  if (s && candy()) return { key: 'pump', song: 0, track: RADIO.pump.rare[0], cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
+  if (s && candy()) return { key: 'pump', song: 0, track: CANDY_SONG, cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
 }
 const songOf = n => { const st = RADIO[n.key]; if (n.track) return n.track; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
