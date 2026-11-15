@@ -500,3 +500,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Clarity through bold.** The hint bar was bold all the way through, with line breaks forcing its sentences apart. Now it is in normal weight and flows, and bold marks what to do: Press R, press 1, a new compound's name.
 
 **A last chance for Candygirl.** If you reach The Crack without having had it, the rumour comes back with the whole recipe.
+
+**An underground rave.** On Candygirl in The Crack, switching to Void FM did nothing for the dark: Candygirl had the radio. So The Crack becomes an underground rave instead: coloured lights drifting through the dark cave, acid techno on.

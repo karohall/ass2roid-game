@@ -1581,7 +1581,7 @@ function update(dt) {
     if (!s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) {
       if (!s.candyRumour) { s.candyRumour = true; clue('zero'); announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. You order it with 0.' + (s.guide.includes('secret_candy') ? ' The Field Guide fills in a word.' : '')); }
       else if (lastLayer && !s.candyRumour2) { s.candyRumour2 = true; for (const k in SECRET.candy.clues) s.clues[k] = true; if (s.guide.includes('secret_candy')) renderGuide(); else unlock('secret_candy');
-        announce(`Rumour, again: that drink off the menu. Crack and chrome, one of each, shaken with 0. You are holding both.`); }
+        announce(`Rumour, louder down here: one Crack Spores and one Chrome Filings, shaken with 0. You have both.`); }
     }
   }
   s.timeMs += dt;
@@ -1726,9 +1726,23 @@ const nightVision = () => !!layer().dark && musicOn() && radioNow().key === 'voi
 function drawDark(L, y0, y1) {
   const cx = p.x * T + T / 2, cy = p.y * T + T / 2;
   const k = s.sight = (s.sight || 0) + ((nightVision() ? 1 : 0) - (s.sight || 0)) * .06;   // 0 normal, 1 night vision
+  // Candygirl in The Crack: an underground rave. The dark lifts most of the way, and pastel lights sweep the cave, slowly
+  // (no strobes: safe for photosensitive players; with "reduce motion" the lights stand still). It fades in and out with the drink.
+  const t = now(), rave = candy() ? Math.max(0, Math.min(1, (t - (s.candyFrom || 0)) / 1500, (s.fx.candy - t) / 1500)) : 0;
   const glow = ctx.createRadialGradient(cx, cy, (L.dark.clear + (L.dark.voidClear - L.dark.clear) * k) * T, cx, cy, (L.dark.fade + (L.dark.voidFade - L.dark.fade) * k) * T);
-  glow.addColorStop(0, 'rgba(0,0,0,0)'); glow.addColorStop(1, 'rgba(0,0,0,.96)');
+  glow.addColorStop(0, 'rgba(0,0,0,0)'); glow.addColorStop(1, `rgba(0,0,0,${.96 * (1 - .15 * rave)})`);
   ctx.fillStyle = glow; ctx.fillRect(T, y0 * T, (W - 2) * T, (y1 - y0) * T);
+  if (rave > 0) {
+    const sec = reduceMotion.matches ? 0 : t / 1000, top = y0 * T, h = VIEW * T, w = (W - 2) * T;
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    [[255, 70, 170], [60, 255, 150], [70, 140, 255], [255, 225, 80]].forEach(([r, g0, b], i) => {   // four saturated lights (the rock stays pastel), each on its own slow path
+      const lx = T + w * (.5 + .42 * Math.sin(sec * (.31 + i * .07) + i * 1.7)), ly = top + h * (.5 + .4 * Math.cos(sec * (.23 + i * .05) + i * 2.3)), R = T * 4.5;
+      const light = ctx.createRadialGradient(lx, ly, 0, lx, ly, R);
+      light.addColorStop(0, `rgba(${r},${g0},${b},${.38 * rave})`); light.addColorStop(1, `rgba(${r},${g0},${b},0)`);
+      ctx.fillStyle = light; ctx.fillRect(lx - R, ly - R, R * 2, R * 2);
+    });
+    ctx.restore();
+  }
   ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 14px monospace';
   for (let y = y0; y < y1; y++) for (let x = 1; x < W - 1; x++) {
     const c = g[y][x], px = x * T + T / 2, py = y * T + T / 2;
