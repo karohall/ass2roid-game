@@ -1,26 +1,35 @@
 # ASS2ROID: Ex Profundo — Playtest guide
 
-*For testing Prototype 2.2 (tag `prototype-2.2`) with 3–5 people who have not played it. Run every test the same way, so the results can be compared. A run takes roughly 4–9 minutes.*
+*For testing Prototype 3 (tag `prototype-3`) with 3–5 people who have not played it. Run every test the same way, so the results can be compared. A run to the Core takes roughly 15–25 minutes; let them stop whenever they like.*
+
+*(The Prototype 2.2 guide is in git history, at tag `prototype-2.2`.)*
 
 ---
 
 ## What we want to learn
 
-1. **First impression:** the game opens with only the prospector, the hint and one button, and the rest of the interface arrives bit by bit. Do they notice new parts appearing? Does it feel calm, or confusing? Where do they look, and where do they get stuck? Do they ever look at the Field Guide and the feed in the right-hand column?
-2. **Shake and drink:** the game opens by asking them to shake a Strength. Do they understand what shaking is? Later, do they shake again on their own, and do they ever shake ahead and keep a bottle?
-3. **The dose window:** right after the first drink, the hint explains "next drink ×1.5". Do they read it, and do they ever drink quickly on purpose?
-4. **Altered states:** do they reach Frenzy and Stillness, and do they want to go back for more?
-5. **Pace:** the layers are long and slow on purpose. Does that feel good ("a cool graphic effect"), or does it drag? When do they start to get bored, if at all?
-6. **The drill and Recovery:** Frenzy wears the drill, and at 0% it breaks and the pick axe takes over. Do they notice the drill's condition before it breaks? Does a broken drill feel fair, or like a punishment? Do they find Recovery (key 3)?
-7. **Each layer's own thing:** do they break the fossil shakers in the Shaker Strata, and how do they react to drinking an unknown Milk+? Do they find their way around the Näsa chrome slabs in the Chrome Vein?
-8. **The map and the depth gauge:** the walls of the shaft show a map of the layer (left) and how deep the whole game goes (right). Do they notice them? Do they use them?
-9. **The radio:** the tape plays from the start screen. Do they find R (stations) and T (tape)? Do they notice the stations' effects?
+Prototype 3 added a lot. These are the questions that matter most, in roughly the order a player meets them:
+
+1. **The radio first:** the drill won't start without music. Do they find R? Do they try other stations, and do they notice a station's effect (the Pump Zone digs faster, Disco Gravitas calms the meter, Void FM gives night vision in The Crack)? What do they make of the DJs, Coach Rocky and the Broadcaster?
+2. **The interface arriving bit by bit:** do they notice new parts appearing? Does the screen feel like a place ("a room"), or like too much? Where do they look first?
+3. **Shake, drink, and the dose window:** do they shake ahead and keep bottles? Do they ever drink quickly on purpose?
+4. **Frenzy and Stillness:** do they reach them, and do they want to go back? Do they notice the music changing (faster and rougher in a Frenzy, muffled in Stillness)?
+5. **Seams and sealed finds:** do they understand that a sealed find (◈) only gives way in the right state? Do they plan for one (save bottles, tip over beside it)? Does the hint help, or do they ignore it?
+6. **The drill, the pick axe and the tape:** when the drill breaks, the radio dies and the tape plays. Do they get it? Do they find Recovery (now Legacy Powder + Chrome Filings)?
+7. **Näsa chrome:** do they find the gap? Does anyone try to melt it in a Frenzy (and what happens when it blows)?
+8. **Blasting charges:** after the rumour, do they use B? Does it change how they play the slow deep layers?
+9. **The secret menu:** does anyone notice the graffiti, the redacted card, the rumours? Does anyone find Candygirl (0) or Jizz+ (9)? How long does it take, and what do they say?
+10. **The Crack:** how does the darkness feel? Do they find night vision on Void FM? If they have Candygirl, what do they make of the rave?
+11. **The two endings:** does anyone drift off (Calm on top of Stillness)? Do they steer? Do they stay to the end of the song, or press Esc? Does anyone reach the Core?
+12. **The archive:** do they open the archive cabinet and read cards? Do they click the photos? Does the end screen's list of finds still in the rock make them want to play again?
+13. **Pace:** the deeper layers are slow on purpose. Where, if anywhere, do they get bored?
 
 ---
 
 ## Before the test
 
-- **Setup:** a laptop with a keyboard, the game open in a fresh browser tab on the itch.io link (see [Putting it on itch.io](#putting-it-on-itchio)). Sound doesn't matter yet: the game has none.
+- **Setup:** a laptop with a keyboard, the game open in a fresh browser tab on the itch.io link (see [Putting it on itch.io](#putting-it-on-itchio)). **Sound on, with headphones or speakers:** the radio is part of the game now.
+- **Photosensitivity:** the game avoids flashing, but ask before you start whether the tester is sensitive to flashing lights or moving patterns. The page should carry a short note too.
 - **Recording (optional):** a screen recording helps, but only with the tester's permission.
 - **You need:** this guide, a copy of the [notes sheet](#notes-sheet) per tester, and a clock.
 
@@ -35,7 +44,7 @@ Keep it short, and say the same thing every time:
 - **Don't help.** Not with words, not by pointing. If they ask, say: *"What do you think it does?"*
 - **If they're stuck for more than 2 minutes,** give one small nudge, and write down exactly where and what you said. A nudge is a finding.
 - **Write down times** for the moments on the notes sheet. Rough is fine.
-- **Write down their words,** especially surprise, confusion and laughter.
+- **Write down their words,** especially surprise, confusion and laughter. The radio, the Belt Authority and the archive cards are meant to be funny: note what lands.
 
 ## After the test
 
@@ -43,11 +52,12 @@ Ask these, in this order, and write down the answers:
 
 1. What was the game about?
 2. What did the drinks do? Did any of them surprise you?
-3. What happened when the screen tilted / turned violet? What did you make of it?
-4. Was there anything you didn't understand, or didn't notice until late?
-5. How did the pace feel: the long layers, the slow rock?
-6. What happened to your drill? What did you do about it?
-7. Would you play again? Why, or why not?
+3. What did the radio do? Did you have a favourite station, or a DJ you remember?
+4. What happened when the screen tilted, or went quiet and violet? What did you make of it?
+5. Was there anything you didn't understand, or didn't notice until late?
+6. Did you find anything that wasn't on the menu? How?
+7. How did the pace feel in the deeper layers?
+8. Would you play again? Why, or why not?
 
 ---
 
@@ -59,29 +69,36 @@ Copy this block once per tester.
 TESTER: ______________   DATE: __________   PLAYED FOR: ____ min
 
 MOMENTS (time from start)
+  Found R / radio on .............. ____
   First dig ....................... ____
-  First ingredient ................ ____
   Opening shake + drink ........... ____   (understood / confused)
-  First shake on their own ........ ____   (after the opening one)
-  Noticed parts appearing ......... ____   (yes / no / said: "_______")
-  Switched radio station .......... ____   (which: ________)
-  Looked at the map / gauge ....... ____   (yes / no)
-  Noticed the dose window ......... ____   (yes / no / said: "_______")
-  First Frenzy .................... ____   (on purpose / by accident)
+  Switched station ................ ____   (which: ________ / noticed its effect? yes / no)
+  Reacted to a DJ ................. ____   (said: "_______")
+  First Frenzy .................... ____   (on purpose / by accident / noticed the sound? yes / no)
   First Stillness ................. ____   (on purpose / by accident)
-  Artefact found .................. ____   (which: ________)
+  First artefact .................. ____   (which: ________ / seam or sealed?)
+  Planned for a sealed find ....... ____   (yes / no)
   Layer 1 cleared ................. ____
   Layer 2 cleared ................. ____
-  Drill broke ..................... ____   (used Recovery? yes / no)
-  First fossil shaker ............. ____   (reaction: ________)
+  Drill broke ..................... ____   (noticed the tape? used Recovery? yes / no)
+  Näsa chrome: found the gap ...... ____   (tried to melt it? blew up? yes / no)
+  First blasting charge (B) ....... ____   (after the rumour? yes / no)
+  Layer 3 cleared ................. ____
+  Noticed graffiti / secret card .. ____
+  Found Candygirl (0) ............. ____   (how: ________)
+  Found Jizz+ (9) ................. ____   (how: ________)
+  Night vision on Void FM ......... ____   (yes / no)
+  Drift ........................... ____   (steered? stayed to the end? yes / no)
+  Reached the Core ................ ____
+  Opened the archive / a photo .... ____
   First sign of boredom ........... ____   (where: ________)
-  Finished / stopped .............. ____   (end screen shift length: ____ min)
+  Finished / stopped .............. ____   (end screen shift length: ____ min, finds: __ of 14)
 
 WHERE THEY LOOKED FIRST
 
 STUCK (where, how long, nudge given)
 
-THEIR WORDS (quotes)
+THEIR WORDS (quotes; what made them laugh)
 
 TOO MUCH AT ONCE? (what they ignored, what they said)
 
@@ -93,6 +110,7 @@ AFTER-TEST ANSWERS
   5.
   6.
   7.
+  8.
 
 MY OBSERVATIONS
 ```
@@ -102,17 +120,17 @@ MY OBSERVATIONS
 ## After all tests
 
 - **Look for patterns,** not single opinions. Something two or more testers struggle with is a finding; one tester's taste is a data point.
-- **Write a playtest entry in [DEVLOG.md](DEVLOG.md):** what you tested, what you saw, what surprised you, and what changes for Prototype 3. It becomes the "test" chapter of the case study: idea → prototype → **test** → finished.
+- **Write a playtest entry in [DEVLOG.md](DEVLOG.md):** what you tested, what you saw, what surprised you, and what changes for Prototype 4 (the interface: the rover's control panel). It becomes the "test" chapter of the case study: idea → prototype → **test** → finished.
 
 ---
 
 ## Putting it on itch.io
 
-The whole game is one file, `index.html`, so it uploads as an HTML game.
+The game is `index.html` plus its songs (`audio/Radio/`) and archive photos (`archive/`), so it uploads as an HTML game in one zip.
 
-1. **Make a zip** with `index.html` at the top level of the zip (not inside a folder).
-2. On itch.io, **create a new project.** Set the kind of project to **HTML**.
-3. **Upload the zip** and mark it to be played in the browser.
-4. **Embed size:** the game is about 1,100 × 1,030 pixels at full size and scales itself down to fit any smaller window, so it never scrolls. Set the embed close to that size, or turn on the option to launch the game in fullscreen or a new window.
+1. **Build the zip** with `.claude/build-itch.ps1`. It writes `itch/ass2roid-prototype-3.zip` (about 65 MB) with `index.html` at the top level, the audio and the photos, using forward slashes and UTF-8 file names so names like *Kármán Lines* survive.
+2. On itch.io, **upload the zip** to the existing project (or create one with the kind of project set to **HTML**) and mark it to be played in the browser.
+3. **Embed size:** the game is about 1,100 × 1,030 pixels at full size and scales itself down to fit any smaller window, so it never scrolls. Set the embed close to that size, or turn on the option to launch the game in fullscreen or a new window.
+4. **Add a photosensitivity note** to the page, for example: *"Contains moving colours and patterns, and a brief bright moment in the Drift. No strobing. Respects your system's reduce-motion setting."*
 5. **Visibility:** keep the page **restricted** (or a draft) while testing, and share the link only with your testers.
-6. **Before sending the link,** open it yourself on a laptop and play the first minute.
+6. **Before sending the link,** open it yourself on a laptop with sound, and play the first minutes: the radio should come on with R.
