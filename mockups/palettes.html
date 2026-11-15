@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colour scales · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Tektur:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Colour scale suggestions: a near-black navy, a greige, a fluo green, and one or two support colours, all in one family.
+     Contrast ratios (WCAG) are computed on the page: 4.5 is the floor for body text, 7 is comfortable. */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e9e6df; color: #15171a; font: 14px/1.5 Inter, sans-serif; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 36px 20px 60px; }
+  h1 { font: 700 28px/1.1 'Architype Ballmer', Tektur, sans-serif; margin: 0 0 6px; }
+  .intro { color: #5a5751; max-width: 760px; margin: 0 0 28px; }
+  .pal { display: grid; grid-template-columns: 1fr 360px; gap: 22px; margin-bottom: 34px; padding-top: 18px; border-top: 2px solid #15171a; }
+  .pal h2 { font: 700 18px 'Architype Ballmer', Tektur, sans-serif; margin: 0 0 4px; } .pal p.why { margin: 0 0 14px; color: #5a5751; font-size: 13px; }
+  .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .sw { display: flex; flex-direction: column; }
+  .sw i { display: block; height: 78px; border: 1px solid rgba(0,0,0,.12); }
+  .sw b { font: 600 11px 'IBM Plex Sans', sans-serif; margin-top: 6px; } .sw code { font: 11px 'IBM Plex Sans', sans-serif; color: #5a5751; }
+  .sw small { font: 10.5px 'IBM Plex Sans', sans-serif; color: #7a766e; }
+  /* A sample of the interface in each palette. */
+  .demo { padding: 16px; border: 1px solid rgba(0,0,0,.15); font-size: 13px; }
+  .demo .panel { padding: 0 12px 12px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+  .demo .bar { display: flex; justify-content: space-between; align-items: center; margin: 0 -12px 10px; padding: 7px 12px; font: 600 11px 'Architype Ballmer', Tektur, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+  .demo .row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; }
+  .demo .num { font: 700 24px/1 'Architype Ballmer', Tektur, sans-serif; }
+  .demo .btn { font: 600 10px 'IBM Plex Sans', sans-serif; letter-spacing: .12em; text-transform: uppercase; padding: 6px 12px; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+  .demo .hint { margin-top: 12px; padding: 10px 12px; font-weight: 500; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+  .demo .hint b { padding: 0 5px; }
+  .demo .ratios { margin-top: 12px; font: 11px 'IBM Plex Sans', sans-serif; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Colour scales</h1>
+  <p class="intro">Three suggestions in the spirit of Crying Suns: near-black backgrounds with only a hint of navy (less blue, more contrast), a warm greige for text and the one light surface, fluo green as the glow. Each has one or two support colours from the same family. The ratios under each sample are WCAG contrast: 4.5 is the floor for body text, 7 and up is comfortable.</p>
+  <div id="pals"></div>
+</div>
+<script>
+  const PALS = [
+    { name: 'A · Night shift', why: 'The closest to your identity: navy pushed almost to black, a neutral greige, your fluo green. Amber for warnings (the check-engine light, the drill). The calmest of the three.',
+      c: [['Ink', '#0a0f14', 'background'], ['Navy', '#14212c', 'panels'], ['Slate', '#3b4b58', 'lines, dim text'], ['Greige', '#d9d2c5', 'text, the hint'], ['Fluo', '#00ff73', 'the one glow'], ['Amber', '#ffb43c', 'warnings']] },
+    { name: 'B · Deep shaft', why: 'The most Crying Suns: a black with a green-teal undertone, so the fluo green and a dark teal feel like one light source. Darker panels, stronger glow. Moody, and The Crack is built in.',
+      c: [['Ink', '#05100f', 'background'], ['Shaft', '#0c1c1d', 'panels'], ['Teal', '#1f5c58', 'lines, secondary glow'], ['Greige', '#d6cfbf', 'text, the hint'], ['Fluo', '#14ff7e', 'the one glow'], ['Signal', '#ff8a3d', 'warnings']] },
+    { name: 'C · Foundation', why: 'Warmer: a navy-charcoal with a little brown in it, a paler greige, a slightly yellower green. Rust for warnings, a dusty violet for the secret menu. More printed, more archive.',
+      c: [['Ink', '#0d1116', 'background'], ['Navy', '#182330', 'panels'], ['Dust', '#4a4f55', 'lines, dim text'], ['Greige', '#e4ddcf', 'text, the hint'], ['Fluo', '#3dff5f', 'the one glow'], ['Rust', '#e8653a', 'warnings'], ['Violet', '#a993d6', 'secret menu']] },
+  ];
+  // WCAG contrast
+  const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return ((Math.max(x, y) + .05) / (Math.min(x, y) + .05)).toFixed(1); };
+  const out = document.getElementById('pals');
+  for (const p of PALS) {
+    const C = Object.fromEntries(p.c.map(([n, h]) => [n, h]));
+    const bg = p.c[0][1], panel = p.c[1][1], line = p.c[2][1], text = C.Greige, fluo = C.Fluo, warn = p.c[5][1];
+    const el = document.createElement('section'); el.className = 'pal';
+    el.innerHTML = `<div><h2>${p.name}</h2><p class="why">${p.why}</p><div class="swatches">${p.c.map(([n, h, u]) => `<div class="sw"><i style="background:${h}"></i><b>${n}</b><code>${h}</code><small>${u}</small></div>`).join('')}</div></div>
+      <div class="demo" style="background:${bg};color:${text}">
+        <div class="panel" style="background:${panel}">
+          <div class="bar" style="background:linear-gradient(90deg, ${line}, transparent);color:${text}">Rover <span class="btn" style="border:1px solid ${line};color:${text}">Pause</span></div>
+          <div class="row"><span style="opacity:.7">Depth</span><span class="num">522 m</span></div>
+          <div class="row" style="border-top:1px solid ${line}"><span style="opacity:.7">Drill</span><span class="num" style="color:${warn}">62%</span></div>
+          <div class="row" style="border-top:1px solid ${line}"><span>Strength</span><span class="btn" style="background:${fluo};color:${bg};box-shadow:0 0 14px ${fluo}88">Drink</span></div>
+          <div class="row" style="border-top:1px solid ${line}"><span>Crack Spores</span><span class="num" style="color:${fluo};text-shadow:0 0 8px ${fluo}99">13</span></div>
+          ${C.Violet ? `<div class="row" style="border-top:1px solid ${line}"><span style="color:${C.Violet}">Candygirl</span><span class="btn" style="border:1px solid ${line};color:${text}">Shake</span></div>` : ''}
+        </div>
+        <div class="hint" style="background:${text};color:${bg}">Hard band ahead. Or blast it: <b style="background:${bg};color:${fluo}">Press B</b></div>
+        <div class="ratios" style="color:${text};opacity:.75">Greige on ink ${ratio(text, bg)} · greige on panel ${ratio(text, panel)} · fluo on ink ${ratio(fluo, bg)} · ink on fluo button ${ratio(bg, fluo)} · warning on panel ${ratio(warn, panel)}</div>
+      </div>`;
+    out.appendChild(el);
+  }
+</script>
+</body>
+</html>
