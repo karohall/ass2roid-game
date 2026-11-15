@@ -7,181 +7,128 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Group 1 · the world. Every tile is drawn in code: seeded per tile, so it never flickers and costs nothing to download.
-   The interface is machined; the world is raw. Materials from real minerals; obstacles by pattern; letters for ingredients. */
-:root { --ink:#0b0c0e; --panel:#15171a; --raised:#1e2124; --steel:#969da4; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42);
-        --text:#e1e4e6; --faint:#5f656b; --concrete:#c9ccc9; --fluo:#00ff73; --amber:#ffb43c; --violet:#a993d6; --candy:#f2b8d6; --jizz:#b9d3f0; --nasa:#0000dd;
-        --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; }
+/* Group 1 · the world, round 3. The rock from the tile lab (the user's own settings per layer); Regolith's depth and gap
+   are the standard. High-contrast rock, so every find sits on an overlay plate: the texture shows through, the symbol stays crisp. */
+:root { --ink:#0b0c0e; --panel:#15171a; --steel:#969da4; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --faint:#5f656b; --concrete:#c9ccc9; --fluo:#00ff73; --amber:#ffb43c; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 var(--f-text); text-wrap: pretty; }
+body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 Inter, sans-serif; text-wrap: pretty; }
 .doc { max-width: 1180px; margin: 0 auto; padding: 48px 24px 96px; }
 .doc > header { padding-bottom: 24px; border-bottom: 1px solid var(--line-2); }
-.doc > header h1 { font: 700 40px/1 var(--f-title); margin: 8px 0 12px; } .doc > header p { color: var(--steel); max-width: 680px; margin: 0; }
-.meta { font: 500 11px/1.4 var(--f-small); color: var(--steel); }
+.doc > header h1 { font: 700 40px/1 'Chakra Petch'; margin: 8px 0 12px; } .doc > header p { color: var(--steel); max-width: 700px; margin: 0; }
+.meta { font: 500 11px/1.4 'IBM Plex Sans'; color: var(--steel); }
 .sec { display: grid; grid-template-columns: 220px 1fr; gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--line); }
-.sec > h2 { font: 600 11px/1.6 var(--f-title); letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 0; }
-.sec > h2 small { display: block; margin-top: 8px; font: 400 12px/1.5 var(--f-text); letter-spacing: 0; text-transform: none; color: var(--faint); }
-.sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 16px 12px; }
-.cell { display: flex; flex-direction: column; gap: 6px; } .cell canvas { width: 80px; height: 80px; image-rendering: auto; }
-.cell b { font: 600 12px var(--f-text); } .cell span { font: 11px/1.35 var(--f-small); color: var(--faint); }
-.layers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.sec > h2 { font: 600 11px/1.6 'Chakra Petch'; letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 0; }
+.sec > h2 small { display: block; margin-top: 8px; font: 400 12px/1.5 Inter; letter-spacing: 0; text-transform: none; color: var(--faint); }
+.grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 .patch { display: flex; flex-direction: column; gap: 8px; } .patch canvas { width: 100%; height: auto; display: block; }
-.patch b { font: 600 11px var(--f-title); letter-spacing: .2em; text-transform: uppercase; } .patch p { margin: 0; font: 12px/1.5 var(--f-text); color: var(--steel); }
-.states { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.state canvas { width: 100%; height: auto; display: block; transition: filter .3s; }
-.state.frenzy canvas { transform: rotate(-3deg); }
+.patch b { font: 600 11px 'Chakra Petch'; letter-spacing: .2em; text-transform: uppercase; } .patch p { margin: 0; font: 12px/1.5 Inter; color: var(--steel); }
+.tilt canvas { transform: rotate(-3deg); }
+.sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 16px 12px; }
+.cell { display: flex; flex-direction: column; gap: 6px; } .cell canvas { width: 80px; height: 80px; } .cell b { font: 600 12px Inter; } .cell span { font: 11px/1.35 'IBM Plex Sans'; color: var(--faint); }
 </style>
 </head>
 <body>
 <div class="doc">
-  <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 1</div><h1>The world: tiles</h1>
-    <p>The interface is machined; the world is raw. Each layer is an abstraction of a real mineral: tiles split into blocks, their tone flowing across the layer, matte. Drawn in code and seeded per tile, so it never flickers. What matters stands out in a fixed order: the prospector, then what glows, then what you collect, then obstacles by their pattern, and plain rock last.</p></header>
-
-  <section class="sec"><h2>Materials<small>One per layer, from real minerals. Neutral and cool; the descent is felt in the material, not in new colours.</small></h2>
-    <div class="layers" id="layers"></div></section>
-
-  <section class="sec"><h2>Tiles<small>Drawn at 40 px, shown at twice that. Collectibles sit raised on the rock; obstacles are patterns; only glowing things glow.</small></h2>
-    <div class="sheet" id="sheet"></div></section>
-
-  <section class="sec"><h2>States<small>The same patch of the Chrome Vein. Frenzy: warm overdrive, tilted. Stillness: cold and drained. And The Crack: dark, then the rave.</small></h2>
-    <div class="states" id="states"></div></section>
+  <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 1 · round 3</div><h1>The world: tiles</h1>
+    <p>The rock from the tile lab, with your settings per layer. Regolith’s depth and gap are the standard for all. The rock is high-contrast, so every find sits on an overlay plate: the texture shows through, the symbol stays crisp.</p></header>
+  <section class="sec"><h2>Materials<small>Your four settings. Gap 4, block depth 1, tile depth 1 for every layer.</small></h2><div class="grid2" id="layers"></div></section>
+  <section class="sec"><h2>Overlays<small>Every find on a plate. Concrete for what you collect, ink for what you read, fluo for what is open now.</small></h2><div class="sheet" id="sheet"></div></section>
+  <section class="sec"><h2>States<small>The Chrome Vein in Frenzy and Stillness, and The Crack in the dark and in the rave.</small></h2><div class="grid2" id="states"></div></section>
 </div>
-
 <script>
-const T = 40;
-// A small seeded random, so every tile always draws the same.
-function rng(seed) { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
-const hash = (x, y, k) => (x * 73856093) ^ (y * 19349663) ^ (k * 83492791);
-
-// ── Materials: abstract, fractal, matte ─────────────────────────────────────
-// A slow value field runs across the whole layer (in world pixels), so tone flows from tile to tile: alive, like the rave.
-// Each tile is then split into smaller blocks (its own way per layer) and every block takes its tone from the field. No gloss.
-const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
-function field(x, y, k, scale) { const fx = x / scale, fy = y / scale, ix = Math.floor(fx), iy = Math.floor(fy), tx = fx - ix, ty = fy - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
-  const a = vhash(ix, iy, k), b = vhash(ix + 1, iy, k), c = vhash(ix, iy + 1, k), d = vhash(ix + 1, iy + 1, k);
-  return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; }
-const tone = (v, tint = [0, 1, 3]) => { v = Math.max(0, Math.min(255, v)) | 0; return `rgb(${v + tint[0]},${v + tint[1]},${v + tint[2]})`; };
-// Split a square into quads, recursively, while the dice say so.
-function quads(r, x, y, size, min, p, out) { if (size > min && r() < p) { const h = size / 2; for (const [dx, dy] of [[0, 0], [h, 0], [0, h], [h, h]]) quads(r, x + dx, y + dy, h, min, p * .82, out); } else out.push([x, y, size]); return out; }
-const WORLD = c => [c.__ox || 0, c.__oy || 0];
-const MATERIAL = {
-  // Regolith Prime: fine square grit.
-  regolith(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
-    for (const [qx, qy, q] of quads(r, x, y, T, 5, .95, [])) { const f = field(ox + qx + q / 2, oy + qy + q / 2, 1, 70), g = field(ox + qx, oy + qy, 2, 14);
-      c.fillStyle = tone(30 + f * 16 + g * 8 + r() * 5 + lift * 110); c.fillRect(qx, qy, q, q); } },
-  // The Shaker Strata: horizontal bands of varying height, continuing across tiles.
-  strata(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
-    for (let j = 0; j < T;) { const wy = oy + y + j, hgt = 2 + Math.floor(vhash(0, Math.floor(wy / 3), 5) * 5);
-      const segs = lift ? 4 : (vhash(Math.floor((ox + x) / T), Math.floor(wy / 3), 6) < .3 ? 2 : 1);
-      for (let s2 = 0; s2 < segs; s2++) { const f = field(ox + x + s2 * T / segs, wy, 3, 90), b = vhash(0, Math.floor(wy / 2), 7);
-        c.fillStyle = tone(28 + f * 12 + b * 12 + lift * 110, [1, 1, 2]); c.fillRect(x + s2 * T / segs, y + j, T / segs + .5, Math.min(hgt, T - j)); }
-      j += hgt; } },
-  // The Chrome Vein: blocks lit along the path of a vein; the vein grows out of the blocks.
-  chrome(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
-    const vein = (wx, wy) => { let d = 99; for (let k = Math.floor((wx - 80) / 150); k <= Math.floor((wx + 80) / 150); k++) { const vx = k * 150 + 60 * Math.sin(k * 12.9) + 22 * Math.sin(wy * .043 + k) + 9 * Math.sin(wy * .13 + k * 2.1); d = Math.min(d, Math.abs(wx - vx)); } return d; };
-    for (const [qx, qy, q] of quads(r, x, y, T, 4, .9, [])) { const cx = ox + qx + q / 2, cy = oy + qy + q / 2, d = vein(cx, cy), f = field(cx, cy, 4, 80);
-      const lit = d < 5 ? 1 : d < 12 ? .45 : 0; c.fillStyle = tone(24 + f * 12 + r() * 4 + lit * 70 + lift * 110, [0, 3, 8]); c.fillRect(qx, qy, q, q); } },
-  // The Crack: dark triangular shards, rare green specks.
-  obsidian(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
-    for (const [qx, qy, q] of quads(r, x, y, T, 10, .9, [])) { const f = field(ox + qx, oy + qy, 8, 60), diag = r() < .5;
-      const a = tone(12 + f * 12 + lift * 110, [0, 2, 3]), b = tone(18 + f * 14 + r() * 6 + lift * 110, [0, 2, 3]);
-      c.fillStyle = a; c.fillRect(qx, qy, q, q); c.fillStyle = b; c.beginPath();
-      if (diag) { c.moveTo(qx, qy); c.lineTo(qx + q, qy); c.lineTo(qx + q, qy + q); } else { c.moveTo(qx + q, qy); c.lineTo(qx + q, qy + q); c.lineTo(qx, qy + q); } c.fill();
-      if (r() < .06) { c.fillStyle = 'rgba(60,255,170,.55)'; c.fillRect(qx + q / 2 - 1, qy + q / 2 - 1, 2, 2); } } },
+const T = 40, COLS = 11, ROWS = 6;
+// ── The rock: the tile lab's engine ──
+const STANDARD = { grout: 4, bevel: 1, tileBevel: 1 };   // from Regolith: the standard for every layer
+const LAYERS = {
+  regolith: { name: 'Regolith Prime', P: {"cells":6,"grout":4,"scale":20,"angle":66,"stretch":4.1,"detail":0.5,"base":115,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0,"veins":0.66,"bands":0,"bandSize":34,"bevel":1,"tileBevel":1} },
+  strata:   { name: 'The Shaker Strata', P: {"cells":8,"grout":2,"scale":20,"angle":151,"stretch":1,"detail":0,"base":94,"contrast":160,"levels":16,"jitter":40,"cool":0,"streaks":0.24,"veins":1,"bands":0.38,"bandSize":4,"bevel":1,"tileBevel":1} },
+  chrome:   { name: 'The Chrome Vein', P: {"cells":9,"grout":4,"scale":20,"angle":145,"stretch":8,"detail":1,"base":110,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0.92,"veins":0,"bands":0,"bandSize":30,"bevel":1,"tileBevel":1} },
+  crack:    { name: 'The Crack', P: {"cells":20,"grout":4,"scale":20,"angle":91,"stretch":8,"detail":1,"base":32,"contrast":200,"levels":16,"jitter":40,"cool":5,"streaks":1,"veins":1,"bands":0,"bandSize":4,"bevel":1,"tileBevel":1} },
 };
-const LAYERS = [
-  ['regolith', 'Regolith Prime', 'After lunar regolith: fine square grit, tone drifting slowly across the layer.'],
-  ['strata', 'The Shaker Strata', 'After limestone and shale: horizontal bands of varying height, continuing from tile to tile.'],
-  ['chrome', 'The Chrome Vein', 'After chromite in gabbro: blocks light up along a vein, so the vein grows out of the rock.'],
-  ['obsidian', 'The Crack', 'After obsidian: dark triangular shards, rare green specks, in the dark.'],
-];
+for (const k in LAYERS) Object.assign(LAYERS[k].P, STANDARD);
+let P, seed = 7;
+const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k + seed, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+function vnoise(x, y, k) { const ix = Math.floor(x), iy = Math.floor(y), tx = x - ix, ty = y - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
+  const a = vhash(ix, iy, k), b = vhash(ix + 1, iy, k), c = vhash(ix, iy + 1, k), d = vhash(ix + 1, iy + 1, k); return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; }
+function fbm(x, y, k, oct, gain) { let v = 0, a = 1, n = 0, f = 1; for (let o = 0; o < oct; o++) { v += vnoise(x * f, y * f, k + o * 11) * a; n += a; a *= gain; f *= 2.03; } return v / n; }
+function flowXY(wx, wy) { const a = P.angle * Math.PI / 180, c = Math.cos(a), s = Math.sin(a); return [(wx * c + wy * s) / (P.scale * P.stretch), (-wx * s + wy * c) / P.scale]; }
+function rockTone(wx, wy) { const [u, v] = flowXY(wx, wy); let t = fbm(u, v, 1, 4, P.detail);
+  if (P.bands > 0) { const b = vhash(0, Math.floor(wy / P.bandSize), 9); t = t * (1 - P.bands) + b * P.bands; }
+  let tone = P.base + (t - .5) * 2 * P.contrast; const ridge = 1 - Math.abs(fbm(u * 1.7 + 5, v * 1.7, 3, 3, .5) * 2 - 1);
+  if (P.streaks > 0 && ridge > 1 - P.streaks * .18) tone -= 34 + P.contrast * .25; const vein = 1 - Math.abs(fbm(u * 3.1 + 17, v * 3.1, 5, 2, .5) * 2 - 1);
+  if (P.veins > 0 && vein > 1 - P.veins * .06) tone += 70; return tone; }
+const quant = v => { const L = P.levels - 1, hi = 230; const q = Math.round(Math.max(0, Math.min(hi, v)) / hi * L) / L; return q * hi; };
+const rgb = v => { v = Math.max(0, Math.min(255, v)); const k = P.cool; return `rgb(${v - k * .4 | 0},${v | 0},${v + k | 0})`; };
+function rock(c, gx, gy) { const x = gx * T, y = gy * T, n = P.cells, cs = T / n, g = P.grout;
+  c.fillStyle = '#060708'; c.fillRect(x, y, T, T); c.save(); c.beginPath(); c.rect(x + g / 2, y + g / 2, T - g, T - g); c.clip();
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const wx = x + (i + .5) * cs, wy = y + (j + .5) * cs;
+    c.fillStyle = rgb(quant(rockTone(wx, wy) + (vhash(gx * 97 + i, gy * 89 + j, 4) - .5) * P.jitter)); c.fillRect(x + i * cs, y + j * cs, cs + .05, cs + .05);
+    if (cs >= 3) { c.fillStyle = `rgba(255,255,255,${.16 * P.bevel})`; c.fillRect(x + i * cs, y + j * cs, cs, 1); c.fillStyle = `rgba(0,0,0,${.4 * P.bevel})`; c.fillRect(x + i * cs, y + (j + 1) * cs - 1, cs, 1); } }
+  c.fillStyle = `rgba(255,255,255,${.12 * P.tileBevel})`; c.fillRect(x, y + g / 2, T, 1.5); c.fillStyle = `rgba(0,0,0,${.5 * P.tileBevel})`; c.fillRect(x, y + T - g / 2 - 2, T, 2); c.restore(); }
 
-// ── Tiles ───────────────────────────────────────────────────────────────────
-const raise = (c, r, x, y, m, gy, lift = .5) => MATERIAL[m](c, r, x, y, gy, lift);
-const label = (c, x, y, t, col, glow) => { c.save(); c.font = '700 17px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, x + T / 2, y + T / 2 + 1); c.restore(); };
-const TILE = {
-  rock(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); },
-  // Obstacles: patterns.
-  band(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.save(); c.beginPath(); c.rect(x, y, T, T); c.clip(); c.strokeStyle = 'rgba(0,0,0,.55)'; c.lineWidth = 2; for (let i = -T; i < T; i += 6) { c.beginPath(); c.moveTo(x + i, y + T); c.lineTo(x + i + T * .45, y); c.stroke(); } c.restore(); },
-  crust(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.fillStyle = 'rgba(0,0,0,.45)'; c.fillRect(x, y, T, T); c.save(); c.beginPath(); c.rect(x, y, T, T); c.clip(); c.strokeStyle = 'rgba(150,157,164,.32)'; c.lineWidth = 1; for (let i = -T; i < T; i += 8) { c.beginPath(); c.moveTo(x + i, y + T); c.lineTo(x + i + T, y); c.stroke(); c.beginPath(); c.moveTo(x + i, y); c.lineTo(x + i + T, y + T); c.stroke(); } c.restore(); c.strokeStyle = 'rgba(150,157,164,.4)'; c.strokeRect(x + .5, y + .5, T - 1, T - 1); },
-  wall(c, r, x, y) { c.fillStyle = '#0f1012'; c.fillRect(x, y, T, T); c.strokeStyle = 'rgba(150,157,164,.12)'; for (let i = 4; i < T; i += 6) { c.beginPath(); c.moveTo(x + i + .5, y); c.lineTo(x + i + .5, y + T); c.stroke(); } },
-  slab(c, r, x, y) { const g = c.createLinearGradient(0, y, 0, y + T); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s)); c.fillStyle = g; c.fillRect(x, y, T, T); c.fillStyle = '#fff'; c.fillRect(x, y, T, 1); c.fillStyle = 'rgba(60,62,75,.55)'; c.fillRect(x, y + T - 2, T, 2); c.font = '700 8px "IBM Plex Sans"'; c.fillStyle = '#0000dd'; c.fillText('™', x + T - 10, y + 9); },
-  // Collect: raised on the rock.
-  sample(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy, .4); c.fillStyle = '#e1e4e6'; c.beginPath(); c.moveTo(x + 20, y + 13); c.lineTo(x + 27, y + 20); c.lineTo(x + 20, y + 27); c.lineTo(x + 13, y + 20); c.closePath(); c.fill(); },
-  whey(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy); label(c, x, y, 'W', '#0b0c0e'); },
-  powder(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy); label(c, x, y, 'P', '#0b0c0e'); },
-  chromeI(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy); label(c, x, y, 'C', '#0b0c0e'); },
-  spores(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy, .08); c.fillStyle = 'rgba(0,255,115,.10)'; c.fillRect(x, y, T, T); label(c, x, y, 'S', '#00ff73', true); },
-  shaker(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.fillStyle = '#c9cdd1'; c.beginPath(); c.moveTo(x + 18, y + 9); c.lineTo(x + 22, y + 9); c.lineTo(x + 22, y + 14); c.lineTo(x + 25, y + 17); c.lineTo(x + 25, y + 32); c.lineTo(x + 15, y + 32); c.lineTo(x + 15, y + 17); c.lineTo(x + 18, y + 14); c.closePath(); c.fill(); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(x + 15, y + 23, 10, 1.5); },
-  graffiti(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.strokeStyle = 'rgba(225,228,230,.75)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x + 9, y + 13); c.lineTo(x + 31, y + 10); c.moveTo(x + 8, y + 21); c.lineTo(x + 26, y + 19); c.moveTo(x + 28, y + 18); c.lineTo(x + 32, y + 17); c.moveTo(x + 10, y + 29); c.lineTo(x + 21, y + 28); c.stroke(); },
-  // States of finds: closed, open.
-  seam(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.strokeStyle = 'rgba(150,157,164,.45)'; c.setLineDash([3, 3]); c.strokeRect(x + 4.5, y + 4.5, T - 9, T - 9); c.setLineDash([]); label(c, x, y, '?', '#969da4'); },
-  seamOpen(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.fillStyle = 'rgba(0,255,115,.08)'; c.fillRect(x, y, T, T); c.strokeStyle = 'rgba(0,255,115,.75)'; c.strokeRect(x + 4.5, y + 4.5, T - 9, T - 9); label(c, x, y, '?', '#00ff73', true); },
-  sealed(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.strokeStyle = '#969da4'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x + 20, y + 9); c.lineTo(x + 31, y + 20); c.lineTo(x + 20, y + 31); c.lineTo(x + 9, y + 20); c.closePath(); c.stroke(); c.fillStyle = '#969da4'; c.beginPath(); c.moveTo(x + 20, y + 15); c.lineTo(x + 25, y + 20); c.lineTo(x + 20, y + 25); c.lineTo(x + 15, y + 20); c.closePath(); c.fill(); },
-  sealedOpen(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.save(); c.shadowColor = '#00ff73'; c.shadowBlur = 10; c.strokeStyle = '#00ff73'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x + 20, y + 8); c.lineTo(x + 32, y + 20); c.lineTo(x + 20, y + 32); c.lineTo(x + 8, y + 20); c.closePath(); c.stroke(); c.fillStyle = '#00ff73'; c.beginPath(); c.moveTo(x + 20, y + 15); c.lineTo(x + 25, y + 20); c.lineTo(x + 20, y + 25); c.lineTo(x + 15, y + 20); c.closePath(); c.fill(); c.restore(); },
-  charge(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.fillStyle = '#0b0c0e'; c.fillRect(x + 12, y + 16, 16, 16); c.strokeStyle = '#e1e4e6'; c.lineWidth = 1.5; c.strokeRect(x + 12.75, y + 16.75, 14.5, 14.5); c.beginPath(); c.moveTo(x + 20, y + 16); c.lineTo(x + 20, y + 11); c.lineTo(x + 24, y + 7); c.stroke(); c.fillStyle = '#ffb43c'; c.fillRect(x + 23, y + 5, 3, 3); },
-  air(c, r, x, y) { c.fillStyle = '#08090a'; c.fillRect(x, y, T, T); },
-  you(c, r, x, y) { c.fillStyle = '#08090a'; c.fillRect(x, y, T, T); c.fillStyle = '#c9ccc9'; c.fillRect(x + 9, y + 6, 22, 30); c.fillStyle = '#0b0c0e'; c.fillRect(x + 13, y + 12, 14, 6); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(x + 9, y + 33, 22, 3); },
+// ── Overlays: a plate on the rock, the symbol on the plate ──
+const plate = (c, gx, gy, fill, alpha, border) => { const x = gx * T + 5, y = gy * T + 5, s = T - 10; c.globalAlpha = alpha; c.fillStyle = fill; c.fillRect(x, y, s, s); c.globalAlpha = 1;
+  if (border) { c.strokeStyle = border; c.lineWidth = 1; c.strokeRect(x + .5, y + .5, s - 1, s - 1); } };
+const label = (c, gx, gy, t, col, glow, size = 17) => { c.save(); c.font = `700 ${size}px "Chakra Petch"`; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, gx * T + T / 2, gy * T + T / 2 + 1); c.restore(); };
+const diamond = (c, gx, gy, s, col, outline) => { const x = gx * T + T / 2, y = gy * T + T / 2; c.beginPath(); c.moveTo(x, y - s); c.lineTo(x + s, y); c.lineTo(x, y + s); c.lineTo(x - s, y); c.closePath(); if (outline) { c.strokeStyle = col; c.lineWidth = 1.5; c.stroke(); } else { c.fillStyle = col; c.fill(); } };
+const hatch = (c, gx, gy, col, step, cross) => { const x = gx * T, y = gy * T; c.save(); c.beginPath(); c.rect(x + 5, y + 5, T - 10, T - 10); c.clip(); c.strokeStyle = col; c.lineWidth = 1.5;
+  for (let i = -T; i < T; i += step) { c.beginPath(); c.moveTo(x + i, y + T); c.lineTo(x + i + T * .6, y); c.stroke(); if (cross) { c.beginPath(); c.moveTo(x + i, y); c.lineTo(x + i + T * .6, y + T); c.stroke(); } } c.restore(); };
+const FIND = {
+  whey: (c, x, y) => { plate(c, x, y, '#c9ccc9', .82); label(c, x, y, 'W', '#0b0c0e'); },
+  powder: (c, x, y) => { plate(c, x, y, '#c9ccc9', .82); label(c, x, y, 'P', '#0b0c0e'); },
+  chromeI: (c, x, y) => { plate(c, x, y, '#c9ccc9', .82); label(c, x, y, 'C', '#0b0c0e'); },
+  sample: (c, x, y) => { plate(c, x, y, '#c9ccc9', .74); diamond(c, x, y, 7, '#0b0c0e'); },
+  spores: (c, x, y) => { plate(c, x, y, '#03150c', .84, 'rgba(0,255,115,.45)'); label(c, x, y, 'S', '#00ff73', true); },
+  band: (c, x, y) => { plate(c, x, y, '#0b0c0e', .55); hatch(c, x, y, 'rgba(150,157,164,.7)', 6); },
+  crust: (c, x, y) => { plate(c, x, y, '#0b0c0e', .7, 'rgba(150,157,164,.55)'); hatch(c, x, y, 'rgba(150,157,164,.5)', 8, true); },
+  seam: (c, x, y) => { plate(c, x, y, '#0b0c0e', .72); c.setLineDash([3, 3]); c.strokeStyle = 'rgba(150,157,164,.7)'; c.strokeRect(x * T + 5.5, y * T + 5.5, T - 11, T - 11); c.setLineDash([]); label(c, x, y, '?', '#969da4'); },
+  seamOpen: (c, x, y) => { plate(c, x, y, '#00ff73', .22, 'rgba(0,255,115,.8)'); label(c, x, y, '?', '#00ff73', true); },
+  sealed: (c, x, y) => { plate(c, x, y, '#0b0c0e', .72); diamond(c, x, y, 10, '#969da4', true); diamond(c, x, y, 4.5, '#969da4'); },
+  sealedOpen: (c, x, y) => { plate(c, x, y, '#00ff73', .22, 'rgba(0,255,115,.8)'); c.save(); c.shadowColor = '#00ff73'; c.shadowBlur = 8; diamond(c, x, y, 10, '#00ff73', true); diamond(c, x, y, 4.5, '#00ff73'); c.restore(); },
+  shaker: (c, x, y) => { plate(c, x, y, '#0b0c0e', .72); const X = x * T, Y = y * T; c.fillStyle = '#c9ccc9'; c.beginPath(); c.moveTo(X + 18.5, Y + 9); c.lineTo(X + 21.5, Y + 9); c.lineTo(X + 21.5, Y + 14); c.lineTo(X + 24, Y + 17); c.lineTo(X + 24, Y + 32); c.lineTo(X + 16, Y + 32); c.lineTo(X + 16, Y + 17); c.lineTo(X + 18.5, Y + 14); c.closePath(); c.fill(); },
+  graffiti: (c, x, y) => { plate(c, x, y, '#0b0c0e', .65); const X = x * T, Y = y * T; c.strokeStyle = '#c9ccc9'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(X + 10, Y + 14); c.lineTo(X + 30, Y + 11); c.moveTo(X + 10, Y + 21); c.lineTo(X + 25, Y + 19); c.moveTo(X + 27, Y + 18.5); c.lineTo(X + 30, Y + 18); c.moveTo(X + 11, Y + 28); c.lineTo(X + 21, Y + 27); c.stroke(); },
+  charge: (c, x, y) => { plate(c, x, y, '#0b0c0e', .8); const X = x * T, Y = y * T; c.strokeStyle = '#e1e4e6'; c.lineWidth = 1.5; c.strokeRect(X + 13.75, Y + 17.75, 12.5, 12.5); c.beginPath(); c.moveTo(X + 20, Y + 17); c.lineTo(X + 20, Y + 12); c.lineTo(X + 24, Y + 9); c.stroke(); c.fillStyle = '#ffb43c'; c.fillRect(X + 23, Y + 7, 3, 3); },
 };
-const SHEET = [
-  ['rock', 'Rock', 'recedes'], ['band', 'Hard band', 'hatching: compacted'], ['crust', 'Crust', 'cross-hatch, framed'], ['wall', 'Wall', 'Belt Authority bedrock'], ['slab', 'Näsa slab', 'chrome, ™ in Näsa blue'],
-  ['sample', 'Drill sample', 'raised, the core'], ['whey', 'Regolith Whey', 'raised, letter'], ['powder', 'Legacy Powder', 'raised, letter'], ['chromeI', 'Chrome Filings', 'raised, letter'], ['spores', 'Crack Spores', 'the only glowing find'],
-  ['shaker', 'Fossil shaker', 'a bottle in the rock'], ['graffiti', 'Graffiti', 'scratches, no tiny text'], ['seam', 'Seam', 'closed: dashed, steel'], ['seamOpen', 'Seam, open', 'its state: fluo'], ['sealed', 'Sealed find', 'closed: steel ◈'],
-  ['sealedOpen', 'Sealed, open', 'its state: fluo'], ['charge', 'Charge', 'fuse in amber'], ['air', 'Tunnel', 'dug'], ['you', 'Prospector', 'concrete: the lightest'],
-];
+const SOLID = {
+  air: (c, x, y) => { c.fillStyle = '#08090a'; c.fillRect(x * T, y * T, T, T); },
+  you: (c, x, y) => { SOLID.air(c, x, y); c.fillStyle = '#c9ccc9'; c.fillRect(x * T + 9, y * T + 6, 22, 30); c.fillStyle = '#0b0c0e'; c.fillRect(x * T + 13, y * T + 12, 14, 6); },
+  slab: (c, x, y) => { const g = c.createLinearGradient(0, y * T, 0, y * T + T); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s)); c.fillStyle = g; c.fillRect(x * T, y * T, T, T); c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans"'; c.fillText('™', x * T + T - 10, y * T + 9); },
+};
+function tile(c, kind, gx, gy) { if (SOLID[kind]) return SOLID[kind](c, gx, gy); rock(c, gx, gy); if (FIND[kind]) FIND[kind](c, gx, gy); }
 
-function drawTile(c, kind, gx, gy, m) {
-  const r = rng(hash(gx, gy, m.length * 7 + 3)), x = gx * T, y = gy * T;
-  if (kind === 'air' || kind === 'you') { TILE[kind](c, r, x, y, m, gy); return; }
-  c.fillStyle = '#060708'; c.fillRect(x, y, T, T);                       // the division between blocks
-  c.save(); c.beginPath(); c.rect(x + 1, y + 1, T - 2, T - 2); c.clip(); TILE[kind](c, r, x, y, m, gy); c.restore();
-}
-// The sheet: every tile on the Chrome Vein, at 2×.
-const sheet = document.getElementById('sheet');
+const KEY = { r: 'rock', w: 'whey', s: 'sample', a: 'air', p: 'powder', g: 'graffiti', Y: 'you', b: 'band', c: 'chromeI', '?': 'seam', S: 'spores', h: 'shaker', o: 'sealed' };
+const PATCH = ['rrrrrrrrrrr', 'rrwrrrsrrrr', 'rrraaarrrpr', 'rgrrYrrrhrr', 'bbbbbbbbbbb', 'rrrcrrr?roS'];
+function patch(m, map = KEY, post) { P = LAYERS[m].P; const cv = document.createElement('canvas'); cv.width = COLS * T * 2; cv.height = ROWS * T * 2; const c = cv.getContext('2d'); c.scale(2, 2);
+  PATCH.forEach((row, gy) => [...row].forEach((ch, gx) => { let k = map[ch]; if (m !== 'strata' && k === 'shaker') k = 'rock'; if (m === 'regolith' && k === 'spores') k = 'rock'; tile(c, k, gx, gy); }));
+  if (post) post(c); return cv; }
+const add = (el, cv, name, why, cls = '') => { const d = document.createElement('div'); d.className = 'patch ' + cls; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><p>${why}</p>`); el.append(d); };
+const dark = c => { const g = c.createRadialGradient(4.5 * T, 3.5 * T, T * 1.4, 4.5 * T, 3.5 * T, T * 3.8); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.92)'); c.fillStyle = g; c.fillRect(0, 0, COLS * T, ROWS * T); FIND.spores(c, 10, 5); };
+
 document.fonts.ready.then(() => {
-  for (const [k, name, note] of SHEET) {
-    const cv = document.createElement('canvas'); cv.width = 80; cv.height = 80; const c = cv.getContext('2d'); c.scale(2, 2);
-    c.__ox = 120 + SHEET.findIndex(e => e[0] === k) * 40; c.__oy = 200; c.fillStyle = '#060708'; c.fillRect(0, 0, T, T); c.save(); c.beginPath(); c.rect(1, 1, T - 2, T - 2); c.clip(); TILE[k](c, rng(hash(3, 5, k.length)), 0, 0, 'chrome', 5); c.restore();
-    const d = document.createElement('div'); d.className = 'cell'; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><span>${note}</span>`); sheet.append(d);
-  }
-  // A patch of each layer: 11 × 6 tiles, with the layer's own finds.
-  const PATCH = [
-    'rrrrrrrrrrr', 'rrwrrrsrrrr', 'rrraaarrrpr', 'rgrrYrrrrrr', 'bbbbbbbbbbb', 'rrrcrrr?rrS',
-  ];
-  const layersEl = document.getElementById('layers');
-  for (const [m, name, why] of LAYERS) {
-    const cv = document.createElement('canvas'); cv.width = 11 * T * 2; cv.height = 6 * T * 2; const c = cv.getContext('2d'); c.scale(2, 2);
-    PATCH.forEach((row, gy) => [...row].forEach((ch, gx) => {
-      let k = { r: 'rock', w: 'whey', s: 'sample', a: 'air', p: 'powder', g: 'graffiti', Y: 'you', b: 'band', c: m === 'chrome' ? 'chromeI' : 'rock', '?': 'seam', S: 'spores' }[ch];
-      if (m === 'strata' && gx === 8 && gy === 3) k = 'shaker';
-      if (m === 'regolith' && k === 'spores') k = 'rock';
-      drawTile(c, k, gx, gy, m);
-    }));
-    if (m === 'obsidian') { const g = c.createRadialGradient(4.5 * T, 3.5 * T, T * 1.4, 4.5 * T, 3.5 * T, T * 3.6); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.94)'); c.fillStyle = g; c.fillRect(0, 0, 11 * T, 6 * T);
-      [[10, 5]].forEach(([gx, gy]) => drawTile(c, 'spores', gx, gy, m)); }
-    const d = document.createElement('div'); d.className = 'patch'; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><p>${why}</p>`); layersEl.append(d);
-  }
-  // States on the Chrome Vein.
-  const stEl = document.getElementById('states');
-  const STATES = [
-    ['frenzy', 'Frenzy', 'Heat in the seams: the rock brightens and sharpens, the divisions glow amber, the window tilts. No brown.', c => { const d = c.getImageData(0, 0, c.canvas.width, c.canvas.height); for (let i = 0; i < d.data.length; i += 4) for (let k = 0; k < 3; k++) d.data[i + k] = Math.min(255, (d.data[i + k] - 20) * 1.35 + 26); c.putImageData(d, 0, 0);
-      c.strokeStyle = 'rgba(255,180,60,.5)'; c.lineWidth = 1.5; for (let gx = 1; gx < 11; gx++) { c.beginPath(); c.moveTo(gx * T, 0); c.lineTo(gx * T, 6 * T); c.stroke(); } for (let gy = 1; gy < 6; gy++) { c.beginPath(); c.moveTo(0, gy * T); c.lineTo(11 * T, gy * T); c.stroke(); } }],
-    ['still', 'Stillness', 'Cold and drained: colour leaves, the light goes flat and blue-grey. (No longer violet: violet is the secret menu.)', c => { const d = c.getImageData(0, 0, c.canvas.width, c.canvas.height); for (let i = 0; i < d.data.length; i += 4) { const l = d.data[i] * .3 + d.data[i + 1] * .59 + d.data[i + 2] * .11; d.data[i] = l * .82; d.data[i + 1] = l * .9; d.data[i + 2] = l * 1.02; } c.putImageData(d, 0, 0); }],
-    ['rave', 'The Crack · rave', 'Candygirl in the dark: pastel rock, saturated light pools drifting.', null],
-  ];
-  for (const [cls, name, why, post] of STATES) {
-    const cv = document.createElement('canvas'); cv.width = 11 * T * 2; cv.height = 6 * T * 2; const c = cv.getContext('2d'); c.scale(2, 2);
-    const m = cls === 'rave' ? 'obsidian' : 'chrome';
-    PATCH.forEach((row, gy) => [...row].forEach((ch, gx) => {
-      const k = { r: 'rock', w: 'whey', s: 'sample', a: 'air', p: 'powder', g: 'graffiti', Y: 'you', b: 'band', c: 'chromeI', '?': 'seamOpen', S: 'spores' }[ch];
-      if (cls === 'rave' && ['rock', 'band'].includes(k)) { const P = ['#f4d5e4', '#cdeadb', '#d3e0f3', '#ebe6cf'][(gx + gy) % 4]; drawTile(c, k, gx, gy, m); c.fillStyle = P; c.globalAlpha = .82; c.fillRect(gx * T, gy * T, T, T); c.globalAlpha = 1; if (k === 'band') { c.save(); c.beginPath(); c.rect(gx * T, gy * T, T, T); c.clip(); c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 2; for (let i = -T; i < T; i += 6) { c.beginPath(); c.moveTo(gx * T + i, gy * T + T); c.lineTo(gx * T + i + T * .45, gy * T); c.stroke(); } c.restore(); } }
-      else drawTile(c, k, gx, gy, m);
-    }));
-    if (cls === 'rave') { c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(0,0,0,.55)'; c.fillRect(0, 0, 11 * T, 6 * T);
-      c.globalCompositeOperation = 'lighter'; [[255, 70, 170, 2, 1.5], [60, 255, 150, 8, 4], [70, 140, 255, 5, 2.5], [255, 225, 80, 9.5, 1]].forEach(([rr, gg, bb, gx, gy]) => { const g = c.createRadialGradient(gx * T, gy * T, 0, gx * T, gy * T, T * 3.2); g.addColorStop(0, `rgba(${rr},${gg},${bb},.42)`); g.addColorStop(1, `rgba(${rr},${gg},${bb},0)`); c.fillStyle = g; c.fillRect(0, 0, 11 * T, 6 * T); }); c.globalCompositeOperation = 'source-over'; }
-    if (post) post(c);
-    const d = document.createElement('div'); d.className = 'patch state ' + cls; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><p>${why}</p>`); stEl.append(d);
-  }
+  const L = document.getElementById('layers');
+  const WHY = { regolith: 'Fine light grit, veins of brightness running through: the surface.', strata: 'Bands and veins, layered and broken: the fossil shakers’ rock.', chrome: 'Long dark streaks pulled along the flow: the vein.', crack: 'Fine, nearly black, shot through with light and dark lines: the dark.' };
+  for (const m of Object.keys(LAYERS)) add(L, patch(m, KEY, m === 'crack' ? dark : null), LAYERS[m].name, WHY[m]);
+  // The overlay sheet, on the Chrome Vein.
+  const S = document.getElementById('sheet');
+  const SHEET = [['rock', 'Rock', 'high contrast, free'], ['band', 'Hard band', 'ink plate, hatching'], ['crust', 'Crust', 'ink plate, cross-hatch'], ['slab', 'Näsa slab', 'chrome, no plate'],
+    ['sample', 'Drill sample', 'concrete plate'], ['whey', 'Regolith Whey', 'concrete plate, letter'], ['powder', 'Legacy Powder', 'concrete plate'], ['chromeI', 'Chrome Filings', 'concrete plate'],
+    ['spores', 'Crack Spores', 'the only glowing find'], ['shaker', 'Fossil shaker', 'ink plate, bottle'], ['graffiti', 'Graffiti', 'ink plate, scratches'], ['charge', 'Charge', 'ink plate, amber spark'],
+    ['seam', 'Seam', 'closed: ink, dashed'], ['seamOpen', 'Seam, open', 'its state: fluo plate'], ['sealed', 'Sealed find', 'closed: ink, ◈'], ['sealedOpen', 'Sealed, open', 'its state: fluo plate'], ['you', 'Prospector', 'concrete: the lightest']];
+  SHEET.forEach(([k, name, note], i) => { P = LAYERS.chrome.P; const cv = document.createElement('canvas'); cv.width = 80; cv.height = 80; const c = cv.getContext('2d'); c.scale(2, 2); c.translate(-(i + 3) * T, -4 * T); tile(c, k, i + 3, 4);
+    const d = document.createElement('div'); d.className = 'cell'; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><span>${note}</span>`); S.append(d); });
+  // States
+  const St = document.getElementById('states');
+  add(St, patch('chrome', { ...KEY, '?': 'seamOpen' }, c => { const d = c.getImageData(0, 0, c.canvas.width, c.canvas.height); for (let i = 0; i < d.data.length; i += 4) for (let k = 0; k < 3; k++) d.data[i + k] = Math.min(255, (d.data[i + k] - 20) * 1.2 + 26); c.putImageData(d, 0, 0);
+    c.setTransform(2, 0, 0, 2, 0, 0); c.strokeStyle = 'rgba(255,180,60,.6)'; c.lineWidth = 2; for (let gx = 1; gx < COLS; gx++) { c.beginPath(); c.moveTo(gx * T, 0); c.lineTo(gx * T, ROWS * T); c.stroke(); } for (let gy = 1; gy < ROWS; gy++) { c.beginPath(); c.moveTo(0, gy * T); c.lineTo(COLS * T, gy * T); c.stroke(); } }),
+    'Frenzy', 'Heat in the seams: brighter, sharper, amber divisions, the window tilts.', 'tilt');
+  add(St, patch('chrome', KEY, c => { const d = c.getImageData(0, 0, c.canvas.width, c.canvas.height); for (let i = 0; i < d.data.length; i += 4) { const l = d.data[i] * .3 + d.data[i + 1] * .59 + d.data[i + 2] * .11; const f = .55 + l / 255 * .35; d.data[i] = l * f * .85; d.data[i + 1] = l * f * .93; d.data[i + 2] = l * f * 1.05; } c.putImageData(d, 0, 0); }),
+    'Stillness', 'Cold and drained: the contrast falls away, the light goes flat and blue-grey.');
+  add(St, patch('crack', KEY, dark), 'The Crack', 'The dark: about three tiles of light around the prospector, the spores glowing beyond.');
+  add(St, patch('crack', KEY, c => { const P2 = ['#f4d5e4', '#cdeadb', '#d3e0f3', '#ebe6cf']; c.globalCompositeOperation = 'soft-light'; for (let gy = 0; gy < ROWS; gy++) for (let gx = 0; gx < COLS; gx++) { if ('aY'.includes(PATCH[gy][gx])) continue; c.fillStyle = P2[(gx + gy) % 4]; c.fillRect(gx * T, gy * T, T, T); }
+    c.globalCompositeOperation = 'source-over'; c.globalAlpha = .55; for (let gy = 0; gy < ROWS; gy++) for (let gx = 0; gx < COLS; gx++) { if ('aY'.includes(PATCH[gy][gx])) continue; c.fillStyle = P2[(gx + gy) % 4]; c.fillRect(gx * T + 2, gy * T + 2, T - 4, T - 4); } c.globalAlpha = 1;
+    c.globalCompositeOperation = 'lighter'; [[255, 70, 170, 2, 1.5], [60, 255, 150, 8, 4], [70, 140, 255, 5, 2.5], [255, 225, 80, 9.5, 1]].forEach(([r, g0, b, x, y]) => { const g = c.createRadialGradient(x * T, y * T, 0, x * T, y * T, T * 3.2); g.addColorStop(0, `rgba(${r},${g0},${b},.4)`); g.addColorStop(1, `rgba(${r},${g0},${b},0)`); c.fillStyle = g; c.fillRect(0, 0, COLS * T, ROWS * T); }); c.globalCompositeOperation = 'source-over';
+    PATCH.forEach((row, gy) => [...row].forEach((ch, gx) => { const k = KEY[ch]; if (FIND[k] && k !== 'band') FIND[k](c, gx, gy); })); }),
+    'The Crack · rave', 'Candygirl in the dark: pastel over the rock, the light pools drifting, the finds still on their plates.');
 });
 </script>
 </body>
