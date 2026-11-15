@@ -502,3 +502,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **A last chance for Candygirl.** If you reach The Crack without having had it, the rumour comes back with the whole recipe.
 
 **An underground rave.** On Candygirl in The Crack, switching to Void FM did nothing for the dark: Candygirl had the radio. So The Crack becomes an underground rave instead: coloured lights drifting through the dark cave, acid techno on.
+
+**Testarocca plays the end.** The shift ends, and the rover plays its own tape. And Candygirl is fabulous in The Crack when I need more drill samples for blasting: run up the tunnel to the ones I passed.

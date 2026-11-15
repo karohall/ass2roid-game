@@ -423,6 +423,7 @@ function radioKey(k) {
 // What the radio plays right now: the station you chose. The Drift plays The You Show, and a broken drill
 // leaves only the tape. Frenzy and Stillness don't switch the station: they change how it sounds (stateSound).
 function radioNow() {
+  if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
   if (s && s.drift) return { key: 'oddity', song: 0 };
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
   if (s && candy()) return { key: 'pump', song: 0, track: RADIO.pump.rare[0], cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
@@ -1240,6 +1241,7 @@ function pickCrater(i) {
 }
 
 function finishGame(drifted = false) {
+  s.over = true;                                             // the shift is over: the rover's tape plays the end
   if (!drifted) unlock('core');                             // the redacted card, for reaching the Core
   const sec = Math.floor(s.timeMs / 1000);
   const stats = [

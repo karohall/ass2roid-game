@@ -285,6 +285,7 @@ The song ending ends the Drift: CONTACT LOST. Esc still ends it early. The canva
 ### The rover's tape deck
 
 - **Concept:** the rover has a tape deck as well as the radio. Tapes are physical things the prospector carries, not stations.
+- **The tape plays the end (2026-11-15).** When the shift ends, at the Core or after the Drift, the radio cross-fades to Testarocca, from the top, under the end screen. A new shift brings your station back.
 - **Named Tape (2026-11-15).** The ticker said Testarocca twice (the tape and the song), so the tape is just *Tape* now, and its song says which side: *Tape · Now playing: Testarocca · Side A*. A B side can come with the next tape song.
 - **The broken drill plays the tape (2026-11-14).** The radio runs on the drill's power: when the drill breaks, the radio dies with it, and the rover cuts straight to the tape, which runs on its own battery. The radio panel: *"The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back."* R and T stay on the tape: *"No power for the radio. Only the tape."* Recovery repairs the drill, and the station you were on comes back. The Pump Zone's speed only counts while it actually plays. The tape plays even over a Frenzy: no power is no power. The game now starts on the Pump Zone; T still plays the tape any time.
 - **Tapes so far:**
