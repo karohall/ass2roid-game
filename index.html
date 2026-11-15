@@ -310,7 +310,9 @@ const CONFIG = {
   drift:   { nudge: 6, durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
-  radio:   { pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
+  radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
+             // duckDownMs/duckUpMs: the music dips under a DJ in 0.4 s and comes back over 1.5 s; djLead: the dip starts 0.4 s before the voice
+             pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
              states: { normal: { rate: 1, lowpass: 20000, highpass: 10, drive: 0 }, still: { rate: 0.88, lowpass: 650, highpass: 10, drive: 0 }, frenzy: { rate: 1.08, lowpass: 20000, highpass: 220, drive: 0.35 } } },   // Frenzy and Stillness change the sound, not the station   // the voices sit lower and the music ducks less (to 60%)   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -446,14 +448,16 @@ const DJS = {
   },
 };
 const dj = new Audio(); dj.preload = 'auto'; let djLast = '', djOn = '';
-const djTalking = () => !!dj.src && !dj.paused && !dj.ended;
+let djCue = 0;                                              // a voice about to start: the music is already dipping
+const djTalking = () => !!djCue || (!!dj.src && !dj.paused && !dj.ended);
 const djOnAir = key => sound.on && !(s && s.drift) && (key === '*' ? radioNow().key !== 'tape' : radioNow().key === key);   // '*': breaking in on any station
 function djSay(key, file, any) {
   if (any) key = '*';
   if (!djOnAir(key) || djTalking()) return;
   dj.src = encodeURI(file); djLast = file; djOn = key;
-  dj.play().catch(() => {});
+  djCue = setTimeout(() => { djCue = 0; if (djOnAir(djOn)) dj.play().catch(() => {}); }, CONFIG.radio.djLead);
 }
+function djHush() { clearTimeout(djCue); djCue = 0; dj.pause(); }
 const rocky = file => djSay('pump', file);
 // The radio's sound, through Web Audio. Songs and voices share one bus, so the state changes both.
 // Stillness: muffled and slower, as if through rock. Frenzy: faster, thinner, a little distorted.
@@ -471,7 +475,7 @@ function soundGraph() {
     const crush = node('createWaveShaper', { curve: drive(25), oversample: '2x' });
     bus.lp.connect(bus.hp); bus.hp.connect(bus.dry); bus.hp.connect(crush); crush.connect(bus.wet);
     bus.dry.connect(ac.destination); bus.wet.connect(ac.destination);
-    ac.createMediaElementSource(player).connect(bus.lp);
+    decks.forEach(d => ac.createMediaElementSource(d).connect(bus.lp));
     // The voice chain.
     const vhp = node('createBiquadFilter', { type: 'highpass' }), vlp = node('createBiquadFilter', { type: 'lowpass' });
     vhp.frequency.value = 280; vlp.frequency.value = 4200;
@@ -488,9 +492,11 @@ function soundGraph() {
 function stateSound() {
   const st = s && running && !s.drift ? s.inState : null, A = CONFIG.radio.states;
   const want = st === 'still' ? A.still : st === 'frenzy' ? A.frenzy : A.normal;
-  player.preservesPitch = false;                                             // slower is lower, like a tape
-  player.playbackRate += (want.rate - player.playbackRate) * 0.05;
-  if (Math.abs(player.playbackRate - want.rate) < 0.002) player.playbackRate = want.rate;
+  for (const d of decks) {
+    d.preservesPitch = false;                                                // slower is lower, like a tape
+    d.playbackRate += (want.rate - d.playbackRate) * 0.05;
+    if (Math.abs(d.playbackRate - want.rate) < 0.002) d.playbackRate = want.rate;
+  }
   if (!bus.ac || bus.st === want) return;
   bus.st = want; const t = bus.ac.currentTime, k = st ? 0.25 : 1.2;          // in fast, out slowly: sound returns one thing at a time
   bus.lp.frequency.setTargetAtTime(want.lowpass, t, k); bus.hp.frequency.setTargetAtTime(want.highpass, t, k);
@@ -505,18 +511,20 @@ function djBreak(key) {
   djSay(key, pool[Math.floor(Math.random() * pool.length)]);
 }
 
-// The sound itself: one player, cross-fading between songs. Browsers only allow sound after the
-// player has pressed a key or clicked, so the radio comes on with the first one: Begin shift.
-const player = new Audio(); player.preload = 'auto';
-const sound = { on: false, file: '', vol: 0 };
-player.addEventListener('ended', () => {
+// The sound itself: two decks, cross-fading between songs: the live one (player) and the one fading out. Browsers only
+// allow sound after the player has pressed a key or clicked, so the radio comes on with the first one: Begin shift.
+const decks = [new Audio(), new Audio()]; decks.forEach(d => d.preload = 'auto');
+let player = decks[0], outgoing = null;
+const sound = { on: false, file: '', vol: 0, out: 0, outMs: 1, inMs: 1, rising: false };
+decks.forEach(d => d.addEventListener('ended', () => { if (d === player) songEnded(); }));
+function songEnded() {
   if (s && s.drift && !s.drift.done) { endDrift(); return; }   // The You Show is over: so is the Drift
   const n = radioNow();
   if (n.song === undefined && radio.rare[n.key]) radio.rare[n.key] = null;     // a rare song gives way to the rotation
   else if (n.song === undefined) { radio.idx[n.key] = (radio.idx[n.key] || 0) + 1; pickRare(n.key); }   // the next song on this station
   else { player.currentTime = 0; player.play().catch(() => {}); return; }     // a song that cut in plays again
   djBreak(n.key);                                                            // between songs, the DJ may have a word
-});
+}
 // V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
 const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
 const volumeLabel = () => `♪ V: radio volume (${VOLUMES[radio.vol].name})`;
@@ -551,23 +559,28 @@ function soundTick(dt) {
     if (!s.djHello) { s.djHello = { [k]: true }; if (DJS[k]) djSay(k, DJS[k].hello); }                     // the shift's first sound: the DJ's hello
     else if (radio.on === 'void' && k === 'void' && !s.djHello.void && !djTalking()) { s.djHello.void = true; djSay('void', DJS.void.hello); }   // tuning in to Void FM: welcome
   }
-  if (djTalking() && !djOnAir(djOn)) dj.pause();                                                          // off their station, the DJ goes quiet
+  if (djTalking() && !djOnAir(djOn)) djHush();                                                          // off their station, the DJ goes quiet
   dj.volume = menuK;
   stateSound();
   const level = CONFIG.radio.volume * menuK * (djTalking() ? CONFIG.radio.djDuck : 1);                    // the music ducks under the DJ
-  if (n.cut && want !== sound.file) {                                         // the Frenzy: cut, mid-song, no fade
-    sound.file = want; sound.vol = level; player.volume = level;
-    loadSong(want);
-    return;
-  }
-  const target = want && want === sound.file ? level : 0;
-  const step = dt / CONFIG.radio.fadeMs;
-  sound.vol = target > sound.vol ? Math.min(target, sound.vol + step) : Math.max(target, sound.vol - step);
-  if (want !== sound.file && sound.vol === 0) {                                // faded out: change song
-    sound.file = want;
+  if (want !== sound.file) {                                                  // a new song: the live deck fades out as the other fades in
+    const R = CONFIG.radio, ms = n.cut ? R.cutMs : R.xfadeMs;                  // a hard cut is a very quick cross-fade
+    if (outgoing) outgoing.pause();
+    if (sound.file) { outgoing = player; sound.out = sound.vol; sound.outMs = ms; } else outgoing = null;
+    player = decks.find(d => d !== outgoing && d !== player) || decks.find(d => d !== player);
+    sound.file = want; sound.vol = 0; sound.inMs = ms; sound.rising = true;
     if (want) loadSong(want); else player.pause();
   }
-  player.volume = sound.vol;
+  // The live deck: up to its level (at the cross-fade's pace while it comes in), then following the ducking.
+  const R = CONFIG.radio, target = want ? level : 0;
+  if (sound.vol < target) { sound.vol = Math.min(target, sound.vol + dt / (sound.rising ? sound.inMs : R.duckUpMs) * CONFIG.radio.volume); if (sound.vol >= target) sound.rising = false; }
+  else sound.vol = Math.max(target, sound.vol - dt / R.duckDownMs * CONFIG.radio.volume);
+  player.volume = Math.min(1, sound.vol);
+  if (outgoing) {                                                             // the other deck fades away, then stops
+    sound.out = Math.max(0, sound.out - dt / sound.outMs * CONFIG.radio.volume);
+    outgoing.volume = Math.min(1, sound.out);
+    if (sound.out === 0) { outgoing.pause(); outgoing = null; }
+  }
 }
 
 const DOSAGE = ['Get out of our sight', 'Coward', 'Meh', 'We see you', 'Hell yeah'];
