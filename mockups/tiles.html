@@ -44,7 +44,7 @@ body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 Int
 </div>
 <script>
 const T = 40, COLS = 11, ROWS = 6;
-const C = { ink: '#0b0c0e', concrete: '#c9ccc9', steel: '#969da4', fluo: '#00ff73', amber: '#ffb43c', text: '#e1e4e6' };
+const C = { ink: '#0b0c0e', concrete: '#c9ccc9', steel: '#b4bac0',   /* steel lifted for plates on busy rock (was #969da4) */ fluo: '#00ff73', amber: '#ffb43c', text: '#e1e4e6' };
 // ── The rock: the tile lab's engine ──
 const STANDARD = { grout: 4, bevel: 1, tileBevel: 1 };   // from Regolith: the standard for every layer
 const LAYERS = {
@@ -77,9 +77,11 @@ function rock(c, gx, gy) { const x = gx * T, y = gy * T, n = P.cells, cs = T / n
 // ── Overlays: one plate, the role's colour ──
 let SPORE = '#34e6ff';
 const hexA = (h, a) => `rgba(${parseInt(h.slice(1, 3), 16)},${parseInt(h.slice(3, 5), 16)},${parseInt(h.slice(5, 7), 16)},${a})`;
-function plate(c, gx, gy, col, { glow = false, dashed = false, tint = .12 } = {}) { const x = gx * T + 5, y = gy * T + 5, s = T - 10;
-  c.fillStyle = hexA(C.ink, .74); c.fillRect(x, y, s, s); c.fillStyle = hexA(col, glow ? .18 : tint); c.fillRect(x, y, s, s);
-  c.save(); if (dashed) c.setLineDash([3, 3]); if (glow) { c.shadowColor = col; c.shadowBlur = 6; } c.strokeStyle = hexA(col, glow ? .85 : .6); c.lineWidth = 1; c.strokeRect(x + .5, y + .5, s - 1, s - 1); c.restore(); }
+// Contrast: a dark gap cut round the plate separates it from the rock; the plate is near-solid ink; the border is bright and 1.5 px.
+function plate(c, gx, gy, col, { glow = false, dashed = false, tint = .1 } = {}) { const x = gx * T + 5, y = gy * T + 5, s = T - 10;
+  c.fillStyle = hexA('#000000', .7); c.fillRect(x - 2, y - 2, s + 4, s + 4);
+  c.fillStyle = hexA(C.ink, .92); c.fillRect(x, y, s, s); c.fillStyle = hexA(col, glow ? .2 : tint); c.fillRect(x, y, s, s);
+  c.save(); if (dashed) c.setLineDash([3, 2]); if (glow) { c.shadowColor = col; c.shadowBlur = 6; } c.strokeStyle = hexA(col, .95); c.lineWidth = 1.5; c.strokeRect(x + .75, y + .75, s - 1.5, s - 1.5); c.restore(); }
 const label = (c, gx, gy, t, col, glow, size = 17) => { c.save(); c.font = `700 ${size}px "Chakra Petch"`; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, gx * T + T / 2, gy * T + T / 2 + 1); c.restore(); };
 const diamond = (c, gx, gy, s, col, outline) => { const x = gx * T + T / 2, y = gy * T + T / 2; c.beginPath(); c.moveTo(x, y - s); c.lineTo(x + s, y); c.lineTo(x, y + s); c.lineTo(x - s, y); c.closePath(); if (outline) { c.strokeStyle = col; c.lineWidth = 1.5; c.stroke(); } else { c.fillStyle = col; c.fill(); } };
 const hatch = (c, gx, gy, col, step, cross) => { const x = gx * T, y = gy * T; c.save(); c.beginPath(); c.rect(x + 6, y + 6, T - 12, T - 12); c.clip(); c.strokeStyle = col; c.lineWidth = 1.5;
@@ -120,8 +122,9 @@ const FIND = {
 function cham(c, x, y, w, h, k) { c.moveTo(x + k, y); c.lineTo(x + w - k, y); c.lineTo(x + w, y + k); c.lineTo(x + w, y + h - k); c.lineTo(x + w - k, y + h); c.lineTo(x + k, y + h); c.lineTo(x, y + h - k); c.lineTo(x, y + k); c.closePath(); }
 function body(c, shape, fill) { c.beginPath(); shape(c); c.lineJoin = 'miter'; c.strokeStyle = C.ink; c.lineWidth = 3; c.stroke(); c.fillStyle = fill; c.fill(); }
 const AVATAR = {
-  block: { name: 'The block, outlined', why: 'Today’s prospector, cut to the grid: chamfered, an ink outline, a glint on the visor. The least change.',
-    draw(c, X, Y, o) { body(c, c => cham(c, X + 8, Y + 6, 24, 30, 4), o.fill); c.fillStyle = C.ink; c.fillRect(X + 13, Y + 12, 14, 6); c.fillStyle = C.steel; c.fillRect(X + 15, Y + 13, 5, 1); } },
+  block: { name: 'The block, outlined', why: 'Chosen. Today’s prospector, cut to the grid: chamfered, an ink outline, a glint on the visor. In The Crack, a headlamp on the brow.',
+    draw(c, X, Y, o) { body(c, c => cham(c, X + 8, Y + 6, 24, 30, 4), o.fill); c.fillStyle = C.ink; c.fillRect(X + 13, Y + 12, 14, 6); c.fillStyle = C.steel; c.fillRect(X + 15, Y + 13, 5, 1);
+      if (o.dark) { c.fillStyle = C.ink; c.fillRect(X + 17, Y + 6.5, 6, 4); c.save(); c.shadowColor = '#fff'; c.shadowBlur = 10; c.fillStyle = '#fff'; c.fillRect(X + 18, Y + 7.5, 4, 2); c.restore(); } } },   // in The Crack: a headlamp on the brow
   lamp: { name: 'Helmet and lamp', why: 'A helmet over a narrower suit, a headlamp on the brow. The lamp is the light in The Crack: the dark pool has a source.',
     draw(c, X, Y, o) { body(c, c => { cham(c, X + 11, Y + 19, 18, 17, 3); cham(c, X + 8, Y + 4, 24, 17, 6); }, o.fill); c.fillStyle = C.ink; c.fillRect(X + 12, Y + 11, 16, 6);
       c.save(); c.shadowColor = '#fff'; c.shadowBlur = o.dark ? 12 : 5; c.fillStyle = '#fff'; c.fillRect(X + 18, Y + 5, 4, 3); c.restore(); } },
@@ -143,7 +146,7 @@ function prospector(c, gx, gy, kind, o = {}) { const X = gx * T, Y = gy * T, s =
 let YOU = 'block';
 const SOLID = {
   air: (c, x, y) => { c.fillStyle = '#08090a'; c.fillRect(x * T, y * T, T, T); },
-  you: (c, x, y) => { SOLID.air(c, x, y); prospector(c, x, y, YOU); },
+  you: (c, x, y) => { SOLID.air(c, x, y); prospector(c, x, y, YOU, { dark: P === LAYERS.crack.P }); },
   slab: (c, x, y) => { const g = c.createLinearGradient(0, y * T, 0, y * T + T); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s)); c.fillStyle = g; c.fillRect(x * T, y * T, T, T); c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans"'; c.fillText('™', x * T + T - 10, y * T + 9); },
 };
 function tile(c, kind, gx, gy) { if (SOLID[kind]) return SOLID[kind](c, gx, gy); rock(c, gx, gy); if (FIND[kind]) FIND[kind](c, gx, gy); }
@@ -170,7 +173,7 @@ document.fonts.ready.then(() => {
     const d = document.createElement('div'); d.className = 'cell'; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><span>${note}</span>`); S.append(d); });
   // Spore colours, in The Crack.
   const Sp = document.getElementById('spores');
-  [['#34e6ff', 'Bioluminescent cyan', 'Cold, like deep-sea light. Sits in the steel palette; far from fluo, also for colour-blind eyes. My pick.'],
+  [['#34e6ff', 'Bioluminescent cyan', 'Cold, like deep-sea light. Sits in the steel palette; like the glow-worm caves of New Zealand. Chosen.'],
    ['#ff3ddc', 'Ultraviolet magenta', 'Loud and alien, a blacklight glow. Nothing else in the game is this colour; close to Candygirl’s pink in spirit, not in tone.'],
    ['#8a7dff', 'Ultraviolet blue', 'Deep and eerie, but it brushes the secret menu’s violet and the Näsa blue. The riskiest.']].forEach(([col, name, why]) => {
     SPORE = col; add(Sp, patch('crack', KEY, dark), `<i style="background:${col}"></i>${name}`, why); });
