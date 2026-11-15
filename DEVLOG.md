@@ -492,3 +492,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **The layout settles.** Pause moved into the Rover panel heading, so the right column can run all the way down. The card box now hugs its card, and the Belt Authority log takes the rest: a short card means more log, not empty space, and nothing moves when you pick one. The hint bar is always as tall as its longest hint, the meter always sits below the Milk+ column, and the mining view is taller: 19 rows instead of 17½.
 
 **Seamless radio.** Songs cross-fade now, hard cuts are a breath softer, and the music makes room before a DJ speaks.
+
+**Exploding rock.** Digging was getting slow, and I had been digging for several layers. Now drill samples buy Belt Authority blasting charges: B, a fuse, BOOM. Blasting permit: pending. And maybe XXX becomes Chrome + Chrome, with blasting instead of X-ray: more fun than seeing through rock.

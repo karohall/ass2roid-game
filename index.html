@@ -13,6 +13,9 @@
   #stage { position:relative; width:442px; }                   /* the meter may reach past it, under the Milk+ column */
   canvas { display:block; width:442px; height:calc(var(--viewH) + 2px); border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
+  canvas.blast { animation:jolt .35s ease-out; }
+  @keyframes jolt { 0% { transform:translate(0,0); } 20% { transform:translate(-4px,3px); } 45% { transform:translate(3px,-2px); } 70% { transform:translate(-2px,1px); } 100% { transform:translate(0,0); } }
+  @media (prefers-reduced-motion: reduce) { canvas.blast { animation:none; } }
   canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   #hint { width:442px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
@@ -194,6 +197,7 @@
       <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
       <div class="row later" data-reveal="drill"><span>Drill</span><span id="drill">100%</span></div>
+      <div class="row later" data-reveal="blast"><span>B: blasting charge</span><span id="chargeCost" class="small"></span></div>
     </div>
 
     <div class="box later" data-reveal="guide">
@@ -229,6 +233,7 @@ const CONFIG = {
   balance: { min: -100, max: 100, decayPerSec: 1.2, windowMs: 20000, windowMult: [1, 1.5, 2, 3] },
   push:    { strength: 30, calm: -30, stamina: 10, focus: 10, recovery: 0 },
 
+  charge:    { cost: 15, fuseMs: 1500, radius: 1, frenzyRadius: 2, frenzyWear: 15, crustDamage: 0.6, rumourAt: 30 },   // B: a Belt Authority blasting charge for drill samples: 3×3 (5×5 in a Frenzy, which also rattles the drill); the crust cracks but holds
   frenzy:    { durationMs: 12000, settleAt: 45, powerMult: 2, drift: 0.5, sampleLossChance: 0.12 },
   stillness: { durationMs: 20000, settleAt: 45, slowMult: 2, yieldMult: 2 },   // everything slows (so it lasts longer than a Frenzy), and comes out whole: samples and ingredients ×2
   seam:      { sealedNear: 6, hp: 6, artefactHp: 3, finderFee: 10 },   // the Foundation pays a finder's fee in drill samples for every artefact recovered
@@ -635,7 +640,7 @@ function freshState() {
     bottles: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 },
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
-    guide: [], clues: {}, artCrater: {}, artLayer: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
+    guide: [], clues: {}, charges: [], chargesSet: 0, artCrater: {}, artLayer: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
     shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drillBreaks: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
@@ -892,6 +897,41 @@ function loseSample() {
 }
 
 function warn(m) { if (now() - s.lastWarn > 1500) { say(m); s.lastWarn = now(); } }
+
+// Blasting charges: paid in drill samples, a short fuse, and the rock around goes. The Belt Authority sells them;
+// the permit is pending. Näsa chrome shrugs it off (it only melts); seams, sealed finds and graffiti are left for you;
+// the crust cracks but holds, so its digging power still counts.
+function chargeKey() {
+  const C = CONFIG.charge;
+  if (!running) return;
+  if (s.charges.length) return warn('One charge at a time. Stand back.');
+  if (s.samples < C.cost) return warn(`A blasting charge costs ${C.cost} drill samples. You have ${s.samples}.`);
+  const y = Math.min(H - 1, p.y + 1);
+  s.samples -= C.cost; s.chargesSet++; s.blastInfo = true;
+  s.charges.push({ x: p.x, y, at: now() + C.fuseMs });
+  say(s.chargesSet === 1 ? `Blasting charge set: −${C.cost} drill samples. Fuse lit. Blasting permit: pending.` : `Blasting charge set: −${C.cost} drill samples. Fuse lit.`);
+}
+function detonate(ch) {
+  const C = CONFIG.charge, r = frenzy() ? C.frenzyRadius : C.radius;
+  let cracked = false, chrome = false;
+  for (let y = ch.y - r; y <= ch.y + r; y++) for (let x = ch.x - r; x <= ch.x + r; x++) {
+    if (y < 0 || y >= H || x < 0 || x >= W) continue;
+    const c = g[y][x];
+    if (c.t === AIR || c.t === ROCK || [SEAM, ART, SEALED, GRAFFITI].includes(c.t)) continue;
+    if (c.t === SLAB) { chrome = true; continue; }
+    if (c.t === CRUST) { c.hp = Math.max(1, c.hp - c.max * C.crustDamage); cracked = true; bump(x, y, 6); continue; }
+    if (c.t === SAMPLE) s.samples += 1;
+    if (c.t === INGR) gain(c.ing, c.cache ? CONFIG.recipes.strength.whey : 1);
+    if (c.t === SHAKER) say('A fossilised shaker went up with the rock. Whatever was in it, nobody will know.');
+    g[y][x] = { t: AIR, hp: 0, max: 0 }; s.dug++;
+    bump(x, y, 8);
+  }
+  bump(ch.x, ch.y, 40);
+  cv.classList.remove('blast'); void cv.offsetWidth; cv.classList.add('blast');   // the screen jolts
+  say(frenzy() ? 'BOOM. A Frenzy blast: twice the hole, and the drill felt it.' : 'BOOM.' + (cracked ? ' The crust cracks, but holds. Dig through it.' : '') + (chrome ? ' Näsa™ chrome: not a scratch.' : ''));
+  if (frenzy() && !onPick()) { s.drill = Math.max(0, s.drill - C.frenzyWear); s.drillWorn = true; if (onPick()) { s.drillBreaks++; say('The drill is done, and the radio with it. Out comes the pick axe; the tape deck runs on its own battery.'); } }
+  if (chrome) nasa('Näsa™ chrome is blast-rated. An invoice has been issued anyway.', true);
+}
 
 function bump(x, y, n) {
   for (let i = 0; i < n; i++)
@@ -1520,6 +1560,10 @@ function announce(m, extraMs = 0, discovery = false) {
 
 function update(dt) {
   const t = now();
+  for (const ch of s.charges.filter(ch => t >= ch.at)) { s.charges.splice(s.charges.indexOf(ch), 1); detonate(ch); }
+  if (running && !s.chargeRumour && s.layer >= 1 && s.samples >= CONFIG.charge.rumourAt && s.announceUntil < t) {
+    s.chargeRumour = true; announce(`Rumour: the Belt Authority sells blasting charges. ${CONFIG.charge.cost} drill samples each. Press B. Blasting permit: pending.`);
+  }
   if (running && !s.drift) {                                 // a sealed find coming into view: said once, as you approach
     const seen = near(5, c => c.t === SEALED && !c.seen && !seamAnswers(c.kind));
     if (seen) { seen.seen = true; announce(`A sealed artefact ahead (◈). It waits for ${STATE_OF[seen.kind].name}.`); }
@@ -1649,6 +1693,12 @@ function draw() {
     ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
     ctx.fillStyle = '#fff'; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
   }
+  for (const ch of s.charges) {                              // a blasting charge: a little block, its fuse sparking
+    const left = Math.max(0, ch.at - now()) / CONFIG.charge.fuseMs, px = ch.x * T, py = ch.y * T;
+    ctx.fillStyle = '#111'; ctx.fillRect(px + 12, py + 14, 16, 18); ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 12.5, py + 14.5, 15, 17); ctx.lineWidth = 1;
+    ctx.strokeStyle = '#aaa'; ctx.beginPath(); ctx.moveTo(px + 20, py + 14); ctx.lineTo(px + 20 + 6 * left, py + 14 - 8 * left); ctx.stroke();
+    if (Math.floor(now() / (60 + 140 * left)) % 2) { ctx.fillStyle = '#fff'; ctx.fillRect(px + 18 + 6 * left, py + 12 - 8 * left, 4, 4); }
+  }
   ctx.fillStyle = '#bbb';
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
   if (L.dark) drawDark(L, y0, y1);
@@ -1735,6 +1785,7 @@ const REVEAL = {
   recipe_recovery: () => s.drillWorn || s.bottles.recovery > 0,
   recipe_candy:   () => !!s.candyFound,                    // the secret menu shows once you have found it
   drill:  () => s.drillWorn,
+  blast:  () => !!(s.chargeRumour || s.chargesSet),
 };
 // The first tile within r of the prospector that matches.
 const near = (r, f) => { for (let y = Math.max(0, p.y - r); y <= Math.min(H - 1, p.y + r); y++) for (let x = Math.max(0, p.x - r); x <= Math.min(W - 1, p.x + r); x++) if (f(g[y][x])) return g[y][x]; return null; };
@@ -1849,6 +1900,7 @@ function hud() {
   setText('samples', s.samples);
   const need = layer().crustMinPower;   // digging power, against what this layer's crust needs
   setHTML('power', `${power()} <span class="small">· crust needs ${need} ${power() >= need ? '✓' : '✗'}</span>`);
+  setText('chargeCost', s.charges.length ? 'fuse lit…' : `${CONFIG.charge.cost} drill samples`);
   setText('drill', onPick() ? 'broken · pick axe' : Math.round(s.drill) + '%' + (s.drill < CONFIG.drill.warnBelow ? ' · worn' : ''));
   for (const k of Object.keys(ING)) {
     setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
@@ -1954,6 +2006,7 @@ addEventListener('keydown', e => {
     }
     held = dirs[k];
   }
+  if (k === 'b') { chargeKey(); return; }             // a blasting charge
   const i = '12345'.indexOf(k);
   if (i >= 0) press(VARIANTS[i]);
   if (k === '0') secretCandy();   // the secret menu
