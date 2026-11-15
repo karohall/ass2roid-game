@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rover panel mockup · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;600&family=VT323&display=swap" rel="stylesheet">
+<style>
+  /* Mockup 1 for Prototype 4: the rover's control panel (GDD, Visual direction).
+     Comic ink: black outlines and offset shadows, a blue-grey wash. One white surface: the hint note.
+     Amber is the check-engine light; bioluminescent green/violet only where The Crack shows through; chrome only for Näsa. */
+  :root {
+    --ink: #0b0d10; --dash: #1e242b; --plate: #3a4652; --plate-hi: #4b5866; --wash: #5f6d7c;
+    --paper: #f1ede2; --paper-dim: #d9d3c4; --lcd: #c9f2a0; --lcd-bg: #12180f; --amber: #ffb347;
+    --bio: #00ff9f; --violet: #9b5de5; --text: #e6e9ec; --dim: #9aa6b2;
+    --label: 'Chakra Petch', sans-serif; --mono: 'IBM Plex Mono', monospace; --lcdf: 'VT323', monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--text); font: 13px/1.45 var(--mono); text-wrap: pretty; }
+  .dash { width: 1100px; margin: 0 auto; padding: 18px; position: relative;
+          background: var(--dash) radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.3px) 0 0/7px 7px; }   /* halftone, like a comic */
+  .cols { display: flex; gap: 16px; align-items: flex-start; }
+  /* A plate: outlined in ink, an offset shadow, rivets in the corners. */
+  .plate { position: relative; background: var(--plate); border: 3px solid var(--ink); border-radius: 6px;
+           box-shadow: 4px 4px 0 var(--ink); padding: 12px 12px 10px; }
+  .plate::before, .plate::after { content: ''; position: absolute; top: 6px; width: 6px; height: 6px; border-radius: 50%;
+           background: var(--wash); box-shadow: inset -1px -1px 0 var(--ink); }
+  .plate::before { left: 6px; } .plate::after { right: 6px; }
+  .label { font: 700 11px/1 var(--label); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin: 0 0 8px 12px; }
+  .label b { color: var(--text); }
+
+  /* The monitor: the mining window, set into the dash. */
+  .monitor { width: 470px; padding: 14px; background: var(--plate-hi); }
+  .screen { position: relative; height: 640px; background: #0e1114; border: 3px solid var(--ink); border-radius: 10px / 14px; overflow: hidden; }
+  .screen::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+                   background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.18) 2px 3px); }   /* scanlines */
+  .grid { position: absolute; left: 34px; right: 34px; top: 40px; bottom: 0; display: grid; grid-template-columns: repeat(9, 1fr); grid-auto-rows: 42px; gap: 2px; }
+  .t { background: #59616a; border: 1px solid var(--ink); display: grid; place-items: center; font: 700 14px var(--mono); color: #dfe3e6; }
+  .t.air { background: transparent; border-color: transparent; }
+  .t.w, .t.p, .t.c { background: #6c757e; } .t.s { color: var(--bio); text-shadow: 0 0 8px var(--bio); }
+  .t.band { background: repeating-linear-gradient(110deg, #3d444b 0 6px, #2c3238 6px 9px); }
+  .t.sealed { color: #f4f4f4; } .t.you { background: var(--paper); color: var(--ink); border: 2px solid var(--ink); }
+  .wall { position: absolute; top: 0; bottom: 0; width: 26px; background: #15191d; border-right: 2px solid var(--ink); }
+  .wall.r { right: 0; border-right: 0; border-left: 2px solid var(--ink); }
+  .wall .fill { position: absolute; left: 8px; right: 8px; top: 14px; bottom: 14px; background: #2a3138; }
+  .wall .here { position: absolute; left: 6px; right: 6px; top: 46%; height: 4px; background: var(--paper); }
+  .cam { position: absolute; top: 8px; left: 40px; font: 20px/1 var(--lcdf); color: var(--lcd); opacity: .85; letter-spacing: .05em; }
+  .rec { position: absolute; top: 10px; right: 40px; font: 20px/1 var(--lcdf); color: #ff6b6b; }
+  .nasa { position: absolute; right: 44px; bottom: 120px; transform: rotate(4deg); padding: 6px 10px; border: 2px solid var(--ink);
+          font: 700 11px var(--label); color: #1a1a1a; letter-spacing: .06em;
+          background: linear-gradient(135deg, #f4f7fa 0%, #9aa4ae 35%, #eef2f5 55%, #7b858f 80%, #d7dde2 100%); box-shadow: 3px 3px 0 var(--ink); }
+  .lamp { position: absolute; bottom: 12px; left: 18px; width: 30px; height: 18px; display: flex; gap: 6px; align-items: center;
+          font: 600 10px var(--label); color: var(--dim); letter-spacing: .1em; white-space: nowrap; }
+  .lamp i { width: 14px; height: 14px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 10px var(--amber); border: 2px solid var(--ink); }
+
+  /* The hint: still the one white surface. A note taped to the dash. */
+  .note { position: relative; margin: 18px 6px 0; padding: 14px 16px; background: var(--paper); color: var(--ink);
+          border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); transform: rotate(-.6deg); font: 14px/1.5 var(--mono); min-height: 88px; }
+  .note b { font-weight: 600; background: #fff1c9; padding: 0 3px; }
+  .note::before, .note::after { content: ''; position: absolute; top: -9px; width: 54px; height: 18px; background: rgba(214,206,186,.85); border: 1px solid rgba(0,0,0,.15); }
+  .note::before { left: 24px; transform: rotate(-4deg); } .note::after { right: 24px; transform: rotate(5deg); }
+
+  /* The middle column: the Milk+ dispenser and the ingredient tubes. */
+  .mid { width: 300px; display: flex; flex-direction: column; gap: 16px; }
+  .drink { display: grid; grid-template-columns: 38px 1fr 72px; gap: 10px; align-items: center; padding: 8px 0; border-top: 2px dashed rgba(11,13,16,.55); }
+  .drink:first-of-type { border-top: 0; }
+  .key { width: 38px; height: 38px; display: grid; place-items: center; font: 700 18px var(--label); color: var(--ink);
+         background: var(--paper-dim); border: 2px solid var(--ink); border-radius: 6px; box-shadow: 0 4px 0 var(--ink); }
+  .drink h4 { margin: 0; font: 700 14px var(--label); letter-spacing: .04em; }
+  .drink p { margin: 1px 0 0; font-size: 11.5px; color: var(--dim); }
+  .btn { font: 700 11px var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); background: var(--paper-dim);
+         border: 2px solid var(--ink); border-radius: 4px; padding: 8px 0; text-align: center; box-shadow: 0 3px 0 var(--ink); }
+  .btn.ready { background: var(--amber); }
+  .drink.secret .key { background: #2a2140; color: #d9c8ff; }
+  .drink.secret h4 { color: #d9c8ff; }
+  .fine { margin-top: 8px; font-size: 10.5px; color: var(--dim); border-top: 2px solid rgba(11,13,16,.55); padding-top: 8px; }
+  .tubes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .tube { text-align: center; }
+  .glass { position: relative; height: 92px; margin: 0 auto 6px; width: 34px; border: 3px solid var(--ink); border-radius: 0 0 16px 16px; background: #222a31; overflow: hidden; }
+  .glass i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--paper-dim); border-top: 2px solid var(--ink); }
+  .glass.s i { background: var(--bio); box-shadow: 0 0 12px var(--bio); } .glass.c i { background: #aeb7c0; } .glass.p i { background: #c9b98f; }
+  .tube b { font: 700 13px var(--label); display: block; } .tube small { color: var(--dim); font-size: 10px; }
+
+  /* The right column: the instrument cluster, the clipboard, the receipt printer. */
+  .right { width: 270px; display: flex; flex-direction: column; gap: 16px; }
+  .cluster { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lcd { background: var(--lcd-bg); border: 2px solid var(--ink); border-radius: 4px; padding: 4px 8px 2px; box-shadow: inset 0 0 12px rgba(0,0,0,.7); }
+  .lcd small { display: block; font: 600 9px var(--label); letter-spacing: .14em; text-transform: uppercase; color: #7e9a6a; }
+  .lcd span { font: 28px/1 var(--lcdf); color: var(--lcd); text-shadow: 0 0 6px rgba(201,242,160,.5); }
+  .lcd.wide { grid-column: span 2; }
+  .bar { height: 10px; margin-top: 4px; border: 2px solid var(--ink); background: #222a31; } .bar i { display: block; height: 100%; width: 62%; background: var(--amber); }
+  .toggle { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; font: 700 11px var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .switch { width: 46px; height: 22px; border: 2px solid var(--ink); border-radius: 12px; background: #222a31; position: relative; }
+  .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper-dim); border: 2px solid var(--ink); }
+  .clipboard { background: #8a6a45; padding: 30px 10px 12px; }
+  .clipboard .clip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 92px; height: 30px; border: 3px solid var(--ink); border-radius: 6px 6px 3px 3px;
+                     background: linear-gradient(#cfd5da, #8c959d); box-shadow: 2px 2px 0 var(--ink); }
+  .sheet { background: var(--paper); color: var(--ink); border: 2px solid var(--ink); padding: 10px; }
+  .sheet h5 { margin: 0 0 6px; font: 700 10px var(--label); letter-spacing: .16em; text-transform: uppercase; color: #6b6255; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 8px; } .tabs span { font: 700 9px var(--label); letter-spacing: .04em; padding: 3px 4px; border: 2px solid var(--ink); border-bottom: 0; border-radius: 4px 4px 0 0; background: var(--paper-dim); }
+  .tabs span.on { background: var(--ink); color: var(--paper); }
+  .drawer { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 10px; }
+  .drawer i { height: 26px; border: 2px solid var(--ink); display: grid; place-items: center; font: 700 11px var(--label); font-style: normal; background: #fff; }
+  .drawer i.no { background: transparent; border-style: dashed; color: #9b9283; }
+  .drawer i.gone { background: transparent; border-style: dotted; color: #b9b0a0; text-decoration: line-through; }
+  .card { display: grid; grid-template-columns: 64px 1fr; gap: 8px; font-size: 11px; }
+  .card .ph { height: 48px; border: 2px solid var(--ink); background: linear-gradient(135deg, #cdd3c9, #8e9a8a); }
+  .card b { font: 700 11px var(--label); display: block; margin-bottom: 2px; }
+  .card em { color: #6b6255; }
+  .printer { padding: 10px 10px 0; }
+  .slot { height: 10px; background: var(--ink); border-radius: 3px; margin: 0 6px; }
+  .receipt { margin: 0 14px; background: var(--paper); color: var(--ink); padding: 8px 10px 14px; font-size: 11px; line-height: 1.5;
+             -webkit-mask: radial-gradient(circle 5px at 50% 100%, transparent 98%, #000) 0 0/12px 100% repeat-x; }   /* torn edge */
+  .receipt p { margin: 0; color: #6b6255; } .receipt p:first-child { color: var(--ink); font-weight: 600; }
+  .receipt .rule { border-top: 1px dashed #9b9283; margin: 6px 0; }
+
+  /* The bottom row: the gauge and the head unit. */
+  .bottom { display: flex; gap: 16px; margin-top: 18px; }
+  .gauge { width: 470px; display: grid; grid-template-columns: 1fr 120px; gap: 10px; align-items: center; }
+  .gauge svg { display: block; }
+  .readout { text-align: center; } .readout .lcd span { font-size: 34px; }
+  .readout p { margin: 6px 0 0; font-size: 11px; color: var(--dim); }
+  .unit { flex: 1; background: #15191d; }
+  .unit .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+  .ticker { background: #1a1405; border: 2px solid var(--ink); border-radius: 4px; padding: 6px 10px; font: 26px/1 var(--lcdf); color: var(--amber);
+            text-shadow: 0 0 8px rgba(255,179,71,.6); white-space: nowrap; overflow: hidden; box-shadow: inset 0 0 14px rgba(0,0,0,.8); }
+  .knob { width: 54px; height: 54px; border-radius: 50%; border: 3px solid var(--ink); background: radial-gradient(circle at 35% 30%, #6b7682, #2c333a 70%);
+          position: relative; box-shadow: 2px 2px 0 var(--ink); }
+  .knob::after { content: ''; position: absolute; top: 6px; left: 50%; width: 3px; height: 14px; margin-left: -1.5px; background: var(--paper); transform-origin: 50% 21px; transform: rotate(40deg); }
+  .presets { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .presets .btn { width: 64px; }
+  .presets .fx { margin-left: 8px; font-size: 13px; color: var(--text); }
+  .presets .fx small { display: block; color: var(--dim); font-size: 11px; }
+  .caption { width: 1100px; margin: 0 auto; padding: 10px 18px 30px; color: var(--dim); font: 12px/1.5 var(--mono); }
+  .caption b { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="dash">
+  <div class="cols">
+
+    <!-- The monitor and the hint note -->
+    <div>
+      <div class="plate monitor">
+        <div class="label"><b>Shaft cam 1</b> · Korova Rock · Site KR-1</div>
+        <div class="screen">
+          <div class="cam">KR-1 · C · 522 M</div><div class="rec">● REC</div>
+          <div class="wall"><div class="fill"></div><div class="here"></div></div>
+          <div class="wall r"><div class="fill"></div><div class="here" style="top:62%"></div></div>
+          <div class="grid" id="grid"></div>
+          <div class="nasa">NÄSA™ PROPERTY · BIG SPACE™</div>
+        </div>
+        <div class="lamp"><i></i> Check engine</div>
+      </div>
+      <div class="note">Hard band ahead. Strength makes it much faster. Or blast it: <b>Press B</b> to set a charge under you (15 drill samples).</div>
+    </div>
+
+    <!-- The Milk+ dispenser and the ingredient tubes -->
+    <div class="mid">
+      <div class="plate">
+        <div class="label"><b>Milk+</b> dispenser</div>
+        <div class="drink"><div class="key">1</div><div><h4>Strength</h4><p>Dig harder. Stacks. Pushes toward Frenzy.</p></div><div class="btn ready">Drink</div></div>
+        <div class="drink"><div class="key">2</div><div><h4>Calm</h4><p>Pulls toward Stillness.</p></div><div class="btn">Shake</div></div>
+        <div class="drink"><div class="key">3</div><div><h4>Recovery</h4><p>Repairs the drill.</p></div><div class="btn">Shake</div></div>
+        <div class="drink"><div class="key">4</div><div><h4>Stamina</h4><p>Everything lasts 50% longer.</p></div><div class="btn">Shake</div></div>
+        <div class="drink"><div class="key">5</div><div><h4>Hyperfocus</h4><p>Drinks don’t move the meter.</p></div><div class="btn">Shake</div></div>
+        <div class="drink secret"><div class="key">0</div><div><h4>Candygirl</h4><p>Up the tunnel.</p></div><div class="btn">Shake</div></div>
+        <div class="fine">Caution: quick drinks push harder. This is not a recommendation.</div>
+      </div>
+      <div class="plate">
+        <div class="label"><b>Ingredients</b></div>
+        <div class="tubes">
+          <div class="tube"><div class="glass"><i style="height:55%"></i></div><b>W 19</b><small>Whey</small></div>
+          <div class="tube"><div class="glass p"><i style="height:70%"></i></div><b>P 29</b><small>Powder</small></div>
+          <div class="tube"><div class="glass c"><i style="height:35%"></i></div><b>C 14</b><small>Chrome</small></div>
+          <div class="tube"><div class="glass s"><i style="height:30%"></i></div><b>S 13</b><small>Spores</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The instrument cluster, the clipboard, the receipt printer -->
+    <div class="right">
+      <div class="plate">
+        <div class="label"><b>Rover</b> · 3. Chrome Vein</div>
+        <div class="cluster">
+          <div class="lcd"><small>Depth</small><span>522 m</span></div>
+          <div class="lcd"><small>Samples</small><span>56</span></div>
+          <div class="lcd"><small>Power</small><span>4/7</span></div>
+          <div class="lcd"><small>Drill</small><span>62%</span><div class="bar"><i></i></div></div>
+        </div>
+        <div class="toggle">Pause (Space) <div class="switch"></div></div>
+      </div>
+      <div class="plate clipboard">
+        <div class="clip"></div>
+        <div class="sheet">
+          <h5>Field Guide · Kroeber Foundation</h5>
+          <div class="tabs"><span>Layers</span><span>Compounds</span><span>Secret</span><span class="on">Archive</span></div>
+          <div class="drawer">
+            <i>1</i><i>2</i><i>3</i><i class="no">4</i><i class="no">5</i><i>6</i><i class="gone">7</i>
+            <i>8</i><i class="no">9</i><i class="gone">10</i><i class="gone">11</i><i class="no">12</i><i>13</i><i>14</i>
+            <i class="gone">15</i><i>16</i><i>17</i><i class="gone">18</i><i class="no">E</i>
+          </div>
+          <div class="card"><div class="ph"></div><div><b>KR-1 D 0006 · Hand stencils</b>At least eleven hands, of different sizes. The pigment still glows faintly. <em>The Foundation has counted twice.</em></div></div>
+        </div>
+      </div>
+      <div class="plate printer">
+        <div class="label"><b>Belt Authority</b> public service</div>
+        <div class="slot"></div>
+        <div class="receipt">
+          <p>BOOM. Blasting permit: pending.</p>
+          <div class="rule"></div>
+          <p>+1 Chrome Filings.</p><p>+1 Crack Spores.</p><p>Radio: The Pump Zone.</p><p>Stacking Strength. Bold.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The gauge and the radio head unit -->
+  <div class="bottom">
+    <div class="plate gauge">
+      <svg viewBox="0 0 320 170" width="320" height="170" aria-label="Dosage gauge">
+        <defs><linearGradient id="arc" x1="0" x2="1"><stop offset="0" stop-color="#5b7fa6"/><stop offset=".5" stop-color="#9aa6b2"/><stop offset="1" stop-color="#ffb347"/></linearGradient></defs>
+        <path d="M30 150 A130 130 0 0 1 290 150" fill="none" stroke="#0b0d10" stroke-width="30"/>
+        <path d="M30 150 A130 130 0 0 1 290 150" fill="none" stroke="url(#arc)" stroke-width="22"/>
+        <g stroke="#0b0d10" stroke-width="3">
+          <line x1="160" y1="14" x2="160" y2="34"/><line x1="66" y1="56" x2="80" y2="70"/><line x1="254" y1="56" x2="240" y2="70"/>
+        </g>
+        <g font-family="Chakra Petch" font-weight="700" font-size="10" fill="#e6e9ec" text-anchor="middle" letter-spacing="1">
+          <text x="72" y="146">GET OUT</text><text x="100" y="98">COWARD</text><text x="160" y="76">MEH</text><text x="220" y="98">WE SEE YOU</text><text x="248" y="146">HELL YEAH</text>
+        </g>
+        <g transform="rotate(28 160 150)"><line x1="160" y1="150" x2="160" y2="40" stroke="#0b0d10" stroke-width="7" stroke-linecap="round"/><line x1="160" y1="150" x2="160" y2="44" stroke="#f1ede2" stroke-width="3" stroke-linecap="round"/></g>
+        <circle cx="160" cy="150" r="11" fill="#f1ede2" stroke="#0b0d10" stroke-width="3"/>
+      </svg>
+      <div class="readout">
+        <div class="lcd"><small>Dosage</small><span>MEH</span></div>
+        <p>Next drink ×1.5</p>
+      </div>
+    </div>
+    <div class="plate unit">
+      <div class="label"><b>Radio</b> · Station</div>
+      <div class="row">
+        <div class="ticker">THE PUMP ZONE · NOW PLAYING: DRILL INSTRUCTOR</div>
+        <div class="knob" title="V: volume"></div>
+      </div>
+      <div class="presets"><div class="btn">R · Next</div><div class="btn">T · Tape</div><div class="btn">V · Vol</div>
+        <div class="fx">Digging slightly faster.<small>Each station does something.</small></div></div>
+    </div>
+  </div>
+</div>
+<div class="caption"><b>Mockup 1 · Prototype 4 · the rover’s control panel.</b> Static: nothing here works. Same layout as Prototype 3, redrawn as the rover’s dashboard in comic ink: the mining window as a monitor, the hint as the one paper note, the Milk+ menu as a dispenser with keycaps, ingredients as tubes, the rover panel as an instrument cluster, the Field Guide on a clipboard, the Belt Authority log as a receipt, the dosage scale as a gauge with a needle, and the radio as a car-stereo head unit. Fonts: Chakra Petch (labels), IBM Plex Mono (text), VT323 (LCDs).</div>
+<script>
+  // A few rows of the Chrome Vein, for the monitor.
+  const rows = [
+    '..WSP....', 'Wk.C..◆..', 'P.◆..W..S', '.....◈...', '◆.You.C..', '===B=====', '..P....W.', 'S..◆..C..', '.W....S..', '..C..◆..P', 'S....W...', '.◆..P..S.', 'W..S....◆', '..◆..W...'];
+  const g = document.getElementById('grid'), map = { W: 'w', P: 'p', C: 'c', S: 's' };
+  for (const r of rows) {
+    const cells = r.replace('You', 'Y').split('');
+    for (const ch of cells.slice(0, 9)) {
+      const d = document.createElement('div'); d.className = 't';
+      if (ch === 'k' || ch === '.') {}
+      if (ch === '=') d.className += ' band';
+      else if (ch === 'Y') { d.className += ' you'; d.textContent = '▬'; }
+      else if (map[ch]) { d.className += ' ' + map[ch]; d.textContent = ch; }
+      else if (ch === '◆' || ch === '◈') { d.textContent = ch; if (ch === '◈') d.className += ' sealed'; }
+      else if (ch === 'B') { d.className += ' band'; }
+      g.appendChild(d);
+    }
+  }
+  // the tunnel above the prospector
+  [3, 12, 21, 30].forEach(i => { const c = g.children[i + 1]; if (c) { c.className = 't air'; c.textContent = ''; } });
+</script>
+</body>
+</html>
