@@ -72,7 +72,7 @@ kbd.k { display: inline-grid; place-items: center; min-width: 22px; height: 22px
   <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 2 · round 3</div><h1>Näsa and the archive</h1>
     <p>Two small pieces to close group 2. Näsa intrudes at the edge of the mining window, never over play. The archive photo opens over the whole game, in a frame, with its card.</p></header>
 
-  <section class="sec"><h2>Näsa<small>The capsule: the one rounded thing in an interface of cut corners, because it is a foreign brand barging in. Chrome, Näsa blue, a swoosh.</small></h2>
+  <section class="sec"><h2>Näsa<small>The capsule: the one rounded thing in an interface of cut corners, because it is a foreign brand barging in. Chrome, and the name in Näsa blue: the name is brand enough.</small></h2>
     <div class="nasaRow" id="pills"></div></section>
   <section class="sec"><h2>In the window<small>You hit a slab; Näsa drops in at the top edge, over the row furthest from you. It holds long enough to read, then fades.</small></h2>
     <div class="ctxRow"><div><div class="win" id="ctx"></div><p class="cap"><b>The Chrome Vein · a slab below you</b>The capsule over row 0, nine rows above you. The slab and its gap stay clear.</p></div>
@@ -88,8 +88,7 @@ kbd.k { display: inline-grid; place-items: center; min-width: 22px; height: 22px
 </div>
 <script src="world.js"></script>
 <script>
-const SWOOSH = '<svg viewBox="0 0 22 14" aria-hidden="true"><ellipse cx="11" cy="7" rx="10" ry="4.2" fill="none" stroke="#0000dd" stroke-width="1.6" transform="rotate(-14 11 7)"/><circle cx="11" cy="7" r="3.2" fill="#0000dd"/></svg>';
-const pill = (msg, inv) => `<div class="nasa"><span class="logo">${SWOOSH}<b>NÄSA</b><sup>™</sup></span><span>${msg}${inv ? `<span class="inv">Invoice no. ${inv} · issued</span>` : ''}</span></div>`;
+const pill = (msg, inv) => `<div class="nasa"><span class="logo"><b>NÄSA</b><sup>™</sup></span><span>${msg}${inv ? `<span class="inv">Invoice no. ${inv} · issued</span>` : ''}</span></div>`;
 const MSG = [['This chrome is the property of Näsa™. Big Space™.'], ['Näsa™ property damaged. An invoice has been issued.', '0047'], ['Näsa™ chrome is blast-rated. An invoice has been issued anyway.', '0048']];
 document.getElementById('pills').innerHTML = MSG.map(([m, i]) => pill(m, i)).join('');
 
