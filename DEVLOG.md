@@ -506,3 +506,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Testarocca plays the end.** The shift ends, and the rover plays its own tape. And Candygirl is fabulous in The Crack when I need more drill samples for blasting: run up the tunnel to the ones I passed.
 
 **Jizz+ is on the secret menu.** Key 9, two whey and a powder, and for 45 seconds every shake makes two bottles. The song is locked in Suno for now; until it can teach the recipe, the bartender's rumour does, on Disco Gravitas. **XXX is parked:** a lot of new content for a small addition, and the redactions are better kept. The Belt Authority benefits from being CIA. **The Jacked Asses are dropped:** another storyline.
+
+**No orphans.** My issue with the line breaks was orphans: one word alone on a last line. The browser now balances the last lines of every paragraph (text-wrap: pretty), and the Milk+ menu's name, description and recipe are separate paragraphs so it works there too.
