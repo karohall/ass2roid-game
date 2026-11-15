@@ -38,11 +38,11 @@
   #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--hot); font-weight:bold; }
-  #baseRow { width:1074px; display:flex; gap:16px; margin-top:10px; }   /* reaches across all three columns */
+  #baseRow { width:758px; display:flex; gap:16px; margin-top:10px; }   /* the radio, under the meter and the Milk+ column */
   #radioBox { width:758px; flex:none; padding:6px 10px; }   /* as long as the meter */
   #radioBox.call { animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { border-color:var(--line); box-shadow:none; } 50% { border-color:#ffb347; box-shadow:0 0 10px rgba(255,179,71,.35); } }
-  #pauseBtn { width:300px; flex:none; }
+  #pauseBtn { width:auto; flex:none; padding:3px 8px; font-size:12px; }   /* in the Rover panel's heading */
   #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font-weight:bold; color:var(--hot);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
@@ -73,7 +73,8 @@
   .ph.on { display:block; }
   body.fitting .ph { display:none !important; }
   .small { font-size:11px; color:var(--dim); }
-  #log { height:108px; overflow:hidden; font-size:12px; line-height:1.5; }   /* fixed height: newest on top, the rest cut off */
+  #log { flex:1; min-height:108px; overflow:hidden; font-size:12px; line-height:1.5; }   /* newest on top, the rest cut off; it takes the room the card leaves */
+  #panel2 > .box:last-child { flex:1; min-height:0; display:flex; flex-direction:column; }   /* the right column has a fixed height: the log fills it */
   #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
   #guide { display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; }
   #guide .cat { grid-column:1 / -1; font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.08em; margin-top:2px; }
@@ -161,12 +162,11 @@
         <span>Get out</span><span>Coward</span><span>Meh</span><span>We see you</span><span>Hell yeah</span>
       </div>
     </div>
-    <div id="baseRow">                                      <!-- the radio, and Pause beside it under the right-hand column -->
+    <div id="baseRow">                                      <!-- the radio, under the meter -->
     <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
       <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
       <div class="row"><span class="small" id="radioFx"></span><span class="small" id="radioKeys">R: next station · T: tape · V: volume</span></div>
     </div>
-    <button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button>
     </div>
     <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
@@ -188,7 +188,7 @@
 
   <div id="panel2" class="panel">
     <div class="box later" data-reveal="dig" id="rover">
-      <h3>Rover panel</h3>
+      <div class="row" style="align-items:center"><h3 style="margin:0">Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button></div>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
       <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
       <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
@@ -215,7 +215,7 @@
 // CONFIG: every tunable number lives here.
 // ─────────────────────────────────────────────────────────────────────────────
 const CONFIG = {
-  grid:    { cols: 11, tile: 40, viewRows: 17.5, metresPerRow: 3 },   // 17½ rows: the mining window ends where the Milk+ column does
+  grid:    { cols: 11, tile: 40, viewRows: 19, metresPerRow: 3 },   // 19 rows: the mining window reaches down to where the Milk+ column ends (2026-11-15: was 17½)
   dig:     { basePower: 1, holdMs: 160, tapMs: 60, sampleChance: 0.08, sampleBonusChance: 0.3, ingredientBonusChance: 0.1 },
   strength:{ boost: 3, maxStacks: 2, durationMs: 45000 },
   calm:    { durationMs: 15000 },
@@ -1494,7 +1494,7 @@ function begin() {
 function say(m) {
   const d = document.createElement('div'); d.textContent = plain(m);
   $('log').prepend(d);
-  while ($('log').children.length > 5) $('log').lastChild.remove();
+  while ($('log').children.length > 20) $('log').lastChild.remove();
 }
 
 // An announcement stays long enough to be typed out and then read in full: longer texts stay longer.
@@ -1962,8 +1962,9 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 const LONGEST_HINT = 'Frenzy and Stillness are documented. Certain strata are only accessible in these states. The Foundation does not endorse them. The Foundation has noted their usefulness.';
 // The meter reaches under the Milk+ column: it must start below the column's end, with every row the menu can grow
 // (Candygirl included). Measured with them all shown, at the page's own scale.
+let panel2Need = 0;                                         // the right column's height with the longest card (fit() measures it)
 function placeMeter() {
-  const dz = $('dosage'), rows = [...document.querySelectorAll('#panel .later:not(.shown)')], saved = [];
+  const dz = $('dosage'), rows = [...document.querySelectorAll('#panel .later:not(.shown), #stage .later:not(.shown)')], saved = [];   // the legend too: it sets where the game ends
   const put = (el, t) => { if (el) { saved.push([el, el.textContent]); el.textContent = t; } };
   // The worst case: every ingredient known (full names wrap), the longest effects line, every row shown.
   for (const v of VARIANTS) put($('rc_' + v), Object.entries(CONFIG.recipes[v]).map(([k, n]) => n + '× ' + ING[k].name).join(' + '));
@@ -1974,6 +1975,11 @@ function placeMeter() {
   const m = parseFloat($('wrap').style.transform.split('scale(')[1]) || 1;   // the page's scale
   const gap = ($('panel').getBoundingClientRect().bottom - dz.getBoundingClientRect().top) / m + 10;
   if (gap > 0) dz.style.marginTop = (10 + gap) + 'px';
+  if (panel2Need) {                                        // the right column runs to the bottom of the game (and pushes the meter only if it must)
+    const p2 = $('panel2'), room = ($('stage').getBoundingClientRect().bottom - p2.getBoundingClientRect().top) / m;
+    if (room < panel2Need) dz.style.marginTop = ((parseFloat(dz.style.marginTop) || 10) + panel2Need - room) + 'px';
+    p2.style.height = Math.max(room, panel2Need) + 'px';
+  }
   rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
   $('hint').innerHTML = hint0;
   if (!fitting) document.body.classList.remove('fitting');
@@ -1986,11 +1992,12 @@ function fit() {
   document.body.classList.add('fitting');                   // placeholders give way to the real rows they stand for
   const hidden = [...document.querySelectorAll('.later:not(.shown)')];
   hidden.forEach(el => el.classList.add('shown'));
-  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;
+  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT; $('hint').style.minHeight = ''; $('hint').style.minHeight = $('hint').offsetHeight + 'px';   // the hint bar is always as tall as its longest hint: nothing below it moves
   // The card box is as tall as the longest card, so no card is ever cut off and choosing one never moves the page.
   const cd = $('cardDetail'), card0 = cd.innerHTML; cd.style.height = 'auto'; let tallest = 0;
   for (const e of guideEntries()) { cd.innerHTML = cardHTML(e).replace(/ src="[^"]*"/, ''); tallest = Math.max(tallest, cd.offsetHeight); }   // with room for its photo, without loading it
-  cd.style.height = tallest + 'px'; cd.innerHTML = card0;
+  cd.style.height = tallest + 'px'; $('panel2').style.height = ''; panel2Need = $('panel2').offsetHeight;   // the column, with the longest card
+  cd.style.height = 'auto'; cd.innerHTML = card0;
   placeMeter();
   const height = w.offsetHeight, width = w.offsetWidth;
   hidden.forEach(el => el.classList.remove('shown'));
