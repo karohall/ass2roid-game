@@ -49,9 +49,7 @@ const C = { ink: '#0b0c0e', concrete: '#c9ccc9', steel: '#b4bac0',   /* steel li
 const STANDARD = { grout: 4, bevel: 1, tileBevel: 1 };   // from Regolith: the standard for every layer
 const LAYERS = {
   regolith: { name: 'Regolith Prime', P: {"cells":6,"grout":4,"scale":20,"angle":66,"stretch":4.1,"detail":0.5,"base":115,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0,"veins":0.66,"bands":0,"bandSize":34,"bevel":1,"tileBevel":1} },
-  // Contrast pass (2026-11-15): broad light and dark bands, a calmer grain, thinner veins, so the plates separate from the rock.
-  // The user's lab settings were: scale 20, detail 0, base 94, jitter 40, veins 1, bands .38, bandSize 4.
-  strata:   { name: 'The Shaker Strata', P: {"cells":8,"grout":2,"scale":50,"angle":151,"stretch":1,"detail":0.4,"base":84,"contrast":160,"levels":16,"jitter":15,"cool":0,"streaks":0.24,"veins":0.55,"bands":0.65,"bandSize":20,"bevel":1,"tileBevel":1} },
+  strata:   { name: 'The Shaker Strata', P: {"cells":8,"grout":2,"scale":20,"angle":151,"stretch":1,"detail":0,"base":94,"contrast":160,"levels":16,"jitter":40,"cool":0,"streaks":0.24,"veins":1,"bands":0.38,"bandSize":4,"bevel":1,"tileBevel":1} },
   chrome:   { name: 'The Chrome Vein', P: {"cells":9,"grout":4,"scale":20,"angle":145,"stretch":8,"detail":1,"base":110,"contrast":200,"levels":16,"jitter":40,"cool":12,"streaks":0.92,"veins":0,"bands":0,"bandSize":30,"bevel":1,"tileBevel":1} },
   crack:    { name: 'The Crack', P: {"cells":20,"grout":4,"scale":20,"angle":91,"stretch":8,"detail":1,"base":32,"contrast":200,"levels":16,"jitter":40,"cool":5,"streaks":1,"veins":1,"bands":0,"bandSize":4,"bevel":1,"tileBevel":1} },
 };
@@ -68,7 +66,7 @@ function rockTone(wx, wy) { const [u, v] = flowXY(wx, wy); let t = fbm(u, v, 1, 
   if (P.streaks > 0 && ridge > 1 - P.streaks * .18) tone -= 34 + P.contrast * .25; const vein = 1 - Math.abs(fbm(u * 3.1 + 17, v * 3.1, 5, 2, .5) * 2 - 1);
   if (P.veins > 0 && vein > 1 - P.veins * .06) tone += 70; return tone; }
 const quant = v => { const L = P.levels - 1, hi = 230; const q = Math.round(Math.max(0, Math.min(hi, v)) / hi * L) / L; return q * hi; };
-const rgb = v => { v = Math.max(0, Math.min(255, v)); const k = P.cool; return `rgb(${v - k * .4 | 0},${v | 0},${v + k | 0})`; };
+const rgb = v => { v = Math.max(0, Math.min(255, v)) * (P.dim ?? 1); /* dim: the whole tone range, texture untouched */ const k = P.cool; return `rgb(${v - k * .4 | 0},${v | 0},${v + k | 0})`; };
 function rock(c, gx, gy) { const x = gx * T, y = gy * T, n = P.cells, cs = T / n, g = P.grout;
   c.fillStyle = '#060708'; c.fillRect(x, y, T, T); c.save(); c.beginPath(); c.rect(x + g / 2, y + g / 2, T - g, T - g); c.clip();
   for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) { const wx = x + (i + .5) * cs, wy = y + (j + .5) * cs;
