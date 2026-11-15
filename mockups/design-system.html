@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Design system · ASS2ROID Prototype 4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Tektur:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ─────────────────────────────────────────────────────────────────────────────
    ASS2ROID · Prototype 4 · design system (Gunmetal)
@@ -29,8 +29,8 @@
   --jizz:    #b9d3f0;   /* Jizz+: pastel blue */
   --nasa:    #0000dd;   /* Näsa, and nothing else */
 
-  /* Type. Tektur for titles and numbers, Inter for text, Plex Sans for the small print. */
-  --f-title: Tektur, sans-serif;   /* titles and numbers (Architype Ballmer is commercial; Tektur is SIL Open Font License) */
+  /* Type. Chakra Petch for titles and numbers, Inter for text, Plex Sans for the small print. */
+  --f-title: 'Chakra Petch', sans-serif;   /* titles and numbers: squared, cut corners, elegant (SIL Open Font License) */
   --f-text:  Inter, sans-serif;
   --f-small: 'IBM Plex Sans', sans-serif;
 
@@ -230,18 +230,18 @@ h1, h2, h3, p { margin: 0; }
   <header>
     <div><div class="t-meta">ASS2ROID: Ex Profundo · Prototype 4</div><h1 class="t-display" style="margin-top:8px">Design system</h1>
       <p class="t-body-s">Gunmetal. Neutral cold steel, a concrete hint, one glow; a pastel for each secret. Every component on this page is built from the tokens in its first three sections and nothing else; the game will be re-skinned from these, keeping its layout.</p></div>
-    <div class="t-meta" style="text-align:right">Tektur · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
+    <div class="t-meta" style="text-align:right">Chakra Petch · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
   </header>
 
   <section class="sec"><h2>Colour<small>Steel does the structure. Concrete (the coldest greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Näsa blue means Näsa and nothing else.</small></h2>
     <div class="swatches" id="swatches"></div></section>
 
-  <section class="sec"><h2>Type<small>Tektur for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
+  <section class="sec"><h2>Type<small>Chakra Petch for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
     <div class="type">
-      <span class="t-display">The Chrome Vein</span><span class="t-meta">display · Tektur 700 · 40/40 · screen titles</span>
-      <span class="t-num-xl">522 m</span><span class="t-meta">number XL · Tektur 700 · 28 · depth, samples</span>
-      <span class="t-num-l">19 · 29 · 14</span><span class="t-meta">number L · Tektur 700 · 20 · counts</span>
-      <span class="t-label">Field Guide</span><span class="t-meta">label · Tektur 600 · 11 · +0.2em · panel titles</span>
+      <span class="t-display">The Chrome Vein</span><span class="t-meta">display · Chakra Petch 700 · 40/40 · screen titles</span>
+      <span class="t-num-xl">522 m</span><span class="t-meta">number XL · Chakra Petch 700 · 28 · depth, samples</span>
+      <span class="t-num-l">19 · 29 · 14</span><span class="t-meta">number L · Chakra Petch 700 · 20 · counts</span>
+      <span class="t-label">Field Guide</span><span class="t-meta">label · Chakra Petch 600 · 11 · +0.2em · panel titles</span>
       <span class="t-body">Hard band ahead. Strength makes it much faster.</span><span class="t-meta">body · Inter 400 · 14/21 · hints, cards</span>
       <span class="t-body-s">Dig harder. Stacks. Pushes toward Frenzy.</span><span class="t-meta">body S · Inter 400 · 13/19 · descriptions</span>
       <span class="t-meta" style="color:var(--text)">KR-1 · 3 Chrome Vein · 2× Regolith Whey</span><span class="t-meta">meta · Plex Sans 500 · 11 · details, recipes</span>
@@ -282,7 +282,7 @@ h1, h2, h3, p { margin: 0; }
       </div>
     </div></section>
 
-  <section class="sec"><h2>Rows<small>Lists separate with hairlines, not boxes. Labels in steel, values in text, numbers in Tektur.</small></h2>
+  <section class="sec"><h2>Rows<small>Lists separate with hairlines, not boxes. Labels in steel, values in text, numbers in Chakra Petch.</small></h2>
     <div class="row">
       <div class="frame live" style="width:340px"><div class="frame-head"><span class="t-label">Milk+</span><span class="t-meta">Strength ×2 · 41 s</span></div>
         <div class="drink"><svg class="ico fluo"><use href="#i-bottle-full"/></svg><span class="key">1</span><div><div class="name">Strength</div><div class="does">Dig harder. Stacks. Pushes toward Frenzy.</div><div class="rc">2× Regolith Whey</div></div><span class="btn primary"><span>Drink</span></span></div>
