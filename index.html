@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ASS2ROID: Ex Profundo (Prototype 3)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#1b1b1b; --panel:#262626; --line:#444; --text:#ddd; --dim:#888; --hot:#fff; }
   * { box-sizing:border-box; }
@@ -254,12 +256,17 @@ const CONFIG = {
 
   // tipAt: how far the balance meter must go to tip into Frenzy or Stillness.
   // Regolith Prime tips a little earlier than the deeper layers: three quick drinks, or two plus a nudge.
+  // rock: each layer's rock, from the tile lab (mockups/tile-lab.html): flow, grain, veins, bands, bevel; dim keeps the plates readable.
   layers: [
-    { name: 'Regolith Prime', rows: 60, drillWear: 0.5,   // the drill wears half as fast here: Recovery needs Chrome, from the layer below
+    { name: 'Regolith Prime', rows: 60,
+      rock: { cells: 6, grout: 4, scale: 20, angle: 66, stretch: 4.1, detail: 0.5, base: 115, contrast: 200, levels: 16, jitter: 40, cool: 12, streaks: 0, veins: 0.66, bands: 0, bandSize: 34, bevel: 1, tileBevel: 1, dim: 0.72 },   // the tile lab (Prototype 4)
+      drillWear: 0.5,   // the drill wears half as fast here: Recovery needs Chrome, from the layer below
       hp: [8, 10], bandHp: 60, crustHp: 60, crustMinPower: 1, tipAt: 80, tint: '#5a5a5a',
       yields: { whey: 0.05, powder: 0.035 },
       craters: null },
-    { name: 'The Shaker Strata', rows: 60, hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
+    { name: 'The Shaker Strata', rows: 60,
+      rock: { cells: 8, grout: 4, scale: 20, angle: 151, stretch: 1, detail: 0, base: 94, contrast: 160, levels: 16, jitter: 40, cool: 0, streaks: 0.24, veins: 1, bands: 0.38, bandSize: 4, bevel: 1, tileBevel: 1, dim: 0.72 },   // the tile lab (Prototype 4)
+      hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
       shakers: 0.02,               // fossilised shakers: break one for a ready, random Milk+
       shakerOdds: { strength: 0.5, calm: 0.15, recovery: 0.15, stamina: 0.1, focus: 0.1 },   // they lean Strength: the layer is short on Whey
       yields: { powder: 0.05, whey: 0.025, chrome: 0.025 },
@@ -267,7 +274,9 @@ const CONFIG = {
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
         { id: 7, label: 'Crater 7', note: 'Metallic traces. More Chrome Filings, less Legacy Powder.', mods: { chrome: 1.5, powder: 0.7 } },
       ] },
-    { name: 'The Chrome Vein', rows: 60, hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 90, tint: '#4f5358',
+    { name: 'The Chrome Vein', rows: 60,
+      rock: { cells: 9, grout: 4, scale: 20, angle: 145, stretch: 8, detail: 1, base: 110, contrast: 200, levels: 16, jitter: 40, cool: 12, streaks: 0.92, veins: 0, bands: 0, bandSize: 30, bevel: 1, tileBevel: 1, dim: 0.72 },   // the tile lab (Prototype 4)
+      hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 90, tint: '#4f5358',
       slabs: { rows: [8, 15, 22, 37, 44, 51], gap: 2 },   // Näsa chrome: can't be dug, find the gap
       graffiti: ['chrome', 'crack'],   // scratched into the rock: the secret menu's recipe, both pieces here, where Crack Spores first turn up (2026-11-15: CRACK was in The Crack, too late to use)
       yields: { chrome: 0.05, whey: 0.05, powder: 0.02, spores: 0.0175 },   // Whey doubled: the toughest rock needs Strength
@@ -275,7 +284,9 @@ const CONFIG = {
         { id: 3, label: 'Crater 3', note: 'Faint glow from below. More Crack Spores, less Regolith Whey.', mods: { spores: 1.6, whey: 0.6 } },
         { id: 9, label: 'Crater 9', note: 'Well-trodden. More Regolith Whey, fewer Crack Spores.', mods: { whey: 1.6, spores: 0.6 } },
       ] },
-    { name: 'The Crack', rows: 60, hp: [36, 42], bandHp: 240, crustHp: 260, crustMinPower: 7, tipAt: 90, tint: '#3d4744',
+    { name: 'The Crack', rows: 60,
+      rock: { cells: 20, grout: 4, scale: 20, angle: 91, stretch: 8, detail: 1, base: 32, contrast: 200, levels: 16, jitter: 40, cool: 5, streaks: 1, veins: 1, bands: 0, bandSize: 4, bevel: 1, tileBevel: 1 },   // the tile lab (Prototype 4)
+      hp: [36, 42], bandHp: 240, crustHp: 260, crustMinPower: 7, tipAt: 90, tint: '#3d4744',
       dark: { clear: 1.4, fade: 3.4, voidClear: 3, voidFade: 6.5 },   // darkness: you see about three tiles around you, twice that on Void FM (night vision); the Crack Spores glow
       yields: { spores: 0.06, whey: 0.05, chrome: 0.02, powder: 0.02 },
       craters: [
@@ -625,13 +636,6 @@ const CANDY_TILES = ['#f4d5e4', '#cdeadb', '#d3e0f3', '#ebe6cf'];
 const rgbOf = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
 const CANDY_RGB = CANDY_TILES.map(rgbOf);
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-function candyColour(x, y, base) {
-  const t = now(), k = Math.max(0, Math.min(1, (t - (s.candyFrom || 0)) / 1000, (s.fx.candy - t) / 1000));   // fade in, fade out
-  const ph = x + y + (reduceMotion.matches ? 0 : t / 1000 * CONFIG.candy.glide), i = Math.floor(ph), fr = ph - i;
-  const a = CANDY_RGB[i % 4], b = CANDY_RGB[(i + 1) % 4], g0 = rgbOf(base);
-  return 'rgb(' + [0, 1, 2].map(j => Math.round(g0[j] + ((a[j] + (b[j] - a[j]) * fr) - g0[j]) * k)).join(',') + ')';
-}
-//   // pastel pink, green, blue, yellow: the rock on Candygirl (samples, ingredients, shakers, sealed finds and graffiti keep their colours, to be found)
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
 const inState = kind => kind === 'still' ? stillness() : frenzy();
@@ -642,9 +646,109 @@ const tipAt = () => layer().tipAt;
 const windowDrinks = () => s.window.filter(t => now() - t < CONFIG.balance.windowMs);
 const nextMult = () => { if (active('focus')) return 1; const m = CONFIG.balance.windowMult; return m[Math.min(windowDrinks().length, m.length - 1)]; };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// THE ROCK (Prototype 4): the tile lab's rock (CONFIG.layers[i].rock), the overlay plates, the prospector.
+// The rock is drawn once per layer into an offscreen image; each frame copies the visible slice and draws the rest live.
+// ─────────────────────────────────────────────────────────────────────────────
+const COL = { ink: '#0b0c0e', air: '#08090a', grout: '#060708', concrete: '#c9ccc9', steel: '#b4bac0', fluo: '#00ff73', amber: '#ffb43c', text: '#e1e4e6', spore: '#34e6ff' };
+let RP = null, rockSeed = 7;                                  // the rock settings being drawn, and this run's seed
+const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k + rockSeed, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+function vnoise(x, y, k) { const ix = Math.floor(x), iy = Math.floor(y), tx = x - ix, ty = y - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
+  const a = vhash(ix, iy, k), b = vhash(ix + 1, iy, k), c = vhash(ix, iy + 1, k), d = vhash(ix + 1, iy + 1, k); return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; }
+function fbm(x, y, k, oct, gain) { let v = 0, a = 1, n = 0, f = 1; for (let o = 0; o < oct; o++) { v += vnoise(x * f, y * f, k + o * 11) * a; n += a; a *= gain; f *= 2.03; } return v / n; }
+function rockTone(wx, wy) {
+  const a = RP.angle * Math.PI / 180, co = Math.cos(a), si = Math.sin(a), u = (wx * co + wy * si) / (RP.scale * RP.stretch), v = (-wx * si + wy * co) / RP.scale;
+  let t = fbm(u, v, 1, 4, RP.detail);
+  if (RP.bands > 0) t = t * (1 - RP.bands) + vhash(0, Math.floor(wy / RP.bandSize), 9) * RP.bands;
+  let tone = RP.base + (t - .5) * 2 * RP.contrast;
+  if (RP.streaks > 0 && 1 - Math.abs(fbm(u * 1.7 + 5, v * 1.7, 3, 3, .5) * 2 - 1) > 1 - RP.streaks * .18) tone -= 34 + RP.contrast * .25;
+  if (RP.veins > 0 && 1 - Math.abs(fbm(u * 3.1 + 17, v * 3.1, 5, 2, .5) * 2 - 1) > 1 - RP.veins * .06) tone += 70;
+  return tone;
+}
+const quant = v => { const L = RP.levels - 1, hi = 230; return Math.round(Math.max(0, Math.min(hi, v)) / hi * L) / L * hi; };
+const rockRGB = (v, dim = 1) => { v = Math.max(0, Math.min(255, v)) * (RP.dim ?? 1) * dim; const k = RP.cool; return `rgb(${v - k * .4 | 0},${v | 0},${v + k | 0})`; };
+// One tile of rock: blocks taking their tone from the flowing field, a bevel per block and per tile, a grout gap round it.
+function rockTile(c, gx, gy, dim = 1) {
+  const x = gx * T, y = gy * T, n = RP.cells, cs = T / n, gr = RP.grout;
+  c.fillStyle = COL.grout; c.fillRect(x, y, T, T); c.save(); c.beginPath(); c.rect(x + gr / 2, y + gr / 2, T - gr, T - gr); c.clip();
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    c.fillStyle = rockRGB(quant(rockTone(x + (i + .5) * cs, y + (j + .5) * cs) + (vhash(gx * 97 + i, gy * 89 + j, 4) - .5) * RP.jitter), dim); c.fillRect(x + i * cs, y + j * cs, cs + .05, cs + .05);
+    if (cs >= 3) { c.fillStyle = `rgba(255,255,255,${.16 * RP.bevel * dim})`; c.fillRect(x + i * cs, y + j * cs, cs, 1); c.fillStyle = `rgba(0,0,0,${.4 * RP.bevel})`; c.fillRect(x + i * cs, y + (j + 1) * cs - 1, cs, 1); }
+  }
+  c.fillStyle = `rgba(255,255,255,${.12 * RP.tileBevel * dim})`; c.fillRect(x, y + gr / 2, T, 1.5); c.fillStyle = `rgba(0,0,0,${.5 * RP.tileBevel})`; c.fillRect(x, y + T - gr / 2 - 2, T, 2); c.restore();
+}
+// The layer's rock, once: the walls (bedrock) at half light.
+let rockImg = null, rockFor = null;
+function buildRock() {
+  rockSeed = (s.rockSeed || 7) + s.layer * 7919; rockImg = document.createElement('canvas'); rockImg.width = W * T; rockImg.height = H * T; RP = layer().rock;
+  const c = rockImg.getContext('2d'); for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) rockTile(c, x, y, x === 0 || x === W - 1 ? .5 : 1);
+  rockFor = g;
+}
+
+// Overlays: every find on one plate, in its role's colour (concrete: collect; steel: read or work through; fluo: open now).
+const hexA = (h, a) => `rgba(${parseInt(h.slice(1, 3), 16)},${parseInt(h.slice(3, 5), 16)},${parseInt(h.slice(5, 7), 16)},${a})`;
+function plate(c, gx, gy, col, { glow = false, dashed = false, tint = .1 } = {}) {
+  const x = gx * T + 5, y = gy * T + 5, sz = T - 10;
+  c.fillStyle = 'rgba(0,0,0,.7)'; c.fillRect(x - 2, y - 2, sz + 4, sz + 4);                       // a dark gap cut round it
+  c.fillStyle = hexA(COL.ink, .92); c.fillRect(x, y, sz, sz); c.fillStyle = hexA(col, glow ? .2 : tint); c.fillRect(x, y, sz, sz);
+  c.save(); if (dashed) c.setLineDash([3, 2]); if (glow) { c.shadowColor = col; c.shadowBlur = 6; } c.strokeStyle = hexA(col, .95); c.lineWidth = 1.5; c.strokeRect(x + .75, y + .75, sz - 1.5, sz - 1.5); c.restore();
+}
+const plateLabel = (c, gx, gy, t, col, glow, size = 17) => { c.save(); c.font = `700 ${size}px "Chakra Petch", sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, gx * T + T / 2, gy * T + T / 2 + 1); c.restore(); };
+const diamond = (c, gx, gy, sz, col, outline) => { const x = gx * T + T / 2, y = gy * T + T / 2; c.beginPath(); c.moveTo(x, y - sz); c.lineTo(x + sz, y); c.lineTo(x, y + sz); c.lineTo(x - sz, y); c.closePath(); if (outline) { c.strokeStyle = col; c.lineWidth = 1.5; c.stroke(); } else { c.fillStyle = col; c.fill(); } };
+function spray(c, gx, gy, col, path, drops = []) {                 // spray paint: a soft overspray under a hard core, round ends, drips
+  c.save(); c.translate(gx * T, gy * T); c.lineCap = 'round'; c.lineJoin = 'round';
+  c.strokeStyle = hexA(col, .28); c.lineWidth = 4; c.beginPath(); path(c); c.stroke(); c.strokeStyle = col; c.lineWidth = 1.8; c.beginPath(); path(c); c.stroke();
+  c.fillStyle = col; for (const [x, y, r] of drops) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); } c.restore();
+}
+const FIND = {
+  ingr: (c, x, y, letter) => { plate(c, x, y, COL.concrete); plateLabel(c, x, y, letter, COL.concrete); },
+  sample: (c, x, y) => { plate(c, x, y, COL.concrete); diamond(c, x, y, 7, COL.concrete); },
+  shaker: (c, x, y) => { plate(c, x, y, COL.concrete); const X = x * T, Y = y * T; c.fillStyle = COL.concrete; c.beginPath(); c.moveTo(X + 18.5, Y + 10); c.lineTo(X + 21.5, Y + 10); c.lineTo(X + 21.5, Y + 14); c.lineTo(X + 24, Y + 17); c.lineTo(X + 24, Y + 31); c.lineTo(X + 16, Y + 31); c.lineTo(X + 16, Y + 17); c.lineTo(X + 18.5, Y + 14); c.closePath(); c.fill(); },
+  spores: (c, x, y) => { plate(c, x, y, COL.spore, { glow: true }); plateLabel(c, x, y, 'S', COL.spore, true); },
+  band: (c, x, y) => { plate(c, x, y, COL.steel, { tint: .06 }); c.fillStyle = hexA(COL.steel, .8); for (let k = 0; k < 4; k++) c.fillRect(x * T + 8, y * T + 11 + k * 5.5, T - 16, 2.5); },   // stripes: a compressed stratum
+  crust: (c, x, y) => { plate(c, x, y, COL.steel); c.strokeStyle = hexA(COL.steel, .6); c.lineWidth = 1; c.strokeRect(x * T + 9.5, y * T + 9.5, T - 19, T - 19); plateLabel(c, x, y, String(layer().crustMinPower), COL.steel, false, 15); },   // the digging power it needs
+  seam: (c, x, y) => { plate(c, x, y, COL.steel, { dashed: true }); plateLabel(c, x, y, '?', COL.steel); },
+  seamOpen: (c, x, y) => { plate(c, x, y, COL.fluo, { glow: true }); plateLabel(c, x, y, '?', COL.fluo, true); },
+  sealed: (c, x, y) => { plate(c, x, y, COL.steel, { dashed: true }); diamond(c, x, y, 10, COL.steel, true); diamond(c, x, y, 4.5, COL.steel); },
+  sealedOpen: (c, x, y) => { plate(c, x, y, COL.fluo, { glow: true }); c.save(); c.shadowColor = COL.fluo; c.shadowBlur = 8; diamond(c, x, y, 10, COL.fluo, true); diamond(c, x, y, 4.5, COL.fluo); c.restore(); },
+  graffiti: (c, x, y) => { plate(c, x, y, COL.steel); spray(c, x, y, COL.concrete, c => {   // a tag: a loopy scrawl, an underline with a flick, a drip and a dot
+      c.moveTo(8.5, 24); c.lineTo(10.5, 14); c.lineTo(13, 23.5); c.lineTo(15.5, 13); c.lineTo(17.5, 22.5); c.quadraticCurveTo(19, 16.5, 22.5, 17); c.quadraticCurveTo(26.5, 17.5, 24.5, 21.5); c.quadraticCurveTo(22, 24.5, 20.5, 21.5);
+      c.lineTo(27, 11.5); c.quadraticCurveTo(32.5, 10, 29.5, 16); c.moveTo(8, 29.5); c.quadraticCurveTo(20, 26.5, 32, 27.5); c.lineTo(29.5, 30.5); c.moveTo(13, 23.5); c.lineTo(13, 31); }, [[13, 32, 1.3], [31.5, 22.5, 1.4]]); },
+  graffiti2: (c, x, y) => { plate(c, x, y, COL.steel); const pts = [0, 1, 2, 3, 4, 5].map(k => { const a = (-90 + 144 * k) * Math.PI / 180; return [20 + 10.5 * Math.cos(a), 20 + 10.5 * Math.sin(a)]; });   // a star, scrawled, dripping
+    spray(c, x, y, COL.concrete, c => { c.moveTo(pts[0][0], pts[0][1]); for (let k = 1; k < 6; k++) c.lineTo(pts[k][0], pts[k][1]); c.lineTo(pts[1][0] + 2, pts[1][1] + 1.5);
+      c.moveTo(pts[2][0], pts[2][1]); c.lineTo(pts[2][0], pts[2][1] + 4); c.moveTo(pts[3][0], pts[3][1]); c.lineTo(pts[3][0], pts[3][1] + 2.5); }, [[pts[2][0], pts[2][1] + 5, 1.2], [pts[3][0], pts[3][1] + 3.5, 1.1]]); },
+  slab: (c, x, y) => {                                          // Näsa chrome: a tile like the rock, in its own grout, bevelled, ™ in Näsa blue
+    const X = x * T, Y = y * T, g0 = 2; c.fillStyle = COL.grout; c.fillRect(X, Y, T, T);
+    const gr = c.createLinearGradient(0, Y + g0, 0, Y + T - g0); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, v]) => gr.addColorStop(o, v));
+    c.fillStyle = gr; c.fillRect(X + g0, Y + g0, T - 2 * g0, T - 2 * g0); c.fillStyle = 'rgba(255,255,255,.7)'; c.fillRect(X + g0, Y + g0, T - 2 * g0, 1.5); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(X + g0, Y + T - g0 - 2, T - 2 * g0, 2);
+    c.fillStyle = 'rgba(255,255,255,.5)'; c.fillRect(X + g0, Y + g0, 1.5, T - 2 * g0); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(X + T - g0 - 1.5, Y + g0, 1.5, T - 2 * g0);
+    c.save(); c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans", sans-serif'; c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillText('™', X + T - 11, Y + 11); c.restore();
+  },
+};
+// The prospector: the block, outlined in ink, a glint on the visor. A headlamp on the crown in the dark.
+function chamfer(c, x, y, w, h, k) { c.moveTo(x + k, y); c.lineTo(x + w - k, y); c.lineTo(x + w, y + k); c.lineTo(x + w, y + h - k); c.lineTo(x + w - k, y + h); c.lineTo(x + k, y + h); c.lineTo(x, y + h - k); c.lineTo(x, y + k); c.closePath(); }
+function drawProspector(c, X, Y, o) {
+  const sc = 1 + (o.str || 0) * .09; c.save(); c.translate(X + T / 2, Y + T - 3); c.scale(sc, sc); c.translate(-(X + T / 2), -(Y + T - 3));
+  c.beginPath(); chamfer(c, X + 8, Y + 6, 24, 30, 4); c.lineJoin = 'miter'; c.strokeStyle = COL.ink; c.lineWidth = 3; c.stroke(); c.fillStyle = o.frenzy ? '#ffffff' : COL.concrete; c.fill();
+  c.fillStyle = COL.ink; c.fillRect(X + 13, Y + 12, 14, 6); c.fillStyle = COL.steel; c.fillRect(X + 15, Y + 13, 5, 1);
+  if (o.pick) { const mx = X + T / 2; c.strokeStyle = COL.ink; c.lineWidth = 2; c.beginPath(); c.moveTo(mx, Y + 21); c.lineTo(mx, Y + 32); c.moveTo(mx - 7, Y + 23); c.quadraticCurveTo(mx, Y + 18, mx + 7, Y + 23); c.stroke(); }
+  if (o.dark) { const lx = X + 20, ly = Y + 5, R = 13, h = c.createRadialGradient(lx, ly, 0, lx, ly, R);
+    h.addColorStop(0, 'rgba(255,255,255,.95)'); h.addColorStop(.3, 'rgba(255,255,255,.4)'); h.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = h; c.fillRect(lx - R, ly - R, R * 2, R * 2); c.shadowColor = '#fff'; c.shadowBlur = 6; c.fillStyle = '#fff'; c.fillRect(lx - 2.5, ly - 1.5, 5, 3); }
+  c.restore();
+}
+// The depth gauge's cores: each layer's own rock in a strip, made once.
+const coreImgs = [];
+function coreImg(i, w, h) {
+  if (coreImgs[i] && coreImgs[i].height === Math.round(h)) return coreImgs[i];
+  const cvs = document.createElement('canvas'); cvs.width = w; cvs.height = Math.round(h); const c = cvs.getContext('2d'), keep = RP, seed0 = rockSeed; RP = CONFIG.layers[i].rock; rockSeed = 7;
+  for (let j = 0; j < h; j += 2) for (let k = 0; k < w; k += 2) { c.fillStyle = rockRGB(quant(rockTone(k * 5 + 300, j * 5 + i * 900) + (vhash(k, j + i * 50, 4) - .5) * RP.jitter * .6)); c.fillRect(k, j, 2, 2); }
+  RP = keep; rockSeed = seed0; return coreImgs[i] = cvs;
+}
+
 function freshState() {
   return {
-    layer: 0, crater: 1, depthOffset: 0,
+    layer: 0, crater: 1, depthOffset: 0, rockSeed: Math.floor(Math.random() * 1e6),   // a new rock every run
     inv: { whey: 0, powder: 0, chrome: 0, spores: 0 },
     bottles: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 },
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
@@ -1663,98 +1767,81 @@ function update(dt) {
 
 function draw() {
   const L = layer();
-  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, cv.width, cv.height);
+  if (rockFor !== g) buildRock();                            // a new layer: draw its rock once
+  ctx.fillStyle = COL.air; ctx.fillRect(0, 0, cv.width, cv.height);
   ctx.save();
   ctx.translate(0, -cam * T);
   const y0 = Math.floor(cam), y1 = Math.min(H, y0 + VIEW + 1);
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  for (let y = y0; y < y1; y++) for (let x = 0; x < W; x++) {
-    const c = g[y][x], px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
-    if (c.t === AIR) continue;
-    ctx.font = 'bold 14px monospace';
-    ctx.fillStyle = (s && candy() && [DIRT, BAND].includes(c.t) && candyColour(x, y, c.t === BAND ? '#3a3a3a' : L.tint)) || { [DIRT]: L.tint, [SAMPLE]: '#4a4a4a', [INGR]: '#6e6e6e', [BAND]: '#3a3a3a', [CRUST]: '#262626', [SEAM]: '#555', [ART]: '#555', [ROCK]: '#222', [SHAKER]: L.tint, [SEALED]: L.tint, [GRAFFITI]: L.tint, [SLAB]: '#a9b2bc' }[c.t];
-    ctx.fillRect(px + 1, py + 1, T - 2, T - 2);
-    if (c.t === SAMPLE) { ctx.fillStyle = '#ccc'; ctx.fillText('◆', cx, cy); }
-    if (c.t === GRAFFITI) {                                  // scratches: someone wrote here
-      ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 2; ctx.beginPath();
-      ctx.moveTo(px + 9, py + 13); ctx.lineTo(px + 31, py + 10);
-      ctx.moveTo(px + 8, py + 21); ctx.lineTo(px + 27, py + 19); ctx.moveTo(px + 29, py + 18); ctx.lineTo(px + 33, py + 17);
-      ctx.moveTo(px + 10, py + 29); ctx.lineTo(px + 22, py + 28);
-      ctx.stroke(); ctx.lineWidth = 1;
-    }
-    if (c.t === SHAKER) {                                    // a little sealed bottle
-      ctx.fillStyle = '#ddd'; ctx.fillRect(cx - 6, cy - 7, 12, 16); ctx.fillStyle = '#888'; ctx.fillRect(cx - 4, cy - 11, 8, 4);
-    }
-    if (c.t === SLAB) {                                      // Näsa chrome, with a shine and a ™
-      const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * Math.max(0, now() - c.hotAt - CONFIG.chrome.heatEveryMs * 2) / 1000) / CONFIG.chrome.meltHeat : 0;
-      if (heat > 0) { ctx.fillStyle = `rgba(255,179,71,${Math.min(.9, heat)})`; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }   // heating up: amber
-      ctx.fillStyle = '#e4e9ee'; ctx.fillRect(px + 1, py + 1, T - 2, 6);
-      ctx.fillStyle = '#5d6670'; ctx.font = 'bold 11px monospace'; ctx.fillText('™', cx, cy + 3); ctx.font = 'bold 14px monospace';
-    }
-    if (c.t === INGR) { ctx.fillStyle = '#fff'; ctx.fillText(ING[c.ing].letter, cx, cy); }
-    if (c.t === BAND || c.t === CRUST) {
-      ctx.strokeStyle = c.t === CRUST ? '#444' : '#2a2a2a'; ctx.beginPath();
-      for (let i = 0; i < T; i += c.t === CRUST ? 5 : 8) { ctx.moveTo(px + i, py + T); ctx.lineTo(px + i + 8, py); }
-      ctx.stroke();
-    }
-    if (c.t === SEALED) {                                    // a sealed find: a dim ◈ in the rock, bright when its state can open it
-      const open = seamAnswers(c.kind);
-      if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
-      ctx.strokeStyle = open ? '#fff' : '#bdbdbd'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 5.5, py + 5.5, T - 11, T - 11); ctx.lineWidth = 1;   // framed, like a specimen box
-      ctx.fillStyle = open ? '#fff' : '#cfcfcf'; ctx.font = open ? 'bold 22px monospace' : 'bold 18px monospace'; ctx.fillText('◈', cx, cy);
-      ctx.font = 'bold 14px monospace';
-    }
-    if (c.t === SEAM || c.t === ART) {
-      const open = seamAnswers(c.kind);                      // lights up only in its own state, or while Hyperfocus holds it
-      if (open) { ctx.fillStyle = '#888'; ctx.fillRect(px + 1, py + 1, T - 2, T - 2); }
-      ctx.fillStyle = open ? '#fff' : '#777'; ctx.font = open ? 'bold 22px monospace' : '12px monospace';
-      ctx.fillText('?', cx, cy);
-    }
-    if (c.hp < c.max && c.t !== ROCK) {
-      const k = 1 - c.hp / c.max;
-      ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1.5; ctx.beginPath();
-      ctx.moveTo(cx, cy); ctx.lineTo(cx - 14 * k, py + 6);
-      ctx.moveTo(cx, cy); ctx.lineTo(px + T - 6, cy + 12 * k);
-      if (k > .5) { ctx.moveTo(cx, cy); ctx.lineTo(px + 8, py + T - 6); }
-      ctx.stroke(); ctx.lineWidth = 1;
-    }
-  }
-  // Prospector (jitters while shaking, with a progress bar overhead).
-  const bob = active('strength') ? 2 * s.strStacks : 0;
-  const jx = shaking() ? Math.round(Math.sin(now() / 25) * 3) : 0, px0 = p.x * T + jx;
-  ctx.fillStyle = frenzy() ? '#fff' : '#ddd';
-  ctx.fillRect(px0 + 8 - bob, p.y * T + 6 - bob, T - 16 + bob * 2, T - 10 + bob);
-  ctx.fillStyle = '#111'; ctx.fillRect(px0 + 13, p.y * T + 12, 14, 6); // visor
-  if (onPick()) {                                            // the pick axe: black, upright, under the visor
-    const mx = px0 + T / 2, py0 = p.y * T;
-    ctx.strokeStyle = '#111'; ctx.lineWidth = 2; ctx.beginPath();
-    ctx.moveTo(mx, py0 + 21); ctx.lineTo(mx, py0 + 32);           // handle
-    ctx.moveTo(mx - 7, py0 + 23); ctx.quadraticCurveTo(mx, py0 + 18, mx + 7, py0 + 23);   // curved head
+  ctx.drawImage(rockImg, 0, y0 * T, W * T, (y1 - y0) * T, 0, y0 * T, W * T, (y1 - y0) * T);
+  RP = L.rock;
+  const play = (fn) => { for (let y = y0; y < y1; y++) for (let x = 1; x < W - 1; x++) fn(g[y][x], x, y); };
+  play((c, x, y) => { if (c.t === AIR) { ctx.fillStyle = COL.air; ctx.fillRect(x * T, y * T, T, T); } });
+  // Frenzy: heat in the seams. The rock brighter and sharper, amber in the divisions between tiles.
+  if (frenzy()) {
+    ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.fillRect(T, y0 * T, (W - 2) * T, (y1 - y0) * T); ctx.restore();
+    ctx.strokeStyle = 'rgba(255,180,60,.6)'; ctx.lineWidth = 2; ctx.beginPath();
+    for (let x = 1; x < W; x++) { ctx.moveTo(x * T, y0 * T); ctx.lineTo(x * T, y1 * T); }
+    for (let y = y0; y <= y1; y++) { ctx.moveTo(T, y * T); ctx.lineTo((W - 1) * T, y * T); }
     ctx.stroke(); ctx.lineWidth = 1;
   }
+  // Candygirl: the rock goes pastel, gliding slowly (photosensitive-safe; still with "reduce motion"). Finds keep their plates.
+  if (candy()) {
+    const t = now(), k = Math.max(0, Math.min(1, (t - (s.candyFrom || 0)) / 1000, (s.fx.candy - t) / 1000));
+    play((c, x, y) => { if (c.t !== DIRT && c.t !== BAND) return;
+      const ph = x + y + (reduceMotion.matches ? 0 : t / 1000 * CONFIG.candy.glide), i = Math.floor(ph), fr = ph - i, a = CANDY_RGB[i % 4], b = CANDY_RGB[(i + 1) % 4];
+      const col = 'rgb(' + [0, 1, 2].map(j => Math.round(a[j] + (b[j] - a[j]) * fr)).join(',') + ')';
+      ctx.save(); ctx.globalAlpha = k; ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = col; ctx.fillRect(x * T, y * T, T, T);
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .55 * k; ctx.fillRect(x * T + 2, y * T + 2, T - 4, T - 4); ctx.restore(); });
+  }
+  // The finds, on their plates.
+  play((c, x, y) => {
+    switch (c.t) {
+      case SAMPLE: FIND.sample(ctx, x, y); break;
+      case INGR: if (c.ing === 'spores') FIND.spores(ctx, x, y); else FIND.ingr(ctx, x, y, ING[c.ing].letter); break;
+      case BAND: FIND.band(ctx, x, y); break;
+      case CRUST: FIND.crust(ctx, x, y); break;
+      case SEAM: case ART: (seamAnswers(c.kind) ? FIND.seamOpen : FIND.seam)(ctx, x, y); break;
+      case SEALED: (seamAnswers(c.kind) ? FIND.sealedOpen : FIND.sealed)(ctx, x, y); break;
+      case SHAKER: FIND.shaker(ctx, x, y); break;
+      case GRAFFITI: (c.clue === 'crack' ? FIND.graffiti2 : FIND.graffiti)(ctx, x, y); break;
+      case SLAB: {
+        FIND.slab(ctx, x, y);
+        const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * Math.max(0, now() - c.hotAt - CONFIG.chrome.heatEveryMs * 2) / 1000) / CONFIG.chrome.meltHeat : 0;
+        if (heat > 0) { ctx.fillStyle = `rgba(255,180,60,${Math.min(.85, heat)})`; ctx.fillRect(x * T + 2, y * T + 2, T - 4, T - 4); }   // heating up: amber
+        break;
+      }
+    }
+    if (c.hp < c.max && c.t !== ROCK && c.t !== AIR) {      // damage: cracks, ink with a pale edge
+      const k = 1 - c.hp / c.max, px = x * T, py = y * T, cx = px + T / 2, cy = py + T / 2;
+      const path = () => { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - 14 * k, py + 6); ctx.moveTo(cx, cy); ctx.lineTo(px + T - 6, cy + 12 * k); if (k > .5) { ctx.moveTo(cx, cy); ctx.lineTo(px + 8, py + T - 6); } };
+      ctx.strokeStyle = 'rgba(11,12,14,.9)'; ctx.lineWidth = 2.5; path(); ctx.stroke(); ctx.strokeStyle = 'rgba(225,228,230,.55)'; ctx.lineWidth = .75; ctx.save(); ctx.translate(.8, -.8); path(); ctx.stroke(); ctx.restore(); ctx.lineWidth = 1;
+    }
+  });
+  // Prospector (jitters while shaking, grows with Strength, a progress bar overhead while shaking).
+  const jx = shaking() ? Math.round(Math.sin(now() / 25) * 3) : 0;
+  if (!L.dark) drawProspector(ctx, p.x * T + jx, p.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick() });
   if (shaking()) {
     const k = 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs;
-    ctx.fillStyle = '#111'; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
-    ctx.fillStyle = '#fff'; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
+    ctx.fillStyle = COL.ink; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
+    ctx.fillStyle = COL.concrete; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
   }
-  for (const ch of s.charges) {                              // a blasting charge: a little block, its fuse sparking
-    const left = Math.max(0, ch.at - now()) / CONFIG.charge.fuseMs, px = ch.x * T, py = ch.y * T;
-    ctx.fillStyle = '#111'; ctx.fillRect(px + 12, py + 14, 16, 18); ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1.5; ctx.strokeRect(px + 12.5, py + 14.5, 15, 17); ctx.lineWidth = 1;
-    ctx.strokeStyle = '#aaa'; ctx.beginPath(); ctx.moveTo(px + 20, py + 14); ctx.lineTo(px + 20 + 6 * left, py + 14 - 8 * left); ctx.stroke();
-    if (Math.floor(now() / (60 + 140 * left)) % 2) { ctx.fillStyle = '#fff'; ctx.fillRect(px + 18 + 6 * left, py + 12 - 8 * left, 4, 4); }
+  for (const ch of s.charges) {                              // a blasting charge: on its plate, the fuse burning down to an amber spark
+    const left = Math.max(0, ch.at - now()) / CONFIG.charge.fuseMs, X = ch.x * T, Y = ch.y * T;
+    plate(ctx, ch.x, ch.y, COL.concrete); ctx.strokeStyle = COL.concrete; ctx.lineWidth = 1.5; ctx.strokeRect(X + 13.75, Y + 17.75, 12.5, 12.5);
+    ctx.beginPath(); ctx.moveTo(X + 20, Y + 17); ctx.lineTo(X + 20 + 4 * left, Y + 17 - 7 * left); ctx.stroke(); ctx.lineWidth = 1;
+    if (Math.floor(now() / (60 + 140 * left)) % 2) { ctx.save(); ctx.shadowColor = COL.amber; ctx.shadowBlur = 6; ctx.fillStyle = COL.amber; ctx.fillRect(X + 18.5 + 4 * left, Y + 15.5 - 7 * left, 3, 3); ctx.restore(); }
   }
-  ctx.fillStyle = '#bbb';
+  ctx.fillStyle = COL.steel;
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
-  if (L.dark) drawDark(L, y0, y1);
+  if (L.dark) { drawDark(L, y0, y1); drawProspector(ctx, p.x * T + jx, p.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick(), dark: true }); }
   ctx.restore();
-  if (s.dug > 0) { drawMap(); drawGauge(); }               // the side walls become a map and a depth gauge
-  else { ctx.fillStyle = '#777'; ctx.font = '10px monospace'; ctx.textAlign = 'left'; ctx.fillText('0 m', 4, 10); }
+  drawGauge();
 }
 
 // Void FM in the dark: night vision.
 const nightVision = () => !!layer().dark && musicOn() && radioNow().key === 'void';
 
-// The Crack: only a little light around the prospector. The Crack Spores glow green, and an open seam glows white.
+// The Crack: only a little light around the prospector (and its headlamp). The Crack Spores glow cyan, an open seam fluo.
 function drawDark(L, y0, y1) {
   const cx = p.x * T + T / 2, cy = p.y * T + T / 2;
   const k = s.sight = (s.sight || 0) + ((nightVision() ? 1 : 0) - (s.sight || 0)) * .06;   // 0 normal, 1 night vision
@@ -1775,54 +1862,43 @@ function drawDark(L, y0, y1) {
     });
     ctx.restore();
   }
-  ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold 14px monospace';
+  // Beyond the light: the spores glow, and an open seam or sealed find, on their plates.
   for (let y = y0; y < y1; y++) for (let x = 1; x < W - 1; x++) {
-    const c = g[y][x], px = x * T + T / 2, py = y * T + T / 2;
-    if (c.t === INGR && c.ing === 'spores') { ctx.shadowColor = '#00ff9f'; ctx.shadowBlur = 14; ctx.fillStyle = '#00ff9f'; ctx.fillText('S', px, py); }
-    else if ((c.t === SEAM || c.t === ART || c.t === SEALED) && seamAnswers(c.kind)) { ctx.shadowColor = '#fff'; ctx.shadowBlur = 10; ctx.fillStyle = '#fff'; ctx.fillText('?', px, py); }
+    const c = g[y][x];
+    if (c.t === INGR && c.ing === 'spores') FIND.spores(ctx, x, y);
+    else if ((c.t === SEAM || c.t === ART) && seamAnswers(c.kind)) FIND.seamOpen(ctx, x, y);
+    else if (c.t === SEALED && seamAnswers(c.kind)) FIND.sealedOpen(ctx, x, y);
   }
-  ctx.restore();
 }
 
-// Left wall: the whole layer in miniature. Your tunnel, bands, slabs, the crust, and what's on screen.
-function drawMap() {
-  const x0 = 2, w = T - 4, top = 2, h = cv.height - 4, rh = h / H, cw = w / (W - 2);
-  ctx.fillStyle = '#0d0d0d'; ctx.fillRect(x0, top, w, h);
-  for (let y = 0; y < H; y++) for (let x = 1; x < W - 1; x++) {
-    const c = g[y][x]; let col;
-    if (c.t === AIR) col = y < 2 || y === H - 1 ? null : '#8a8a8a';
-    else if (c.t === SLAB) col = '#a9b2bc';
-    else if (c.t === CRUST) col = '#4a4a4a';
-    else if (c.t === BAND) col = '#2c2c2c';
-    else if ((c.t === SEAM || c.t === ART) && seamAnswers(c.kind)) col = '#fff';
-    else col = '#1d1d1d';
-    if (col) { ctx.fillStyle = col; ctx.fillRect(x0 + (x - 1) * cw, top + y * rh, Math.ceil(cw), Math.ceil(rh)); }
-  }
-  ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1;                        // the part of the layer on screen
-  ctx.strokeRect(x0 + .5, top + cam * rh + .5, w - 1, VIEW * rh - 1);
-  ctx.fillStyle = '#fff';                                          // you
-  ctx.fillRect(x0 + (p.x - 1) * cw - 1, top + p.y * rh - 1, Math.ceil(cw) + 2, Math.ceil(rh) + 2);
-}
-
-// Right wall: how deep the whole game goes, layer by layer, and how far you've come. We go deeper.
+// The right wall: the depth gauge, once you start digging. The four layers as four segments with clear gaps; the one you are
+// in framed, its number on a plate; behind you, your rock; ahead, unsurveyed (hatched). The metres at the top. (No map.)
 function drawGauge() {
-  const rows = CONFIG.layers.map(l => l.rows - 1), total = rows.reduce((a, b) => a + b, 0);
-  const x0 = cv.width - T + 12, w = T - 24, top = 18, h = cv.height - 36;
-  const done = rows.slice(0, s.layer).reduce((a, b) => a + b, 0) + Math.min(p.y, rows[s.layer]);
-  ctx.fillStyle = '#0d0d0d'; ctx.fillRect(x0, top, w, h);
-  ctx.fillStyle = '#8a8a8a'; ctx.fillRect(x0, top, w, h * done / total);
-  let y = top; ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  rows.forEach((r, i) => {
-    const sh = h * r / total;
-    ctx.strokeStyle = '#555'; ctx.strokeRect(x0 + .5, y + .5, w - 1, sh - 1);
-    ctx.fillStyle = i === s.layer ? '#fff' : i < s.layer ? '#111' : '#666';
-    ctx.fillText(String(i + 1), x0 + w / 2, y + sh / 2);
-    y += sh;
-  });
-  ctx.fillStyle = '#fff'; ctx.fillRect(x0 - 3, top + h * done / total - 1, w + 6, 3);   // you are here
-  ctx.fillStyle = '#777'; ctx.font = '9px monospace';
-  ctx.fillText('▼', x0 + w / 2, top + h + 9);                          // the end, below the deepest layer
-  ctx.fillText(`${depthNow()}m`, x0 + w / 2, 9);
+  const x0 = (W - 1) * T, small = (t, x, y, col = '#5f656b') => { ctx.save(); ctx.font = '600 8px "IBM Plex Sans", sans-serif'; ctx.letterSpacing = '1.5px'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(t, x + .75, y); ctx.restore(); };
+  const num = (t, x, y, size, col) => { ctx.save(); ctx.font = `700 ${size}px "Chakra Petch", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(t, x, y); ctx.restore(); };
+  if (!(s.dug > 0)) {                                        // before the first dig: bedrock, and only the depth
+    ctx.fillStyle = 'rgba(11,12,14,.88)'; ctx.fillRect(x0 + 4, 4, T - 8, 30); num('0', x0 + T / 2, 15, 13, COL.text); small('M', x0 + T / 2, 27); return;
+  }
+  ctx.fillStyle = COL.ink; ctx.fillRect(x0, 0, T, cv.height);
+  ctx.beginPath(); chamfer(ctx, x0 + 2.5, 2.5, T - 5, cv.height - 5, 6); ctx.strokeStyle = 'rgba(150,157,164,.42)'; ctx.lineWidth = 1; ctx.stroke();
+  num(String(depthNow()), x0 + T / 2, 15, 13, COL.text); small('M', x0 + T / 2, 27);
+  const n = CONFIG.layers.length, cx = x0 + 9, cw = 22, top = 40, bottom = cv.height - 26, gap = 8, seg = (bottom - top - gap * (n - 1)) / n;
+  const within = Math.min(p.y, H - 1) / (H - 1);
+  for (let i = 0; i < n; i++) {
+    const y = top + i * (seg + gap), cur = i === s.layer, img = coreImg(i, cw, seg);
+    if (i < s.layer) { ctx.globalAlpha = .8; ctx.drawImage(img, cx, y); ctx.globalAlpha = 1; }
+    else if (cur) { const cut = seg * within; ctx.drawImage(img, 0, 0, cw, cut, cx, y, cw, cut); ctx.drawImage(img, 0, cut, cw, seg - cut, cx, y + cut, cw, seg - cut); ctx.fillStyle = 'rgba(11,12,14,.62)'; ctx.fillRect(cx, y + cut, cw, seg - cut); }
+    else { ctx.fillStyle = '#121417'; ctx.fillRect(cx, y, cw, seg); ctx.save(); ctx.beginPath(); ctx.rect(cx, y, cw, seg); ctx.clip(); ctx.strokeStyle = 'rgba(150,157,164,.2)'; ctx.lineWidth = 1;
+      for (let k = -cw; k < seg; k += 6) { ctx.beginPath(); ctx.moveTo(cx, y + k + cw); ctx.lineTo(cx + cw, y + k); ctx.stroke(); } ctx.restore(); }
+    if (cur) { ctx.strokeStyle = COL.concrete; ctx.lineWidth = 1.5; ctx.strokeRect(cx - 2.25, y - 2.25, cw + 4.5, seg + 4.5); }
+    let ny = y + seg / 2; if (cur) { const you = y + seg * within; if (Math.abs(ny - you) < 16) ny = you > ny ? you - 18 : you + 18; }
+    ctx.fillStyle = 'rgba(11,12,14,.9)'; ctx.fillRect(cx + cw / 2 - 8, ny - 8, 16, 16);
+    if (cur) { ctx.strokeStyle = COL.concrete; ctx.lineWidth = 1; ctx.strokeRect(cx + cw / 2 - 7.5, ny - 7.5, 15, 15); }
+    num(String(i + 1), cx + cw / 2, ny + .5, 11, cur ? COL.text : i < s.layer ? '#969da4' : '#5f656b');
+  }
+  const yy = top + s.layer * (seg + gap) + seg * within;          // you are here
+  ctx.fillStyle = COL.ink; ctx.fillRect(cx - 5, yy - 3, cw + 10, 6); ctx.fillStyle = '#fff'; ctx.fillRect(cx - 4, yy - 1.5, cw + 8, 3);
+  small('▼', x0 + T / 2 - .75, bottom + 12);                    // the end, below the deepest layer
 }
 
 const depthNow = () => s.depthOffset + Math.max(0, p.y - 1) * CONFIG.grid.metresPerRow;
