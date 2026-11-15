@@ -157,14 +157,13 @@ document.fonts.ready.then(() => Promise.all(['700 30px "Chakra Petch"', '600 10p
 
   shot(S, screen('crack', `<span class="lbl live">Shift complete</span><h2 class="ttl">The Core.</h2>
     <p class="body">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</p>
-    <div data-coin></div><div class="btn" style="margin-top:-8px">Save the coin <kbd>C</kbd></div>
     ${kv([['Depth', 708, 'm'], ['Shift length', '41:07'], ['Milk+ drunk', 37], ['Frenzies', 4], ['Field Guide', 34, '/ 41']])}
-    <p class="note">Still in the rock: Nos. 3, 8 and 12. <b>The archive cabinet waits.</b></p>
-    <div class="go">New game <kbd>Enter</kbd></div>`, s => s.querySelector('[data-coin]').replaceWith(coin(708))),
-    'The Core', 'The ending you dig for. The coin is a steel plate with your depth on it, to keep; the stats count up like a tally; what is still out there is the reason to go again.');
+    <p class="note">Still in the rock: Nos. 3, 8 and 12.<br><b>The archive cabinet waits.</b></p>
+    <div class="go">New game <kbd>Enter</kbd></div>`),
+    'The Core', 'The ending you dig for. The stats count up like a tally; what is still out there is the reason to go again.');
 
   shot(S, screen('space', `<span class="lbl">Contact lost</span><h2 class="ttl">The drift.</h2>
-    <p class="body">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</p>
+    <p class="body">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet.<br>It was not unpleasant.</p>
     ${kv([['Depth when you let go', 293, 'm'], ['Shift length', '27:15'], ['Stillnesses', 6]])}
     <p class="note">The Core is still down there.</p>
     <div class="go">New game <kbd>Enter</kbd></div>`), 'Contact lost', 'The other ending, over space instead of rock. The same calm: no blame, the numbers, and the way back.');
