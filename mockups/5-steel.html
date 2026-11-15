@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup 5 · Steel · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Tektur:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Mockup 3: the identity (moodboards: Deus Ex 2000, Crying Suns 2019, the UI element sheet).
+     Navy, light grey, neon green. Architype Ballmer for titles and numbers (Tektur stands in until the font files are here),
+     Inter for paragraphs, IBM Plex Sans for the small print. The CRT's mood with 2a's clarity: hairlines, space, one glow. */
+  :root {
+    /* Palette A, Night shift (+ the violet from C): ink #0a0f14, navy #14212c, slate #3b4b58, greige #d9d2c5, fluo #00ff73, amber #ffb43c, violet #a993d6. */
+    /* + Steel (2026-11-15): a cold steel grey takes the lines, labels and secondary text; greige is kept for the hint alone. */
+    --navy: #0a0f14; --deep: #0a0f14; --panel: #111a22; --panel2: #18232d; --line: rgba(139,151,164,.22); --line2: rgba(139,151,164,.45);
+    --grey: #dde2e7; --greige: #d9d2c5; --steel: #8b97a4; --dim: #8b97a4; --faint: #5b6672; --slate: #3b4b58; --neon: #00ff73; --violet: #a993d6; --amber: #ffb43c;
+    --title: 'Architype Ballmer', Tektur, sans-serif; --text: Inter, sans-serif; --misc: 'IBM Plex Sans', sans-serif;
+    --cut: 8px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--deep); color: var(--grey);
+         font: 13px/1.5 var(--text); text-wrap: pretty; }
+  .app { width: 1100px; margin: 0 auto; padding: 22px 20px; display: grid; gap: 18px;
+         grid-template-columns: 460px 290px minmax(0, 1fr); grid-template-areas: "stage mid right" "bottom bottom right"; align-items: start; }
+  .stage { grid-area: stage; } .mid { grid-area: mid; display: flex; flex-direction: column; gap: 18px; }
+  .right { grid-area: right; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .bottom { grid-area: bottom; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 18px; } .bottom > * { min-width: 0; }
+  h2, p { margin: 0; } ul { margin: 0; padding: 0; list-style: none; }
+
+  /* The frame: chamfered corners (top left, bottom right), a 1px border made of two clipped layers, an angled tab for the title. */
+  .frame { position: relative; padding: 1px; background: var(--line2);
+           clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+  .frame > .in { background: var(--panel); padding: 0 14px 14px;
+           clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+  .tab { display: flex; align-items: center; justify-content: space-between; margin: 0 -14px 12px; padding: 0 14px; height: 30px;
+         background: transparent; border-bottom: 1px solid var(--line2); }
+  .tab h2 { font: 600 11px/1 var(--title); letter-spacing: .2em; text-transform: uppercase; color: var(--grey); padding-left: 2px; }
+  .tab h2::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; background: var(--steel); vertical-align: 1px; }
+  .tab .stripes { width: 46px; height: 10px; background: repeating-linear-gradient(115deg, var(--steel) 0 2px, transparent 2px 7px); opacity: .6; }
+  .tab .meta { font: 500 11px var(--misc); color: var(--dim); }
+  .tab button { font: 600 10px var(--misc); letter-spacing: .1em; text-transform: uppercase; color: var(--grey); background: transparent;
+                border: 1px solid var(--line2); padding: 3px 8px; clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px); }
+
+  /* The mining window. */
+  .stage .frame > .in { padding-bottom: 0; }
+  .screen { position: relative; height: 600px; margin: 0 -14px; background: #070b0f; overflow: hidden; }
+  .screen::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.08) 2px 3px); }
+  .grid { position: absolute; inset: 0 22px; display: grid; grid-template-columns: repeat(9, 1fr); grid-auto-rows: 44px; gap: 2px; padding-top: 2px; }
+  .t { display: grid; place-items: center; background: #182029; font: 600 13px var(--title); color: #c3cbd3; }
+  .t.air { background: transparent; } .t.band { background: repeating-linear-gradient(115deg, #10171e 0 5px, #1b252e 5px 7px); }
+  .t.i { background: #222c36; } .t.s { color: var(--neon); text-shadow: 0 0 6px rgba(0,255,115,.5); } .t.smp { color: #8b97a4; font-size: 10px; }
+  .t.seal { color: var(--grey); box-shadow: inset 0 0 0 1px var(--line2); } .t.you { background: var(--greige); }
+  .side { position: absolute; top: 0; bottom: 0; width: 18px; } .side.l { left: 0; border-right: 1px solid var(--line); } .side.r { right: 0; border-left: 1px solid var(--line); }
+  .side i { position: absolute; left: 5px; right: 5px; height: 3px; background: var(--neon); box-shadow: 0 0 6px var(--neon); }
+
+  /* The hint: the one light surface. */
+  .hint { margin-top: 14px; --cut: 10px; padding: 0; background: var(--greige); color: var(--navy);
+          clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+  .hint .lbl { display: flex; align-items: center; gap: 8px; padding: 8px 14px 0 18px; font: 600 10px var(--misc); letter-spacing: .14em; text-transform: uppercase; color: #6b655b; }
+  .hint .lbl::after { content: ''; flex: 1; height: 1px; background: rgba(10,15,20,.2); }
+  .hint p { padding: 6px 18px 14px; font: 500 14px/1.5 var(--text); }
+  .hint b { background: var(--navy); color: var(--neon); padding: 1px 6px; font-weight: 600; }
+
+  /* Milk+: a bottle per drink, the key, what it does. */
+  .drink { display: grid; grid-template-columns: 22px 18px 1fr 64px; gap: 10px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+  .drink:first-of-type { border-top: 0; padding-top: 2px; }
+  .drink svg { width: 18px; height: 26px; }
+  .key { font: 700 16px/1 var(--title); color: var(--dim); text-align: center; }
+  .nm b { display: block; font: 600 13px var(--text); } .nm small { display: block; font-size: 11.5px; color: var(--dim); } .nm small.rc { font: 11px var(--misc); color: var(--faint); }
+  .drink button { font: 600 10px var(--misc); letter-spacing: .12em; text-transform: uppercase; color: var(--grey); background: transparent; border: 1px solid var(--line2); padding: 7px 0;
+                  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); }
+  .drink button.ready { background: var(--neon); border-color: var(--neon); color: var(--navy); box-shadow: 0 0 8px rgba(0,255,115,.35); }
+  .drink.secret .key, .drink.secret b { color: var(--violet); } .drink.secret svg { color: var(--violet); }
+  .fine { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font: 11px var(--misc); color: var(--faint); }
+  .active { margin-top: 6px; font: 600 11px var(--misc); color: var(--neon); }
+  .ingr { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); }
+  .ingr:first-of-type { border-top: 0; padding-top: 0; }
+  .ingr .ltr { font: 700 12px var(--title); color: var(--faint); } .ingr .n { font: 700 20px/1 var(--title); }
+  .ingr.bio .n, .ingr.bio .ltr { color: var(--neon); }
+
+  /* Rover. */
+  .kv { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--line); }
+  .kv:first-of-type { border-top: 0; padding-top: 0; } .kv > span:first-child { color: var(--dim); font: 12px var(--misc); }
+  .kv .big { font: 700 26px/1 var(--title); } .kv em { font-style: normal; color: var(--faint); font: 11px var(--misc); }
+  .drill { display: grid; grid-template-columns: 16px 1fr auto; gap: 8px; align-items: center; padding: 8px 0 6px; border-top: 1px solid var(--line); }
+  .drill svg { width: 16px; height: 16px; color: var(--dim); }
+  .bar { height: 4px; background: var(--line); } .bar i { display: block; height: 100%; width: 62%; background: var(--amber); }
+  .drill span { font: 700 13px var(--title); }
+
+  /* Field Guide: Deus Ex tabs, a drawer of finds. */
+  .tabs { display: flex; gap: 3px; margin-bottom: 12px; }
+  .tabs span { font: 600 9px var(--misc); letter-spacing: .05em; text-transform: uppercase; color: var(--dim); padding: 5px 9px 4px 6px; background: rgba(229,232,235,.06);
+               clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 100%, 0 100%); }
+  .tabs span.on { background: var(--steel); color: var(--navy); }
+  .drawer { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; }
+  .drawer i { font: 700 11px/26px var(--title); font-style: normal; text-align: center; height: 26px; background: var(--panel2); box-shadow: inset 0 0 0 1px var(--line2);
+              clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+  .drawer i.no { background: transparent; color: var(--faint); box-shadow: inset 0 0 0 1px var(--line); }
+  .drawer i.gone { background: transparent; box-shadow: none; color: #2e3a44; text-decoration: line-through; }
+  .card { display: grid; grid-template-columns: 84px 1fr; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--dim); }
+  .card img { width: 84px; height: 63px; object-fit: cover; display: block; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+  .card b { display: block; font: 600 12px var(--text); color: var(--grey); margin-bottom: 3px; }
+  .log li { font: 11.5px/1.45 var(--misc); color: var(--dim); padding: 3px 0 3px 14px; position: relative; }
+  .log li::before { content: ''; position: absolute; left: 0; top: 9px; width: 5px; height: 5px; background: var(--faint); transform: rotate(45deg); }
+  .log li:first-child { color: var(--grey); } .log li:first-child::before { background: var(--neon); }
+
+  /* Dosage: the divider from the sheet, its triangle as the pointer. */
+  .dosehead { display: flex; justify-content: space-between; align-items: baseline; }
+  .now { font: 700 30px/1 var(--title); letter-spacing: .04em; text-transform: uppercase; }
+  .scale { position: relative; margin: 22px 0 0; height: 30px; }
+  .rail { position: absolute; left: 0; right: 0; top: 13px; height: 4px; background: var(--line); }
+  .rail .fill { position: absolute; left: 20%; width: 30%; top: 0; bottom: 0; background: var(--grey); }
+  .rail .tip { position: absolute; top: -6px; width: 2px; height: 16px; background: var(--amber); } .rail .tip.lo { left: 10%; } .rail .tip.hi { left: 90%; }
+  .dots { position: absolute; top: 4px; display: flex; gap: 5px; } .dots i { width: 3px; height: 3px; background: var(--dim); }
+  .ptr { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); width: 0; height: 0; border: 9px solid transparent; border-top: 13px solid var(--neon); filter: drop-shadow(0 0 6px rgba(0,255,115,.6)); }
+  .marks { display: flex; margin-top: 4px; font: 600 9.5px var(--misc); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+  .marks span { flex: 1; text-align: center; } .marks .on { color: var(--grey); }
+  .win { margin-top: 10px; font: 600 11px var(--misc); color: var(--neon); }
+
+  /* Radio. */
+  .ticker { position: relative; overflow: hidden; white-space: nowrap; padding: 8px 12px; background: #070b0f; font: 600 17px/1.2 var(--title); color: var(--neon);
+            text-shadow: 0 0 5px rgba(0,255,115,.4); clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+  .ticker::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.2) 2px 3px); }
+  .fx { margin-top: 10px; font-size: 13px; } .keys { margin-top: 6px; font: 11px var(--misc); color: var(--faint); }
+  .keys b { color: var(--dim); font-weight: 600; }
+
+  .caption { width: 1100px; margin: 0 auto; padding: 0 20px 30px; color: var(--dim); font: 12px/1.6 var(--misc); }
+  .caption b { color: var(--grey); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="bottle" viewBox="0 0 18 26"><path d="M6 1h6v4l3 4v15H3V9l3-4z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 14h12" stroke="currentColor" stroke-width="1.2"/></symbol>
+  <symbol id="bottleFull" viewBox="0 0 18 26"><path d="M6 1h6v4l3 4v15H3V9l3-4z" fill="currentColor"/></symbol>
+  <symbol id="pick" viewBox="0 0 16 16"><path d="M1 5C5 1 11 1 15 5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3v12" stroke="currentColor" stroke-width="2"/></symbol>
+</svg>
+<div class="app">
+  <section class="stage">
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Shaft cam 1</h2><span class="meta">KR-1 · 3 Chrome Vein · 522 m</span></div>
+      <div class="screen"><div class="side l"><i style="top:30%"></i></div><div class="side r"><i style="top:62%"></i></div><div class="grid" id="grid"></div></div>
+    </div></div>
+    <div class="hint"><div class="lbl">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: <b>Press B</b> to set a charge under you (15 drill samples).</p></div>
+  </section>
+
+  <section class="mid">
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Milk+</h2><span class="stripes"></span></div>
+      <div class="drink"><svg style="color:var(--neon)"><use href="#bottleFull"/></svg><span class="key">1</span><div class="nm"><b>Strength</b><small>Dig harder. Stacks. Pushes toward Frenzy.</small><small class="rc">2× Regolith Whey</small></div><button class="ready">Drink</button></div>
+      <div class="drink"><svg style="color:var(--dim)"><use href="#bottle"/></svg><span class="key">2</span><div class="nm"><b>Calm</b><small>Pulls toward Stillness.</small><small class="rc">2× Legacy Powder</small></div><button>Shake</button></div>
+      <div class="drink"><svg style="color:var(--dim)"><use href="#bottle"/></svg><span class="key">3</span><div class="nm"><b>Recovery</b><small>Repairs the drill.</small><small class="rc">Legacy Powder + Chrome Filings</small></div><button>Shake</button></div>
+      <div class="drink"><svg style="color:var(--dim)"><use href="#bottle"/></svg><span class="key">4</span><div class="nm"><b>Stamina</b><small>Everything lasts 50% longer.</small><small class="rc">Regolith Whey + Chrome Filings</small></div><button>Shake</button></div>
+      <div class="drink"><svg style="color:var(--dim)"><use href="#bottle"/></svg><span class="key">5</span><div class="nm"><b>Hyperfocus</b><small>Drinks don’t move the meter.</small><small class="rc">Legacy Powder + Crack Spores</small></div><button>Shake</button></div>
+      <div class="drink secret"><svg><use href="#bottle"/></svg><span class="key">0</span><div class="nm"><b>Candygirl</b><small class="rc">Chrome Filings + Crack Spores</small></div><button>Shake</button></div>
+      <p class="fine">Caution: quick drinks push harder. This is not a recommendation.</p>
+      <p class="active">Active · Strength ×2 · 41 s</p>
+    </div></div>
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Ingredients</h2></div>
+      <div class="ingr"><span class="ltr">W</span><span>Regolith Whey</span><span class="n">19</span></div>
+      <div class="ingr"><span class="ltr">P</span><span>Legacy Powder</span><span class="n">29</span></div>
+      <div class="ingr"><span class="ltr">C</span><span>Chrome Filings</span><span class="n">14</span></div>
+      <div class="ingr bio"><span class="ltr">S</span><span>Crack Spores</span><span class="n">13</span></div>
+    </div></div>
+  </section>
+
+  <section class="right">
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Rover</h2><button>Pause · Space</button></div>
+      <div class="kv"><span>Layer</span><span>3 · Chrome Vein</span></div>
+      <div class="kv"><span>Depth</span><span class="big">522 m</span></div>
+      <div class="kv"><span>Drill samples</span><span class="big">56</span></div>
+      <div class="kv"><span>Digging power</span><span>4 <em>/ crust 7</em></span></div>
+      <div class="drill"><svg><use href="#pick"/></svg><div class="bar"><i></i></div><span>62%</span></div>
+      <div class="kv"><span>B · blasting charge</span><em>15 samples</em></div>
+    </div></div>
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Field Guide</h2><span class="meta">Kroeber Foundation</span></div>
+      <div class="tabs"><span>Layers</span><span>Compounds</span><span>Secret</span><span class="on">Archive</span></div>
+      <div class="drawer">
+        <i>1</i><i>2</i><i>3</i><i class="no">4</i><i class="no">5</i><i>6</i><i class="gone">7</i>
+        <i>8</i><i class="no">9</i><i class="gone">10</i><i class="gone">11</i><i class="no">12</i><i>13</i><i>14</i>
+        <i class="gone">15</i><i>16</i><i>17</i><i class="gone">18</i><i class="no">E</i>
+      </div>
+      <div class="card"><img src="../archive/06-stencils.webp" alt=""><div><b>KR-1 D 0006 · Hand stencils</b>At least eleven hands, of different sizes. The pigment still glows faintly. At least one hand has six fingers. The Foundation has counted twice.</div></div>
+    </div></div>
+    <div class="frame log"><div class="in">
+      <div class="tab"><h2>Belt Authority</h2><span class="meta">Public service</span></div>
+      <ul><li>BOOM. Blasting permit: pending.</li><li>+1 Chrome Filings.</li><li>+1 Crack Spores.</li><li>Radio: The Pump Zone.</li><li>Stacking Strength. Bold.</li><li>Strength ready. Press 1 to drink.</li></ul>
+    </div></div>
+  </section>
+
+  <section class="bottom">
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Dosage</h2><span class="stripes"></span></div>
+      <div class="dosehead"><span class="now">Meh</span><span class="win">Next drink ×1.5</span></div>
+      <div class="scale">
+        <div class="rail"><i class="fill"></i><i class="tip lo"></i><i class="tip hi"></i></div>
+        <div class="dots" style="left:calc(50% - 52px)"><i></i><i></i><i></i><i></i><i></i></div><div class="dots" style="left:calc(50% + 16px)"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="ptr"></div>
+      </div>
+      <div class="marks"><span>Get out</span><span>Coward</span><span class="on">Meh</span><span>We see you</span><span>Hell yeah</span></div>
+    </div></div>
+    <div class="frame"><div class="in">
+      <div class="tab"><h2>Radio</h2><span class="meta">Station</span></div>
+      <div class="ticker">The Pump Zone · Now playing: Drill Instructor · Hydrate. Dominate. Excavate.</div>
+      <p class="fx">Digging slightly faster.</p>
+      <p class="keys"><b>R</b> next station · <b>T</b> tape · <b>V</b> volume (loud)</p>
+    </div></div>
+  </section>
+</div>
+<p class="caption"><b>Mockup 5 · Steel.</b> Mockup 4, colder and stricter: a cold steel grey (#8b97a4) for lines, labels and secondary text, and a cold light grey for text; greige is kept for the hint alone. Flat ink, no gradients, smaller chamfers, glow only where it counts. From the moodboards (Deus Ex 2000, Crying Suns 2019, the UI element sheet) and the year-one identity: navy, light grey, neon green; Architype Ballmer for titles and numbers (Tektur stands in when Ballmer isn’t installed), Inter for paragraphs, IBM Plex Sans for the small print. Chamfered frames with angled tab headers, the divider’s triangle as the dosage pointer, bottle and pickaxe icons. The CRT’s mood with 2a’s clarity: one glowing colour, hairlines, room to breathe. Static: nothing here works. <a href="index.html" style="color:inherit">All mockups</a></p>
+<script>
+  const rows = ['..WSP....', 'W..C..◆..', 'P.◆..W..S', '.....◈...', '◆.Y..C..◆', '=========', '..P....W.', 'S..◆..C..', '.W....S..', '..C..◆..P', 'S....W...', '.◆..P..S.', 'W..S....◆', '..◆..W...', 'P....S..C'];
+  const grid = document.getElementById('grid');
+  rows.forEach((r, y) => [...r].slice(0, 9).forEach((ch, x) => {
+    const d = document.createElement('div'); d.className = 't';
+    if (x === 2 && y < 4) d.className += ' air';
+    else if (ch === '=') d.className += ' band';
+    else if (ch === 'Y') d.className += ' you';
+    else if ('WPCS'.includes(ch)) { d.className += ' i ' + ch.toLowerCase(); d.textContent = ch; }
+    else if (ch === '◆') { d.className += ' smp'; d.textContent = '◆'; }
+    else if (ch === '◈') { d.className += ' seal'; d.textContent = '◈'; }
+    grid.appendChild(d);
+  }));
+</script>
+</body>
+</html>
