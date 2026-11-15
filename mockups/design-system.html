@@ -21,16 +21,16 @@
   --line-2:  rgba(150,157,164,.42);
   --text:    #e1e4e6;   /* text */
   --faint:   #5f656b;   /* tertiary, locked */
-  --greige:  #d3d2cc;   /* the hint: stone, a cooler greige (2026-11-15: was #d9d2c5) */
+  --greige:  #c9ccc9;   /* the hint: concrete, the coldest greige, closest to the steel (2026-11-15) */
   --fluo:    #00ff73;   /* the one glow: act now, glowing things */
   --amber:   #ffb43c;   /* warnings: wear, tip points */
   --violet:  #a993d6;   /* the secret menu as a whole: its labels, its keys */
   --candy:   #f2b8d6;   /* Candygirl: pastel pink, the rave's colour */
-  --jizz:    #f1e2a6;   /* Jizz+: pastel butter, Disco Gravitas gold gone soft */
+  --jizz:    #b9d3f0;   /* Jizz+: pastel blue */
   --nasa:    #0000dd;   /* Näsa, and nothing else */
 
-  /* Type. Ballmer for titles and numbers (Tektur stands in), Inter for text, Plex Sans for the small print. */
-  --f-title: 'Architype Ballmer', Tektur, sans-serif;
+  /* Type. Tektur for titles and numbers, Inter for text, Plex Sans for the small print. */
+  --f-title: Tektur, sans-serif;   /* titles and numbers (Architype Ballmer is commercial; Tektur is SIL Open Font License) */
   --f-text:  Inter, sans-serif;
   --f-small: 'IBM Plex Sans', sans-serif;
 
@@ -56,6 +56,11 @@ h1, h2, h3, p { margin: 0; }
 .t-meta    { font: 500 11px/1.4 var(--f-small); color: var(--steel); }
 .t-micro   { font: 600 10px/1 var(--f-small); letter-spacing: .14em; text-transform: uppercase; }
 
+/* The colour-vision simulator: a bar at the top that filters the whole page. */
+.cvd { position: sticky; top: 0; z-index: 10; display: flex; gap: var(--s2); align-items: center; justify-content: center; padding: var(--s2); background: rgba(11,12,14,.92); border-bottom: 1px solid var(--line); }
+.cvd .t-micro { color: var(--steel); margin-right: var(--s2); }
+.cvd button { font: 600 10px var(--f-small); letter-spacing: .1em; text-transform: uppercase; color: var(--steel); background: transparent; border: 1px solid var(--line-2); padding: 5px 10px; cursor: pointer; }
+.cvd button.on { color: var(--ink); background: var(--text); border-color: var(--text); }
 /* The page itself (documentation, not game). */
 .doc { max-width: 1180px; margin: 0 auto; padding: var(--s7) var(--s5) 96px; }
 .doc > header { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: var(--s5); padding-bottom: var(--s5); border-bottom: 1px solid var(--line-2); }
@@ -92,7 +97,7 @@ h1, h2, h3, p { margin: 0; }
 .frame-head .t-label { display: flex; align-items: center; gap: var(--s2); padding-left: var(--s1); }
 .frame-head .t-label::before { content: ''; width: 6px; height: 6px; background: var(--steel); }
 .frame-head .t-meta { padding-top: 6px; }   /* sits on the frame's lower shoulder, right of the tab */
-.frame.alert .frame-head .t-label::before { background: var(--amber); }
+.frame.alert .frame-head .t-label::before { background: var(--amber); clip-path: polygon(50% 0, 100% 100%, 0 100%); width: 8px; height: 7px; }   /* a triangle: not colour alone */
 .frame.live  .frame-head .t-label::before { background: var(--fluo); box-shadow: 0 0 6px var(--fluo); }
 
 /* Buttons: outline by default; fluo when it is the thing to do now. */
@@ -109,7 +114,7 @@ h1, h2, h3, p { margin: 0; }
 .btn.busy::after { content: ''; position: absolute; left: 1px; bottom: 1px; height: 2px; width: 60%; background: var(--fluo); }
 .btn.off { color: var(--faint); --c: var(--line); cursor: default; }
 .btn.secret { --c: rgba(169,147,214,.5); color: var(--violet); }
-.btn.candy { --c: rgba(242,184,214,.55); color: var(--candy); } .btn.jizz { --c: rgba(241,226,166,.55); color: var(--jizz); }
+.btn.candy { --c: rgba(242,184,214,.55); color: var(--candy); } .btn.jizz { --c: rgba(185,211,240,.55); color: var(--jizz); }
 
 /* Keycap */
 .key { display: inline-grid; place-items: center; width: 24px; height: 24px; font: 700 13px/1 var(--f-title); color: var(--text); background: var(--raised);
@@ -211,22 +216,32 @@ h1, h2, h3, p { margin: 0; }
   <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 2v11M3.5 8.5 8 13l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
 </svg>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <!-- Colour-vision simulation (Machado, Oliveira & Fernandes 2009, full severity), applied in linear RGB. -->
+  <filter id="cvd-prot" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.152286 1.052583 -0.204868 0 0  -0.114503 0.786281 0.327722 0 0  -0.003882 -0.048116 1.051998 0 0  0 0 0 1 0"/></filter>
+  <filter id="cvd-deut" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.367322 0.860646 -0.227968 0 0  0.280085 0.672501 0.047413 0 0  -0.011820 0.042940 0.968881 0 0  0 0 0 1 0"/></filter>
+  <filter id="cvd-trit" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="1.255528 -0.076749 -0.178779 0 0  -0.078411 0.930809 0.147602 0 0  0.004733 0.691367 0.303900 0 0  0 0 0 1 0"/></filter>
+</defs></svg>
+<div class="cvd" role="group" aria-label="Simulate colour vision">
+  <span class="t-micro">See it as</span>
+  <button data-f="" class="on">Normal</button><button data-f="url(#cvd-prot)">Protanopia</button><button data-f="url(#cvd-deut)">Deuteranopia</button><button data-f="url(#cvd-trit)">Tritanopia</button><button data-f="grayscale(1)">Greyscale</button>
+</div>
 <div class="doc">
   <header>
     <div><div class="t-meta">ASS2ROID: Ex Profundo · Prototype 4</div><h1 class="t-display" style="margin-top:8px">Design system</h1>
-      <p class="t-body-s">Gunmetal. Neutral cold steel, a stone hint, one glow; a pastel for each secret. Every component on this page is built from the tokens in its first three sections and nothing else; the game will be re-skinned from these, keeping its layout.</p></div>
-    <div class="t-meta" style="text-align:right">Architype Ballmer · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
+      <p class="t-body-s">Gunmetal. Neutral cold steel, a concrete hint, one glow; a pastel for each secret. Every component on this page is built from the tokens in its first three sections and nothing else; the game will be re-skinned from these, keeping its layout.</p></div>
+    <div class="t-meta" style="text-align:right">Tektur · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
   </header>
 
-  <section class="sec"><h2>Colour<small>Steel does the structure. Stone (a cooler greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Näsa blue means Näsa and nothing else.</small></h2>
+  <section class="sec"><h2>Colour<small>Steel does the structure. Concrete (the coldest greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Näsa blue means Näsa and nothing else.</small></h2>
     <div class="swatches" id="swatches"></div></section>
 
-  <section class="sec"><h2>Type<small>Ballmer for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
+  <section class="sec"><h2>Type<small>Tektur for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
     <div class="type">
-      <span class="t-display">The Chrome Vein</span><span class="t-meta">display · Ballmer 700 · 40/40 · screen titles</span>
-      <span class="t-num-xl">522 m</span><span class="t-meta">number XL · Ballmer 700 · 28 · depth, samples</span>
-      <span class="t-num-l">19 · 29 · 14</span><span class="t-meta">number L · Ballmer 700 · 20 · counts</span>
-      <span class="t-label">Field Guide</span><span class="t-meta">label · Ballmer 600 · 11 · +0.2em · panel titles</span>
+      <span class="t-display">The Chrome Vein</span><span class="t-meta">display · Tektur 700 · 40/40 · screen titles</span>
+      <span class="t-num-xl">522 m</span><span class="t-meta">number XL · Tektur 700 · 28 · depth, samples</span>
+      <span class="t-num-l">19 · 29 · 14</span><span class="t-meta">number L · Tektur 700 · 20 · counts</span>
+      <span class="t-label">Field Guide</span><span class="t-meta">label · Tektur 600 · 11 · +0.2em · panel titles</span>
       <span class="t-body">Hard band ahead. Strength makes it much faster.</span><span class="t-meta">body · Inter 400 · 14/21 · hints, cards</span>
       <span class="t-body-s">Dig harder. Stacks. Pushes toward Frenzy.</span><span class="t-meta">body S · Inter 400 · 13/19 · descriptions</span>
       <span class="t-meta" style="color:var(--text)">KR-1 · 3 Chrome Vein · 2× Regolith Whey</span><span class="t-meta">meta · Plex Sans 500 · 11 · details, recipes</span>
@@ -243,7 +258,7 @@ h1, h2, h3, p { margin: 0; }
       <div class="spec" style="width:300px"><div class="frame live"><div class="frame-head"><span class="t-label">Milk+</span><span class="t-meta">Strength ×2 · 41 s</span></div>
         <p class="t-body-s" style="color:var(--steel)">Something in it is active: the square glows.</p></div><span class="t-meta">live</span></div>
       <div class="spec" style="width:300px"><div class="frame alert"><div class="frame-head"><span class="t-label">Drill</span><span class="t-meta">worn</span></div>
-        <p class="t-body-s" style="color:var(--steel)">Needs attention: the square turns amber.</p></div><span class="t-meta">alert</span></div>
+        <p class="t-body-s" style="color:var(--steel)">Needs attention: the square becomes an amber triangle. Shape as well as colour, since green and amber look alike to many colour-blind players.</p></div><span class="t-meta">alert</span></div>
     </div></section>
 
   <section class="sec"><h2>Controls<small>Outline by default. Fluo only for the one thing to do now. Shaking shows its progress along the bottom edge. Keys are keycaps, so the keyboard is always visible.</small></h2>
@@ -267,7 +282,7 @@ h1, h2, h3, p { margin: 0; }
       </div>
     </div></section>
 
-  <section class="sec"><h2>Rows<small>Lists separate with hairlines, not boxes. Labels in steel, values in text, numbers in Ballmer.</small></h2>
+  <section class="sec"><h2>Rows<small>Lists separate with hairlines, not boxes. Labels in steel, values in text, numbers in Tektur.</small></h2>
     <div class="row">
       <div class="frame live" style="width:340px"><div class="frame-head"><span class="t-label">Milk+</span><span class="t-meta">Strength ×2 · 41 s</span></div>
         <div class="drink"><svg class="ico fluo"><use href="#i-bottle-full"/></svg><span class="key">1</span><div><div class="name">Strength</div><div class="does">Dig harder. Stacks. Pushes toward Frenzy.</div><div class="rc">2× Regolith Whey</div></div><span class="btn primary"><span>Drink</span></span></div>
@@ -291,7 +306,7 @@ h1, h2, h3, p { margin: 0; }
       </div>
     </div></section>
 
-  <section class="sec"><h2>Hint<small>The one light surface, in stone, under the mining window. Normal weight; the key to press is set in ink and fluo. No forced line breaks, no orphans.</small></h2>
+  <section class="sec"><h2>Hint<small>The one light surface, in concrete, under the mining window. Normal weight; the key to press is set in ink and fluo. No forced line breaks, no orphans.</small></h2>
     <div class="row"><div class="hint" style="width:460px"><div class="t-micro">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: <b>Press B</b> to set a charge under you (15 drill samples).</p></div></div></section>
 
   <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio display is the only other glowing text.</small></h2>
@@ -328,7 +343,7 @@ h1, h2, h3, p { margin: 0; }
 <script>
   // Colour swatches, with contrast against the background where it matters.
   const C = [['Ink', '--ink', 'background'], ['Panel', '--panel', 'panels'], ['Raised', '--raised', 'tiles, hover'], ['Steel', '--steel', 'lines, labels, secondary text'],
-             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Stone', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'],
+             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Concrete', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'],
              ['Amber', '--amber', 'wear, tip points'], ['Violet', '--violet', 'the secret menu'], ['Candy', '--candy', 'Candygirl'], ['Jizz', '--jizz', 'Jizz+'], ['Näsa', '--nasa', 'Näsa only']];
   const css = getComputedStyle(document.documentElement), hex = v => css.getPropertyValue(v).trim();
   const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
@@ -354,6 +369,11 @@ h1, h2, h3, p { margin: 0; }
       + `<path d="M${tab + step} ${step + .5} H${w - .5}" stroke="var(--line-2)"/>`
       + `<path d="M${c + 3} 34.5 H${w - .5}" stroke="var(--line)"/>` + stripes;
   }
+  // Colour-vision simulator: filters the documentation, not the bar.
+  document.querySelectorAll('.cvd button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.cvd button').forEach(x => x.classList.toggle('on', x === b));
+    document.querySelector('.doc').style.filter = b.dataset.f;
+  });
   const ro = new ResizeObserver(es => es.forEach(e => drawFrame(e.target)));
   document.fonts.ready.then(() => document.querySelectorAll('.frame').forEach(f => { drawFrame(f); ro.observe(f); }));
 </script>
