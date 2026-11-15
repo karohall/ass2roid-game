@@ -200,7 +200,7 @@
       <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
       <div class="row"><span>Digging power</span><span id="power">1</span></div>
       <div class="row later" data-reveal="drill"><span>Drill</span><span id="drill">100%</span></div>
-      <div class="row later" data-reveal="blast"><span>B: blasting charge</span><span id="chargeCost" class="small"></span></div>
+      <div class="row later" data-reveal="blast"><span>B: blast the rock below</span><span id="chargeCost" class="small"></span></div>
     </div>
 
     <div class="box later" data-reveal="guide">
@@ -1568,7 +1568,7 @@ function update(dt) {
   const t = now();
   for (const ch of s.charges.filter(ch => t >= ch.at)) { s.charges.splice(s.charges.indexOf(ch), 1); detonate(ch); }
   if (running && !s.chargeRumour && s.layer >= 1 && s.samples >= CONFIG.charge.rumourAt && s.announceUntil < t) {
-    s.chargeRumour = true; announce(`Rumour: the Belt Authority sells blasting charges. ${CONFIG.charge.cost} drill samples each. Press B. Blasting permit: pending.`);
+    s.chargeRumour = true; celebrate(); announce(`New: blasting charges. The Belt Authority sells them for ${CONFIG.charge.cost} drill samples each.\nPress B to set one under you; it clears the rock around it. Blasting permit: pending.`, 0, true);
   }
   if (running && !s.drift) {                                 // a sealed find coming into view: said once, as you approach
     const seen = near(5, c => c.t === SEALED && !c.seen && !seamAnswers(c.kind));
@@ -1851,7 +1851,9 @@ function hint() {
   if (s.drinks === 0 && canMix('strength')) return 'You have 2 Regolith Whey. Press 1 to shake a Strength (2 s, no digging meanwhile).';
   if (s.drinks >= 2 && s.drinks < 5 && VARIANTS.every(v => !s.bottles[v]) && VARIANTS.some(canMix)) return 'Tip: shake in a quiet moment and keep the bottle. Drinking it later is instant.';
   if (s.drinks === 0) return 'Dig into W blocks to collect Regolith Whey. You need 2 to shake a Strength.';
-  if (nearBand && !active('strength')) return 'Hard band ahead (striped rock). Strength makes it much faster.';
+  const canBlast = s.layer >= 1 && s.samples >= CONFIG.charge.cost && !s.charges.length;
+  if (nearBand && !active('strength')) return canBlast && s.chargesSet < 2 ? 'Hard band ahead (striped rock). Strength makes it much faster. Or blast it: press B to set a charge under you (15 drill samples).' : 'Hard band ahead (striped rock). Strength makes it much faster.';
+  if (canBlast && s.chargesSet === 0) return `Slow going? Press B to set a blasting charge under you. It clears the rock around it: ${CONFIG.charge.cost} drill samples. Blasting permit: pending.`;
   return `Keep digging. Break the crust at the bottom of ${L.name}.`;
 }
 
