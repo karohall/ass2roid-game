@@ -353,7 +353,7 @@ const ARTEFACT_CARD = {
   chrome1: c => `Site KR-1, Crater ${c}, Quadrant 2. A lump of molten chrome™, still warm. Näsa has issued an invoice for it.`,
   still1: c => `Site KR-1, Crater ${c}, Quadrant 0. A glass of Milk+, perfectly still. Nobody remembers pouring it. The Foundation considers it a health hazard, solely because it has not evaporated, spoiled or moved. It does not appear to be radioactive. The Foundation is confused.`,
   vhs: c => `Site KR-1, Crater ${c}. VHS cassette, handwritten label, mostly scribble. After three readings, the Foundation has settled on "VICE 2–6. DO NOT TAPE OVER." Rewound. The series ran for five seasons. The Foundation has viewed season six. It was never released on Tellus. No further comment.`,
-  stencils: c => `Site KR-1, Crater ${c}. Hand stencils, pigment blown around open hands pressed to the shaft wall. At least eleven hands, of different sizes. The pigment still glows faintly. One hand has six fingers. The Foundation has counted twice.`,
+  stencils: c => `Site KR-1, Crater ${c}. Hand stencils, pigment blown around open hands pressed to the shaft wall. At least eleven hands, of different sizes. The pigment still glows faintly. At least one hand has six fingers. The Foundation has counted twice.`,
   juice: c => `Site KR-1, Crater ${c}. A small amber glass bottle, hand-labelled "JUNGLE JUICE". Empty. The bottle has no straw. The Foundation asks: is this really for drinking?!`,
   boot: c => `Site KR-1, Crater ${c}. A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.`,
   record: c => `Site KR-1, Crater ${c}. Belt Authority Form 7B, carbon copy. Shaft declared safe for prospecting. Reason for inspection: ████████████. Inspector: ████. Findings: none. Additional findings: ███████████████████. The word "none" has been crossed out twice. The language of the form has been compared with every known language family on Tellus. It has no relatives. The Foundation suspects the Belt Authority invented it.`,   // redacted: the hidden texts come with XXX
@@ -999,13 +999,13 @@ const CLUE_FOUND = {
 function secretCard() {
   const known = Object.fromEntries(Object.entries(SECRET.candy.clues).map(([k, w]) => [k, s.clues[k] ? w : '█'.repeat(Math.max(1, w.length))]));
   const done = Object.keys(SECRET.candy.clues).every(k => s.clues[k]);
-  return { id: 'secret_candy', cat: 'Not on the menu', label: s.candyFound ? 'Candygirl' : '█████████', title: s.candyFound ? 'Candygirl' : 'Not on the menu',
+  return { id: 'secret_candy', cat: 'Secret menu', label: s.candyFound ? 'Candygirl' : '█████████', title: s.candyFound ? 'Candygirl' : 'Secret menu',
     body: SECRET.candy.text(known) + (s.candyFound ? ` For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.` : done ? ' Not endorsed.' : '<br><i>Redacted. Some of it is written in the rock.</i>') };
 }
 function clue(k, line) {
   if (s.clues[k]) return;
   s.clues[k] = true;
-  if (line) { celebrate(); announce(line + (s.guide.includes('secret_candy') ? '\nThe Field Guide fills in a word.' : '\nThe Field Guide has a new card: Not on the menu.'), 0, true); }
+  if (line) { celebrate(); announce(line + (s.guide.includes('secret_candy') ? '\nThe Field Guide fills in a word.' : '\nThe Field Guide has a new card: Secret menu.'), 0, true); }
   if (s.guide.includes('secret_candy')) renderGuide();
   else if (line) unlock('secret_candy');                  // the card appears with the first thing you find
 }
