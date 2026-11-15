@@ -1251,7 +1251,7 @@ function finishGame(drifted = false) {
   // What's still out there: a quiet reason to play again, without explaining the whole system.
   const finds = CONFIG.artefacts.filter(a => !a.withdrawn), missing = finds.filter(a => !s.guide.includes(a.id));
   const nos = missing.map(a => a.no === 'E' ? 'E' : a.no), list = nos.length > 1 ? nos.slice(0, -1).join(', ') + ' and ' + nos[nos.length - 1] : nos[0];
-  const unrecovered = missing.length ? `<div class="small">Still in the rock: ${nos.length > 1 ? 'Nos.' : 'No.'} ${list}. The archive cabinet waits.</div>` : '';   // the numbers, as the cabinet shows them
+  const unrecovered = missing.length ? `<div class="small">Still in the rock: ${nos.length > 1 ? 'Nos.' : 'No.'} ${list}.<br>The archive cabinet waits.</div>` : '';   // the numbers, as the cabinet shows them
   showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>THE CORE.</h1><div style="font-size:16px">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</div><canvas id="coin" width="240" height="240" style="width:120px;height:120px;border:0;background:none;margin:4px auto 0"></canvas><div class="small">Archive: KR-1 E, the Core. Redacted.</div><button id="saveCoin" style="width:auto;text-align:center">Save the coin</button>'}
     <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
     ${unrecovered}
