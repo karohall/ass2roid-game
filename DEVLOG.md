@@ -496,3 +496,7 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Exploding rock.** Digging was getting slow, and I had been digging for several layers. Now drill samples buy Belt Authority blasting charges: B, a fuse, BOOM. Blasting permit: pending. And maybe XXX becomes Chrome + Chrome, with blasting instead of X-ray: more fun than seeing through rock.
 
 **Frenzy despite Hyperfocus.** The hint promised that Hyperfocus keeps stacking Strength safe, but drinks still pushed the meter, and the meter didn't drift back either. Now Hyperfocus means what it says: the meter holds still, whatever you drink.
+
+**Clarity through bold.** The hint bar was bold all the way through, with line breaks forcing its sentences apart. Now it is in normal weight and flows, and bold marks what to do: Press R, press 1, a new compound's name.
+
+**A last chance for Candygirl.** If you reach The Crack without having had it, the rumour comes back with the whole recipe.

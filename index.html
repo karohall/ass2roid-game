@@ -18,7 +18,7 @@
   @media (prefers-reduced-motion: reduce) { canvas.blast { animation:none; } }
   canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
-  #hint { width:442px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:bold; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
+  #hint { width:442px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:normal; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
   #dosage { width:758px; margin-top:10px; }   /* reaches under the Milk+ column, which ends above it */
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
@@ -124,7 +124,7 @@
   #hint:empty { visibility:hidden; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
-  #hint .em { -webkit-text-stroke:.35px currentColor; }   /* a new compound, a new drink: heavier than the bold around it */
+  #hint .em, #hint b { font-weight:bold; }   /* bold says what matters: a new compound, a new drink, the key to press */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .cardrow { display:flex; gap:8px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
   .artimg { flex:none; width:96px; height:72px; object-fit:cover; margin-top:2px; border:1px solid var(--line); cursor:zoom-in; }   /* the find's photo, beside its card */
@@ -994,7 +994,7 @@ function drinkCandy() {
   if (!s.candyFound) {
     s.candyFound = true; radio.unlocked.candy = true;   // its song joins the Pump Zone, now and then
     for (const k in SECRET.candy.clues) s.clues[k] = true; unlock('secret_candy'); renderGuide();   // the card, complete
-    celebrate(); announce(`Secret menu: ${em('Candygirl')}. C&C: Crack and chrome.\nFor ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
+    celebrate(); announce(`Secret menu: ${em('Candygirl')}. C&C: Crack and chrome. For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
   } else say('Candygirl. Up you go.');
 }
 
@@ -1062,7 +1062,7 @@ function secretCard() {
 function clue(k, line) {
   if (s.clues[k]) return;
   s.clues[k] = true;
-  if (line) { celebrate(); announce(line + (s.guide.includes('secret_candy') ? '\nThe Field Guide fills in a word.' : '\nThe Field Guide has a new card: Secret menu.'), 0, true); }
+  if (line) { celebrate(); announce(line + (s.guide.includes('secret_candy') ? ' The Field Guide fills in a word.' : ' The Field Guide has a new card: Secret menu.'), 0, true); }
   if (s.guide.includes('secret_candy')) renderGuide();
   else if (line) unlock('secret_candy');                  // the card appears with the first thing you find
 }
@@ -1110,12 +1110,12 @@ function unlock(id) {
   s.guide.push(id);
   const ing = id.startsWith('ing_') && id.slice(4), v = ing && UNLOCKS[ing];
   // Discoveries: the hint box announces them, bursting into confetti, ahead of everything else.
-  if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}.\n${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
+  if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}. ${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
   if (isArtefact(id)) {
     s.artCrater[id] = s.crater; s.artLayer[id] = s.layer; archiveOpen = true;
     if (id !== 'core') {
       s.samples += CONFIG.seam.finderFee; const el = $('samples'); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');   // the counter flashes as the fee lands
-      celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}.\nFinder's fee from the Kroeber Foundation: +${CONFIG.seam.finderFee} drill samples. It is in the archive cabinet.`, 0, true);
+      celebrate(); announce(`Recovered: ${em(guideEntries().find(e => e.id === id).title)}. Finder's fee from the Kroeber Foundation: +${CONFIG.seam.finderFee} drill samples. It is in the archive cabinet.`, 0, true);
     }
   }
   say(`Field Guide updated: ${guideEntries().find(e => e.id === id).title}.`);
@@ -1567,7 +1567,7 @@ function update(dt) {
   const t = now();
   for (const ch of s.charges.filter(ch => t >= ch.at)) { s.charges.splice(s.charges.indexOf(ch), 1); detonate(ch); }
   if (running && !s.chargeRumour && s.layer >= 1 && s.samples >= CONFIG.charge.rumourAt && s.announceUntil < t) {
-    s.chargeRumour = true; celebrate(); announce(`New: blasting charges. The Belt Authority sells them for ${CONFIG.charge.cost} drill samples each.\nPress B to set one under you; it clears the rock around it. Blasting permit: pending.`, 0, true);
+    s.chargeRumour = true; celebrate(); announce(`New: blasting charges. The Belt Authority sells them for ${CONFIG.charge.cost} drill samples each. Press B to set one under you; it clears the rock around it. Blasting permit: pending.`, 0, true);
   }
   if (running && !s.drift) {                                 // a sealed find coming into view: said once, as you approach
     const seen = near(5, c => c.t === SEALED && !c.seen && !seamAnswers(c.kind));
@@ -1575,14 +1575,21 @@ function update(dt) {
     const marks = near(4, c => c.t === GRAFFITI && !c.seen);
     if (marks && s.announceUntil < t) { marks.seen = true; announce('Scratches in the rock nearby. Someone left a message. Dig it out to read it.'); }
     // The secret menu unlocks as soon as you hold its ingredients: a rumour, once the news before it has been read.
-    if (!s.candyRumour && !s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) { s.candyRumour = true; clue('zero'); announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. You order it with 0.' + (s.guide.includes('secret_candy') ? '\nThe Field Guide fills in a word.' : '')); }
+    // The secret menu's rumour: once, when you first hold its ingredients. And once more in The Crack, the whole recipe this time,
+    // if you still haven't had Candygirl: the last layer is the last chance.
+    const lastLayer = s.layer === CONFIG.layers.length - 1;
+    if (!s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) {
+      if (!s.candyRumour) { s.candyRumour = true; clue('zero'); announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. You order it with 0.' + (s.guide.includes('secret_candy') ? ' The Field Guide fills in a word.' : '')); }
+      else if (lastLayer && !s.candyRumour2) { s.candyRumour2 = true; for (const k in SECRET.candy.clues) s.clues[k] = true; if (s.guide.includes('secret_candy')) renderGuide(); else unlock('secret_candy');
+        announce(`Rumour, again: that drink off the menu. Crack and chrome, one of each, shaken with 0. You are holding both.`); }
+    }
   }
   s.timeMs += dt;
   if (!s.powerTaught && power() > CONFIG.dig.basePower && !(s.announceUntil > t)) {
     s.powerTaught = true;
-    announce(`Digging power ${power()}: each hit takes more rock. Strength adds ${CONFIG.strength.boost} and stacks; a Frenzy doubles it.\nEach layer's crust needs a minimum: the rover panel shows it.`);
+    announce(`Digging power ${power()}: each hit takes more rock. Strength adds ${CONFIG.strength.boost} and stacks; a Frenzy doubles it. Each layer's crust needs a minimum: the rover panel shows it.`);
   }
-  if (!s.nice && depthNow() === 69) { s.nice = true; announce('69 m. Nice.\nThe Foundation does not endorse this observation.', 0, true); }   // an easter egg, once per run
+  if (!s.nice && depthNow() === 69) { s.nice = true; announce('69 m. Nice. The Foundation does not endorse this observation.', 0, true); }   // an easter egg, once per run
   // Balance meter: pinned while a state lasts, settles after, otherwise drifts back toward 0.
   const B = CONFIG.balance;
   if (frenzy()) s.meter = B.max;
@@ -1812,8 +1819,8 @@ const sealedNear = (r, open) => near(r, c => c.t === SEALED && seamAnswers(c.kin
 function hint() {
   const t = now(), L = layer(), nearBand = Math.abs(p.y - Math.floor(H / 2)) < 5 && p.y < Math.floor(H / 2);
   if (s.discovery && s.announceUntil > t) return s.announce;
-  if (!musicOn()) return sound.on ? 'The tape is blank, and the drill won’t run on silence.\nPress R to tune in a station.'
-                                  : 'The drill won’t start. Nothing on Korova Rock runs without a soundtrack.\nPress R to tune in the radio.';
+  if (!musicOn()) return sound.on ? 'The tape is blank, and the drill won’t run on silence. Press R to tune in a station.'
+                                  : 'The drill won’t start. Nothing on Korova Rock runs without a soundtrack. Press R to tune in the radio.';
   const nearCrust = p.y >= H - 8;
   const openArt = (frenzy() || stillness()) && sealedNear(4, true);
   if (openArt) return `${frenzy() ? 'FRENZY!' : 'STILLNESS.'} The sealed artefact (◈) gives way now. Dig into it: ${Math.ceil(((frenzy() ? s.frenzyUntil : s.stillUntil) - t) / 1000)}s left.`;
@@ -1826,8 +1833,8 @@ function hint() {
   const firstShake = `Shaking ${VNAME[s.shake ? s.shake.v : 'strength']}… No digging until it is ready.`;
   if (shaking() && s.shakesDone === 0) return firstShake;
   // The opening steps (shake, drink, dig) come before any announcement.
-  if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + '\nReady! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
-  if (s.drinks === 0 && canMix('strength')) return `Welcome, prospector.\nStarter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
+  if (s.drinks === 0 && s.bottles.strength) return s.shakesDone === 1 ? firstShake + ' Ready! Press 1 again to drink it.' : 'Your Strength is ready. Press 1 again to drink it.';   // continues the line
+  if (s.drinks === 0 && canMix('strength')) return `Welcome, prospector. Starter ration: ${CONFIG.start.whey} Regolith Whey, courtesy of the Foundation. Press 1 to shake a Strength.`;
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   // About to tip over: this outranks announcements and rumours, so it is never hidden.
   const sealed = sealedNear(3, false);
@@ -1897,7 +1904,9 @@ const plain = m => m.replace(/[\u0001\u0002]/g, '');
 function hintHTML(t) {
   const esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const open = (esc.split(EM).length - 1) - (esc.split(EM_END).length - 1);
-  return esc.replaceAll(EM, '<span class="em">').replaceAll(EM_END, '</span>') + (open > 0 ? '</span>' : '');
+  return esc.replaceAll(EM, '<span class="em">').replaceAll(EM_END, '</span>')
+    .replace(/([Pp]ress (?:\d|[A-Z](?![a-z])|↑|↓|←|→|Space|Enter)(?: again)?)/g, '<b>$1</b>')   // what to do, in bold
+    + (open > 0 ? '</span>' : '');
 }
 function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTML[id] = v; } }
 
