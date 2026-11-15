@@ -7,97 +7,138 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#1b1b1b; --panel:#262626; --line:#444; --text:#ddd; --dim:#888; --hot:#fff; }
+  /* Prototype 4, "Gunmetal" (mockups/design-system.html). Neutral cold steel, a concrete hint, one glow (fluo: act now),
+     amber for warnings, a pastel for each secret. Sizes the layout depends on are unchanged (fit() measures the rest). */
+  :root { --bg:#0b0c0e; --panel:#15171a; --raised:#1e2124; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --dim:#969da4; --faint:#5f656b; --hot:#ffffff;
+          --concrete:#c9ccc9; --fluo:#00ff73; --amber:#ffb43c; --violet:#a993d6; --candy:#f2b8d6; --jizz:#b9d3f0; --nasa:#0000dd; --spore:#34e6ff;
+          --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; --cut:8px; --cut-s:5px;
+          --chamfer:polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+          --chamfer-s:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font:14px/1.4 ui-monospace, Menlo, Consolas, monospace; text-wrap:pretty; }   /* no orphans: never one word alone on a last line */
+  body { margin:0; background:var(--bg); color:var(--text); font:400 14px/1.45 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }   /* no orphans: never one word alone on a last line */
   #wrap { display:flex; gap:16px; align-items:flex-start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
   html, body { overflow:hidden; }                                /* the game always fits; a page scrollbar coming and going would shift it */
   #stage { position:relative; width:442px; }                   /* the meter may reach past it, under the Milk+ column */
-  canvas { display:block; width:442px; height:calc(var(--viewH) + 2px); border:1px solid var(--line); background:#111; transition:transform .3s; outline:none; }
+  canvas { display:block; width:442px; height:calc(var(--viewH) + 2px); border:1px solid var(--line); background:#08090a; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.blast { animation:jolt .35s ease-out; }
   @keyframes jolt { 0% { transform:translate(0,0); } 20% { transform:translate(-4px,3px); } 45% { transform:translate(3px,-2px); } 70% { transform:translate(-2px,1px); } 100% { transform:translate(0,0); } }
   @media (prefers-reduced-motion: reduce) { canvas.blast { animation:none; } }
-  canvas.still { filter:grayscale(1) sepia(.5) hue-rotate(215deg) saturate(1.8) brightness(.85); transition:filter 1.5s; }
+  canvas.still { filter:grayscale(.9) brightness(.82) contrast(.88) sepia(.25) hue-rotate(175deg) saturate(1.3); transition:filter 1.5s; }   /* Stillness: cold, drained, blue-grey */
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
-  #hint { width:442px; margin-top:8px; padding:8px 10px; background:#eee; color:#111; font-weight:normal; min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top */
+  /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
+  #hint { width:442px; margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
   #dosage { width:758px; margin-top:10px; }   /* reaches under the Milk+ column, which ends above it */
-  #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
-  #dosageNow { font-size:20px; font-weight:bold; letter-spacing:.04em; color:var(--hot); }
+  #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
+  #dosageNow { font:700 20px/1 var(--f-title); letter-spacing:.04em; color:var(--hot); }
   #dosageHead.vast > span:first-child { display:none; }                /* Stillness: the label takes the whole row */
   #dosageHead.vast #dosageNow { font-size:16px; letter-spacing:.02em; width:100%; text-align:center; }
-  #meter { height:22px; background:#111; border:2px solid #666; position:relative;
-           background-image:repeating-linear-gradient(90deg, transparent 0 calc(20% - 2px), #444 calc(20% - 2px) 20%); }
-  #meterFill { position:absolute; top:0; bottom:0; left:50%; width:0; background:#bbb; transition:left .15s, width .15s; }
-  #meterFill.hot { background:#fff; animation:throb .4s ease-in-out infinite alternate; }
-  #meter .mark { position:absolute; top:-4px; bottom:-4px; width:2px; background:#fff; }
-  #meter .mark.mid { left:calc(50% - 1px); background:#888; }
-  #meter .mark.tip { background:none; border-left:2px dashed #fff; }
-  #doseWindow { font-size:12px; color:var(--hot); text-transform:none; letter-spacing:0; }
-  #doseWindow b { background:#fff; color:#111; padding:0 4px; }
+  /* The meter: a rail; the fill grows from the centre; the tip points in amber. */
+  #meter { height:22px; position:relative; background:repeating-linear-gradient(90deg, transparent 0 calc(20% - 1px), var(--line) calc(20% - 1px) 20%) 0 0 / 100% 100% no-repeat; }
+  #meter::before { content:''; position:absolute; left:0; right:0; top:10px; height:2px; background:var(--line-2); }
+  #meterFill { position:absolute; top:8px; height:6px; left:50%; width:0; background:var(--text); transition:left .15s, width .15s; }
+  #meterFill.hot { background:var(--fluo); box-shadow:0 0 8px rgba(0,255,115,.5); animation:throb .4s ease-in-out infinite alternate; }
+  #meter .mark { position:absolute; top:2px; bottom:2px; width:2px; background:var(--text); }
+  #meter .mark.mid { left:calc(50% - 1px); background:var(--dim); }
+  #meter .mark.tip { background:var(--amber); top:0; bottom:0; }
+  #doseWindow { font:500 12px var(--f-small); color:var(--text); text-transform:none; letter-spacing:0; }
+  #doseWindow b { background:var(--bg); color:var(--fluo); padding:1px 5px; font-weight:600; }
   @keyframes throb { from { opacity:.65; } to { opacity:1; } }
   /* The check engine light, on the start button: it is on. Ignore that it is on. It breathes slowly to draw the eye. */
-  .lamp { width:24px; height:16px; margin-left:10px; vertical-align:-3px; fill:#ffb347;
-          filter:drop-shadow(0 0 3px rgba(255,179,71,.8)); animation:breathe 1.8s ease-in-out infinite; }
+  .lamp { width:24px; height:16px; margin-left:10px; vertical-align:-3px; fill:var(--amber);
+          filter:drop-shadow(0 0 3px rgba(255,180,60,.8)); animation:breathe 1.8s ease-in-out infinite; }
   @keyframes breathe { 0%, 100% { opacity:1; } 50% { opacity:.2; } }
-  #scale { display:flex; margin-top:5px; font-size:11px; color:var(--dim); }
+  #scale { display:flex; margin-top:5px; font:500 11px var(--f-small); color:var(--faint); }
   #scale span { flex:1; text-align:center; }
-  #scale span.on { color:var(--hot); font-weight:bold; }
+  #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { width:758px; display:flex; gap:16px; margin-top:10px; }   /* the radio, under the meter and the Milk+ column */
-  #radioBox { width:758px; flex:none; padding:6px 10px; }   /* as long as the meter */
-  #radioBox.call { animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
-  @keyframes radiocall { 0%, 100% { border-color:var(--line); box-shadow:none; } 50% { border-color:#ffb347; box-shadow:0 0 10px rgba(255,179,71,.35); } }
-  #pauseBtn { width:auto; flex:none; padding:3px 8px; font-size:12px; }   /* in the Rover panel's heading */
-  #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font-weight:bold; color:var(--hot);
+  #radioBox { width:758px; flex:none; padding:8px 12px 10px; }   /* as long as the meter */
+  #radioBox.call > svg.outline path:first-child { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
+  @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
+  #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:10px; }   /* in the Rover panel's heading */
+  #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(0,255,115,.4);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
   #rover .row + .row { font-size:12px; line-height:1.5; }   /* the stats, smaller than the layer name above them */
+  #rover .row + .row > span:first-child { font:400 12px var(--f-small); color:var(--dim); }
+  #depth, #samples, #power, #drill { font:700 14px/1.5 var(--f-title); font-variant-numeric:tabular-nums; }
+  #power .small { font-family:var(--f-small); font-weight:400; }
+  #layerName { font:600 13px var(--f-text); }
   #radioFx { font-size:14px; color:var(--text); min-height:2.8em; }   /* the station's effect, across the full width: room for two lines, so the box never changes height */
   #radioKeys { white-space:nowrap; flex:none; margin-left:12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
-  #radioBox .label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); margin-right:6px; }
-  #legend { width:758px; min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:4px 14px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
-  .sw { display:inline-block; width:10px; height:10px; margin-right:4px; vertical-align:-1px; }
-  .sw.hatch { background:repeating-linear-gradient(45deg,#3a3a3a 0 3px,#2a2a2a 3px 6px); }
-  .sw.crust { background:repeating-linear-gradient(45deg,#222 0 2px,#3a3a3a 2px 4px),#222; border:1px solid #777; }
+  #radioBox .label { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:8px; }
+  #legend { width:758px; min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
+  /* The legend: each thing in the rock as it looks, a small plate in its role's colour. */
+  #legend > span { display:inline-flex; align-items:center; gap:6px; }
+  .sw { display:inline-grid; place-items:center; width:16px; height:16px; flex:none; font:700 9px/1 var(--f-title); font-style:normal; color:var(--concrete); background:var(--bg); box-shadow:inset 0 0 0 1px var(--concrete); }
+  .sw.you { background:var(--concrete); box-shadow:inset 0 0 0 1.5px var(--bg), 0 0 0 1px var(--concrete); clip-path:var(--chamfer-s); }
+  .sw.rock { background:repeating-linear-gradient(135deg, #5b6066 0 3px, #8b9198 3px 5px, #3a3e43 5px 8px); box-shadow:none; }
+  .sw.steel { color:#b4bac0; box-shadow:inset 0 0 0 1px #b4bac0; }
+  .sw.dash { box-shadow:none; outline:1px dashed #b4bac0; outline-offset:-1px; color:#b4bac0; }
+  .sw.stripes { background:repeating-linear-gradient(180deg, transparent 0 3px, #b4bac0 3px 4.5px), var(--bg); box-shadow:inset 0 0 0 1px #b4bac0; }
+  .sw.chrome { background:linear-gradient(180deg, #f6f7fb 0%, #c9cbd6 22%, #8d90a0 48%, #e9eaf2 62%, #a7aab8 80%, #d8d9e3 100%); box-shadow:none; color:var(--nasa); font-size:7px; place-items:start end; padding:1px; }
+  .sw.spore { color:var(--spore); box-shadow:inset 0 0 0 1px var(--spore), 0 0 5px rgba(52,230,255,.5); }
+  .sw.crust { color:#b4bac0; box-shadow:inset 0 0 0 1px #b4bac0, inset 0 0 0 3px var(--bg), inset 0 0 0 4px rgba(180,186,192,.6); font-size:8px; }
   #panel, #panel2 { width:300px; display:flex; flex-direction:column; gap:10px; }
-  .box { background:var(--panel); border:1px solid var(--line); padding:10px; }
-  .box h3 { margin:0 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+  /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
+  .box { position:relative; padding:10px 12px 12px; --frame:var(--line-2); }
+  .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
+  .box > *:not(svg) { position:relative; z-index:1; }
+  .box h3 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--text); }
+  .box h3::before { content:''; width:6px; height:6px; flex:none; background:var(--dim); }
+  .box h3 .org { font:500 10px/1 var(--f-small); letter-spacing:.04em; text-transform:none; color:var(--faint); }   /* who keeps it, quietly */
+  #milk { --frame:rgba(150,157,164,.75); }                             /* the shakes stand out */
+  #milk h3::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
   .row { display:flex; justify-content:space-between; gap:8px; }
-  .bar { height:8px; background:#111; border:1px solid #555; margin:3px 0 2px; }
-  .bar > div { height:100%; width:0; background:#999; }
-  .bar.warn > div { background:#fff; }
-  button { font:inherit; background:#333; color:var(--text); border:1px solid #555; padding:6px 8px; cursor:pointer; width:100%; text-align:left; }
-  button:hover:not(:disabled) { background:#444; color:var(--hot); }
+  .bar { height:4px; background:var(--line); margin:4px 0 3px; }
+  .bar > div { height:100%; width:0; background:var(--dim); }
+  .bar.warn > div { background:var(--amber); }
+  /* Buttons: outline, cut corners; fluo when it is the thing to do now. */
+  button { position:relative; isolation:isolate; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; background:transparent; color:var(--text); border:0; padding:8px 10px; cursor:pointer; width:100%; text-align:left; clip-path:var(--chamfer-s); }
+  button::before { content:''; position:absolute; inset:0; z-index:-1; background:var(--line-2);
+    clip-path:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s), var(--cut-s) 0, calc(var(--cut-s) + .7px) 1px, 1px calc(var(--cut-s) + .7px), 1px calc(100% - 1px), calc(100% - var(--cut-s) - .7px) calc(100% - 1px), calc(100% - 1px) calc(100% - var(--cut-s) - .7px), calc(100% - 1px) 1px, calc(var(--cut-s) + .7px) 1px); }
+  button:hover:not(:disabled) { background:var(--raised); }
+  button:hover:not(:disabled)::before { background:var(--dim); }
+  button:focus-visible { outline:2px solid var(--fluo); outline-offset:2px; }
   button:disabled { opacity:.4; cursor:default; }
-  .recipe { display:grid; grid-template-columns:1fr 96px; gap:6px; align-items:center; margin-bottom:5px; }
-  .recipe button { text-align:center; padding:6px 4px; }
-  .recipe button.ready { background:#eee; color:#111; border-color:#fff; font-weight:bold; }
-  .recipe button.ready:hover { background:#fff; color:#111; }
-  .recipe .name { line-height:1.25; }
+  .recipe { display:grid; grid-template-columns:1fr 96px; gap:8px; align-items:center; margin-bottom:6px; padding-top:6px; border-top:1px solid var(--line); }
+  .recipe:first-child { border-top:0; padding-top:0; }
+  .recipe button { text-align:center; padding:9px 4px; }
+  .recipe button.ready { background:var(--fluo); color:var(--bg); filter:drop-shadow(0 0 6px rgba(0,255,115,.35)); }
+  .recipe button.ready::before { background:var(--fluo); }
+  .recipe button.ready:hover { background:var(--fluo); color:var(--bg); }
+  .recipe .name { line-height:1.3; }
+  .recipe .name b { font:600 13px var(--f-text); }
+  .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
   .recipe .name br { display:none; } .recipe .name > * { display:block; }   /* name, what it does and the recipe: each its own paragraph, so text-wrap:pretty keeps every last line from being an orphan */
-  .recipe .does { font-size:12px; color:var(--text); }
-  .ph { display:none; color:#777; margin-bottom:5px; }   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
+  .recipe .does { font-size:12px; color:var(--dim); }
+  .ph { display:none; color:var(--faint); margin-bottom:6px; font:500 12px var(--f-small); }   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
   .ph.on { display:block; }
   body.fitting .ph { display:none !important; }
-  .small { font-size:11px; color:var(--dim); }
-  #log { flex:1; min-height:108px; overflow:hidden; font-size:12px; line-height:1.5; }   /* newest on top, the rest cut off; it takes the room the card leaves */
+  .small { font:400 11px/1.45 var(--f-small); color:var(--dim); }
+  #ingredients .row { padding:3px 0; } #ingredients .row > span:last-child { font:700 14px var(--f-title); font-variant-numeric:tabular-nums; }
+  #log { flex:1; min-height:108px; overflow:hidden; font:400 12px/1.5 var(--f-small); }   /* newest on top, the rest cut off; it takes the room the card leaves */
   #panel2 > .box:last-child { flex:1; min-height:0; display:flex; flex-direction:column; }   /* the right column has a fixed height: the log fills it */
-  #log div { color:var(--dim); } #log div:first-child { color:var(--text); }
+  #log div { position:relative; color:var(--dim); padding:2px 0 2px 14px; }
+  #log div::before { content:''; position:absolute; left:1px; top:8px; width:5px; height:5px; background:var(--faint); transform:rotate(45deg); }
+  #log div:first-child { color:var(--text); } #log div:first-child::before { background:var(--fluo); }
+  /* The Field Guide: cards as tiles; found ones raised, the rest an outline with a ?. */
   #guide { display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; }
-  #guide .cat { grid-column:1 / -1; font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:.08em; margin-top:2px; }
-  .slot { border:1px dashed #555; padding:5px 4px; text-align:center; font-size:11px; height:42px; display:flex; align-items:center; justify-content:center; }
-  .slot.found { border-style:solid; border-color:#999; color:var(--hot); }
-  .slot.sel { outline:1px solid #fff; }
-  .slot.locked { color:#666; font-size:16px; }
-  #guide .drawer { grid-column:1 / -1; text-align:left; font-size:11px; padding:5px 8px; }
+  #guide .cat { grid-column:1 / -1; font:600 10px/1 var(--f-small); color:var(--faint); text-transform:uppercase; letter-spacing:.14em; margin-top:4px; }
+  .slot { box-shadow:inset 0 0 0 1px var(--line); padding:5px 4px; text-align:center; font:500 11px/1.25 var(--f-small); height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--faint); }
+  .slot.found { background:var(--raised); box-shadow:none; color:var(--text); clip-path:var(--chamfer-s); }
+  .slot.sel { background:var(--text); color:var(--bg); clip-path:var(--chamfer-s); }
+  .slot.locked { font:700 14px var(--f-title); }
+  #guide .drawer { grid-column:1 / -1; text-align:left; font:500 11px var(--f-small); letter-spacing:0; text-transform:none; padding:7px 9px; }
   #guide .tiles { grid-column:1 / -1; display:none; grid-template-columns:repeat(7, 1fr); gap:4px; }
   #guide .tiles.open, body.fitting #guide .tiles { display:grid; }   /* measured open, so opening it never rescales the game */
-  .tile { border:1px dashed #555; height:24px; display:flex; align-items:center; justify-content:center; font-size:11px; color:#666; cursor:pointer; }
-  .tile.found { border-style:solid; border-color:#999; color:var(--hot); }
-  .tile.gone { border-color:#333; color:#444; text-decoration:line-through; }
-  .tile.sel { outline:1px solid #fff; }
-  #cardDetail { margin-top:8px; border-top:1px solid var(--line); padding-top:6px; height:104px; overflow:hidden; }   /* fixed: fit() sets it to the longest card */
+  .tile { box-shadow:inset 0 0 0 1px var(--line); height:24px; display:flex; align-items:center; justify-content:center; font:700 11px var(--f-title); color:var(--faint); cursor:pointer; }
+  .tile.found { background:var(--raised); box-shadow:none; color:var(--text); clip-path:var(--chamfer-s); }
+  .tile.gone { box-shadow:none; color:#2f3337; text-decoration:line-through; }
+  .tile.sel { background:var(--text); color:var(--bg); clip-path:var(--chamfer-s); }
+  #cardDetail { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; height:104px; overflow:hidden; font:400 12px/1.5 var(--f-text); color:var(--dim); }   /* fixed: fit() sets it to the longest card */
+  #cardDetail b { font:600 12px/1.35 var(--f-text); }
   .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
   .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
   .overlay h2 { margin:0; font-size:18px; letter-spacing:.08em; }
@@ -105,11 +146,11 @@
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
   #samples.flash { animation:lostflash .7s ease; }
-  @keyframes lostflash { 0%, 40% { background:#fff; color:#111; } 100% { background:none; } }
+  @keyframes lostflash { 0%, 40% { background:var(--amber); color:var(--bg); } 100% { background:none; } }
   #hint.flash { animation:hintflash .5s ease; }   /* a drill sample just dropped */
-  @keyframes hintflash { 0%, 40% { background:#111; color:#eee; outline:2px solid #eee; } 100% { background:#eee; color:#111; } }
+  @keyframes hintflash { 0%, 40% { background:var(--bg); color:var(--concrete); } 100% { background:var(--concrete); color:var(--bg); } }
   .stats { border-collapse:collapse; font-size:13px; min-width:300px; }
-  .stats td { padding:2px 8px; border-bottom:1px solid #333; text-align:left; }
+  .stats td { padding:2px 8px; border-bottom:1px solid var(--line); text-align:left; }
   .stats td.num { text-align:right; color:var(--hot); font-weight:bold; }
   #nasa.fading { opacity:0; transition:opacity 1s ease; }
   #nasa { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:300px; padding:8px 12px; border-radius:14px; font-size:12px; color:#123; text-align:center;
@@ -119,18 +160,16 @@
   .later:not(.shown) { display:none !important; }                    /* hidden parts take no space */
   #dosage.later:not(.shown) { display:block !important; visibility:hidden; }   /* except the meter: its place is kept, so the radio below never jumps */
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
-  #milk { border-color:#777; }                                        /* the shakes stand out */
-  #milk h3 { color:var(--text); }
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
-  body.intro .box:has(#recipes) { border-color:transparent; background:none; }
-  .box:has(#recipes) { transition:background-color 1.2s, border-color 1.2s; }
+  body.intro #milk > svg.outline { opacity:0; }                       /* at first, only the shake button: the frame arrives with the first drink */
   #hint:empty { visibility:hidden; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
-  #hint .em, #hint b { font-weight:bold; }   /* bold says what matters: a new compound, a new drink, the key to press */
+  #hint .em { font-weight:700; }
+  #hint b { font-weight:600; padding:0 4px; background:var(--bg); color:var(--fluo); white-space:nowrap; }   /* bold says what matters: the key to press */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
-  .cardrow { display:flex; gap:8px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
-  .artimg { flex:none; width:96px; height:72px; object-fit:cover; margin-top:2px; border:1px solid var(--line); cursor:zoom-in; }   /* the find's photo, beside its card */
+  .cardrow { display:flex; gap:10px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
+  .artimg { flex:none; width:96px; height:72px; object-fit:cover; margin-top:2px; cursor:zoom-in; clip-path:var(--chamfer-s); }   /* the find's photo, beside its card */
   #artBig { position:fixed; inset:0; z-index:5; background:rgba(0,0,0,.85); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:zoom-out; }
   #artBig img { max-width:min(800px, 90vw); max-height:80vh; border:1px solid var(--line); }
   #sky { position:fixed; left:0; top:0; width:100vw; height:100vh; border:0; background:none; transition:none; z-index:0; pointer-events:none; display:none; }   /* not the mining window's canvas size */
@@ -207,7 +246,7 @@
     </div>
 
     <div class="box later" data-reveal="guide">
-      <h3>Field Guide · Kroeber Foundation</h3>
+      <h3>Field Guide <span class="org">Kroeber Foundation</span></h3>
       <div id="guide"></div>
       <div id="cardDetail" class="small"></div>
     </div>
@@ -2100,16 +2139,17 @@ function hud() {
   const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps));
   setHTML('hint', hintHTML(n < target.length ? target.slice(0, n) + '▌' : target));
   $('pauseBtn').disabled = !running;
-  setHTML('legend', [
-    '<span><i class="sw" style="background:#ddd"></i>You</span>',
-    `<span><i class="sw" style="background:${layer().tint}"></i>Rock</span>`,
-    '<span>◆ Drill sample</span>',
-    '<span>◈ Sealed find</span>',
-    ...Object.keys(ING).filter(known).map(k => `<span><b>${ING[k].letter}</b> ${ING[k].name}</span>`),
-    '<span><i class="sw hatch"></i>Hard band</span>',
-    ...(layer().shakers ? ['<span>▮ Fossil shaker</span>'] : []),
-    ...(layer().slabs ? ['<span><i class="sw" style="background:#a9b2bc"></i>Näsa chrome™</span>'] : []),
-    `<span><i class="sw crust"></i>Crust (power ${layer().crustMinPower})</span>`,
+  setHTML('legend', [                                       // the key to the rock: each thing as it looks, a small plate in its role's colour
+    '<span><i class="sw you"></i>You</span>',
+    '<span><i class="sw rock"></i>Rock</span>',
+    '<span><i class="sw">◆</i>Drill sample</span>',
+    ...Object.keys(ING).filter(known).map(k => `<span><i class="sw${k === 'spores' ? ' spore' : ''}">${ING[k].letter}</i>${ING[k].name}</span>`),
+    '<span><i class="sw dash">?</i>Seam</span>',
+    '<span><i class="sw dash">◈</i>Sealed find</span>',
+    ...(layer().shakers ? ['<span><i class="sw">▮</i>Fossil shaker</span>'] : []),
+    '<span><i class="sw stripes"></i>Hard band: slow</span>',
+    ...(layer().slabs ? ['<span><i class="sw chrome">™</i>Näsa chrome™</span>'] : []),
+    `<span><i class="sw crust">${layer().crustMinPower}</i>Crust: power ${layer().crustMinPower}</span>`,
   ].join(''));
 }
 
@@ -2228,6 +2268,19 @@ addEventListener('resize', () => {
   const size = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4);   // ignore changes under ~4 px
   if (size !== fittedFor) { fittedFor = size; fit(); }
 });
+// Panels: the design system's frame. A vector outline at the panel's own size, cut corners, and a tab that fits its heading;
+// redrawn whenever the panel (or its heading) changes size, so it stays crisp at any scale.
+function drawFrame(el) {
+  const w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
+  const c = 8, step = 6, head = el.querySelector('h3, .label'), hw = head && head.offsetWidth ? head.offsetLeft + head.offsetWidth + 22 : 0, tab = hw && hw < w - 40 ? hw : 0;
+  let svg = el.querySelector(':scope > svg.outline');
+  if (!svg) { svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'outline'); svg.setAttribute('aria-hidden', 'true'); el.prepend(svg); }
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  const top = tab ? `M${c} .5 H${tab} L${tab + step} ${step + .5} H${w - .5}` : `M${c} .5 H${w - .5}`;
+  svg.innerHTML = `<path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="var(--panel)" stroke="var(--frame)" stroke-width="1"/>`;
+}
+const frameWatch = new ResizeObserver(es => es.forEach(e => { const b = e.target.closest('.box'); if (b) drawFrame(b); }));
+document.querySelectorAll('.box').forEach(b => { frameWatch.observe(b); const hd = b.querySelector('h3, .label'); if (hd) frameWatch.observe(hd); });
 $('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
 // Developer mode, for building and testing only: open the game with ?dev in the address.
