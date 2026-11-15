@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordmark · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Group 2 · round 1: the wordmark, three directions. Each shown large, at the game's sizes, and on the same start screen,
+   so the wordmark is the only thing that changes. Tokens from the design system. */
+:root { --ink:#0b0c0e; --panel:#15171a; --raised:#1e2124; --steel:#969da4; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --faint:#5f656b;
+        --concrete:#c9ccc9; --fluo:#00ff73; --amber:#ffb43c; --cut:8px; --cut-s:5px; --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 var(--f-text); text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+.doc { max-width: 1180px; margin: 0 auto; padding: 48px 24px 96px; }
+.doc > header { padding-bottom: 24px; border-bottom: 1px solid var(--line-2); }
+.doc > header h1 { font: 700 40px/1 var(--f-title); margin: 8px 0 12px; } .doc > header p { color: var(--steel); max-width: 720px; margin: 0; }
+.meta { font: 500 11px/1.4 var(--f-small); color: var(--steel); }
+.sec { display: grid; grid-template-columns: 220px 1fr 264px; gap: 32px; padding: 40px 0; border-bottom: 1px solid var(--line); }
+.sec > h2 { font: 600 11px/1.6 var(--f-title); letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 0; }
+.sec > h2 small { display: block; margin-top: 8px; font: 400 12px/1.5 var(--f-text); letter-spacing: 0; text-transform: none; color: var(--faint); }
+.stage { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+.big { min-height: 200px; display: grid; place-items: center; background: #08090a; padding: 32px; }
+.sizes { display: flex; align-items: flex-end; gap: 40px; flex-wrap: wrap; }
+.sizes figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.sizes figcaption, .ctx figcaption { font: 500 11px var(--f-small); color: var(--faint); }
+.ctx { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.ctx .win { width: 264px; height: 456px; overflow: hidden; position: relative; }
+.ctx .win > div { width: 440px; height: 760px; transform: scale(.6); transform-origin: 0 0; position: relative; }
+
+/* ── A · Instrument: machined; the 2 an ink figure on a concrete block ── */
+.wa { --s: 64px; display: inline-flex; flex-direction: column; align-items: center; gap: calc(var(--s) * .16); }
+.wa .w { display: flex; align-items: center; font: 700 var(--s)/1 var(--f-title); letter-spacing: .03em; color: var(--text); }
+.wa .w i { font-style: normal; display: inline-grid; place-items: center; height: 1.04em; padding: 0 .14em; margin: 0 .07em 0 .05em; color: var(--ink); background: var(--concrete);
+           clip-path: polygon(.13em 0, 100% 0, 100% calc(100% - .13em), calc(100% - .13em) 100%, 0 100%, 0 .13em); }
+.wa .sub { display: flex; align-items: center; gap: .9em; width: 100%; font: 600 calc(var(--s) * .17)/1 var(--f-small); letter-spacing: .5em; text-transform: uppercase; color: var(--steel); }
+.wa .sub::before, .wa .sub::after { content: ''; flex: 1; height: 1px; background: var(--line-2); }
+.wa .sub span { margin-right: -.5em; }
+
+/* ── B · Fault: one cut through the word; below it, the rock slipped ── */
+.wb { display: block; overflow: visible; }
+
+/* The start screen, the same for all three: the rock under ink, the wordmark, the check engine light, one thing to do. */
+.start { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 32px; background: rgba(8,9,10,.84); text-align: center; }
+.start .ver { font: 500 11px var(--f-small); color: var(--steel); letter-spacing: .04em; margin-top: -12px; }
+.lamp { display: flex; gap: 14px; align-items: flex-start; text-align: left; font: 400 13px/1.55 var(--f-text); color: var(--steel); }
+.lamp svg { flex: none; width: 30px; height: 22px; color: var(--amber); filter: drop-shadow(0 0 4px rgba(255,180,60,.7)); animation: breathe 1.8s ease-in-out infinite; margin-top: 2px; }
+@keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .lamp svg { animation: none; } }
+.lamp ol { margin: 0; padding: 0; list-style: none; counter-reset: s; } .lamp li { counter-increment: s; } .lamp li::before { content: counter(s) '. '; color: var(--faint); }
+.go { display: inline-flex; align-items: center; gap: 12px; height: 40px; padding: 0 18px 0 20px; font: 600 12px/1 var(--f-small); letter-spacing: .16em; text-transform: uppercase; color: var(--ink); background: var(--fluo);
+      clip-path: polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); filter: drop-shadow(0 0 8px rgba(0,255,115,.35)); }
+.go kbd { font: 700 10px/1 var(--f-small); letter-spacing: .08em; padding: 5px 6px; background: rgba(11,12,14,.85); color: var(--fluo); }
+.keys { display: grid; grid-template-columns: auto auto; gap: 8px 12px; align-items: center; font: 400 12px var(--f-text); color: var(--steel); text-align: left; }
+.keys span:nth-child(odd) { justify-self: end; display: flex; gap: 4px; }
+.keys kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; font: 700 11px/1 var(--f-title); color: var(--text); background: var(--raised);
+            clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow: inset 0 -2px 0 rgba(0,0,0,.45); }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 2 · round 1</div><h1>The wordmark</h1>
+    <p>Three directions. Each shown large, at the sizes the game needs, and on the same start screen over the real rock, so the wordmark is the only thing that changes. All three are Chakra Petch underneath, drawn into a mark rather than typed.</p></header>
+
+  <section class="sec"><h2>A · Instrument<small>Machined, like the rest of the interface. The 2 is the one cut-out part: an ink figure on a concrete block, like a keycap or a stamped plate. Calm, and it scales down cleanly.</small></h2>
+    <div class="stage" data-mark="A"></div><figure class="ctx" data-ctx="A"></figure></section>
+  <section class="sec"><h2>B · Fault<small>One cut through the word, and below it the rock has slipped. Ex Profundo, out of the depths: the dig in a single line. The most character, and still one font.</small></h2>
+    <div class="stage" data-mark="B"></div><figure class="ctx" data-ctx="B"></figure></section>
+  <section class="sec"><h2>C · Dug<small>The word as a row of tiles in the real rock, each letter on a plate, the 2 as an open seam. The game’s own language; the busiest, and it needs the tiles to read.</small></h2>
+    <div class="stage" data-mark="C"></div><figure class="ctx" data-ctx="C"></figure></section>
+</div>
+<script src="world.js"></script>
+<script>
+const SUB = 'Ex Profundo';
+// A · Instrument
+const markA = s => `<div class="wa" style="--s:${s}px"><div class="w">ASS<i>2</i>ROID</div>${s >= 30 ? `<div class="sub"><span>${SUB}</span></div>` : ''}</div>`;
+// B · Fault: the word twice, clipped above and below the cut; the lower half slips right and down. A hairline runs the cut, out past the word.
+let uid = 0;
+function markB(s) { const id = 'f' + (uid++), w = s * 4.7, h = s * 1.02, cut = h * .54, slip = s * .07, drop = s * .025, pad = s * .5, sub = s >= 30;
+  const text = `<text x="${pad + w / 2}" y="${h * .86}" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="${s}" letter-spacing="${s * .03}" fill="#e1e4e6">ASS2ROID</text>`;
+  const H = h + drop + (sub ? s * .55 : 0);
+  return `<svg class="wb" width="${w + pad * 2}" height="${H}" viewBox="0 0 ${w + pad * 2} ${H}"><defs><clipPath id="${id}a"><rect x="0" y="-10" width="9999" height="${cut + 10}"/></clipPath><clipPath id="${id}b"><rect x="0" y="${cut}" width="9999" height="999"/></clipPath></defs>
+    <g clip-path="url(#${id}a)">${text}</g><g clip-path="url(#${id}b)" transform="translate(${slip} ${drop})">${text}</g>
+    <path d="M${pad * .2} ${cut + drop / 2} H${w + pad * 1.8}" stroke="rgba(150,157,164,.55)" stroke-width="${Math.max(1, s / 64)}"/>
+    ${sub ? `<text x="${pad + w + slip}" y="${h + drop + s * .42}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="${s * .17}" letter-spacing="${s * .085}" fill="#969da4">${SUB.toUpperCase()}</text>` : ''}</svg>`; }
+// C · Dug: a row of tiles from world.js, Regolith rock dimmed; letters on plates in concrete, the 2 on an open seam's fluo plate.
+function markC(s) { const n = 8, tile = s, cv = document.createElement('canvas'), k = tile / T, sub = s >= 30, extra = sub ? tile * .5 : 0;
+  cv.width = n * tile * 2; cv.height = (tile + extra) * 2; cv.style.width = n * tile + 'px'; cv.style.height = tile + extra + 'px'; const c = cv.getContext('2d'); c.scale(2 * k, 2 * k);
+  P = LAYERS.regolith.P; [...'ASS2ROID'].forEach((ch, i) => { rock(c, i, 0); if (ch === '2') plate(c, i, 0, C.fluo, { glow: true }); else plate(c, i, 0, C.concrete);
+    c.save(); c.font = '700 22px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = ch === '2' ? C.fluo : C.concrete; if (ch === '2') { c.shadowColor = C.fluo; c.shadowBlur = 8; } c.fillText(ch, i * T + T / 2, T / 2 + 1.5); c.restore(); });
+  if (sub) { c.font = '600 7px "IBM Plex Sans"'; c.letterSpacing = '3.4px'; c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillStyle = '#969da4'; c.fillText(SUB.toUpperCase(), n * T - 2, T + 12); }
+  return cv; }
+const MARK = { A: s => markA(s), B: s => markB(s), C: s => markC(s) };
+const put = (el, m) => { if (typeof m === 'string') el.insertAdjacentHTML('beforeend', m); else el.append(m); };
+
+// The start screen, shared: the rock under ink, the wordmark, the check engine light, one thing to do.
+const ENGINE = '<svg viewBox="0 0 30 22" aria-hidden="true"><path d="M7 5h9v3h4l3 3h3v-2h3v9h-3v-2h-3l-3 3H11l-4-4H4v3H1V9h3v3h3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="miter"/><path d="M9 2.5h5" stroke="currentColor" stroke-width="1.6"/></svg>';
+function startScreen(L) { const box = document.createElement('div'), cv = document.createElement('canvas'); cv.width = 880; cv.height = 1520; cv.style.cssText = 'position:absolute;inset:0;width:440px;height:760px';
+  const c = cv.getContext('2d'); c.scale(2, 2); P = LAYERS.regolith.P; const d = P.dim; P.dim = .45; for (let y = 0; y < 19; y++) for (let x = 0; x < 11; x++) rock(c, x, y); P.dim = d;
+  c.fillStyle = '#08090a'; c.fillRect(T, 0, 9 * T, 2 * T);
+  const s = document.createElement('div'); s.className = 'start'; const m = document.createElement('div'); put(m, MARK[L](L === 'C' ? 38 : L === 'B' ? 56 : 54));
+  s.append(m); s.insertAdjacentHTML('beforeend', `<div class="ver">Prototype 4</div>
+    <div class="lamp">${ENGINE}<ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
+    <div class="keys"><span><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span><span>Move and dig</span><span><kbd>1</kbd><kbd>5</kbd></span><span>Shake, then drink Milk+</span><span><kbd>R</kbd></span><span>Radio</span><span><kbd>Space</kbd></span><span>Pause</span></div>
+    <div class="go">Begin shift <kbd>Enter</kbd></div>`);
+  box.append(cv, s); return box; }
+
+document.fonts.ready.then(() => Promise.all(['700 40px "Chakra Petch"', '600 10px "IBM Plex Sans"'].map(f => document.fonts.load(f)))).then(() => {
+  for (const L of ['A', 'B', 'C']) {
+    const st = document.querySelector(`[data-mark="${L}"]`), big = document.createElement('div'); big.className = 'big'; put(big, MARK[L](L === 'C' ? 64 : 88)); st.append(big);
+    const sz = document.createElement('div'); sz.className = 'sizes';
+    [[40, 'Screen title, 40 px'], [26, 'Menus, 26 px'], [16, 'Small, 16 px']].forEach(([px, cap]) => { const f = document.createElement('figure'); put(f, MARK[L](L === 'C' ? Math.round(px * .8) : px)); f.insertAdjacentHTML('beforeend', `<figcaption>${cap}</figcaption>`); sz.append(f); });
+    st.append(sz);
+    const ctx = document.querySelector(`[data-ctx="${L}"]`), win = document.createElement('div'); win.className = 'win'; win.append(startScreen(L)); ctx.append(win); ctx.insertAdjacentHTML('beforeend', '<figcaption>On the start screen, over Regolith Prime</figcaption>');
+  }
+});
+</script>
+</body>
+</html>
