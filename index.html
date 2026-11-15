@@ -1008,7 +1008,9 @@ function drink(v, fromShaker = false) {
   // The dose window: the push is multiplied by how many drinks you've had in the last 20 s.
   const mult = nextMult();
   s.window = active('focus') ? windowDrinks() : [...windowDrinks(), t];   // Hyperfocus: this drink leaves no trace in the window
-  if (!frenzy() && !stillness()) {
+  const steady = active('focus') && v !== 'focus';           // Hyperfocus: the meter holds still, so stacking Strength is safe (2026-11-15: drinks used to push it ×1)
+  if (steady && v === 'strength' && !s.steadySaid) { s.steadySaid = true; say('Hyperfocus: the meter holds still. Stack away.'); }
+  if (!frenzy() && !stillness() && !steady) {
     const B = CONFIG.balance;
     s.meter = Math.max(B.min, Math.min(B.max, s.meter + CONFIG.push[v] * mult));
     if (mult > 1) say(`Dose window ×${mult}. The Foundation measures how fast, not just how much.`);
@@ -1826,7 +1828,7 @@ function hint() {
   if (s.dug === 0) return 'Press ↓ to dig. Hold it down to keep digging.';
   // About to tip over: this outranks announcements and rumours, so it is never hidden.
   const sealed = sealedNear(3, false);
-  const tipF = s.meter + CONFIG.push.strength * nextMult() >= tipAt(), tipS = s.meter + CONFIG.push.calm * nextMult() <= -tipAt();
+  const steady = active('focus'), tipF = !steady && s.meter + CONFIG.push.strength * nextMult() >= tipAt(), tipS = !steady && s.meter + CONFIG.push.calm * nextMult() <= -tipAt();   // under Hyperfocus no drink tips you
   if (tipF) return sealed && sealed.kind === 'frenzy' ? 'One more quick Strength tips you into Frenzy, and the sealed artefact (◈) gives way.' : 'One more quick Strength tips you into Frenzy.';
   if (tipS) return sealed && sealed.kind === 'still' ? 'One more quick Calm tips you into Stillness, and the sealed artefact (◈) gives way.' : 'One more quick Calm tips you into Stillness.';
   if (sealed) return `An artefact is sealed in the rock here (◈). ${sealedHow(sealed.kind)}`;

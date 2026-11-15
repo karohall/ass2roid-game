@@ -494,3 +494,5 @@ Checked a batch of artefact ideas against the GDD and the vibe of the game. Out:
 **Seamless radio.** Songs cross-fade now, hard cuts are a breath softer, and the music makes room before a DJ speaks.
 
 **Exploding rock.** Digging was getting slow, and I had been digging for several layers. Now drill samples buy Belt Authority blasting charges: B, a fuse, BOOM. Blasting permit: pending. And maybe XXX becomes Chrome + Chrome, with blasting instead of X-ray: more fun than seeing through rock.
+
+**Frenzy despite Hyperfocus.** The hint promised that Hyperfocus keeps stacking Strength safe, but drinks still pushed the meter, and the meter didn't drift back either. Now Hyperfocus means what it says: the meter holds still, whatever you drink.
