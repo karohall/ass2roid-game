@@ -35,7 +35,7 @@ body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 var
 <body>
 <div class="doc">
   <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 1</div><h1>The world: tiles</h1>
-    <p>The interface is machined; the world is raw. Each layer is a real mineral, drawn in code and seeded per tile, so it never flickers. What matters stands out in a fixed order: the prospector, then what glows, then what you collect, then obstacles by their pattern, and plain rock last.</p></header>
+    <p>The interface is machined; the world is raw. Each layer is an abstraction of a real mineral: tiles split into blocks, their tone flowing across the layer, matte. Drawn in code and seeded per tile, so it never flickers. What matters stands out in a fixed order: the prospector, then what glows, then what you collect, then obstacles by their pattern, and plain rock last.</p></header>
 
   <section class="sec"><h2>Materials<small>One per layer, from real minerals. Neutral and cool; the descent is felt in the material, not in new colours.</small></h2>
     <div class="layers" id="layers"></div></section>
@@ -53,58 +53,52 @@ const T = 40;
 function rng(seed) { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
 const hash = (x, y, k) => (x * 73856093) ^ (y * 19349663) ^ (k * 83492791);
 
-// ── Materials ───────────────────────────────────────────────────────────────
+// ── Materials: abstract, fractal, matte ─────────────────────────────────────
+// A slow value field runs across the whole layer (in world pixels), so tone flows from tile to tile: alive, like the rave.
+// Each tile is then split into smaller blocks (its own way per layer) and every block takes its tone from the field. No gloss.
+const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+function field(x, y, k, scale) { const fx = x / scale, fy = y / scale, ix = Math.floor(fx), iy = Math.floor(fy), tx = fx - ix, ty = fy - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
+  const a = vhash(ix, iy, k), b = vhash(ix + 1, iy, k), c = vhash(ix, iy + 1, k), d = vhash(ix + 1, iy + 1, k);
+  return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; }
+const tone = (v, tint = [0, 1, 3]) => { v = Math.max(0, Math.min(255, v)) | 0; return `rgb(${v + tint[0]},${v + tint[1]},${v + tint[2]})`; };
+// Split a square into quads, recursively, while the dice say so.
+function quads(r, x, y, size, min, p, out) { if (size > min && r() < p) { const h = size / 2; for (const [dx, dy] of [[0, 0], [h, 0], [0, h], [h, h]]) quads(r, x + dx, y + dy, h, min, p * .82, out); } else out.push([x, y, size]); return out; }
+const WORLD = c => [c.__ox || 0, c.__oy || 0];
 const MATERIAL = {
-  // Lunar regolith: fine grey grit, glassy beads, the odd pebble.
-  regolith(c, r, x, y) {
-    c.fillStyle = '#26292c'; c.fillRect(x, y, T, T);
-    for (let i = 0; i < 70; i++) { const v = 30 + r() * 40 | 0; c.fillStyle = `rgb(${v},${v + 2},${v + 4})`; c.fillRect(x + r() * T, y + r() * T, 1, 1); }
-    for (let i = 0; i < 14; i++) { c.fillStyle = `rgba(200,206,212,${.08 + r() * .14})`; c.fillRect(x + r() * T, y + r() * T, 1.5, 1.5); }
-    if (r() < .5) { const px = x + 6 + r() * 26, py = y + 6 + r() * 26, s = 2 + r() * 3; c.fillStyle = '#33373b'; c.beginPath(); c.ellipse(px, py, s, s * .8, r() * 3, 0, 7); c.fill(); c.fillStyle = 'rgba(255,255,255,.08)'; c.fillRect(px - 1, py - s * .6, 1.5, 1); }
-  },
-  // Fossil-bearing limestone and shale: thin horizontal laminae in shifting tones, now and then a shell fragment.
-  strata(c, r, x, y, gy) {
-    for (let j = 0; j < T; j += 2) { const v = 34 + Math.sin((gy * T + j) * .21) * 5 + Math.sin((gy * T + j) * .047) * 6 + r() * 3 | 0; c.fillStyle = `rgb(${v + 2},${v + 1},${v - 1})`; c.fillRect(x, y + j, T, 2); }
-    for (let i = 0; i < 26; i++) { c.fillStyle = `rgba(0,0,0,${.15 + r() * .2})`; c.fillRect(x + r() * T, y + (r() * T | 0), 2 + r() * 6, 1); }
-    if (r() < .35) { const px = x + 8 + r() * 24, py = y + 8 + r() * 24, s = 3 + r() * 3; c.strokeStyle = 'rgba(214,210,200,.28)'; c.lineWidth = 1; c.beginPath(); c.arc(px, py, s, Math.PI * (1 + r() * .3), Math.PI * 2); c.stroke(); c.beginPath(); c.arc(px, py, s * .55, Math.PI * 1.2, Math.PI * 1.9); c.stroke(); }
-  },
-  // Chromite in dark gabbro: dark rock, branching metallic veins, glints.
-  chrome(c, r, x, y) {
-    c.fillStyle = '#1f2124'; c.fillRect(x, y, T, T);
-    for (let i = 0; i < 50; i++) { const v = 24 + r() * 22 | 0; c.fillStyle = `rgb(${v},${v + 1},${v + 3})`; c.fillRect(x + r() * T, y + r() * T, 2, 2); }
-    // Veins run through the rock, across tile edges: each follows a smooth path in world coordinates.
-    c.save(); c.beginPath(); c.rect(x, y, T, T); c.clip();
-    const wx = (c.__ox || 0) + x, wy = (c.__oy || 0) + y;
-    for (let k = Math.floor((wx - 80) / 150); k <= Math.floor((wx + T + 80) / 150); k++) {
-      const vx = yy => k * 150 + 60 * Math.sin(k * 12.9) + 22 * Math.sin(yy * .043 + k) + 9 * Math.sin(yy * .13 + k * 2.1);
-      c.strokeStyle = 'rgba(176,184,194,.5)'; c.lineWidth = 1 + (k & 1) * .6; c.beginPath();
-      for (let yy = wy - 2; yy <= wy + T + 2; yy += 3) { const px = vx(yy) - wx + x, py = yy - wy + y; yy === wy - 2 ? c.moveTo(px, py) : c.lineTo(px, py); }
-      c.stroke();
-      // a hairline branch now and then
-      const by = Math.floor(wy / 90) * 90 + 45 + 20 * Math.sin(k);
-      if (by > wy - 30 && by < wy + T + 30 && (k + Math.floor(wy / 90)) % 2 === 0) { const bx = vx(by) - wx + x; c.strokeStyle = 'rgba(176,184,194,.22)'; c.lineWidth = .8; c.beginPath(); c.moveTo(bx, by - wy + y); c.lineTo(bx + 26 * Math.sin(k * 3.7), by - wy + y + 22); c.stroke(); }
-    }
-    c.restore();
-    for (let i = 0; i < 3; i++) if (r() < .5) { c.fillStyle = 'rgba(230,236,242,.75)'; c.fillRect(x + r() * T, y + r() * T, 1, 1); }
-  },
-  // Obsidian: black volcanic glass, curved fracture highlights, faint bioluminescent flecks.
-  obsidian(c, r, x, y) {
-    c.fillStyle = '#0e1011'; c.fillRect(x, y, T, T);
-    const g = c.createLinearGradient(x, y, x + T, y + T); g.addColorStop(0, 'rgba(255,255,255,.035)'); g.addColorStop(.5, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(255,255,255,.02)'); c.fillStyle = g; c.fillRect(x, y, T, T);
-    for (let i = 0; i < 2; i++) { c.strokeStyle = `rgba(210,220,225,${.08 + r() * .12})`; c.lineWidth = 1; c.beginPath(); c.arc(x + r() * T, y + r() * T, 8 + r() * 14, r() * 6, r() * 6 + 1.2); c.stroke(); }
-    for (let i = 0; i < 3; i++) if (r() < .45) { c.fillStyle = `rgba(60,255,170,${.25 + r() * .35})`; c.fillRect(x + r() * T, y + r() * T, 1.5, 1.5); }
-  },
+  // Regolith Prime: fine square grit.
+  regolith(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
+    for (const [qx, qy, q] of quads(r, x, y, T, 5, .95, [])) { const f = field(ox + qx + q / 2, oy + qy + q / 2, 1, 70), g = field(ox + qx, oy + qy, 2, 14);
+      c.fillStyle = tone(30 + f * 16 + g * 8 + r() * 5 + lift * 110); c.fillRect(qx, qy, q, q); } },
+  // The Shaker Strata: horizontal bands of varying height, continuing across tiles.
+  strata(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
+    for (let j = 0; j < T;) { const wy = oy + y + j, hgt = 2 + Math.floor(vhash(0, Math.floor(wy / 3), 5) * 5);
+      const segs = lift ? 4 : (vhash(Math.floor((ox + x) / T), Math.floor(wy / 3), 6) < .3 ? 2 : 1);
+      for (let s2 = 0; s2 < segs; s2++) { const f = field(ox + x + s2 * T / segs, wy, 3, 90), b = vhash(0, Math.floor(wy / 2), 7);
+        c.fillStyle = tone(28 + f * 12 + b * 12 + lift * 110, [1, 1, 2]); c.fillRect(x + s2 * T / segs, y + j, T / segs + .5, Math.min(hgt, T - j)); }
+      j += hgt; } },
+  // The Chrome Vein: blocks lit along the path of a vein; the vein grows out of the blocks.
+  chrome(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
+    const vein = (wx, wy) => { let d = 99; for (let k = Math.floor((wx - 80) / 150); k <= Math.floor((wx + 80) / 150); k++) { const vx = k * 150 + 60 * Math.sin(k * 12.9) + 22 * Math.sin(wy * .043 + k) + 9 * Math.sin(wy * .13 + k * 2.1); d = Math.min(d, Math.abs(wx - vx)); } return d; };
+    for (const [qx, qy, q] of quads(r, x, y, T, 4, .9, [])) { const cx = ox + qx + q / 2, cy = oy + qy + q / 2, d = vein(cx, cy), f = field(cx, cy, 4, 80);
+      const lit = d < 5 ? 1 : d < 12 ? .45 : 0; c.fillStyle = tone(24 + f * 12 + r() * 4 + lit * 70 + lift * 110, [0, 3, 8]); c.fillRect(qx, qy, q, q); } },
+  // The Crack: dark triangular shards, rare green specks.
+  obsidian(c, r, x, y, gy, lift = 0) { const [ox, oy] = WORLD(c);
+    for (const [qx, qy, q] of quads(r, x, y, T, 10, .9, [])) { const f = field(ox + qx, oy + qy, 8, 60), diag = r() < .5;
+      const a = tone(12 + f * 12 + lift * 110, [0, 2, 3]), b = tone(18 + f * 14 + r() * 6 + lift * 110, [0, 2, 3]);
+      c.fillStyle = a; c.fillRect(qx, qy, q, q); c.fillStyle = b; c.beginPath();
+      if (diag) { c.moveTo(qx, qy); c.lineTo(qx + q, qy); c.lineTo(qx + q, qy + q); } else { c.moveTo(qx + q, qy); c.lineTo(qx + q, qy + q); c.lineTo(qx, qy + q); } c.fill();
+      if (r() < .06) { c.fillStyle = 'rgba(60,255,170,.55)'; c.fillRect(qx + q / 2 - 1, qy + q / 2 - 1, 2, 2); } } },
 };
 const LAYERS = [
-  ['regolith', 'Regolith Prime', 'Lunar regolith: fine grey grit, glassy beads, the odd pebble.'],
-  ['strata', 'The Shaker Strata', 'Fossil-bearing limestone and shale: thin laminae, shell fragments.'],
-  ['chrome', 'The Chrome Vein', 'Chromite in dark gabbro: branching metallic veins, glints.'],
-  ['obsidian', 'The Crack', 'Obsidian: black glass, curved fractures, bioluminescent flecks.'],
+  ['regolith', 'Regolith Prime', 'After lunar regolith: fine square grit, tone drifting slowly across the layer.'],
+  ['strata', 'The Shaker Strata', 'After limestone and shale: horizontal bands of varying height, continuing from tile to tile.'],
+  ['chrome', 'The Chrome Vein', 'After chromite in gabbro: blocks light up along a vein, so the vein grows out of the rock.'],
+  ['obsidian', 'The Crack', 'After obsidian: dark triangular shards, rare green specks, in the dark.'],
 ];
 
 // ── Tiles ───────────────────────────────────────────────────────────────────
-const raise = (c, x, y, fill) => { c.fillStyle = fill; c.fillRect(x + 3, y + 3, T - 6, T - 6); c.fillStyle = 'rgba(255,255,255,.07)'; c.fillRect(x + 3, y + 3, T - 6, 1); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(x + 3, y + T - 4, T - 6, 1); };
-const label = (c, x, y, t, col, glow) => { c.save(); c.font = '700 16px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, x + T / 2, y + T / 2 + 1); c.restore(); };
+const raise = (c, r, x, y, m, gy, lift = .5) => MATERIAL[m](c, r, x, y, gy, lift);
+const label = (c, x, y, t, col, glow) => { c.save(); c.font = '700 17px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, x + T / 2, y + T / 2 + 1); c.restore(); };
 const TILE = {
   rock(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); },
   // Obstacles: patterns.
@@ -113,11 +107,11 @@ const TILE = {
   wall(c, r, x, y) { c.fillStyle = '#0f1012'; c.fillRect(x, y, T, T); c.strokeStyle = 'rgba(150,157,164,.12)'; for (let i = 4; i < T; i += 6) { c.beginPath(); c.moveTo(x + i + .5, y); c.lineTo(x + i + .5, y + T); c.stroke(); } },
   slab(c, r, x, y) { const g = c.createLinearGradient(0, y, 0, y + T); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s)); c.fillStyle = g; c.fillRect(x, y, T, T); c.fillStyle = '#fff'; c.fillRect(x, y, T, 1); c.fillStyle = 'rgba(60,62,75,.55)'; c.fillRect(x, y + T - 2, T, 2); c.font = '700 8px "IBM Plex Sans"'; c.fillStyle = '#0000dd'; c.fillText('™', x + T - 10, y + 9); },
   // Collect: raised on the rock.
-  sample(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); raise(c, x, y, 'rgba(46,50,54,.92)'); c.fillStyle = '#c9cdd1'; c.beginPath(); c.moveTo(x + 20, y + 13); c.lineTo(x + 27, y + 20); c.lineTo(x + 20, y + 27); c.lineTo(x + 13, y + 20); c.closePath(); c.fill(); },
-  whey(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); raise(c, x, y, 'rgba(52,56,60,.92)'); label(c, x, y, 'W', '#e1e4e6'); },
-  powder(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); raise(c, x, y, 'rgba(52,56,60,.92)'); label(c, x, y, 'P', '#e1e4e6'); },
-  chromeI(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); raise(c, x, y, 'rgba(52,56,60,.92)'); label(c, x, y, 'C', '#e1e4e6'); },
-  spores(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); raise(c, x, y, 'rgba(20,34,28,.92)'); label(c, x, y, 'S', '#00ff73', true); },
+  sample(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy, .4); c.fillStyle = '#e1e4e6'; c.beginPath(); c.moveTo(x + 20, y + 13); c.lineTo(x + 27, y + 20); c.lineTo(x + 20, y + 27); c.lineTo(x + 13, y + 20); c.closePath(); c.fill(); },
+  whey(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy); label(c, x, y, 'W', '#0b0c0e'); },
+  powder(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy); label(c, x, y, 'P', '#0b0c0e'); },
+  chromeI(c, r, x, y, m, gy) { raise(c, r, x, y, m, gy); label(c, x, y, 'C', '#0b0c0e'); },
+  spores(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy, .08); c.fillStyle = 'rgba(0,255,115,.10)'; c.fillRect(x, y, T, T); label(c, x, y, 'S', '#00ff73', true); },
   shaker(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.fillStyle = '#c9cdd1'; c.beginPath(); c.moveTo(x + 18, y + 9); c.lineTo(x + 22, y + 9); c.lineTo(x + 22, y + 14); c.lineTo(x + 25, y + 17); c.lineTo(x + 25, y + 32); c.lineTo(x + 15, y + 32); c.lineTo(x + 15, y + 17); c.lineTo(x + 18, y + 14); c.closePath(); c.fill(); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(x + 15, y + 23, 10, 1.5); },
   graffiti(c, r, x, y, m, gy) { MATERIAL[m](c, r, x, y, gy); c.strokeStyle = 'rgba(225,228,230,.75)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x + 9, y + 13); c.lineTo(x + 31, y + 10); c.moveTo(x + 8, y + 21); c.lineTo(x + 26, y + 19); c.moveTo(x + 28, y + 18); c.lineTo(x + 32, y + 17); c.moveTo(x + 10, y + 29); c.lineTo(x + 21, y + 28); c.stroke(); },
   // States of finds: closed, open.
@@ -136,16 +130,18 @@ const SHEET = [
   ['sealedOpen', 'Sealed, open', 'its state: fluo'], ['charge', 'Charge', 'fuse in amber'], ['air', 'Tunnel', 'dug'], ['you', 'Prospector', 'concrete: the lightest'],
 ];
 
-function drawTile(c, kind, gx, gy, m, scale = 1) {
+function drawTile(c, kind, gx, gy, m) {
   const r = rng(hash(gx, gy, m.length * 7 + 3)), x = gx * T, y = gy * T;
-  c.save(); c.scale(scale, scale); TILE[kind](c, r, x, y, m, gy); c.restore();
+  if (kind === 'air' || kind === 'you') { TILE[kind](c, r, x, y, m, gy); return; }
+  c.fillStyle = '#060708'; c.fillRect(x, y, T, T);                       // the division between blocks
+  c.save(); c.beginPath(); c.rect(x + 1, y + 1, T - 2, T - 2); c.clip(); TILE[kind](c, r, x, y, m, gy); c.restore();
 }
 // The sheet: every tile on the Chrome Vein, at 2×.
 const sheet = document.getElementById('sheet');
 document.fonts.ready.then(() => {
   for (const [k, name, note] of SHEET) {
     const cv = document.createElement('canvas'); cv.width = 80; cv.height = 80; const c = cv.getContext('2d'); c.scale(2, 2);
-    TILE[k](c, rng(hash(3, 5, k.length)), 0, 0, 'chrome', 5);
+    c.__ox = 120 + SHEET.findIndex(e => e[0] === k) * 40; c.__oy = 200; c.fillStyle = '#060708'; c.fillRect(0, 0, T, T); c.save(); c.beginPath(); c.rect(1, 1, T - 2, T - 2); c.clip(); TILE[k](c, rng(hash(3, 5, k.length)), 0, 0, 'chrome', 5); c.restore();
     const d = document.createElement('div'); d.className = 'cell'; d.append(cv); d.insertAdjacentHTML('beforeend', `<b>${name}</b><span>${note}</span>`); sheet.append(d);
   }
   // A patch of each layer: 11 × 6 tiles, with the layer's own finds.
@@ -168,7 +164,8 @@ document.fonts.ready.then(() => {
   // States on the Chrome Vein.
   const stEl = document.getElementById('states');
   const STATES = [
-    ['frenzy', 'Frenzy', 'Warm overdrive: the rock runs hot, contrast up, the window tilts.', c => { c.fillStyle = 'rgba(255,150,60,.13)'; c.globalCompositeOperation = 'overlay'; c.fillRect(0, 0, 11 * T, 6 * T); c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(255,180,60,.07)'; c.fillRect(0, 0, 11 * T, 6 * T); }],
+    ['frenzy', 'Frenzy', 'Heat in the seams: the rock brightens and sharpens, the divisions glow amber, the window tilts. No brown.', c => { const d = c.getImageData(0, 0, c.canvas.width, c.canvas.height); for (let i = 0; i < d.data.length; i += 4) for (let k = 0; k < 3; k++) d.data[i + k] = Math.min(255, (d.data[i + k] - 20) * 1.35 + 26); c.putImageData(d, 0, 0);
+      c.strokeStyle = 'rgba(255,180,60,.5)'; c.lineWidth = 1.5; for (let gx = 1; gx < 11; gx++) { c.beginPath(); c.moveTo(gx * T, 0); c.lineTo(gx * T, 6 * T); c.stroke(); } for (let gy = 1; gy < 6; gy++) { c.beginPath(); c.moveTo(0, gy * T); c.lineTo(11 * T, gy * T); c.stroke(); } }],
     ['still', 'Stillness', 'Cold and drained: colour leaves, the light goes flat and blue-grey. (No longer violet: violet is the secret menu.)', c => { const d = c.getImageData(0, 0, c.canvas.width, c.canvas.height); for (let i = 0; i < d.data.length; i += 4) { const l = d.data[i] * .3 + d.data[i + 1] * .59 + d.data[i + 2] * .11; d.data[i] = l * .82; d.data[i + 1] = l * .9; d.data[i + 2] = l * 1.02; } c.putImageData(d, 0, 0); }],
     ['rave', 'The Crack · rave', 'Candygirl in the dark: pastel rock, saturated light pools drifting.', null],
   ];
