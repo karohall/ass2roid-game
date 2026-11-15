@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Type and greige options · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Tektur:wght@600;700&family=Oxanium:wght@600;700;800&family=Chakra+Petch:wght@600;700&family=Goldman:wght@400;700&family=Russo+One&family=Michroma&family=Kode+Mono:wght@600;700&family=Saira+Condensed:wght@600;700&family=Big+Shoulders+Display:wght@700;800&family=Sarpanch:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* Free alternatives to Architype Ballmer (all SIL Open Font License, all on Google Fonts, all fine to ship with the game),
+     and cooler greiges for the hint. Same samples in each, on the Gunmetal panel. */
+  :root { --ink:#0b0c0e; --panel:#15171a; --steel:#969da4; --line:rgba(150,157,164,.2); --text:#e1e4e6; --fluo:#00ff73; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 Inter, sans-serif; }
+  .doc { max-width: 1180px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font: 600 11px/1 'IBM Plex Sans'; letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 0 0 8px; }
+  .lede { color: var(--steel); max-width: 720px; margin: 0 0 32px; }
+  .font { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 24px 0; border-top: 1px solid var(--line); align-items: center; }
+  .font .who b { display: block; font: 600 14px Inter; } .font .who span { display: block; font: 12px/1.5 'IBM Plex Sans'; color: var(--steel); margin-top: 4px; }
+  .sample { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 24px; align-items: end; padding: 16px 20px; background: var(--panel); }
+  .sample .d { font-size: 34px; line-height: 1; } .sample .n { font-size: 30px; line-height: 1; text-align: right; } .sample .l { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--text); }
+  .sample .l i { display: inline-block; width: 6px; height: 6px; background: var(--steel); margin-right: 8px; vertical-align: 1px; }
+  .pick { color: var(--fluo); font: 600 10px 'IBM Plex Sans'; letter-spacing: .14em; text-transform: uppercase; margin-top: 6px; display: block; }
+  .greiges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+  .g { padding: 12px 16px 16px; color: var(--ink); clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+  .g small { display: block; font: 600 10px 'IBM Plex Sans'; letter-spacing: .14em; text-transform: uppercase; opacity: .6; margin-bottom: 6px; }
+  .g p { margin: 0; font: 500 14px/1.5 Inter; } .g b { background: var(--ink); color: var(--fluo); padding: 0 4px; font-weight: 600; white-space: nowrap; }
+  .g code { display: block; margin-top: 10px; font: 11px 'IBM Plex Sans'; opacity: .7; }
+  h2 { font: 600 11px/1 'IBM Plex Sans'; letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 56px 0 8px; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <h1>Titles and numbers · alternatives to Architype Ballmer</h1>
+  <p class="lede">All free (SIL Open Font License), all on Google Fonts, all fine to ship with the game. Ballmer’s qualities to look for: squared, geometric, firm, a little architectural, not round, numbers that hold up large. The same three samples in each: a screen title, a big number, a panel label.</p>
+  <div id="fonts"></div>
+  <h2>A cooler greige for the hint</h2>
+  <p class="lede">The current greige (first) next to three cooler ones: less yellow, more stone and concrete, still a touch warmer than the steel around them.</p>
+  <div class="greiges" id="greiges"></div>
+</div>
+<script>
+  const F = [
+    ['Tektur', 700, 'Current stand-in. Angular but with soft, rounded corners: what reads as too round.'],
+    ['Oxanium', 800, 'Squared, with chamfered corners like our frames. Firm, technical, the closest match in spirit.', true],
+    ['Chakra Petch', 700, 'Squared with cut corners, a little narrower, Thai-designed industrial feel. Very legible at small sizes.', true],
+    ['Goldman', 700, 'Blocky and square, the most Ballmer-like in weight. Strong for numbers; a little loud for labels.'],
+    ['Russo One', 400, 'Heavy, squared, compact. Great big numbers; one weight only.'],
+    ['Michroma', 400, 'Wide, extended, very space-age. Elegant for titles, too wide for tight labels.'],
+    ['Kode Mono', 700, 'Squared monospace: every digit the same width, like an instrument. Strict.', true],
+    ['Saira Condensed', 700, 'Condensed and technical. Saves space; less character.'],
+    ['Big Shoulders Display', 800, 'Tall, condensed, industrial (Chicago signage). Strong titles, narrow numbers.'],
+    ['Sarpanch', 700, 'Squared, slightly wide, sci-fi without being cartoon.'],
+  ];
+  document.getElementById('fonts').innerHTML = F.map(([f, w, why, pick]) => `<div class="font"><div class="who"><b>${f}</b><span>${why}</span>${pick ? '<span class="pick">Worth a closer look</span>' : ''}</div>
+    <div class="sample" style="font-family:'${f}';font-weight:${w}"><span class="d">The Chrome Vein</span><span class="l"><i></i>Field Guide</span><span class="n">522 m · 56</span></div></div>`).join('');
+  const G = [['Current greige', '#d9d2c5'], ['Stone', '#d3d2cc'], ['Putty', '#cfcfca'], ['Concrete', '#c9ccc9']];
+  document.getElementById('greiges').innerHTML = G.map(([n, h]) => `<div class="g" style="background:${h}"><small>Note · ${n}</small><p>Hard band ahead. Or blast it: <b>Press B</b> to set a charge under you.</p><code>${h}</code></div>`).join('');
+</script>
+</body>
+</html>

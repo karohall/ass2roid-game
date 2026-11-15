@@ -21,10 +21,12 @@
   --line-2:  rgba(150,157,164,.42);
   --text:    #e1e4e6;   /* text */
   --faint:   #5f656b;   /* tertiary, locked */
-  --greige:  #d9d2c5;   /* the hint: the one warm surface */
+  --greige:  #d3d2cc;   /* the hint: stone, a cooler greige (2026-11-15: was #d9d2c5) */
   --fluo:    #00ff73;   /* the one glow: act now, glowing things */
   --amber:   #ffb43c;   /* warnings: wear, tip points */
-  --violet:  #a993d6;   /* the secret menu */
+  --violet:  #a993d6;   /* the secret menu as a whole: its labels, its keys */
+  --candy:   #f2b8d6;   /* Candygirl: pastel pink, the rave's colour */
+  --jizz:    #f1e2a6;   /* Jizz+: pastel butter, Disco Gravitas gold gone soft */
   --nasa:    #0000dd;   /* Näsa, and nothing else */
 
   /* Type. Ballmer for titles and numbers (Tektur stands in), Inter for text, Plex Sans for the small print. */
@@ -107,23 +109,24 @@ h1, h2, h3, p { margin: 0; }
 .btn.busy::after { content: ''; position: absolute; left: 1px; bottom: 1px; height: 2px; width: 60%; background: var(--fluo); }
 .btn.off { color: var(--faint); --c: var(--line); cursor: default; }
 .btn.secret { --c: rgba(169,147,214,.5); color: var(--violet); }
+.btn.candy { --c: rgba(242,184,214,.55); color: var(--candy); } .btn.jizz { --c: rgba(241,226,166,.55); color: var(--jizz); }
 
 /* Keycap */
 .key { display: inline-grid; place-items: center; width: 24px; height: 24px; font: 700 13px/1 var(--f-title); color: var(--text); background: var(--raised);
        clip-path: polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); box-shadow: inset 0 -2px 0 rgba(0,0,0,.45); }
-.key.secret { color: var(--violet); }
+.key.secret { color: var(--violet); } .key.candy { color: var(--candy); } .key.jizz { color: var(--jizz); }
 .key.wide { width: auto; padding: 0 var(--s2); font: 600 10px/1 var(--f-small); letter-spacing: .1em; }
 
 /* Icons: one 16 px grid, 1.5 px strokes, square ends. */
 .ico { width: 16px; height: 16px; flex: none; color: var(--steel); }
 .ico.l { width: 24px; height: 24px; }
-.ico.fluo { color: var(--fluo); } .ico.violet { color: var(--violet); } .ico.text { color: var(--text); }
+.ico.fluo { color: var(--fluo); } .ico.violet { color: var(--violet); } .ico.candy { color: var(--candy); } .ico.jizz { color: var(--jizz); } .ico.text { color: var(--text); }
 
 /* Drink row */
 .drink { display: grid; grid-template-columns: 16px 24px 1fr auto; gap: var(--s3); align-items: center; padding: var(--s2) 0; border-top: 1px solid var(--line); }
 .drink:first-of-type { border-top: 0; }
 .drink .name { font: 600 13px/1.3 var(--f-text); } .drink .does { font: 400 12px/1.4 var(--f-text); color: var(--steel); } .drink .rc { font: 400 11px/1.4 var(--f-small); color: var(--faint); }
-.drink.secret .name { color: var(--violet); }
+.drink.secret .name { color: var(--violet); } .drink.candy .name { color: var(--candy); } .drink.jizz .name { color: var(--jizz); }
 .drink.locked .name, .drink.locked .key { color: var(--faint); }
 
 /* Key–value row (rover), ingredient row */
@@ -143,7 +146,7 @@ h1, h2, h3, p { margin: 0; }
 .hint .t-micro { display: flex; align-items: center; gap: var(--s2); color: #6c665c; margin-bottom: var(--s2); }
 .hint .t-micro::after { content: ''; flex: 1; height: 1px; background: rgba(11,12,14,.18); }
 .hint p { font: 500 14px/1.5 var(--f-text); }
-.hint b { font-weight: 600; padding: 0 var(--s1); background: var(--ink); color: var(--fluo); }
+.hint b { font-weight: 600; padding: 0 var(--s1); background: var(--ink); color: var(--fluo); white-space: nowrap; }
 
 /* The meter: the moodboard's divider. The triangle is the pointer, the dots flank it. */
 .meter { position: relative; height: 30px; }
@@ -196,8 +199,8 @@ h1, h2, h3, p { margin: 0; }
 <body>
 <!-- Icons: one 16 px grid, 1.5 px strokes -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-bottle" viewBox="0 0 16 16"><path d="M6 1.5h4M6.5 1.5v2.5L4.5 6.5v8h7v-8L9.5 4V1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/><path d="M4.5 9.5h7" stroke="currentColor" stroke-width="1.5"/></symbol>
-  <symbol id="i-bottle-full" viewBox="0 0 16 16"><path d="M6 1.5h4M6.5 1.5v2.5L4.5 6.5v8h7v-8L9.5 4V1.5" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/></symbol>
+  <symbol id="i-bottle" viewBox="0 0 16 16"><path d="M6.25 .75h3.5M6.75 .75v3.5L5 6.5v8.75h6V6.5L9.25 4.25V.75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/><path d="M5 10h6" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="i-bottle-full" viewBox="0 0 16 16"><path d="M6.25 .75h3.5M6.75 .75v3.5L5 6.5v8.75h6V6.5L9.25 4.25V.75" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="miter"/></symbol>
   <symbol id="i-pick" viewBox="0 0 16 16"><path d="M1.5 6C4 3 12 3 14.5 6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 3.8V14.5" stroke="currentColor" stroke-width="1.5"/></symbol>
   <symbol id="i-sample" viewBox="0 0 16 16"><path d="M8 2.5 13.5 8 8 13.5 2.5 8z" fill="currentColor"/></symbol>
   <symbol id="i-sealed" viewBox="0 0 16 16"><path d="M8 1.5 14.5 8 8 14.5 1.5 8z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5 10.5 8 8 10.5 5.5 8z" fill="currentColor"/></symbol>
@@ -211,11 +214,11 @@ h1, h2, h3, p { margin: 0; }
 <div class="doc">
   <header>
     <div><div class="t-meta">ASS2ROID: Ex Profundo · Prototype 4</div><h1 class="t-display" style="margin-top:8px">Design system</h1>
-      <p class="t-body-s">Gunmetal. Neutral cold steel, a greige hint, one glow. Every component on this page is built from the tokens in its first three sections and nothing else; the game will be re-skinned from these, keeping its layout.</p></div>
+      <p class="t-body-s">Gunmetal. Neutral cold steel, a stone hint, one glow; a pastel for each secret. Every component on this page is built from the tokens in its first three sections and nothing else; the game will be re-skinned from these, keeping its layout.</p></div>
     <div class="t-meta" style="text-align:right">Architype Ballmer · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
   </header>
 
-  <section class="sec"><h2>Colour<small>Steel does the structure. Greige is the one warm surface. Fluo is the one glow, and it always means: this, now. Näsa blue means Näsa and nothing else.</small></h2>
+  <section class="sec"><h2>Colour<small>Steel does the structure. Stone (a cooler greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Näsa blue means Näsa and nothing else.</small></h2>
     <div class="swatches" id="swatches"></div></section>
 
   <section class="sec"><h2>Type<small>Ballmer for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
@@ -251,12 +254,13 @@ h1, h2, h3, p { margin: 0; }
         <div class="spec"><span class="btn primary"><span>Drink</span></span><span class="t-meta">primary: do this now</span></div>
         <div class="spec"><span class="btn busy"><span>Shaking…</span></span><span class="t-meta">busy</span></div>
         <div class="spec"><span class="btn off"><span>Shake</span></span><span class="t-meta">not enough</span></div>
-        <div class="spec"><span class="btn secret"><span>Shake</span></span><span class="t-meta">secret menu</span></div>
+        <div class="spec"><span class="btn candy"><span>Shake</span></span><span class="t-meta">Candygirl</span></div>
+        <div class="spec"><span class="btn jizz"><span>Shake</span></span><span class="t-meta">Jizz+</span></div>
       </div>
       <div class="row">
-        <div class="spec"><div style="display:flex;gap:6px"><span class="key">1</span><span class="key">2</span><span class="key">5</span><span class="key secret">0</span><span class="key secret">9</span><span class="key wide">Space</span><span class="key wide">B</span><span class="key wide">R</span></div><span class="t-meta">keycaps</span></div>
+        <div class="spec"><div style="display:flex;gap:6px"><span class="key">1</span><span class="key">2</span><span class="key">5</span><span class="key candy">0</span><span class="key jizz">9</span><span class="key wide">Space</span><span class="key wide">B</span><span class="key wide">R</span></div><span class="t-meta">keycaps</span></div>
         <div class="spec"><div style="display:flex;gap:12px;align-items:center">
-          <svg class="ico"><use href="#i-bottle"/></svg><svg class="ico fluo"><use href="#i-bottle-full"/></svg><svg class="ico violet"><use href="#i-bottle"/></svg>
+          <svg class="ico"><use href="#i-bottle"/></svg><svg class="ico fluo"><use href="#i-bottle-full"/></svg><svg class="ico candy"><use href="#i-bottle"/></svg><svg class="ico jizz"><use href="#i-bottle"/></svg>
           <svg class="ico"><use href="#i-pick"/></svg><svg class="ico text"><use href="#i-sample"/></svg><svg class="ico text"><use href="#i-sealed"/></svg>
           <svg class="ico"><use href="#i-charge"/></svg><svg class="ico"><use href="#i-radio"/></svg><svg class="ico"><use href="#i-archive"/></svg><svg class="ico"><use href="#i-pause"/></svg><svg class="ico"><use href="#i-down"/></svg></div>
           <span class="t-meta">icons · 16 px grid · 1.5 px strokes: bottle, ready, secret, drill, sample, sealed find, charge, radio, archive, pause, dig</span></div>
@@ -269,7 +273,8 @@ h1, h2, h3, p { margin: 0; }
         <div class="drink"><svg class="ico fluo"><use href="#i-bottle-full"/></svg><span class="key">1</span><div><div class="name">Strength</div><div class="does">Dig harder. Stacks. Pushes toward Frenzy.</div><div class="rc">2× Regolith Whey</div></div><span class="btn primary"><span>Drink</span></span></div>
         <div class="drink"><svg class="ico"><use href="#i-bottle"/></svg><span class="key">2</span><div><div class="name">Calm</div><div class="does">Pulls toward Stillness.</div><div class="rc">2× Legacy Powder</div></div><span class="btn busy"><span>Shaking…</span></span></div>
         <div class="drink"><svg class="ico"><use href="#i-bottle"/></svg><span class="key">3</span><div><div class="name">Recovery</div><div class="does">Repairs the drill.</div><div class="rc">Legacy Powder + Chrome Filings</div></div><span class="btn off"><span>Shake</span></span></div>
-        <div class="drink secret"><svg class="ico violet"><use href="#i-bottle"/></svg><span class="key secret">0</span><div><div class="name">Candygirl</div><div class="rc">Chrome Filings + Crack Spores</div></div><span class="btn secret"><span>Shake</span></span></div>
+        <div class="drink candy"><svg class="ico candy"><use href="#i-bottle"/></svg><span class="key candy">0</span><div><div class="name">Candygirl</div><div class="rc">Chrome Filings + Crack Spores</div></div><span class="btn candy"><span>Shake</span></span></div>
+        <div class="drink jizz"><svg class="ico jizz"><use href="#i-bottle"/></svg><span class="key jizz">9</span><div><div class="name">Jizz+</div><div class="rc">2× Regolith Whey + Legacy Powder</div></div><span class="btn jizz"><span>Shake</span></span></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:var(--s5);width:300px">
         <div class="frame alert"><div class="frame-head"><span class="t-label">Rover</span><span class="btn" style="min-width:0;height:24px"><span>Pause · Space</span></span></div>
@@ -286,7 +291,7 @@ h1, h2, h3, p { margin: 0; }
       </div>
     </div></section>
 
-  <section class="sec"><h2>Hint<small>The one warm surface, under the mining window. Normal weight; the key to press is set in ink and fluo. No forced line breaks, no orphans.</small></h2>
+  <section class="sec"><h2>Hint<small>The one light surface, in stone, under the mining window. Normal weight; the key to press is set in ink and fluo. No forced line breaks, no orphans.</small></h2>
     <div class="row"><div class="hint" style="width:460px"><div class="t-micro">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: <b>Press B</b> to set a charge under you (15 drill samples).</p></div></div></section>
 
   <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio display is the only other glowing text.</small></h2>
@@ -323,8 +328,8 @@ h1, h2, h3, p { margin: 0; }
 <script>
   // Colour swatches, with contrast against the background where it matters.
   const C = [['Ink', '--ink', 'background'], ['Panel', '--panel', 'panels'], ['Raised', '--raised', 'tiles, hover'], ['Steel', '--steel', 'lines, labels, secondary text'],
-             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Greige', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'],
-             ['Amber', '--amber', 'wear, tip points'], ['Violet', '--violet', 'the secret menu'], ['Näsa', '--nasa', 'Näsa only']];
+             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Stone', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'],
+             ['Amber', '--amber', 'wear, tip points'], ['Violet', '--violet', 'the secret menu'], ['Candy', '--candy', 'Candygirl'], ['Jizz', '--jizz', 'Jizz+'], ['Näsa', '--nasa', 'Näsa only']];
   const css = getComputedStyle(document.documentElement), hex = v => css.getPropertyValue(v).trim();
   const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
   const ratio = (a, b) => { const x = lum(a), y = lum(b); return ((Math.max(x, y) + .05) / (Math.min(x, y) + .05)).toFixed(1); };
