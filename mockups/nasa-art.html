@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Näsa and the archive · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Group 2 · round 3: the Näsa intrusion and the art viewer. */
+:root { --ink:#0b0c0e; --panel:#15171a; --raised:#1e2124; --steel:#969da4; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --faint:#5f656b;
+        --concrete:#c9ccc9; --fluo:#00ff73; --nasa:#0000dd; --cut:8px; --cut-s:5px; --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ink); color: var(--text); font: 14px/1.5 var(--f-text); text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+.doc { max-width: 1180px; margin: 0 auto; padding: 48px 24px 96px; }
+.doc > header { padding-bottom: 24px; border-bottom: 1px solid var(--line-2); }
+.doc > header h1 { font: 700 40px/1 var(--f-title); margin: 8px 0 12px; } .doc > header p { color: var(--steel); max-width: 720px; margin: 0; }
+.meta { font: 500 11px/1.4 var(--f-small); color: var(--steel); }
+.sec { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 32px 0; border-bottom: 1px solid var(--line); }
+.sec.full { grid-template-columns: 1fr; }
+.sec > h2 { font: 600 11px/1.6 var(--f-title); letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 0; }
+.sec > h2 small { display: block; margin-top: 8px; font: 400 12px/1.5 var(--f-text); letter-spacing: 0; text-transform: none; color: var(--faint); max-width: 640px; }
+.cap { font: 12px/1.5 var(--f-text); color: var(--steel); margin: 10px 0 0; } .cap b { color: var(--text); font: 600 11px var(--f-title); letter-spacing: .2em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+
+/* ── Näsa: Y2K chrome, Näsa blue. The one rounded thing: a foreign brand, barging in at the edge. ── */
+.nasa { display: inline-flex; align-items: center; gap: 12px; padding: 8px 20px 8px 14px; border-radius: 999px; color: #24262f; font: 500 12px/1.35 var(--f-text); max-width: 430px; text-align: left;
+        background: linear-gradient(180deg, #ffffff 0%, #e4e3f3 30%, #b9b8cf 55%, #f1f0fb 75%, #cfcde2 100%);
+        box-shadow: inset 0 2px 1px #fff, inset 0 -3px 4px rgba(80,78,110,.45), 0 0 0 1px rgba(255,255,255,.6), 0 8px 22px rgba(0,0,0,.6); }
+.nasa .logo { display: flex; align-items: center; gap: 6px; flex: none; }
+.nasa .logo svg { width: 22px; height: 14px; }
+.nasa .logo b { font: 700 15px/1 var(--f-title); color: var(--nasa); letter-spacing: .02em; }
+.nasa .logo sup { font: 700 8px var(--f-small); color: var(--nasa); margin-left: -4px; vertical-align: 6px; }
+.nasa .inv { display: block; margin-top: 2px; font: 600 9px/1 var(--f-small); letter-spacing: .12em; text-transform: uppercase; color: #4a4c8a; }
+.nasaRow { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.ctxRow { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+.win { width: 440px; height: 760px; position: relative; overflow: hidden; border: 1px solid var(--line); flex: none; }
+.win canvas { position: absolute; inset: 0; width: 440px; height: 760px; }
+.win .nasa { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); width: max-content; }
+.frames { display: flex; flex-direction: column; gap: 14px; }
+.fr { width: 440px; height: 92px; position: relative; overflow: hidden; border: 1px solid var(--line); }
+.fr canvas { position: absolute; left: 0; top: 0; width: 440px; height: 760px; }
+.fr .nasa { position: absolute; left: 50%; width: max-content; }
+.fr + .cap { margin-top: -6px; }
+.bullets { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; max-width: 420px; }
+.bullets li { font: 13px/1.5 var(--f-text); color: var(--steel); } .bullets li b { color: var(--text); font-weight: 600; }
+
+/* ── The art viewer: over the whole game. The photo in a frame with its archive tab; the card beside it. ── */
+.view { position: relative; width: 1100px; max-width: 100%; height: 660px; background: #08090a; overflow: hidden; border: 1px solid var(--line); }
+.view .ghost { position: absolute; inset: 0; opacity: .22; background:
+  linear-gradient(90deg, transparent 16px, #15171a 16px 458px, transparent 458px 474px, #15171a 474px 774px, transparent 774px 790px, #15171a 790px 1090px, transparent 1090px); }
+.view .dim { position: absolute; inset: 0; background: rgba(8,9,10,.9); }
+.frame { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 980px; padding: 0 24px 24px; }
+.frame > svg.outline { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.frame > *:not(svg) { position: relative; }
+.frame-head { display: flex; align-items: center; justify-content: space-between; height: 38px; margin-bottom: 16px; }
+.frame-head .t-label { display: flex; align-items: center; gap: 8px; padding-left: 2px; font: 600 11px/1 var(--f-title); letter-spacing: .2em; text-transform: uppercase; color: var(--text); }
+.frame-head .t-label::before { content: ''; width: 6px; height: 6px; background: var(--steel); }
+.frame-head .close { display: inline-flex; align-items: center; gap: 8px; padding-top: 8px; font: 500 11px var(--f-small); color: var(--steel); }
+kbd.k { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; font: 600 10px/1 var(--f-small); letter-spacing: .08em; color: var(--text); background: var(--raised); clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow: inset 0 -2px 0 rgba(0,0,0,.45); }
+.art { display: grid; grid-template-columns: 640px 1fr; gap: 28px; align-items: start; }
+.art img { width: 640px; height: 480px; object-fit: cover; display: block; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+.art .no { font: 700 12px/1 var(--f-title); color: var(--faint); letter-spacing: .1em; }
+.art h3 { font: 700 26px/1.1 var(--f-title); margin: 8px 0 14px; }
+.art dl { margin: 0 0 18px; } .art dl div { display: grid; grid-template-columns: 80px 1fr; padding: 6px 0; border-top: 1px solid var(--line); } .art dl div:first-child { border-top: 0; }
+.art dt { font: 400 11px var(--f-small); color: var(--faint); } .art dd { margin: 0; font: 500 12px var(--f-small); color: var(--steel); }
+.art p { margin: 0; font: 13px/1.6 var(--f-text); color: var(--text); }
+.art .endorse { margin-top: 16px; font: italic 400 12px/1.5 var(--f-text); color: var(--faint); }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header><div class="meta">ASS2ROID · Prototype 4 · design system · group 2 · round 3</div><h1>Näsa and the archive</h1>
+    <p>Two small pieces to close group 2. Näsa intrudes at the edge of the mining window, never over play. The archive photo opens over the whole game, in a frame, with its card.</p></header>
+
+  <section class="sec"><h2>Näsa<small>The capsule: the one rounded thing in an interface of cut corners, because it is a foreign brand barging in. Chrome, Näsa blue, a swoosh.</small></h2>
+    <div class="nasaRow" id="pills"></div></section>
+  <section class="sec"><h2>In the window<small>You hit a slab; Näsa drops in at the top edge, over the row furthest from you. It holds long enough to read, then fades.</small></h2>
+    <div class="ctxRow"><div><div class="win" id="ctx"></div><p class="cap"><b>The Chrome Vein · a slab below you</b>The capsule over row 0, nine rows above you. The slab and its gap stay clear.</p></div>
+      <div class="frames" id="frames"></div></div></section>
+  <section class="sec full"><h2>The archive photo<small>Click a find’s photo in the Field Guide: it opens over the whole game. The photo in a frame with its archive tab, the card beside it, and one clear way out.</small></h2>
+    <div class="view"><div class="ghost"></div><div class="dim"></div>
+      <div class="frame" id="artFrame"><div class="frame-head"><span class="t-label">Archive · No. 6</span><span class="close"><kbd class="k">Esc</kbd> or click outside to close</span></div>
+        <div class="art"><img src="../archive/06-stencils.webp" alt="Hand stencils on the shaft wall">
+          <div><div class="no">KR-1 · No. 6</div><h3>Hand stencils</h3>
+            <p>Site KR-1, Crater 1. Hand stencils, pigment blown around open hands pressed to the shaft wall. At least eleven hands, of different sizes. The pigment still glows faintly. At least one hand has six fingers. The Foundation has counted twice.</p>
+            <p class="endorse">Recovered under conditions the Kroeber Foundation does not endorse.</p></div></div></div></div>
+    <p class="cap">Over a dimmed ghost of the game’s three columns. The frame is the design system’s, with the archive tab; the photo’s corners cut like everything else.</p></section>
+</div>
+<script src="world.js"></script>
+<script>
+const SWOOSH = '<svg viewBox="0 0 22 14" aria-hidden="true"><ellipse cx="11" cy="7" rx="10" ry="4.2" fill="none" stroke="#0000dd" stroke-width="1.6" transform="rotate(-14 11 7)"/><circle cx="11" cy="7" r="3.2" fill="#0000dd"/></svg>';
+const pill = (msg, inv) => `<div class="nasa"><span class="logo">${SWOOSH}<b>NÄSA</b><sup>™</sup></span><span>${msg}${inv ? `<span class="inv">Invoice no. ${inv} · issued</span>` : ''}</span></div>`;
+const MSG = [['This chrome is the property of Näsa™. Big Space™.'], ['Näsa™ property damaged. An invoice has been issued.', '0047'], ['Näsa™ chrome is blast-rated. An invoice has been issued anyway.', '0048']];
+document.getElementById('pills').innerHTML = MSG.map(([m, i]) => pill(m, i)).join('');
+
+// The Chrome Vein, a slab below the prospector, the gap off to the side.
+function chromeWindow() { const cv = document.createElement('canvas'); cv.width = 880; cv.height = 1520; const c = cv.getContext('2d'); c.scale(2, 2); P = LAYERS.chrome.P;
+  for (let y = 0; y < 19; y++) for (let x = 0; x < 11; x++) {
+    if (x === 0 || x === 10) { const d = P.dim; P.dim = d * .5; rock(c, x, y); P.dim = d; continue; }
+    if (x === 4 && y <= 9) { SOLID.air(c, x, y); continue; }
+    if (y === 10) { if (x === 7 || x === 8) rock(c, x, y); else SOLID.slab(c, x, y); continue; }
+    const k = (x * 7 + y * 3) % 23 === 0 ? 'chromeI' : (x * 5 + y * 11) % 31 === 0 ? 'sample' : 'rock'; tile(c, k, x, y); }
+  prospector(c, 4, 9, 'block'); return cv; }
+const ctx = document.getElementById('ctx'); ctx.append(chromeWindow()); ctx.insertAdjacentHTML('beforeend', pill(MSG[0][0]));
+// The motion, in three frames: it drops in, holds, fades.
+const F = document.getElementById('frames');
+[['-46px', 1, 'Drops in from above the window, 250 ms, with a little overshoot.'], ['10px', 1, 'Holds long enough to read (CONFIG.nasa.showMs).'], ['10px', .35, 'Fades in one second, and is gone.']].forEach(([top, op, cap], i) => {
+  const f = document.createElement('div'); f.className = 'fr'; f.append(chromeWindow()); f.insertAdjacentHTML('beforeend', pill(MSG[0][0])); const n = f.querySelector('.nasa'); n.style.top = top; n.style.opacity = op; n.style.transform = 'translateX(-50%)';
+  F.append(f); F.insertAdjacentHTML('beforeend', `<p class="cap"><b>${['In', 'Hold', 'Out'][i]}</b>${cap}</p>`); });
+
+// The design system's frame: the tab and the cut corners, drawn at the frame's own size.
+function drawFrame(el) { const NS = 'http://www.w3.org/2000/svg', w = el.offsetWidth, h = el.offsetHeight, c = 10, step = 7, head = el.querySelector('.t-label'), tab = head.offsetLeft + head.offsetWidth + 26;
+  const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('class', 'outline'); svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.innerHTML = `<path d="M${c} .5 H${tab} L${tab + step} ${step + .5} H${w - .5} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="#15171a" stroke="rgba(150,157,164,.42)"/><path d="M${c + 3} 38.5 H${w - .5}" stroke="rgba(150,157,164,.2)"/>`;
+  el.prepend(svg); }
+document.fonts.ready.then(() => drawFrame(document.getElementById('artFrame')));
+</script>
+</body>
+</html>
