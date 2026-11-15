@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tile lab · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Tile lab: tune the rock yourself. A pixel grid per tile, tone from a directional flow (the references: pixel camo with
+   diagonal streaks, voxel depth, strata with real contrast, dark rock with white veins). Copy the settings when it feels right. */
+:root { --ink:#0b0c0e; --panel:#15171a; --raised:#1e2124; --steel:#969da4; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --faint:#5f656b; --fluo:#00ff73; --amber:#ffb43c; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ink); color: var(--text); font: 13px/1.4 Inter, sans-serif; }
+.lab { display: grid; grid-template-columns: 300px 1fr; height: 100vh; }
+aside { overflow-y: auto; padding: 20px 18px 40px; border-right: 1px solid var(--line); background: var(--panel); }
+h1 { font: 700 22px/1 'Chakra Petch'; margin: 0 0 6px; } .sub { color: var(--steel); font: 12px/1.45 'IBM Plex Sans'; margin: 0 0 16px; }
+h2 { font: 600 10px/1 'Chakra Petch'; letter-spacing: .2em; text-transform: uppercase; color: var(--steel); margin: 18px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.presets { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+button { font: 600 10px 'IBM Plex Sans'; letter-spacing: .1em; text-transform: uppercase; color: var(--text); background: transparent; border: 1px solid var(--line-2); padding: 7px 8px; cursor: pointer; }
+button.on, button:active { background: var(--text); color: var(--ink); border-color: var(--text); }
+.ctl { display: grid; grid-template-columns: 1fr 44px; gap: 2px 8px; align-items: center; margin-bottom: 8px; }
+.ctl label { font: 500 12px Inter; } .ctl output { font: 600 12px 'Chakra Petch'; text-align: right; color: var(--steel); }
+.ctl input { grid-column: 1 / -1; width: 100%; accent-color: #e1e4e6; }
+.ctl small { grid-column: 1 / -1; font: 11px/1.3 'IBM Plex Sans'; color: var(--faint); margin-top: -2px; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+main { overflow: auto; padding: 24px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+canvas { display: block; image-rendering: pixelated; }
+#view { width: 880px; height: auto; transition: transform .3s; }
+#view.tilt { transform: rotate(-3deg); }
+.out { width: 880px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
+.out pre { margin: 0; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); font: 11px/1.45 "IBM Plex Sans"; color: var(--steel); white-space: pre-wrap; word-break: break-all; }
+.hint { font: 12px/1.5 'IBM Plex Sans'; color: var(--faint); width: 880px; }
+</style>
+</head>
+<body>
+<div class="lab">
+  <aside>
+    <h1>Tile lab</h1>
+    <p class="sub">Tune the rock on a patch of the shaft. Start from a layer, move the sliders, then copy the settings and paste them to me.</p>
+    <div class="presets" id="presets"></div>
+    <div id="controls"></div>
+    <h2>Show</h2>
+    <div class="toggles"><button id="tFrenzy">Frenzy</button><button id="tDark">The Crack’s dark</button><button id="tFinds" class="on">Finds</button><button id="tSeed">New seed</button></div>
+  </aside>
+  <main>
+    <canvas id="view"></canvas>
+    <div class="out"><pre id="out"></pre><button id="copy">Copy settings</button></div>
+    <p class="hint">Each tile is 40 px in the game; this patch is shown at twice that. Tiles are 11 across, as in the mining window.</p>
+  </main>
+</div>
+<script>
+const T = 40, COLS = 11, ROWS = 8, SCALE = 2;
+// The controls: [key, label, min, max, step, note]
+const CTL = [
+  ['Grid', [
+    ['cells', 'Pixels per tile', 2, 20, 1, '4 = chunky, 8 = like the pixel reference, 20 = fine'],
+    ['grout', 'Gap between tiles', 0, 4, 1, 'the divisions between blocks'],
+  ]],
+  ['Flow', [
+    ['scale', 'Flow size', 20, 400, 5, 'how big the light and dark masses are'],
+    ['angle', 'Flow direction', 0, 180, 1, 'degrees: 0 = horizontal, 45 = diagonal'],
+    ['stretch', 'Stretch', 1, 8, .1, 'pulls the masses into streaks along the direction'],
+    ['detail', 'Detail', 0, 1, .05, 'smaller variation inside the masses'],
+  ]],
+  ['Tone', [
+    ['base', 'Brightness', 0, 140, 1, ''],
+    ['contrast', 'Contrast', 0, 200, 1, 'how far the masses go from dark to light'],
+    ['levels', 'Grey steps', 2, 16, 1, 'posterise: few steps = graphic, many = soft'],
+    ['jitter', 'Pixel noise', 0, 40, 1, 'per pixel, small'],
+    ['cool', 'Coolness', 0, 12, 1, 'a touch of blue in the greys'],
+  ]],
+  ['Marks', [
+    ['streaks', 'Dark streaks', 0, 1, .02, 'dark lines through the flow (pixel reference)'],
+    ['veins', 'Light veins', 0, 1, .02, 'fine bright veins (dark rock reference)'],
+    ['bands', 'Bands', 0, 1, .02, 'horizontal strata with real contrast (strata reference)'],
+    ['bandSize', 'Band height', 4, 120, 2, 'in pixels'],
+  ]],
+  ['Depth', [
+    ['bevel', 'Block depth', 0, 1, .02, 'light top edge, dark lower edge per pixel block (voxel reference)'],
+    ['tileBevel', 'Tile depth', 0, 1, .02, 'the same for the whole tile'],
+  ]],
+];
+const PRESETS = {
+  'Regolith Prime': { cells: 8, grout: 2, scale: 120, angle: 30, stretch: 1.4, detail: .5, base: 52, contrast: 46, levels: 6, jitter: 10, cool: 4, streaks: .08, veins: 0, bands: 0, bandSize: 30, bevel: .25, tileBevel: .3 },
+  'Shaker Strata': { cells: 8, grout: 2, scale: 220, angle: 0, stretch: 5, detail: .4, base: 46, contrast: 40, levels: 6, jitter: 8, cool: 3, streaks: .1, veins: 0, bands: .7, bandSize: 26, bevel: .2, tileBevel: .3 },
+  'Chrome Vein': { cells: 8, grout: 2, scale: 160, angle: 45, stretch: 3, detail: .55, base: 44, contrast: 70, levels: 7, jitter: 8, cool: 6, streaks: .35, veins: .3, bands: 0, bandSize: 30, bevel: .25, tileBevel: .3 },
+  'The Crack': { cells: 8, grout: 2, scale: 140, angle: 135, stretch: 2.4, detail: .6, base: 22, contrast: 50, levels: 5, jitter: 6, cool: 8, streaks: .4, veins: .12, bands: 0, bandSize: 30, bevel: .3, tileBevel: .25 },
+};
+let P = { ...PRESETS['Chrome Vein'] }, seed = 7, frenzy = false, dark = false, finds = true;
+
+// ── Noise ──
+const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k + seed, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+function vnoise(x, y, k) { const ix = Math.floor(x), iy = Math.floor(y), tx = x - ix, ty = y - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
+  const a = vhash(ix, iy, k), b = vhash(ix + 1, iy, k), c = vhash(ix, iy + 1, k), d = vhash(ix + 1, iy + 1, k); return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy; }
+function fbm(x, y, k, oct, gain) { let v = 0, a = 1, n = 0, f = 1; for (let o = 0; o < oct; o++) { v += vnoise(x * f, y * f, k + o * 11) * a; n += a; a *= gain; f *= 2.03; } return v / n; }
+// Rotate into the flow, stretch along it.
+function flowXY(wx, wy) { const a = P.angle * Math.PI / 180, c = Math.cos(a), s = Math.sin(a); const u = wx * c + wy * s, v = -wx * s + wy * c; return [u / (P.scale * P.stretch), v / P.scale]; }
+
+// ── The rock ──
+function rockTone(wx, wy) {
+  const [u, v] = flowXY(wx, wy);
+  let t = fbm(u, v, 1, 4, P.detail);                                        // the masses
+  if (P.bands > 0) { const b = vhash(0, Math.floor(wy / P.bandSize), 9); t = t * (1 - P.bands) + b * P.bands; }   // strata
+  let tone = P.base + (t - .5) * 2 * P.contrast;
+  const ridge = 1 - Math.abs(fbm(u * 1.7 + 5, v * 1.7, 3, 3, .5) * 2 - 1);   // thin lines along the flow
+  if (P.streaks > 0 && ridge > 1 - P.streaks * .18) tone -= 34 + P.contrast * .25;
+  const vein = 1 - Math.abs(fbm(u * 3.1 + 17, v * 3.1, 5, 2, .5) * 2 - 1);
+  if (P.veins > 0 && vein > 1 - P.veins * .06) tone += 70;
+  return tone;
+}
+const quant = v => { const L = P.levels - 1, lo = 0, hi = 230; const q = Math.round((Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * L) / L; return lo + q * (hi - lo); };
+const rgb = (v, extra = [0, 0, 0]) => { v = Math.max(0, Math.min(255, v)); const k = P.cool; return `rgb(${v - k * .4 + extra[0] | 0},${v + extra[1] | 0},${v + k + extra[2] | 0})`; };
+
+function drawTile(c, gx, gy, lift = 0) {
+  const x = gx * T, y = gy * T, n = P.cells, cs = T / n, g = P.grout;
+  c.fillStyle = '#060708'; c.fillRect(x, y, T, T);
+  c.save(); c.beginPath(); c.rect(x + g / 2, y + g / 2, T - g, T - g); c.clip();
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    const wx = x + (i + .5) * cs, wy = y + (j + .5) * cs;
+    let v = quant(rockTone(wx, wy) + (vhash(gx * 97 + i, gy * 89 + j, 4) - .5) * P.jitter) + lift;
+    c.fillStyle = rgb(v); c.fillRect(x + i * cs, y + j * cs, cs + .05, cs + .05);
+    if (P.bevel > 0 && cs >= 3) { const b = P.bevel; c.fillStyle = `rgba(255,255,255,${.16 * b})`; c.fillRect(x + i * cs, y + j * cs, cs, 1); c.fillStyle = `rgba(0,0,0,${.4 * b})`; c.fillRect(x + i * cs, y + (j + 1) * cs - 1, cs, 1); }
+  }
+  if (P.tileBevel > 0) { const b = P.tileBevel; c.fillStyle = `rgba(255,255,255,${.12 * b})`; c.fillRect(x, y + g / 2, T, 1.5); c.fillStyle = `rgba(0,0,0,${.5 * b})`; c.fillRect(x, y + T - g / 2 - 2, T, 2); }
+  c.restore();
+}
+function label(c, gx, gy, t, col, glow) { c.save(); c.font = '700 17px "Chakra Petch"'; c.textAlign = 'center'; c.textBaseline = 'middle'; if (glow) { c.shadowColor = col; c.shadowBlur = 8; } c.fillStyle = col; c.fillText(t, gx * T + T / 2, gy * T + T / 2 + 1); c.restore(); }
+
+// The patch: a tunnel, the prospector, and a few finds.
+const PATCH = ['rrrrrrrrrrr', 'rrwrrrsrrrr', 'rrraaarrrpr', 'rrrrYrrrrrr', 'bbbbbbbbbbb', 'rrrcrrrrrrS', 'rrrrrrrsrrr', 'rwrrrrrrrrr'];
+const view = document.getElementById('view'), c = view.getContext('2d');
+view.width = COLS * T * SCALE; view.height = ROWS * T * SCALE;
+function render() {
+  c.setTransform(SCALE, 0, 0, SCALE, 0, 0);
+  PATCH.forEach((row, gy) => [...row].forEach((ch, gx) => {
+    if (!finds && 'wspcSY'.includes(ch)) ch = 'r';
+    if (ch === 'a' || ch === 'Y') { c.fillStyle = '#08090a'; c.fillRect(gx * T, gy * T, T, T); if (ch === 'Y') { c.fillStyle = '#c9ccc9'; c.fillRect(gx * T + 9, gy * T + 6, 22, 30); c.fillStyle = '#0b0c0e'; c.fillRect(gx * T + 13, gy * T + 12, 14, 6); } return; }
+    const lift = 'wpcs'.includes(ch) ? 70 : ch === 'S' ? 10 : 0;
+    drawTile(c, gx, gy, lift);
+    if (ch === 'b') { c.save(); c.beginPath(); c.rect(gx * T, gy * T, T, T); c.clip(); c.strokeStyle = 'rgba(0,0,0,.55)'; c.lineWidth = 2; for (let i = -T; i < T; i += 6) { c.beginPath(); c.moveTo(gx * T + i, gy * T + T); c.lineTo(gx * T + i + T * .45, gy * T); c.stroke(); } c.restore(); }
+    if (ch === 'w') label(c, gx, gy, 'W', '#0b0c0e'); if (ch === 'p') label(c, gx, gy, 'P', '#0b0c0e'); if (ch === 'c') label(c, gx, gy, 'C', '#0b0c0e');
+    if (ch === 's') { c.fillStyle = '#0b0c0e'; const x = gx * T, y = gy * T; c.beginPath(); c.moveTo(x + 20, y + 13); c.lineTo(x + 27, y + 20); c.lineTo(x + 20, y + 27); c.lineTo(x + 13, y + 20); c.closePath(); c.fill(); }
+    if (ch === 'S') { c.fillStyle = 'rgba(0,255,115,.10)'; c.fillRect(gx * T, gy * T, T, T); label(c, gx, gy, 'S', '#00ff73', true); }
+  }));
+  if (dark) { const g = c.createRadialGradient(4.5 * T, 3.5 * T, T * 1.4, 4.5 * T, 3.5 * T, T * 3.8); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.94)'); c.fillStyle = g; c.fillRect(0, 0, COLS * T, ROWS * T); label(c, 10, 5, 'S', '#00ff73', true); }
+  if (frenzy) { const d = c.getImageData(0, 0, view.width, view.height); for (let i = 0; i < d.data.length; i += 4) for (let k = 0; k < 3; k++) d.data[i + k] = Math.min(255, (d.data[i + k] - 20) * 1.35 + 26); c.putImageData(d, 0, 0);
+    c.setTransform(SCALE, 0, 0, SCALE, 0, 0); c.strokeStyle = 'rgba(255,180,60,.5)'; c.lineWidth = 1.5; for (let gx = 1; gx < COLS; gx++) { c.beginPath(); c.moveTo(gx * T, 0); c.lineTo(gx * T, ROWS * T); c.stroke(); } for (let gy = 1; gy < ROWS; gy++) { c.beginPath(); c.moveTo(0, gy * T); c.lineTo(COLS * T, gy * T); c.stroke(); } }
+  view.classList.toggle('tilt', frenzy);
+  document.getElementById('out').textContent = JSON.stringify(P);
+}
+
+// Controls
+const box = document.getElementById('controls');
+for (const [group, ctls] of CTL) {
+  box.insertAdjacentHTML('beforeend', `<h2>${group}</h2>`);
+  for (const [k, name, min, max, step, note] of ctls) {
+    box.insertAdjacentHTML('beforeend', `<div class="ctl"><label for="c_${k}">${name}</label><output id="o_${k}"></output><input type="range" id="c_${k}" min="${min}" max="${max}" step="${step}">${note ? `<small>${note}</small>` : ''}</div>`);
+    document.getElementById('c_' + k).addEventListener('input', e => { P[k] = +e.target.value; sync(); render(); });
+  }
+}
+function sync() { for (const [, ctls] of CTL) for (const [k] of ctls) { document.getElementById('c_' + k).value = P[k]; document.getElementById('o_' + k).textContent = P[k]; } }
+const pre = document.getElementById('presets');
+for (const name of Object.keys(PRESETS)) { const b = document.createElement('button'); b.textContent = name; b.onclick = () => { P = { ...PRESETS[name] }; pre.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); sync(); render(); }; pre.append(b); if (name === 'Chrome Vein') b.classList.add('on'); }
+const tog = (id, fn) => { const b = document.getElementById(id); b.onclick = () => { fn(b); render(); }; };
+tog('tFrenzy', b => { frenzy = !frenzy; b.classList.toggle('on', frenzy); });
+tog('tDark', b => { dark = !dark; b.classList.toggle('on', dark); });
+tog('tFinds', b => { finds = !finds; b.classList.toggle('on', finds); });
+tog('tSeed', () => { seed = (seed * 31 + 17) % 1000; });
+document.getElementById('copy').onclick = () => { navigator.clipboard.writeText(JSON.stringify(P)).then(() => { document.getElementById('copy').textContent = 'Copied'; setTimeout(() => document.getElementById('copy').textContent = 'Copy settings', 1200); }); };
+document.fonts.ready.then(() => { sync(); render(); });
+</script>
+</body>
+</html>
