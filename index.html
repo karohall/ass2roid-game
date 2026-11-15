@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ASS2ROID: Ex Profundo (Prototype 3)</title>
+<title>ASS2ROID: Ex Profundo (Prototype 4)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -139,23 +139,11 @@
   .tile.sel { background:var(--text); color:var(--bg); clip-path:var(--chamfer-s); }
   #cardDetail { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; height:104px; overflow:hidden; font:400 12px/1.5 var(--f-text); color:var(--dim); }   /* fixed: fit() sets it to the longest card */
   #cardDetail b { font:600 12px/1.35 var(--f-text); }
-  .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(0,0,0,.9); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; gap:12px; }
-  .overlay h1 { margin:0; font-size:26px; letter-spacing:.1em; }
-  .overlay h2 { margin:0; font-size:18px; letter-spacing:.08em; }
-  .overlay button { width:auto; text-align:center; padding:8px 20px; }
-  .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; }
   .hidden { display:none !important; }
   #samples.flash { animation:lostflash .7s ease; }
   @keyframes lostflash { 0%, 40% { background:var(--amber); color:var(--bg); } 100% { background:none; } }
   #hint.flash { animation:hintflash .5s ease; }   /* a drill sample just dropped */
   @keyframes hintflash { 0%, 40% { background:var(--bg); color:var(--concrete); } 100% { background:var(--concrete); color:var(--bg); } }
-  .stats { border-collapse:collapse; font-size:13px; min-width:300px; }
-  .stats td { padding:2px 8px; border-bottom:1px solid var(--line); text-align:left; }
-  .stats td.num { text-align:right; color:var(--hot); font-weight:bold; }
-  #nasa.fading { opacity:0; transition:opacity 1s ease; }
-  #nasa { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:300px; padding:8px 12px; border-radius:14px; font-size:12px; color:#123; text-align:center;
-          background:linear-gradient(180deg,#fdfdff 0%,#c9d3df 45%,#8e9bab 55%,#e6ecf3 100%); border:2px solid #fff; box-shadow:0 0 0 2px #6d7a8a, 0 6px 18px rgba(0,0,0,.5); }
-  #nasa b { color:#0047ff; letter-spacing:.1em; }
   /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
   .later:not(.shown) { display:none !important; }                    /* hidden parts take no space */
   #dosage.later:not(.shown) { display:block !important; visibility:hidden; }   /* except the meter: its place is kept, so the radio below never jumps */
@@ -170,20 +158,88 @@
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .cardrow { display:flex; gap:10px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
   .artimg { flex:none; width:96px; height:72px; object-fit:cover; margin-top:2px; cursor:zoom-in; clip-path:var(--chamfer-s); }   /* the find's photo, beside its card */
-  #artBig { position:fixed; inset:0; z-index:5; background:rgba(0,0,0,.85); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:zoom-out; }
-  #artBig img { max-width:min(800px, 90vw); max-height:80vh; border:1px solid var(--line); }
   #sky { position:fixed; left:0; top:0; width:100vw; height:100vh; border:0; background:none; transition:none; z-index:0; pointer-events:none; display:none; }   /* not the mining window's canvas size */
   #wrap { position:relative; z-index:1; }
   body.wide #sky { display:block; }
   body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
-  .journey { display:flex; align-items:flex-start; width:100%; max-width:400px; margin:4px 0; }
-  .journey .step { width:64px; flex:none; font-size:10px; color:var(--dim); text-align:center; line-height:1.2; }
-  .journey .dot { width:26px; height:26px; margin:0 auto 4px; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; }
-  .journey .link { flex:1; height:2px; background:#555; margin-top:13px; }
-  .journey .done .dot { background:#888; border-color:#888; color:#111; }
-  .journey .here { color:var(--hot); font-weight:bold; }
-  .journey .here .dot { border-color:#fff; background:#fff; color:#111; animation:throb .6s ease-in-out infinite alternate; }
+  /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
+  .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
+  .overlay h1, .overlay h2, .overlay .ttl { margin:-8px 0 0; font:700 30px/1.05 var(--f-title); letter-spacing:.01em; }
+  .overlay p { margin:0; }
+  .overlay .body { font:400 14px/1.55 var(--f-text); color:var(--text); max-width:340px; }
+  .overlay .note { font:400 13px/1.55 var(--f-text); color:var(--dim); max-width:340px; }
+  .overlay .note b { color:var(--text); font-weight:600; }
+  .lbl { display:inline-flex; align-items:center; gap:8px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
+  .lbl::before { content:''; width:6px; height:6px; background:var(--dim); }
+  .lbl.live::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
+  .ver { font:500 11px var(--f-small); color:var(--dim); letter-spacing:.04em; margin-top:-12px; }
+  .overlay button { width:auto; text-align:center; }
+  .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; font:500 13px/1.4 var(--f-text); letter-spacing:0; text-transform:none; }
+  .go { display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 16px 0 20px !important; font:600 12px/1 var(--f-small) !important; letter-spacing:.16em; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(0,255,115,.35)); }
+  .go::before { background:var(--fluo) !important; }
+  .go kbd, .btn2 kbd { font:700 10px/1 var(--f-small); letter-spacing:.08em; padding:5px 6px; background:rgba(11,12,14,.85); color:var(--fluo); }
+  .btn2 { display:inline-flex; align-items:center; gap:10px; height:32px; padding:0 10px 0 14px; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--text); box-shadow:inset 0 0 0 1px var(--line-2); clip-path:var(--chamfer-s); }
+  .btn2 kbd { background:var(--raised); color:var(--text); }
+  /* Wordmark A: machined; the 2 an ink figure on a concrete block. */
+  .wa { --s:54px; display:inline-flex; flex-direction:column; align-items:center; gap:calc(var(--s) * .16); }
+  .wa .w { display:flex; align-items:center; font:700 var(--s)/1 var(--f-title); letter-spacing:.03em; color:var(--text); }
+  .wa .w i { font-style:normal; display:inline-grid; place-items:center; height:1.04em; padding:0 .14em; margin:0 .07em 0 .05em; color:var(--bg); background:var(--concrete); clip-path:polygon(.13em 0, 100% 0, 100% calc(100% - .13em), calc(100% - .13em) 100%, 0 100%, 0 .13em); }
+  .wa .sub { display:flex; align-items:center; gap:.9em; width:100%; font:600 calc(var(--s) * .17)/1 var(--f-small); letter-spacing:.5em; text-transform:uppercase; color:var(--dim); }
+  .wa .sub::before, .wa .sub::after { content:''; flex:1; height:1px; background:var(--line-2); } .wa .sub span { margin-right:-.5em; }
+  /* The check engine light: it is on. Ignore that it is on. */
+  .lamprow { display:flex; gap:14px; align-items:flex-start; text-align:left; font:400 13px/1.55 var(--f-text); color:var(--dim); }
+  .lamprow .lamp { flex:none; width:30px; height:20px; margin:2px 0 0; }
+  .lamprow ol { margin:0; padding:0; list-style:none; counter-reset:s; } .lamprow li { counter-increment:s; } .lamprow li::before { content:counter(s) '. '; color:var(--faint); }
+  .keys { display:grid; grid-template-columns:auto auto; gap:8px 12px; align-items:center; font:400 12px var(--f-text); color:var(--dim); text-align:left; }
+  .keys span:nth-child(odd) { justify-self:end; display:flex; gap:4px; }
+  kbd.k { display:inline-grid; place-items:center; min-width:22px; height:22px; padding:0 5px; font:700 11px/1 var(--f-title); color:var(--text); background:var(--raised); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 -2px 0 rgba(0,0,0,.45); }
+  /* Rows: key and value, numbers in Chakra Petch. */
+  .kv { width:100%; max-width:320px; margin:0; }
+  .kv div { display:grid; grid-template-columns:1fr auto; align-items:baseline; padding:6px 0; border-top:1px solid var(--line); text-align:left; }
+  .kv div:first-child { border-top:0; } .kv dt { font:400 12px var(--f-small); color:var(--dim); } .kv dd { margin:0; font:700 15px/1 var(--f-title); font-variant-numeric:tabular-nums; }
+  .kv dd em { font:400 11px var(--f-small); font-style:normal; color:var(--faint); margin-left:3px; }
+  /* The rover's drive: a rail, filling in fluo. */
+  .loadbar { width:260px; height:4px; background:var(--line); position:relative; } .loadbar i { position:absolute; left:0; top:0; bottom:0; width:0; background:var(--fluo); box-shadow:0 0 6px rgba(0,255,115,.5); }
+  /* The journey: the depth gauge's language on its side. Behind you, your rock; yours, framed; ahead, hatched. */
+  .journey { display:flex; align-items:flex-start; width:100%; max-width:380px; margin:0; }
+  .journey .step { width:58px; flex:none; font:500 10px/1.2 var(--f-small); color:var(--faint); text-align:center; }
+  .journey .dot { position:relative; width:52px; height:30px; margin:0 auto 7px; display:grid; place-items:center; clip-path:var(--chamfer-s);
+                  background:#121417 repeating-linear-gradient(135deg, transparent 0 5px, rgba(150,157,164,.2) 5px 6px); box-shadow:inset 0 0 0 1px var(--line-2); }
+  .journey .dot b { position:relative; z-index:1; display:grid; place-items:center; width:18px; height:16px; background:rgba(11,12,14,.88); font:700 12px/1 var(--f-title); color:var(--faint); }
+  .journey .done .dot b { color:var(--dim); }
+  .journey .here { color:var(--text); font-weight:600; }
+  .journey .here .dot { clip-path:none; outline:1.5px solid var(--concrete); outline-offset:2px; box-shadow:none; }
+  .journey .here .dot::after { content:''; position:absolute; inset:0; background:rgba(11,12,14,.5); }
+  .journey .here .dot b { color:var(--text); }
+  .journey .link { flex:1; height:1px; background:var(--line-2); margin-top:15px; }
+  .journeyCap { font:500 11px var(--f-small); color:var(--faint); margin-top:-14px; }
+  /* Näsa: Y2K chrome, the name in Näsa blue. The one rounded thing: a foreign brand, barging in at the top edge. */
+  #nasa { position:absolute; top:10px; left:50%; transform:translateX(-50%); width:max-content; max-width:420px; z-index:3; display:flex; align-items:center; gap:12px; padding:8px 20px 8px 16px; border-radius:999px;
+          color:#24262f; font:500 12px/1.35 var(--f-text); text-align:left; background:linear-gradient(180deg, #ffffff 0%, #e4e3f3 30%, #b9b8cf 55%, #f1f0fb 75%, #cfcde2 100%);
+          box-shadow:inset 0 2px 1px #fff, inset 0 -3px 4px rgba(80,78,110,.45), 0 0 0 1px rgba(255,255,255,.6), 0 8px 22px rgba(0,0,0,.6); animation:nasaIn .28s cubic-bezier(.3,1.5,.6,1); }
+  #nasa .logo { flex:none; display:flex; align-items:flex-start; } #nasa .logo b { font:700 15px/1 var(--f-title); color:var(--nasa); letter-spacing:.02em; } #nasa .logo sup { font:700 8px var(--f-small); color:var(--nasa); margin-left:1px; }
+  #nasa .inv { display:block; margin-top:2px; font:600 9px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:#4a4c8a; }
+  #nasa.fading { opacity:0; transition:opacity 1s ease; }
+  @keyframes nasaIn { from { transform:translate(-50%, -64px); } to { transform:translate(-50%, 0); } }
+  @media (prefers-reduced-motion: reduce) { #nasa { animation:none; } }
+  /* The archive photo, over the whole game: in a frame with its archive tab, the card beside it, one way out. */
+  #artBig { position:fixed; inset:0; z-index:5; background:rgba(8,9,10,.9); display:grid; place-items:center; cursor:zoom-out; }
+  #artBig .box { width:min(980px, 94vw); padding:0 24px 24px; cursor:default; }
+  #artBig .head { display:flex; align-items:center; justify-content:space-between; height:40px; margin-bottom:16px; }
+  #artBig .head h3 { margin:0; }
+  #artBig .close { display:inline-flex; align-items:center; gap:8px; padding-top:8px; font:500 11px var(--f-small); color:var(--dim); }
+  #artBig .close kbd.k { font:600 10px/1 var(--f-small); letter-spacing:.08em; }
+  #artBig .art { display:grid; grid-template-columns:minmax(0, 640px) minmax(220px, 1fr); gap:28px; align-items:start; }
+  #artBig img { width:100%; aspect-ratio:4 / 3; object-fit:cover; display:block; clip-path:var(--chamfer); }
+  #artBig .no { font:700 12px/1 var(--f-title); color:var(--faint); letter-spacing:.1em; }
+  #artBig h4 { font:700 26px/1.1 var(--f-title); margin:8px 0 14px; }
+  #artBig p { margin:0; font:13px/1.6 var(--f-text); color:var(--text); } #artBig p i { display:block; margin-top:14px; color:var(--faint); font-size:12px; }
+  /* A discovery in the hint: a tag on ink in its role's colour. */
+  #hint .tag { display:inline-flex; align-items:center; gap:6px; margin-right:8px; padding:4px 8px 4px 7px; vertical-align:1px; font:600 10px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; background:var(--bg); color:var(--fluo);
+               clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+  #hint .tag::before { content:''; width:5px; height:5px; background:currentColor; box-shadow:0 0 5px currentColor; }
+  #hint .tag.violet { color:var(--violet); } #hint .tag.jizz { color:var(--jizz); } #hint .tag.candy { color:var(--candy); } #hint .tag.steel { color:var(--dim); } #hint .tag.steel::before { box-shadow:none; }
 </style>
 </head>
 <body class="intro">
@@ -192,15 +248,16 @@
   <div id="stage">
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
     <div id="start" class="overlay">
-      <h1>ASS2ROID</h1>
-      <div>Ex Profundo · Prototype 3</div>
-      <div id="startJourney" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
-      <div class="small">1. Check engine light.<br>2. Ignore that it is on.<br>3. See Step 1.</div>
-      <div class="small">Arrows / WASD: move and dig · 1–5: shake, then drink Milk+ · Space: pause · R: radio · T: tape · V: volume</div>
-      <button id="go">Begin shift (Enter)</button>
+      <div class="wa"><div class="w">ASS<i>2</i>ROID</div><div class="sub"><span>Ex Profundo</span></div></div>
+      <div class="ver">Prototype 4</div>
+      <div class="lamprow"><svg class="lamp" viewBox="0 0 24 16" role="img" aria-label="Check engine light"><title>Check engine light</title><path d="M9 1H15V3H13V5H17L19 7H21V5H23V13H21V11H19V14H9L6 11H4V13H2V7H4V9H6V5H11V3H9Z"/></svg>
+        <ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
+      <div class="keys"><span><kbd class="k">←</kbd><kbd class="k">↓</kbd><kbd class="k">→</kbd></span><span>Move and dig (or WASD)</span><span><kbd class="k">1–5</kbd></span><span>Shake, then drink Milk+</span>
+        <span><kbd class="k">R</kbd><kbd class="k">T</kbd><kbd class="k">V</kbd></span><span>Radio, tape, volume</span><span><kbd class="k">Space</kbd></span><span>Pause</span></div>
+      <button id="go" class="go">Begin shift <kbd>Enter</kbd></button>
     </div>
     <div id="menu" class="overlay hidden"></div>
-    <div id="nasa" class="hidden"><b>NÄSA™</b> This chrome is the property of Näsa™. Big Space™.</div>
+    <div id="nasa" class="hidden"></div>
     <div id="hint"></div>
     <div id="dosage" class="later" data-reveal="drink">
       <div id="dosageHead"><span>Dosage scale</span><span id="doseWindow"></span><span id="dosageNow">Meh</span></div>
@@ -590,11 +647,12 @@ function songEnded() {
 }
 // V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
 const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
+const pauseVolHTML = () => `Radio volume: ${VOLUMES[radio.vol].name} <kbd>V</kbd>`;
 const volumeLabel = () => `♪ V: radio volume (${VOLUMES[radio.vol].name})`;
 function volumeKey() {
   radio.vol = (radio.vol + 1) % VOLUMES.length;
   if (running) say(`Radio volume: ${VOLUMES[radio.vol].name}.`);
-  if ($('pauseVol')) $('pauseVol').textContent = volumeLabel();   // live on the pause screen
+  if ($('pauseVol')) $('pauseVol').innerHTML = pauseVolHTML();   // live on the pause screen
 }
 function tuneIn() { if (!sound.on) { sound.on = true; soundGraph(); soundTick(0); } if (bus.ac && bus.ac.state === 'suspended') bus.ac.resume(); }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
@@ -793,7 +851,7 @@ function freshState() {
     fx: { strength: 0, calm: 0, stamina: 0, focus: 0, recovery: 0 }, strStacks: 0, drill: 100, drillWorn: false,
     samples: 0, meter: 0, window: [], frenzyUntil: 0, stillUntil: 0, inState: null,
     guide: [], clues: {}, charges: [], chargesSet: 0, artCrater: {}, artLayer: {}, seamOpen: { frenzy: false, still: false }, announce: '', announceUntil: 0, lastWarn: 0, firstDrink: true,
-    shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, drillBreaks: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
+    shake: null, shakesDone: 0, pickups: 0, mysteries: 0, nasaAt: 0, invoices: 46, drillBreaks: 0, drinks: 0, dug: 0, frenzies: 0, stills: 0, lost: 0, timeMs: 0,
   };
 }
 
@@ -1036,7 +1094,7 @@ function nasa(msg = 'This chrome is the property of Näsa™. Big Space™.', fo
   if (!force && now() - s.nasaAt < CONFIG.nasa.everyMs) return;
   s.nasaAt = now();
   const el = $('nasa');
-  el.innerHTML = '<b>NÄSA™</b> ' + msg;
+  el.innerHTML = `<span class="logo"><b>NÄSA</b><sup>™</sup></span><span>${msg}${/invoice/i.test(msg) ? `<span class="inv">Invoice no. ${String(++s.invoices).padStart(4, '0')} · issued</span>` : ''}</span>`;
   el.classList.remove('hidden', 'fading');
   clearTimeout(nasa.t1); clearTimeout(nasa.t2);
   nasa.t1 = setTimeout(() => el.classList.add('fading'), CONFIG.nasa.showMs);                 // long enough to read
@@ -1252,11 +1310,12 @@ const isArtefact = id => CONFIG.artefacts.some(a => a.id === id);
 let archiveOpen = false;                                    // the archive cabinet's drawer
 
 // A discovery: dust confetti bursts out from the edges of the hint box, where the news is.
-function celebrate() {
+function celebrate() { setTimeout(burst, 0); }   // after the announcement is set, so the confetti takes its colours
+function burst() {
   const h = $('hint'), box = document.createElement('div'), W0 = h.offsetWidth, H0 = h.offsetHeight;
   box.id = 'confetti';
   Object.assign(box.style, { left: h.offsetLeft + 'px', top: h.offsetTop + 'px', width: W0 + 'px', height: H0 + 'px' });
-  const shades = ['#fff', '#eee', '#bbb', '#888'];
+  const tg = discoveryTag(s.announce || ''), shades = TAG_CONFETTI[tg ? tg.role : 'steel'];
   for (let i = 0; i < 70; i++) {
     // A point on the box's edge, flying outward from it.
     const t = Math.random() * 2 * (W0 + H0);
@@ -1300,10 +1359,12 @@ const ART_PHOTO = { record: '12a-record-redacted' };
 const artImg = a => a && a.no !== 'E' ? `archive/${ART_PHOTO[a.id] || String(a.no).padStart(2, '0') + '-' + a.id}.webp` : null;
 const cardHTML = e => `<div class="cardrow">` + (artImg(e.art) ? `<img class="artimg" src="${artImg(e.art)}" width="96" height="72" alt="" data-big="${artImg(e.art)}" onerror="this.remove()">` : '')
   + `<div><b style="color:var(--text)">${e.title}</b><br>${e.body}</div></div>`;
-function showArt(src, title) {
+function showArt(src, e) {
   const o = document.createElement('div'); o.id = 'artBig';
-  o.innerHTML = `<img src="${src}" alt=""><div class="small">${title} · click or Esc to close</div>`;
-  o.onclick = () => o.remove(); document.body.appendChild(o);
+  o.innerHTML = `<div class="box"><div class="head"><h3>Archive · ${e.art ? catNo(e.art) : ''}</h3><span class="close"><kbd class="k">Esc</kbd> or click outside to close</span></div>
+    <div class="art"><img src="${src}" alt=""><div><div class="no">${e.art ? catNo(e.art) : ''}</div><h4>${e.art ? e.art.name : e.title}</h4><p>${e.body}</p></div></div></div>`;
+  o.onclick = ev => { if (!ev.target.closest('.box') || ev.target.closest('.close')) o.remove(); };
+  document.body.appendChild(o); const b = o.querySelector('.box'); drawFrame(b); frameWatch.observe(b);
 }
 function renderGuide() {
   const entries = guideEntries();
@@ -1333,7 +1394,7 @@ function renderGuide() {
     : `<b style="color:var(--text)">? ? ?</b><br>Not yet documented.`;
 }
 
-$('cardDetail').addEventListener('click', e => { const im = e.target.closest('.artimg'); if (im) showArt(im.dataset.big, im.closest('#cardDetail').querySelector('b').textContent); });
+$('cardDetail').addEventListener('click', e => { const im = e.target.closest('.artimg'); if (im) showArt(im.dataset.big, guideEntries().find(x => x.id === selCard)); });
 $('guide').addEventListener('click', e => {
   if (e.target.closest('#drawer')) { archiveOpen = !archiveOpen; renderGuide(); cv.focus(); return; }
   const el = e.target.closest('.slot, .tile'); if (!el) return;
@@ -1355,23 +1416,23 @@ function breakthrough() {
     // Loading screen: the rover picks a crater and drives there. It waits for the player,
     // so there is always time to read what comes next.
     const i = Math.floor(Math.random() * next.craters.length);
-    showMenu(`<h2>${layer().name.toUpperCase()} CLEARED</h2>
+    showMenu(`<span class="lbl live">Layer ${s.layer + 1} cleared</span><h2 class="ttl">${next.name}</h2>
       ${journey(s.layer + 1)}
-      <div>Rover en route to <b>${next.craters[i].label}</b>, ${next.name}.</div>
-      <div class="small" style="max-width:360px;color:var(--text)">${LAYER_INTRO[s.layer + 1]}</div>
-      <div class="bar" style="width:260px;height:12px"><div id="loadBar" style="transition:width ${CONFIG.loadingMs}ms linear"></div></div>
-      <div id="loadGo" class="small">1. Check engine light. 2. Ignore that it is on. 3. See Step 1.</div>`);
+      <p class="body">Rover en route to <b>${next.craters[i].label}</b>. ${next.craters[i].note}</p>
+      <p class="note">${LAYER_INTRO[s.layer + 1]}</p>
+      <div class="loadbar"><i id="loadBar" style="transition:width ${CONFIG.loadingMs}ms linear"></i></div>
+      <div id="loadGo" class="note">1. Check engine light. 2. Ignore that it is on. 3. See step 1.</div>`);
     menuKeys = () => {};                                   // swallow keys while driving
     requestAnimationFrame(() => requestAnimationFrame(() => $('loadBar').style.width = '100%'));
     setTimeout(() => {
       if (!$('loadGo')) return;                               // the loading screen is already gone
-      $('loadGo').innerHTML = '<b style="color:var(--hot);font-size:14px">Press ↓ to start digging</b>';
+      $('loadGo').outerHTML = '<button id="loadGo" class="go">Start digging <kbd>↓</kbd></button>'; $('loadGo').onclick = () => pickCrater(i);
       menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
     }, CONFIG.loadingMs);
     return;
   }
   showMenu(`<h2>${layer().name.toUpperCase()} CLEARED</h2>
-    <div class="small">The rover is warm. Choose the next crater.</div>
+    <p class="note">The rover is warm. Choose the next crater.</p>
     <div>Next: <b>${next.name}</b></div>
     ${next.craters.map((c, i) => `<button class="choice" data-pick="${i}">[${i + 1}] ${c.label}<br><span class="small">${c.note}</span></button>`).join('')}`);
   menuKeys = k => { if (k === '1' || k === '2') pickCrater(+k - 1); };
@@ -1385,11 +1446,19 @@ const typing = { text: '', from: 0 };                      // the hint currently
 function journey(at) {
   const steps = CONFIG.layers.map((L, i) => {
     const state = i < at ? 'done' : i === at ? 'here' : 'todo';
-    return `<div class="step ${state}"><div class="dot">${i < at ? '✓' : i + 1}</div><div>${L.name.replace('The ', '')}</div></div>`;
+    return `<div class="step ${state}"><div class="dot"${state === 'todo' ? '' : ` style="background:url(${layerThumb(i)}) center / cover"`}><b>${i < at ? '✓' : i + 1}</b></div><div>${L.name.replace('The ', '')}</div></div>`;
   });
   return `<div class="journey">${steps.join('<div class="link"></div>')}<div class="link"></div>
-    <div class="step todo"><div class="dot">■</div><div>The end</div></div></div>
-    <div class="small">Layer ${at + 1} of ${CONFIG.layers.length}</div>`;
+    <div class="step todo"><div class="dot"><b>▼</b></div><div>The end</div></div></div>
+    <div class="journeyCap">Layer ${at + 1} of ${CONFIG.layers.length}</div>`;
+}
+// A small picture of a layer's rock, for the journey.
+const thumbs = [];
+function layerThumb(i) {
+  if (thumbs[i]) return thumbs[i];
+  const c = document.createElement('canvas'); c.width = 104; c.height = 60; const x = c.getContext('2d'), keep = RP, seed0 = rockSeed; RP = CONFIG.layers[i].rock; rockSeed = 7;
+  for (let j = 0; j < 60; j += 3) for (let k = 0; k < 104; k += 3) { x.fillStyle = rockRGB(quant(rockTone(k * 3 + 300, j * 3 + i * 900) + (vhash(k, j + i * 50, 4) - .5) * RP.jitter * .6)); x.fillRect(k, j, 3, 3); }
+  RP = keep; rockSeed = seed0; return thumbs[i] = c.toDataURL();
 }
 
 function pickCrater(i) {
@@ -1421,15 +1490,16 @@ function finishGame(drifted = false) {
   // What's still out there: a quiet reason to play again, without explaining the whole system.
   const finds = CONFIG.artefacts.filter(a => !a.withdrawn), missing = finds.filter(a => !s.guide.includes(a.id));
   const nos = missing.map(a => a.no === 'E' ? 'E' : a.no), list = nos.length > 1 ? nos.slice(0, -1).join(', ') + ' and ' + nos[nos.length - 1] : nos[0];
-  const unrecovered = missing.length ? `<div class="small">Still in the rock: ${nos.length > 1 ? 'Nos.' : 'No.'} ${list}.<br>The archive cabinet waits.</div>` : '';   // the numbers, as the cabinet shows them
-  showMenu(`${drifted ? '<h1>CONTACT LOST.</h1><div style="font-size:16px">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet. It was not unpleasant.</div>' : '<h1>THE CORE.</h1><div style="font-size:16px">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</div><canvas id="coin" width="240" height="240" style="width:120px;height:120px;border:0;background:none;margin:4px auto 0"></canvas><div class="small">Archive: KR-1 E, the Core. Redacted.</div><button id="saveCoin" style="width:auto;text-align:center">Save the coin</button>'}
-    <table class="stats">${stats.map(([k, v, unit, f], i) => `<tr><td>${k}</td><td class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</td></tr>`).join('')}</table>
+  const unrecovered = missing.length ? `<p class="note">Still in the rock: ${nos.length > 1 ? 'Nos.' : 'No.'} ${list}.<br><b>The archive cabinet waits.</b></p>` : '';   // the numbers, as the cabinet shows them
+  showMenu(`${drifted
+      ? '<span class="lbl">Contact lost</span><h2 class="ttl">The drift.</h2><p class="body">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet.<br>It was not unpleasant.</p>'
+      : '<span class="lbl live">Shift complete</span><h2 class="ttl">The Core.</h2><p class="body">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</p>'}
+    <dl class="kv">${stats.map(([k, v, unit, f]) => `<div><dt>${k}</dt><dd class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</dd></div>`).join('')}</dl>
     ${unrecovered}
-    <div class="small">${drifted ? 'Prototype 3. The Core is still down there.' : 'Prototype 3. Ex profundo, nova.'}</div>
-    <button id="again">New game (Enter)</button>`);
+    ${drifted ? '<p class="note">The Core is still down there.</p>' : ''}
+    <button id="again" class="go">New game <kbd>Enter</kbd></button>`);
   $('again').onclick = newGame;
   menuKeys = k => { if (k === 'Enter') newGame(); };
-  if (!drifted) { drawCoin($('coin'), s.depthOffset); $('saveCoin').onclick = () => saveCoin(s.depthOffset); }
   // The stats count up, like a tally.
   const cells = [...document.querySelectorAll('#menu .num')], t0 = performance.now();
   (function count() {
@@ -1444,38 +1514,6 @@ function finishGame(drifted = false) {
 // DRIFT: Stillness overload. Calm on top of Stillness, and the shaft lets go.
 // An ending of its own: no controls, nothing to do, just watch.
 // ─────────────────────────────────────────────────────────────────────────────
-// The challenge coin, for reaching the Core: drawn in the game's ink, with your depth on it, to keep and share.
-function drawCoin(cv2, depth) {
-  const c = cv2.getContext('2d'), r = 120;                // drawn at 240 px, scaled to any size
-  c.clearRect(0, 0, cv2.width, cv2.height); c.save(); c.scale(cv2.width / 240, cv2.width / 240); c.translate(r, r);
-  const metal = c.createRadialGradient(-r * .3, -r * .35, r * .1, 0, 0, r);
-  metal.addColorStop(0, '#f2f2f2'); metal.addColorStop(.55, '#b9b9b9'); metal.addColorStop(1, '#6f6f6f');
-  c.beginPath(); c.arc(0, 0, r - 4, 0, Math.PI * 2); c.fillStyle = metal; c.fill();
-  c.lineWidth = 4; c.strokeStyle = '#111'; c.stroke();
-  c.beginPath(); c.arc(0, 0, r - 22, 0, Math.PI * 2); c.lineWidth = 2; c.stroke();
-  // Lettering around the rim: EX PROFUNDO, NOVA above; KOROVA ROCK below.
-  const arc = (text, radius, mid, inward) => {
-    const step = .118, start = mid - (text.length - 1) * step / 2 * (inward ? -1 : 1);
-    [...text].forEach((ch, i) => {
-      const a = start + i * step * (inward ? -1 : 1);
-      c.save(); c.rotate(a); c.translate(0, inward ? radius : -radius);   // along the bottom the letters stay upright, reading left to right
-      c.fillText(ch, 0, 0); c.restore();
-    });
-  };
-  c.fillStyle = '#111'; c.font = 'bold 15px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
-  arc('EX PROFUNDO, NOVA', r - 13, 0, false);
-  arc('KOROVA ROCK', r - 13, 0, true);
-  c.font = 'bold 54px monospace'; c.fillText('1', 0, -14);
-  c.font = 'bold 30px monospace'; c.fillText('A$$', 0, 30);
-  c.font = 'bold 12px monospace'; c.fillText(`KR-1 · ${depth} m`, 0, 60);
-  c.restore();
-}
-function saveCoin(depth) {
-  const big = document.createElement('canvas'); big.width = big.height = 600;
-  drawCoin(big, depth);
-  const a = document.createElement('a'); a.href = big.toDataURL('image/png'); a.download = 'ass2roid-challenge-coin.png'; a.click();
-}
-
 function startDrift() {
   running = false; held = null; pendingTap = null;
   const R = Math.random, W0 = cv.width, H0 = cv.height;
@@ -1670,12 +1708,13 @@ let pausedAt = 0;
 function pause() {
   if (!running) return;
   running = false; held = null; pendingTap = null; pausedAt = now();
-  showMenu(`<h2>PAUSED</h2>
+  showMenu(`<span class="lbl">Paused</span><h2 class="ttl">${layer().name}</h2>
     ${journey(s.layer)}
-    <div class="small">${layer().name} · ${depthNow()} m · ${s.samples} drill samples · Field Guide ${s.guide.length} / ${guideEntries().length}</div>
-    <div class="small">The Rock will wait. It has waited before.</div>
-    <button id="resume">Resume (Space)</button>
-    <div class="small" id="pauseVol" style="color:var(--text)">${volumeLabel()}</div>`);   // where people look to change things
+    <dl class="kv"><div><dt>Depth</dt><dd>${depthNow()}<em>m</em></dd></div><div><dt>Drill samples</dt><dd>${s.samples}</dd></div>
+      <div><dt>Field Guide</dt><dd>${s.guide.length}<em>/ ${guideEntries().length}</em></dd></div><div><dt>Shift</dt><dd>${fmt(Math.floor(s.timeMs / 1000))}</dd></div></dl>
+    <p class="note">The Rock will wait. It has waited before.</p>
+    <button id="resume" class="go">Resume <kbd>Space</kbd></button>
+    <div class="btn2" id="pauseVol">${pauseVolHTML()}</div>`);   // where people look to change things
   $('resume').onclick = resume;
   menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
 }
@@ -2075,6 +2114,14 @@ function hintHTML(t) {
     .replace(/([Pp]ress (?:\d|[A-Z](?![a-z])|↑|↓|←|→|Space|Enter)(?: again)?)/g, '<b>$1</b>')   // what to do, in bold
     + (open > 0 ? '</span>' : '');
 }
+// A discovery's tag: what kind of find, in its role's colour. The text after the tag starts with a capital.
+function discoveryTag(t) {
+  const m = /^(New compound|Recovered|Secret menu|New|Rumour)(?:, [^:]*)?: /.exec(t); if (!m) return null;
+  let body = t.slice(m[0].length); const at = body.search(/[a-z]/i); if (at >= 0) body = body.slice(0, at) + body[at].toUpperCase() + body.slice(at + 1);
+  const role = m[1] === 'Rumour' ? 'steel' : m[1] === 'Secret menu' ? (/Jizz\+/.test(t) ? 'jizz' : /Candygirl/.test(t) ? 'candy' : 'violet') : 'fluo';
+  return { label: m[1], role, body };
+}
+const TAG_CONFETTI = { fluo: ['#00ff73', '#e1e4e6', '#969da4', '#c9ccc9'], jizz: ['#b9d3f0', '#a993d6', '#e1e4e6'], candy: ['#f2b8d6', '#a993d6', '#e1e4e6'], violet: ['#a993d6', '#e1e4e6', '#969da4'], steel: ['#e1e4e6', '#c9ccc9', '#969da4', '#5f656b'] };
 function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTML[id] = v; } }
 
 function hud() {
@@ -2136,8 +2183,9 @@ function hud() {
     typing.text = target;
     typing.from = performance.now() - (extends_ ? shown / CONFIG.hint.typeCps * 1000 : 0);   // continue, don't erase
   }
-  const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps));
-  setHTML('hint', hintHTML(n < target.length ? target.slice(0, n) + '▌' : target));
+  const n = Math.min(target.length, Math.floor((performance.now() - typing.from) / 1000 * CONFIG.hint.typeCps)), tag = discoveryTag(target);
+  if (tag) { const body = tag.body, m = Math.min(body.length, n); setHTML('hint', `<span class="tag ${tag.role}">${tag.label}</span>` + hintHTML(m < body.length ? body.slice(0, m) + '▌' : body)); }
+  else setHTML('hint', hintHTML(n < target.length ? target.slice(0, n) + '▌' : target));
   $('pauseBtn').disabled = !running;
   setHTML('legend', [                                       // the key to the rock: each thing as it looks, a small plate in its role's colour
     '<span><i class="sw you"></i>You</span>',
@@ -2281,7 +2329,6 @@ function drawFrame(el) {
 }
 const frameWatch = new ResizeObserver(es => es.forEach(e => { const b = e.target.closest('.box'); if (b) drawFrame(b); }));
 document.querySelectorAll('.box').forEach(b => { frameWatch.observe(b); const hd = b.querySelector('h3, .label'); if (hd) frameWatch.observe(hd); });
-$('startJourney').innerHTML = journey(0).replace(/Layer 1 of (\d+)/, '$1 layers to the end');
 
 // Developer mode, for building and testing only: open the game with ?dev in the address.
 // N skips to the next layer. Players never see it.
@@ -2299,10 +2346,7 @@ window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
 // The start button says what works right now: Enter only when the game has the keyboard.
-const startLabel = () => { $('go').innerHTML = (document.hasFocus() ? 'Begin shift (Enter)' : 'Click to begin shift') + ENGINE_LAMP; };
-// The dashboard's check engine symbol: an engine block with its oil cap, the fan on the left, the exhaust on the right.
-const ENGINE_LAMP = '<svg class="lamp" viewBox="0 0 24 16" role="img" aria-label="Check engine light"><title>Check engine light</title>' +
-  '<path d="M9 1H15V3H13V5H17L19 7H21V5H23V13H21V11H19V14H9L6 11H4V13H2V7H4V9H6V5H11V3H9Z"/></svg>';
+const startLabel = () => { $('go').innerHTML = document.hasFocus() ? 'Begin shift <kbd>Enter</kbd>' : 'Click to begin shift'; };
 addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 </body>
