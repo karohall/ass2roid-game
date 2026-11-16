@@ -1488,7 +1488,7 @@ function unlock(id) {
 }
 
 // A recovered artefact's photo: archive/<number>-<id>.webp. A find without a photo simply has none.
-// The inspection record shows its redacted copy (12a) until XXX uncovers it (12).
+// The inspection record always shows its redacted copy (12a): the Belt Authority's black bars stay (XXX, which would have lifted them, was dropped 2026-11-16).
 const ART_PHOTO = { record: '12a-record-redacted' };
 const artImg = a => a && a.no !== 'E' ? `archive/${ART_PHOTO[a.id] || String(a.no).padStart(2, '0') + '-' + a.id}.webp` : null;
 const cardHTML = e => `<div class="cardrow">` + (artImg(e.art) ? `<img class="artimg" src="${artImg(e.art)}" width="96" height="72" alt="" data-big="${artImg(e.art)}" onerror="this.remove()">` : '')
@@ -1921,8 +1921,9 @@ function update(dt) {
     if (seen) { seen.seen = true; announce(`A sealed artefact ahead (◈). It waits for ${STATE_OF[seen.kind].name}.`); }
     const marks = near(4, c => c.t === GRAFFITI && !c.seen);
     if (marks && s.announceUntil < t) { marks.seen = true; announce('Scratches in the rock nearby. Someone left a message. Dig it out to read it.'); }
-    // The secret menu unlocks as soon as you hold its ingredients: a rumour, once the news before it has been read.
-    if (!s.jizzFound && !s.jizzRumour && s.layer >= 1 && radioNow().key === 'disco' && s.inv.whey >= 2 && s.inv.powder >= 1 && s.announceUntil < t) {
+    // The Jizz+ rumour (2026-11-16: it used to need Disco Gravitas on AND the ingredients in hand at the same moment, and a 14-minute run never saw it).
+    // From the second layer, Disco Gravitas tells it whatever you carry; from the third, it reaches you on any station once you hold the ingredients.
+    if (!s.jizzFound && !s.jizzRumour && s.announceUntil < t && ((s.layer >= 1 && sound.on && radioNow().key === 'disco') || (s.layer >= 2 && s.inv.whey >= 2 && s.inv.powder >= 1))) {
       s.jizzRumour = true; announce('Rumour: the bartender at the Milk+ bar pours doubles. Two whey and a powder, and ask for 9.');
     }
     // The secret menu's rumour: once, when you first hold its ingredients. And once more in The Crack, the whole recipe this time,
