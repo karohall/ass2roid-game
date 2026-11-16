@@ -2298,7 +2298,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w * .475), cy: 250, R: 160 }); GZ.win.cx = w - 52;   // the dial a little left of centre, Next drink in the corner
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w * .44), cy: 262, R: 160 }); GZ.win.cx = w - 52;   // the dial a little left of centre, Next drink in the corner
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
