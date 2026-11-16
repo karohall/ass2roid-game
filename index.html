@@ -1921,14 +1921,15 @@ function update(dt) {
     if (seen) { seen.seen = true; announce(`A sealed artefact ahead (◈). It waits for ${STATE_OF[seen.kind].name}.`); }
     const marks = near(4, c => c.t === GRAFFITI && !c.seen);
     if (marks && s.announceUntil < t) { marks.seen = true; announce('Scratches in the rock nearby. Someone left a message. Dig it out to read it.'); }
-    // The Jizz+ rumour (2026-11-16: it used to need Disco Gravitas on AND the ingredients in hand at the same moment, and a 14-minute run never saw it).
-    // From the second layer, Disco Gravitas tells it whatever you carry; from the third, it reaches you on any station once you hold the ingredients.
-    if (!s.jizzFound && !s.jizzRumour && s.announceUntil < t && ((s.layer >= 1 && sound.on && radioNow().key === 'disco') || (s.layer >= 2 && s.inv.whey >= 2 && s.inv.powder >= 1))) {
-      s.jizzRumour = true; announce('Rumour: the bartender at the Milk+ bar pours doubles. Two whey and a powder, and ask for 9.');
-    }
     // The secret menu's rumour: once, when you first hold its ingredients. And once more in The Crack, the whole recipe this time,
     // if you still haven't had Candygirl: the last layer is the last chance.
     const lastLayer = s.layer === CONFIG.layers.length - 1;
+    // Jizz+, the same way as Candygirl (2026-11-16): a rumour once, when you first hold its ingredients (from the Shaker Strata on: the opening
+    // teaches one thing at a time); and once more in the last layer, louder, if you still haven't had it. No radio condition.
+    if (!s.jizzFound && s.layer >= 1 && s.inv.whey >= 2 && s.inv.powder >= 1 && s.announceUntil < t) {
+      if (!s.jizzRumour) { s.jizzRumour = true; announce('Rumour: the bartender at the Milk+ bar pours doubles. Two whey and a powder, and ask for 9.'); }
+      else if (lastLayer && !s.jizzRumour2) { s.jizzRumour2 = true; announce('Rumour, louder down here: two Regolith Whey and a Legacy Powder, and ask the bartender for 9. You have them.'); }
+    }
     if (!s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) {
       if (!s.candyRumour) { s.candyRumour = true; clue('zero'); announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. You order it with 0.' + (s.guide.includes('secret_candy') ? ' The Field Guide fills in a word.' : '')); }
       else if (lastLayer && !s.candyRumour2) { s.candyRumour2 = true; for (const k in SECRET.candy.clues) s.clues[k] = true; if (s.guide.includes('secret_candy')) renderGuide(); else unlock('secret_candy');
