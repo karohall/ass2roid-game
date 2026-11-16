@@ -851,13 +851,13 @@ const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
 const jizz = () => s.fx.jizz > now();     // Jizz+: every shake, two bottles
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
-// Safe for photosensitive players (2026-11-14): the four pastels lie within 7% brightness of each other (no change counts as
+// Pink, mint, blue and lilac (no yellow: cool tones, 2026-11-16). Safe for photosensitive players (2026-11-14): the four pastels lie within 7% brightness of each other (no change counts as
 // a flash), the stripes glide slowly instead of stepping, the colour fades in and out over a second, and with the
 // system's "reduce motion" setting the stripes stand still.
-const CANDY_TILES = ['#f4d5e4', '#cdeadb', '#d3e0f3', '#ebe6cf'];
+const CANDY_TILES = ['#f4d5e4', '#cdeadb', '#d3e0f3', '#e7dcf5'];
 const rgbOf = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
 const CANDY_RGB = CANDY_TILES.map(rgbOf);
-const CANDY_DEEP_RGB = ['#e9b5cf', '#90d1b1', '#adc5e7', '#d4c37f'].map(rgbOf);   // the same four hues, deeper, for light rock (layer candyDeep); still equal in brightness to each other
+const CANDY_DEEP_RGB = ['#e9b5cf', '#90d1b1', '#adc5e7', '#cebbe8'].map(rgbOf);   // the same four hues, deeper, for light rock (layer candyDeep); still equal in brightness to each other
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
