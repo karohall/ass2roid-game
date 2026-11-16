@@ -16,10 +16,11 @@
           --chamfer-s:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:400 14px/1.45 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }   /* no orphans: never one word alone on a last line */
-  :root { --side:480px; }                                      /* the two side columns; wider than the 300 of before, since the game is wider than it is tall */
-  #wrap { display:grid; grid-template-columns:442px var(--side) var(--side); grid-template-rows:var(--row1, auto) auto auto; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
-  #stage { grid-area:1 / 1; } #panel { grid-area:1 / 2; } #panel2 { grid-area:1 / 3 / 3 / 4; align-self:stretch; }   /* row 1: the window and the Milk+ column; the right column runs down both rows, its log filling it */
-  #band { grid-area:2 / 1 / 3 / 3; display:flex; gap:16px; } #dosage { flex:1; min-width:0; } #baseRow { flex:none; width:270px; } #legend { grid-area:3 / 1 / 4 / 4; }   /* row 2: the cluster and the radio; row 3: the legend */
+  :root { --side:480px; --cluster:652px; }                                      /* the two side columns; wider than the 300 of before, since the game is wider than it is tall */
+  #wrap { display:grid; grid-template-columns:442px var(--side) var(--side); grid-template-rows:var(--row1, auto) 120px 100px auto; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
+  #stage { grid-area:1 / 1; } #panel { grid-area:1 / 2; } #panel2 { grid-area:1 / 3 / 3 / 4; align-self:stretch; }   /* the right column runs down to the radio, its log filling it */
+  #dosage { grid-area:2 / 1 / 4 / 3; width:var(--cluster); align-self:stretch; }   /* the cluster: rows 2 and 3, under the window and part of the Milk+ column */
+  #baseRow { grid-area:3 / 2 / 4 / 4; margin-left:calc(var(--cluster) - 442px); align-self:stretch; } #legend { grid-area:4 / 1 / 5 / 4; }   /* the radio beside the cluster's foot, to the right edge; then the legend */
   body.fitting #panel2 { align-self:start; }                  /* measured at its own height */
   html, body { overflow:hidden; }                                /* the game always fits; a page scrollbar coming and going would shift it */
   #stage { position:relative; width:442px; }
@@ -32,7 +33,8 @@
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
   #hint { width:442px; margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
-  #dosage { position:relative; clip-path:var(--chamfer);   /* the cluster, recessed behind glass */
+  #dosage { --step:40px; position:relative;   /* the cluster, recessed behind glass; its right end a step lower, like the frames' tabs */
+    clip-path:polygon(8px 0, calc(100% - 150px) 0, calc(100% - 134px) var(--step), 100% var(--step), 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
   #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
   #gauge { display:block; }
@@ -60,7 +62,7 @@
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
-  #radioBox { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:10px 14px 12px; }   /* as tall as the cluster */
+  #radioBox { flex:1; min-width:0; padding:8px 12px 10px; }   /* long and slim */
   #radioBox.call > svg.outline path:first-child { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
@@ -141,7 +143,7 @@
   body.fitting .ph { display:none !important; }
   .small { font:400 11px/1.45 var(--f-small); color:var(--dim); }
   #ingredients .row { padding:3px 0; } #ingredients .row > span:last-child { font:700 14px var(--f-title); font-variant-numeric:tabular-nums; }
-  #log { flex:1; min-height:108px; overflow:hidden; font:400 12px/1.5 var(--f-small); }   /* newest on top, the rest cut off; it takes the room the card leaves */
+  #log { flex:1; min-height:70px; overflow:hidden; font:400 12px/1.5 var(--f-small); }   /* newest on top, the rest cut off; it takes the room the card leaves */
   #panel2 > .box:last-child { flex:1; min-height:0; display:flex; flex-direction:column; }   /* the right column has a fixed height: the log fills it */
   #log div { position:relative; color:var(--dim); padding:2px 0 2px 14px; }
   #log div::before { content:''; position:absolute; left:1px; top:8px; width:5px; height:5px; background:var(--faint); transform:rotate(45deg); }
@@ -414,16 +416,14 @@
 
   </div>
 
-    <div id="band">                                         <!-- the cluster, and the radio beside it like a car stereo -->
     <div id="dosage" class="later" data-reveal="drink">
-      <svg id="gauge" width="612" height="230" viewBox="0 0 612 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
+      <svg id="gauge" width="652" height="230" viewBox="0 0 652 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
     </div>
-    <div id="baseRow">                                      <!-- the radio, under the meter -->
-    <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
+    <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
+    <div class="box" id="radioBox">
       <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
       <div class="small" id="radioFx"></div>                 <!-- the station's effect, the full width -->
       <div class="row"><span class="small" id="radioLesson"></span><span class="small" id="radioKeys">R: next station · T: tape · V: volume</span></div>
-    </div>
     </div>
     </div>
     <div id="legend" class="small later" data-reveal="dig"></div>
@@ -1678,7 +1678,7 @@ function skyBegin() {
   if (sky.width !== innerWidth || sky.height !== innerHeight) { sky.width = innerWidth; sky.height = innerHeight; }
   const W0 = cv.width, H0 = cv.height, r = cv.getBoundingClientRect(), b = r.width / (W0 + 2);   // b: the page's scale
   const grow = smooth(ramp(5000, 17000, performance.now() - s.drift.t0));
-  const pr = $('panel').getBoundingClientRect(), br = $('band').getBoundingClientRect();
+  const pr = $('panel').getBoundingClientRect(), br = $('dosage').getBoundingClientRect();
   const from = { x: r.left + b, y: r.top + b, w: W0 * b, h: H0 * b };                       // the mining window
   const to = { x: r.left + b, y: r.top + b, w: pr.right - r.left - 2 * b, h: br.top - r.top - 10 * b };   // it and the Milk+ column, down to the cluster
   const box = { x: lerp(from.x, to.x, grow), y: lerp(from.y, to.y, grow), w: lerp(from.w, to.w, grow), h: lerp(from.h, to.h, grow) };
@@ -2289,7 +2289,7 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
 // the shake on the left (amber while it shakes, blue when a bottle is ready) and the dose window on the right (×1.5, ×2, ×3 and its seconds).
-const GZ = { w: 612, h: 230, main: { cx: 306, cy: 250, R: 176, half: 54 }, shake: { cx: 64, cy: 120, R: 46, half: 125 }, win: { cx: 548, cy: 120, R: 46, half: 125 } };   // centred in whatever width the deck gives it (buildGauge)
+const GZ = { w: 652, h: 230, main: { cx: 336, cy: 250, R: 176, half: 54 }, shake: { cx: 74, cy: 116, R: 58, half: 125 }, win: { cx: 594, cy: 136, R: 36, half: 125 } };   // three sizes: the shake big, the dial, Next drink small under the step   // centred in whatever width the deck gives it (buildGauge)
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2297,7 +2297,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; GZ.main.cx = w / 2; GZ.win.cx = w - 64;
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; GZ.main.cx = w / 2 + 10; GZ.win.cx = w - 58;
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
@@ -2315,12 +2315,12 @@ function buildGauge() {
   h += txt('gword', M.cx, 210, 34, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
   // the two small gauges
   for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'NEXT DRINK']]) {
-    const r = d.R - 7 / 2 - 2;
+    const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge
     h += `<path d="${gArc(d, -1, 1, d.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(d, -1, 1, r)}" stroke="rgba(150,157,164,.08)" stroke-width="7" fill="none"/>`;
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
     h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>`;
-    h += txt(k + 'read', d.cx, 166, 16, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx}" y="188" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + txt(k + 'sub', d.cx, 206, 11, '#34e6ff', 600, 'IBM Plex Sans');
+    h += txt(k + 'read', d.cx, ry, d.R > 45 ? 17 : 14, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx}" y="${ry + 22}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + txt(k + 'sub', d.cx, ry + 40, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
 }
@@ -2342,14 +2342,14 @@ function drawGaugeMeter(t) {
   // The shake gauge: amber while a bottle shakes (the seconds left), blue and full when one is ready to drink (and its key).
   const S = GZ.shake, ready = VARIANTS.findIndex(v => s.bottles[v] > 0), sh = shaking() ? Math.min(1, 1 - (s.shake.until - t) / CONFIG.mix.shakeMs) : null;
   const sU = sh !== null ? sh * 2 - 1 : ready >= 0 ? 1 : -1, sCol = sh !== null ? '#ffb43c' : ready >= 0 ? '#34e6ff' : '#5f656b';
-  for (const ln of G.querySelectorAll('.sneedle line')) { gSeg(ln, S, sU, S.R - 40, S.R + 10); attr(ln, 'stroke', sCol); }
+  for (const ln of G.querySelectorAll('.sneedle line')) { gSeg(ln, S, sU, S.R * .28, S.R + 10); attr(ln, 'stroke', sCol); }
   attr(q('sfill'), 'd', sU > -1 ? gArc(S, -1, sU, S.R - 5.5) : ''); attr(q('sfill'), 'stroke', sCol);
   put(q('sread'), sh !== null ? Math.max(0, (s.shake.until - t) / 1000).toFixed(1) + 's' : ready >= 0 ? 'DRINK' : '—'); attr(q('sread'), 'fill', sCol);
   put(q('ssub'), sh === null && ready >= 0 ? 'press ' + (ready + 1) : '');
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
   const W = GZ.win, win = windowDrinks(), open = win.length && !st && !active('focus'), m = nextMult(), left = open ? Math.max(0, Math.max(...win) + CONFIG.balance.windowMs - t) : 0;
   const wU = open ? left / CONFIG.balance.windowMs * 2 - 1 : -1, wCol = open ? '#34e6ff' : '#5f656b';
-  for (const ln of G.querySelectorAll('.wneedle line')) { gSeg(ln, W, wU, W.R - 40, W.R + 10); attr(ln, 'stroke', wCol); }
+  for (const ln of G.querySelectorAll('.wneedle line')) { gSeg(ln, W, wU, W.R * .28, W.R + 8); attr(ln, 'stroke', wCol); }
   attr(q('wfill'), 'd', open ? gArc(W, -1, wU, W.R - 5.5) : ''); attr(q('wfill'), 'stroke', wCol);
   put(q('wread'), '×' + (open ? m : 1)); attr(q('wread'), 'fill', open || (active('focus') && !st) ? '#34e6ff' : '#5f656b');
   put(q('wsub'), active('focus') && !st ? 'steady hand' : open ? Math.ceil(left / 1000) + 's' : '');
@@ -2505,7 +2505,7 @@ function placeMeter() {
   put($('effects'), 'Active: Strength ×2 45s · Stamina 45s · FRENZY 12s');   // a long but real one
   const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it
   rows.forEach(el => el.classList.add('shown')); document.body.classList.add('fitting');
-  $('wrap').style.setProperty('--row1', Math.max($('stage').offsetHeight, $('panel').offsetHeight, panel2Need - $('band').offsetHeight - 10) + 'px');   // the right column spans both rows
+  $('wrap').style.setProperty('--row1', Math.max($('stage').offsetHeight, $('panel').offsetHeight, panel2Need - 130) + 'px');   // the right column spans both rows
   rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
   $('hint').innerHTML = hint0;
   if (!fitting) document.body.classList.remove('fitting');
