@@ -64,7 +64,7 @@ const FIND = {
   // Hard band: stripes, a compressed stratum. Two full rows mid-layer; the stripes run on from tile to tile. Slow: Strength, or blast it.
   band: (c, x, y) => { plate(c, x, y, C.steel, { tint: .06 }); c.fillStyle = hexA(C.steel, .8); for (let k = 0; k < 4; k++) c.fillRect(x * T + 8, y * T + 11 + k * 5.5, T - 16, 2.5); },
   // Crust: the floor of the layer, two full rows. It shows the digging power it needs; a double border, armoured.
-  crust: (c, x, y) => { plate(c, x, y, C.steel); c.strokeStyle = hexA(C.steel, .6); c.lineWidth = 1; c.strokeRect(x * T + 9.5, y * T + 9.5, T - 19, T - 19); label(c, x, y, String(P.crust ?? 4), C.steel, false, 15); },
+  crust: (c, x, y) => { plate(c, x, y, C.steel); c.strokeStyle = hexA(C.steel, .6); c.lineWidth = 1; c.strokeRect(x * T + 8.5, y * T + 8.5, T - 17, T - 17); c.fillStyle = hexA(C.steel, .8); for (let k = 0; k < 6; k++) c.fillRect(x * T + 11, y * T + 11 + k * 3.4, T - 22, 1.6); },   // the floor: the band's stripes, denser, armoured; the same on every layer
   seam: (c, x, y) => { plate(c, x, y, C.steel, { dashed: true }); label(c, x, y, '?', C.steel); },
   seamOpen: (c, x, y) => { plate(c, x, y, C.fluo, { glow: true }); label(c, x, y, '?', C.fluo, true); },
   sealed: (c, x, y) => { plate(c, x, y, C.steel, { dashed: true }); diamond(c, x, y, 10, C.steel, true); diamond(c, x, y, 4.5, C.steel); },
@@ -121,6 +121,6 @@ const SOLID = {
     const g = c.createLinearGradient(0, Y + g0, 0, Y + T - g0); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s));
     c.fillStyle = g; c.fillRect(X + g0, Y + g0, T - 2 * g0, T - 2 * g0); c.fillStyle = 'rgba(255,255,255,.7)'; c.fillRect(X + g0, Y + g0, T - 2 * g0, 1.5); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(X + g0, Y + T - g0 - 2, T - 2 * g0, 2);
     c.fillStyle = 'rgba(255,255,255,.5)'; c.fillRect(X + g0, Y + g0, 1.5, T - 2 * g0); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(X + T - g0 - 1.5, Y + g0, 1.5, T - 2 * g0);
-    c.fillStyle = '#0000dd'; c.font = '700 12px "IBM Plex Sans"'; c.fillText('™', X + T - 15, Y + 14); },
+    c.fillStyle = '#0000dd'; c.font = '700 16px "IBM Plex Sans"'; c.fillText('™', X + T - 20, Y + 17); },
 };
 function tile(c, kind, gx, gy) { if (SOLID[kind]) return SOLID[kind](c, gx, gy); rock(c, gx, gy); if (FIND[kind]) FIND[kind](c, gx, gy); }
