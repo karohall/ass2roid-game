@@ -241,9 +241,64 @@
                clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
   #hint .tag::before { content:''; width:5px; height:5px; background:currentColor; box-shadow:0 0 5px currentColor; }
   #hint .tag.violet { color:var(--violet); } #hint .tag.jizz { color:var(--jizz); } #hint .tag.candy { color:var(--candy); } #hint .tag.steel { color:var(--dim); } #hint .tag.steel::before { box-shadow:none; }
+  /* ── Skins (2026-11-16, exploring depth): ?skin=glass or ?skin=deck. The default stays as it is. ── */
+  #backdrop { position:fixed; inset:0; width:100vw; height:100vh; border:0; background:none; z-index:0; pointer-events:none; display:none; transition:none; }
+  .skin-glass #backdrop { display:block; }
+  #skinTag { position:fixed; right:10px; bottom:8px; z-index:9; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+
+  /* Glass: frosted panels over the layer's own rock, blurred far behind; the radio green glass, lit from inside. */
+  .skin-glass { background:#05070a; }
+  .skin-glass .box { backdrop-filter:blur(18px) saturate(1.35); -webkit-backdrop-filter:blur(18px) saturate(1.35); clip-path:var(--chamfer); }
+  .skin-glass .box > svg.outline path:first-child { fill:rgba(20,24,30,.38); stroke:rgba(255,255,255,.16); }
+  .skin-glass .box::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,255,255,.10) 0, rgba(255,255,255,.03) 18%, transparent 40%), radial-gradient(120% 60% at 0 0, rgba(255,255,255,.06), transparent 60%); }
+  .skin-glass #milk > svg.outline path:first-child { stroke:rgba(255,255,255,.3); }
+  .skin-glass canvas#c { border-color:rgba(255,255,255,.14); box-shadow:0 24px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.6); }
+  .skin-glass #hint { background:rgba(201,204,201,.9); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); backdrop-filter:blur(10px); }
+  .skin-glass button { background:rgba(255,255,255,.04); }
+  .skin-glass button:hover:not(:disabled) { background:rgba(255,255,255,.1); }
+  .skin-glass #radioBox { backdrop-filter:blur(22px) saturate(1.6);
+    background:radial-gradient(120% 160% at 50% 130%, rgba(0,255,115,.28), rgba(0,255,115,.06) 55%, transparent 75%), linear-gradient(180deg, rgba(0,255,115,.10), rgba(0,255,115,.02)); }
+  .skin-glass #radioBox > svg.outline path:first-child { fill:rgba(6,30,18,.35); stroke:rgba(0,255,115,.5); }
+  .skin-glass #radioBox::after { background:linear-gradient(180deg, rgba(200,255,225,.16) 0, rgba(200,255,225,.04) 22%, transparent 45%); }
+  .skin-glass #radioBox .ticker { color:#5dffa2; text-shadow:0 0 6px rgba(0,255,115,.9), 0 0 18px rgba(0,255,115,.45); }
+  .skin-glass #radioFx { color:#c8ffe0; text-shadow:0 0 8px rgba(0,255,115,.35); }
+  .skin-glass #radioBox .small, .skin-glass #radioBox .label { color:rgba(170,255,205,.7); }
+
+  /* Deck: machined plates with bevels and screws on brushed gunmetal; readouts recessed behind glass; the radio a phosphor screen. */
+  .skin-deck { background:radial-gradient(130% 90% at 50% 0, #1a1d21, #0a0b0d 70%), #0b0c0e;
+    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px), radial-gradient(130% 90% at 50% 0, #1b1e22, #090a0c 72%); }
+  .skin-deck .box { clip-path:var(--chamfer); background:
+      radial-gradient(circle at 9px 9px, #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
+      radial-gradient(circle at calc(100% - 9px) 9px, #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
+      radial-gradient(circle at 9px calc(100% - 9px), #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
+      radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
+      linear-gradient(180deg, #23272c 0, #181a1e 40%, #141619 100%); }
+  .skin-deck .box > svg.outline path:first-child { fill:transparent; stroke:rgba(255,255,255,.12); }
+  .skin-deck .box::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:var(--chamfer);
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.09), inset -1px -1px 0 rgba(0,0,0,.7), inset 0 0 0 3px rgba(0,0,0,.25); }
+  .skin-deck .box h3 { text-shadow:0 1px 0 rgba(0,0,0,.8); }
+  /* Recessed readouts: dark glass set into the plate. */
+  .skin-deck #log, .skin-deck #cardDetail, .skin-deck #ingredients, .skin-deck #recipes {
+    background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c; box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
+  .skin-deck #cardDetail { border-top:0; }
+  .skin-deck canvas#c { border:0; box-shadow:0 0 0 5px #15171a, 0 0 0 6px rgba(255,255,255,.07), 0 0 0 9px #0a0b0d, 0 18px 40px rgba(0,0,0,.7); }
+  .skin-deck #hint { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 -2px 0 rgba(0,0,0,.18); background:linear-gradient(180deg, #d3d6d3, #c3c6c3); }
+  .skin-deck button:not(.go):not(.ready) { background:linear-gradient(180deg, #2a2e33, #1c1f23); box-shadow:inset 0 1px 0 rgba(255,255,255,.08); }
+  /* The radio: a green phosphor screen behind glass, lit from inside. */
+  .skin-deck #radioBox { background:
+      linear-gradient(115deg, transparent 0 58%, rgba(255,255,255,.06) 58% 64%, transparent 64%),
+      repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px),
+      radial-gradient(110% 150% at 50% 50%, #0b3a22, #04170d 70%, #020a06); }
+  .skin-deck #radioBox::after { box-shadow:inset 0 0 28px rgba(0,255,115,.22), inset 0 3px 10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(0,255,115,.25); }
+  .skin-deck #radioBox > svg.outline path:first-child { stroke:rgba(0,255,115,.35); }
+  .skin-deck #radioBox .ticker { color:#6dffab; text-shadow:0 0 6px rgba(0,255,115,.9), 0 0 16px rgba(0,255,115,.4); }
+  .skin-deck #radioFx { color:#b5f7cf; text-shadow:0 0 6px rgba(0,255,115,.35); }
+  .skin-deck #radioBox .small, .skin-deck #radioBox .label { color:rgba(140,230,180,.65); }
 </style>
 </head>
 <body class="intro">
+<canvas id="backdrop"></canvas>
 <canvas id="sky"></canvas>
 <div id="wrap">
   <div id="stage">
@@ -1866,7 +1921,7 @@ function update(dt) {
 
 function draw() {
   const L = layer();
-  if (rockFor !== g) buildRock();                            // a new layer: draw its rock once
+  if (rockFor !== g) { buildRock(); paintBackdrop(); }       // a new layer: draw its rock once
   ctx.fillStyle = COL.air; ctx.fillRect(0, 0, cv.width, cv.height);
   ctx.save();
   ctx.translate(0, -cam * T);
@@ -2337,6 +2392,19 @@ addEventListener('resize', () => {
   const size = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4);   // ignore changes under ~4 px
   if (size !== fittedFor) { fittedFor = size; fit(); }
 });
+// Skins, to explore depth (2026-11-16): ?skin=glass (frosted panels over the layer's own rock, far behind) or ?skin=deck
+// (machined plates, recessed readouts, a phosphor radio). Without it, the default.
+const SKIN = new URLSearchParams(location.search).get('skin');
+if (SKIN === 'glass' || SKIN === 'deck') { document.body.classList.add('skin-' + SKIN); document.body.insertAdjacentHTML('beforeend', `<div id="skinTag">Skin: ${SKIN}</div>`); }
+// Glass: the backdrop is the current layer's rock, enlarged, blurred and dimmed, so the glass has something to look through.
+function paintBackdrop() {
+  if (SKIN !== 'glass' || !rockImg) return;
+  const bd = $('backdrop'), w = bd.width = Math.ceil(innerWidth / 3), h = bd.height = Math.ceil(innerHeight / 3), c = bd.getContext('2d');
+  const sh = Math.min(rockImg.height, rockImg.width * h / w * 1.6), sy = Math.max(0, Math.min(rockImg.height - sh, cam * T - sh / 3));
+  c.filter = 'blur(6px) brightness(.42) saturate(1.2)'; c.drawImage(rockImg, 0, sy, rockImg.width, sh, -w * .1, -h * .1, w * 1.2, h * 1.2); c.filter = 'none';
+  const v = c.createRadialGradient(w / 2, h * .45, h * .2, w / 2, h / 2, Math.max(w, h) * .75); v.addColorStop(0, 'rgba(5,7,10,0)'); v.addColorStop(1, 'rgba(5,7,10,.85)'); c.fillStyle = v; c.fillRect(0, 0, w, h);
+}
+addEventListener('resize', paintBackdrop);
 // Panels: the design system's frame. A vector outline at the panel's own size, cut corners, and a tab that fits its heading;
 // redrawn whenever the panel (or its heading) changes size, so it stays crisp at any scale.
 function drawFrame(el) {
