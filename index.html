@@ -65,6 +65,14 @@
   #radioBox { flex:1; min-width:0; padding:8px 12px 10px; }   /* long and slim */
   #radioBox.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
+  /* The guide (2026-11-16): the radio's amber pulse, used for every first step, one at a time (guideNow()): the hint bar when the shift
+     begins, the radio, the [1] Strength row (shake it, then drink it), the hint bar again for the first dig. */
+  #hint.guide { animation:hintguide 1.8s ease-in-out infinite; }
+  @keyframes hintguide { 0%, 100% { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 2px rgba(255,180,60,.3), inset 0 -2px 0 rgba(0,0,0,.18); }
+                         50% { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 3px rgba(255,180,60,1), inset 0 -2px 0 rgba(0,0,0,.18); } }
+  .recipe.guide { outline:1.5px solid rgba(255,180,60,.3); outline-offset:4px; animation:rowguide 1.8s ease-in-out infinite; }
+  @keyframes rowguide { 50% { outline-color:rgba(255,180,60,1); } }
+  @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
   #radioBox .ticker { flex:1; min-width:0; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
@@ -777,6 +785,16 @@ function volumeKey() {
 function tuneIn() { if (!sound.on) { sound.on = true; soundGraph(); soundTick(0); } if (bus.ac && bus.ac.state === 'suspended') bus.ac.resume(); }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
 const musicOn = () => sound.on && !!songOf(radioNow()).file;
+// Where to look now, during the first steps: one thing at a time (the GDD's onboarding rule). null: nothing calls.
+function guideNow() {
+  if (!running || !s || s.drift || s.over) return null;
+  if (s.hintIntroUntil > now()) return 'hint';                                   // the shift begins: this is where instructions appear
+  if (!musicOn()) return 'radio';                                                // the drill waits for music (also later, if the music stops)
+  if (s.drinks === 0 && (s.bottles.strength > 0 || (!shaking() && canMix('strength')))) return 'strength';   // shake the first Strength, then drink it
+  if (s.drinks === 0 && shaking()) return null;                                  // the first shake: its key fills amber, nothing else calls
+  if (s.dug === 0) return 'hint';                                                // Press ↓ to dig
+  return null;
+}
 // Like a real radio, a station you switch to is already playing: a random song, from a random place in it.
 // (A song that ends gives way to the next from its start; a song that is pinned, like The You Show, starts at the top.)
 function loadSong(file) {
@@ -1888,6 +1906,7 @@ function newGame() {
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
   s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey');
   begin();
+  s.hintIntroUntil = now() + 4000;                         // the guide's first stop: the hint bar
   say('Welcome to Korova Rock. Dig responsibly.');
   say(`Starter ration: ${CONFIG.start.whey} Regolith Whey. Courtesy of the Foundation.`);
 }
@@ -2268,7 +2287,7 @@ function radioHud() {
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + ''); setText('radioLesson', sound.on && s && !s.radioHops ? 'Each station does something: R for the next.' : '');   // the radio lesson lives in the radio, until another station is tried
-  $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
+  $('radioBox').classList.toggle('call', guideNow() === 'radio');   // the drill is waiting: look here
 }
 
 // A shake key's state: can (SHAKE lit), shaking (SHAKE fills amber over the shake), ready (DRINK lit), off (dark: can't mix, or another is shaking).
@@ -2409,6 +2428,7 @@ function hud() {
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
   setText('effects', 'Active: ' + (fx.join(' · ') || 'none'));
+  const gd = guideNow(); $('hint').classList.toggle('guide', gd === 'hint'); $('act_strength').closest('.recipe').classList.toggle('guide', gd === 'strength');
   drawGaugeMeter(t);
   cv.className = s.drift ? '' : frenzy() ? 'frenzy' : stillness() ? 'still' : '';   // the Drift drops Stillness's tint: space has its own colours
   document.body.classList.toggle('intro', s.drinks === 0);
