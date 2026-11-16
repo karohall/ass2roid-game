@@ -1418,8 +1418,8 @@ const secretOf = k => Object.values(SECRET).find(x => k in x.clues);
 const CLUE_FOUND = {
   chrome: 'Scratched into the rock: “…AND CHROME.” The rest is scraped away.',
   crack:  'Scratched into the rock: “CRACK AND…” The rest runs under the Näsa chrome.',
-  doppioWhey:   'Scratched into the rock: “TWO WHEY AND…” The rest is scraped away.',
-  doppioPowder: 'Scratched into the rock: “…A POWDER, DARLING.” Someone drew a heart.',
+  doppioWhey:   'Scratched into the rock: “DUO DI WHEY…” The rest is scraped away.',   // the user's line, in the Italian of Disco Gravitas
+  doppioPowder: 'Scratched into the rock: “…UNA DI POWDER.” Someone drew a heart.',
 };
 function secretCard(key) {
   const S = SECRET[key], found = key === 'candy' ? s.candyFound : s.jizzFound;
