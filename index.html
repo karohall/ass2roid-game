@@ -32,7 +32,7 @@
   canvas.still { filter:grayscale(.9) brightness(.82) contrast(.88) sepia(.25) hue-rotate(175deg) saturate(1.3); transition:filter 1.5s; }   /* Stillness: cold, drained, blue-grey */
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
-  #hint { margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
+  #hint { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1.5px rgba(80,84,82,.45), inset 0 -2px 0 rgba(0,0,0,.18); margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
   #dosage { --step:40px; position:relative;   /* the cluster, recessed behind glass; its right end a step lower, like the frames' tabs */
     clip-path:polygon(8px 0, calc(100% - 118px) 0, calc(100% - 102px) var(--step), 100% var(--step), 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
@@ -63,7 +63,7 @@
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
   #radioBox { flex:1; min-width:0; padding:8px 12px 10px; }   /* long and slim */
-  #radioBox.call > svg.outline path:first-child { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
+  #radioBox.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
   #radioBox .ticker { flex:1; min-width:0; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
@@ -92,13 +92,13 @@
   .sw.crust { background:repeating-linear-gradient(180deg, transparent 0 2px, #b4bac0 2px 3px) 4px 4px / 8px 8px no-repeat, var(--bg); box-shadow:inset 0 0 0 1px #b4bac0, inset 0 0 0 3px var(--bg), inset 0 0 0 4px rgba(180,186,192,.6); }
   #panel, #panel2 { display:flex; flex-direction:column; gap:10px; }
   /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
-  .box { position:relative; padding:10px 12px 12px; --frame:var(--line-2); }
+  .box { position:relative; padding:10px 12px 12px; --frame:rgba(150,157,164,.5); --edge-hi:rgba(214,220,226,.8); --edge-lo:rgba(70,76,82,.8); }   /* the frame's steel edge: highlight, body, shadow */
   .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
   .box > *:not(svg) { position:relative; z-index:1; }
   .box h3 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--text); }
   .box h3::before { content:''; width:6px; height:6px; flex:none; background:var(--dim); }
   .box h3 .org { font:500 11px/1 var(--f-small); letter-spacing:.04em; text-transform:none; color:var(--faint); }   /* who keeps it, quietly */
-  #milk { --frame:rgba(150,157,164,.75); }                             /* the shakes stand out */
+  #milk { --frame:rgba(170,177,184,.8); --edge-hi:rgba(236,240,244,.95); }                             /* the shakes stand out */
   #milk h3::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
   .row { display:flex; justify-content:space-between; gap:8px; }
   .bar { height:4px; background:var(--line); margin:4px 0 3px; }
@@ -277,7 +277,7 @@
     box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
   #cardDetail { border-top:0; }
   #radioBox { clip-path:var(--chamfer); background:radial-gradient(120% 160% at 50% 130%, rgba(var(--fluo-rgb),.26), rgba(var(--fluo-rgb),.06) 55%, transparent 75%), linear-gradient(180deg, rgba(var(--fluo-rgb),.10), rgba(var(--fluo-rgb),.02)), #0b0e10; }   /* dark behind the glass: the plate around is silver */
-  #radioBox > svg.outline path:first-child { fill:rgba(var(--fluo-rgb),.05); stroke:rgba(var(--fluo-rgb),.5); }
+  #radioBox > svg.outline path:first-of-type { fill:rgba(var(--fluo-rgb),.05); stroke:rgba(var(--fluo-rgb),.5); }
   #radioBox::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:var(--chamfer);
     background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
   #radioBox .ticker { text-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 18px rgba(var(--fluo-rgb),.45); }
@@ -297,7 +297,7 @@
   #panel::before, #panel2::before { content:''; position:absolute; left:-9px; top:0; bottom:0; width:2px; background:linear-gradient(90deg, rgba(0,0,0,.75) 0 1px, rgba(255,255,255,.06) 1px); }   /* the seams between the columns */
   body.wide #panel2::before { opacity:0; }
   .box { --bay:#121417; }
-  .box > svg.outline path:first-child { fill:var(--bay); }
+  .box > svg.outline path:first-of-type { fill:var(--bay); }
   canvas#c { box-shadow:0 0 0 3px #07080a, 0 0 0 4px rgba(255,255,255,.07); }   /* the mining window, set in a bezel */
   /* Name plates: engraved in a raised steel plate, the letters cut in (shadow above, light below). The square becomes a lamp. */
   .box h3 { padding:3px 8px 3px 7px; margin:0 0 4px -2px; width:max-content; color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s);
@@ -419,7 +419,7 @@
   </div>
 
     <div id="dosage" class="later" data-reveal="drink">
-      <svg id="gauge" width="652" height="230" viewBox="0 0 652 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
+      <svg id="gauge" width="480" height="230" viewBox="0 0 480 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
     </div>
     <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
     <div class="box" id="radioBox">
@@ -2290,7 +2290,14 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
 // the shake on the left (amber while it shakes, blue when a bottle is ready) and the dose window on the right (×1.5, ×2, ×3 and its seconds).
-const GZ = { w: 652, h: 230, main: { cx: 252, cy: 250, R: 152, half: 48 }, shake: { cx: 58, cy: 110, R: 46, half: 125 }, win: { cx: 432, cy: 134, R: 32, half: 125 } };   // three sizes: the shake big, the dial, Next drink small under the step   // centred in whatever width the deck gives it (buildGauge)
+const GZ = { w: 480, h: 230, main: { half: 48 }, shake: { half: 125 }, win: { half: 125 } };
+// Three layouts for the small gauges (2026-11-16, to compare in play: ?cluster=a, b or c). "in": the reading sits on the gauge's face.
+const CLUSTER = ({ a: 1, b: 1, c: 1 })[new URLSearchParams(location.search).get('cluster')] ? new URLSearchParams(location.search).get('cluster') : 'b';
+const CLUSTERS = {
+  a: w => ({ shake: { cx: 48, cy: 112, R: 38 }, win: { cx: w - 40, cy: 134, R: 28 }, main: { cx: (w + 18) / 2, cy: 244, R: 172 } }),                         // smaller gauges either side
+  b: w => ({ shake: { cx: w - 56, cy: 84, R: 32, in: true }, win: { cx: w - 56, cy: 170, R: 24, in: true }, main: { cx: 188, cy: 250, R: 180 } }),          // both stacked on the right, under the step
+  c: w => ({ shake: { cx: 46, cy: 118, R: 34 }, win: { cx: w - 48, cy: 84, R: 24, in: true }, main: { cx: 232, cy: 244, R: 166 } }),                       // Next drink up in the corner under the step
+};   // three sizes: the shake big, the dial, Next drink small under the step   // centred in whatever width the deck gives it (buildGauge)
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2298,13 +2305,15 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; GZ.main.cx = (w + 24) / 2; GZ.win.cx = w - 44;   // the dial centred between the two small gauges
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; const L = CLUSTERS[CLUSTER](w); for (const k of ['main', 'shake', 'win']) GZ[k] = { ...L[k], half: GZ[k].half };
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
     h += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${major ? '#e1e4e6' : 'rgba(150,157,164,.55)'}" stroke-width="${major ? 2 : 1}"/>`; } return h; };
   const txt = (cls, x, y, size, fill, weight, fam, extra = '') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="middle" font-family="${fam}" font-weight="${weight}" font-size="${size}" fill="${fill}" ${extra}></text>`;
-  let h = '<defs><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
+  const bez = `M8.5 .75 H${w - 118} L${w - 102} 40.75 H${w - .75} V${GZ.h - 8.5} L${w - 8.5} ${GZ.h - .75} H.75 V8.5 Z`;   // the box's outline, as its clip-path
+  let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
+  h += `<path d="${bez}" fill="none" stroke="url(#gbez)" stroke-width="1.5"/>`;   // a steel bezel around the glass, like the radio's lit edge
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
@@ -2316,12 +2325,13 @@ function buildGauge() {
   h += '<text class="gword" x="16" y="34" text-anchor="start" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-left corner, like a readout: the dial gets the room under it
   // the two small gauges
   for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'NEXT DRINK']]) {
-    const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge
+    const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
     h += `<path d="${gArc(d, -1, 1, d.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(d, -1, 1, r)}" stroke="rgba(150,157,164,.08)" stroke-width="7" fill="none"/>`;
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
-    h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>`;
-    h += txt(k + 'read', d.cx, ry, d.R > 45 ? 17 : 14, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx}" y="${ry + 22}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + txt(k + 'sub', d.cx, ry + 40, 11, '#34e6ff', 600, 'IBM Plex Sans');
+    const lab = t => `<text x="${d.cx}" y="${t}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>`;
+    if (d.in) h += txt(k + 'read', d.cx, d.cy + 5, 13, '#5f656b', 700, 'Chakra Petch') + txt(k + 'sub', d.cx, d.cy + 19, 11, '#34e6ff', 600, 'IBM Plex Sans') + lab(d.cy + d.R + 16);
+    else h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>` + txt(k + 'read', d.cx, ry, d.R > 36 ? 16 : 14, '#5f656b', 700, 'Chakra Petch') + lab(ry + 20) + txt(k + 'sub', d.cx, ry + 37, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
 }
@@ -2343,14 +2353,14 @@ function drawGaugeMeter(t) {
   // The shake gauge: amber while a bottle shakes (the seconds left), blue and full when one is ready to drink (and its key).
   const S = GZ.shake, ready = VARIANTS.findIndex(v => s.bottles[v] > 0), sh = shaking() ? Math.min(1, 1 - (s.shake.until - t) / CONFIG.mix.shakeMs) : null;
   const sU = sh !== null ? sh * 2 - 1 : ready >= 0 ? 1 : -1, sCol = sh !== null ? '#ffb43c' : ready >= 0 ? '#34e6ff' : '#5f656b';
-  for (const ln of G.querySelectorAll('.sneedle line')) { gSeg(ln, S, sU, S.R * .28, S.R + 10); attr(ln, 'stroke', sCol); }
+  for (const ln of G.querySelectorAll('.sneedle line')) { gSeg(ln, S, sU, S.R * (S.in ? .58 : .28), S.R + 8); attr(ln, 'stroke', sCol); }
   attr(q('sfill'), 'd', sU > -1 ? gArc(S, -1, sU, S.R - 5.5) : ''); attr(q('sfill'), 'stroke', sCol);
   put(q('sread'), sh !== null ? Math.max(0, (s.shake.until - t) / 1000).toFixed(1) + 's' : ready >= 0 ? 'DRINK' : '—'); attr(q('sread'), 'fill', sCol);
   put(q('ssub'), sh === null && ready >= 0 ? 'press ' + (ready + 1) : '');
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
   const W = GZ.win, win = windowDrinks(), open = win.length && !st && !active('focus'), m = nextMult(), left = open ? Math.max(0, Math.max(...win) + CONFIG.balance.windowMs - t) : 0;
   const wU = open ? left / CONFIG.balance.windowMs * 2 - 1 : -1, wCol = open ? '#34e6ff' : '#5f656b';
-  for (const ln of G.querySelectorAll('.wneedle line')) { gSeg(ln, W, wU, W.R * .28, W.R + 8); attr(ln, 'stroke', wCol); }
+  for (const ln of G.querySelectorAll('.wneedle line')) { gSeg(ln, W, wU, W.R * (W.in ? .58 : .28), W.R + 8); attr(ln, 'stroke', wCol); }
   attr(q('wfill'), 'd', open ? gArc(W, -1, wU, W.R - 5.5) : ''); attr(q('wfill'), 'stroke', wCol);
   put(q('wread'), '×' + (open ? m : 1)); attr(q('wread'), 'fill', open || (active('focus') && !st) ? '#34e6ff' : '#5f656b');
   put(q('wsub'), active('focus') && !st ? 'steady hand' : open ? Math.ceil(left / 1000) + 's' : '');
@@ -2551,6 +2561,7 @@ addEventListener('resize', () => {
 });
 // Panels: the design system's frame. A vector outline at the panel's own size, cut corners, and a tab that fits its heading;
 // redrawn whenever the panel (or its heading) changes size, so it stays crisp at any scale.
+let frameIds = 0;
 function drawFrame(el) {
   const w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
   const c = 8, step = 6, head = el.querySelector('h3, .label'), hw = head && head.offsetWidth ? head.offsetLeft + head.offsetWidth + 22 : 0, tab = hw && hw < w - 40 ? hw : 0;
@@ -2558,7 +2569,8 @@ function drawFrame(el) {
   if (!svg) { svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'outline'); svg.setAttribute('aria-hidden', 'true'); el.prepend(svg); }
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
   const top = tab ? `M${c} .5 H${tab} L${tab + step} ${step + .5} H${w - .5}` : `M${c} .5 H${w - .5}`;
-  svg.innerHTML = `<path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="var(--panel)" stroke="var(--frame)" stroke-width="1"/>`;
+  const id = el.dataset.fid || (el.dataset.fid = 'f' + (++frameIds));   // a steel edge in its own material: light catching the top, darker below
+  svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--edge-hi)"/><stop offset=".45" style="stop-color:var(--frame)"/><stop offset="1" style="stop-color:var(--edge-lo)"/></linearGradient></defs><path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="var(--panel)" stroke="url(#${id})" stroke-width="1.5"/>`;
 }
 const frameWatch = new ResizeObserver(es => es.forEach(e => { const b = e.target.closest('.box'); if (b) drawFrame(b); }));
 document.querySelectorAll('.box').forEach(b => { frameWatch.observe(b); const hd = b.querySelector('h3, .label'); if (hd) frameWatch.observe(hd); });
