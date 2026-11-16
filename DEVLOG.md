@@ -541,4 +541,4 @@ When vibecoding with Claude Code, knowing about pixels, margins and padding come
 
 **Still to learn:** a large amount of information, with writing that is not too small, and everything still fitting on one screen.
 
-**Playtest, end of the day:** a full run took **14 minutes**, inside the 10–15 minute target. Small fixes after it: the Näsa pill taller, and Candygirl's pastels a notch deeper in the Chrome Vein, where the rock is light. Very close to finished.
+**Playtest, end of the day:** a full run took **14 minutes**, inside the 10–15 minute target. Small fixes after it: the Näsa pill taller, and Candygirl's pastels a notch deeper in the Chrome Vein, where the rock is light. Then the secret menu: Jizz+ is renamed **Doppio+** (too vulgar; Doppio sits beside Dolce de Leche+ on Disco Gravitas, and its line stays: *Doubles, darling*). Its rumour never showed in the run, so it now works like Candygirl's: graffiti in the rock, a redacted card that fills in, a rumour with the key. XXX is dropped for good. Very close to finished.

@@ -477,6 +477,7 @@ const CONFIG = {
     { name: 'The Shaker Strata', rows: 60,
       rock: { cells: 8, grout: 4, scale: 20, angle: 151, stretch: 1, detail: 0, base: 94, contrast: 160, levels: 16, jitter: 40, cool: 0, streaks: 0.24, veins: 1, bands: 0.38, bandSize: 4, bevel: 1, tileBevel: 1, dim: 0.72 },   // the tile lab (Prototype 4)
       hp: [16, 20], bandHp: 110, crustHp: 110, crustMinPower: 4, tipAt: 100, tint: '#565350',
+      graffiti: ['doppioWhey', 'doppioPowder'],   // Doppio+'s recipe, scratched into the rock (2026-11-16), as Candygirl's is in the Chrome Vein
       shakers: 0.02,               // fossilised shakers: break one for a ready, random Milk+
       shakerOdds: { strength: 0.5, calm: 0.15, recovery: 0.15, stamina: 0.1, focus: 0.1 },   // they lean Strength: the layer is short on Whey
       yields: { powder: 0.05, whey: 0.025, chrome: 0.025 },
@@ -548,7 +549,7 @@ const CONFIG = {
   loadingMs: 4000,                // loading screen bar; then it waits for a key
   mix: { shakeMs: 2000 },
   // The secret menu: not on the Milk+ menu. Its recipes are sung on the radio (Candygirl's in Candygirl (Asylum Mix)).
-  jizz:  { recipe: { whey: 2, powder: 1 }, durationMs: 45000, song: null },   // Jizz+, key 9, Disco Gravitas: for a while every shake makes two bottles (you pay for both). song: its track, once unlocked in Suno
+  jizz:  { recipe: { whey: 2, powder: 1 }, durationMs: 45000, song: null },   // Doppio+, key 9, Disco Gravitas: for a while every shake makes two bottles (you pay for both). song: its track, once unlocked in Suno
   candy: { recipe: { chrome: 1, spores: 1 }, durationMs: 45000, glide: 1 },   // glide: the stripes move about one tile a second   // Candygirl, key 0: for a while, ↑ runs you up open tunnel         // shaking a Milk+; no digging meanwhile. Drinking is instant.
 
 };
@@ -557,7 +558,7 @@ const CONFIG = {
 // CONTENT: names and Field Guide copy.
 // ─────────────────────────────────────────────────────────────────────────────
 const VARIANTS = ['strength', 'calm', 'recovery', 'stamina', 'focus'];
-const VNAME = { candy: 'Candygirl', jizz: 'Jizz+', strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
+const VNAME = { candy: 'Candygirl', jizz: 'Doppio+', strength: 'Strength', calm: 'Calm', stamina: 'Stamina', focus: 'Hyperfocus', recovery: 'Recovery' };
 const VDESC = { strength: 'Dig harder. Stacks. Pushes toward Frenzy.', calm: 'Pulls toward Stillness, where everything comes out double.', stamina: 'Drink it last: everything already in your system lasts 50% longer.', focus: 'Drinks don’t move the meter, and an open ? seam stays open.', recovery: 'Repairs the drill after a Frenzy.' };
 const ING = {
   whey:   { name: 'Regolith Whey',  letter: 'W', card: 'Nutrition Facts: 0 g fat, 40 g regolith. Caution: do not inhale. Fun fact: it was milk once, according to the label.' },
@@ -591,7 +592,7 @@ const ARTEFACT_CARD = {
   boot: c => `Site KR-1, Crater ${c}. A single moon boot, upright and laced, perfectly still. Size undisclosed. The other boot has not been found. The Foundation considers the matter closed.`,
   record: c => `Site KR-1, Crater ${c}. Belt Authority Form 7B, carbon copy. Shaft declared safe for prospecting. Reason for inspection: ████████████. Inspector: ████. Findings: none. Additional findings: ███████████████████. The word "none" has been crossed out twice. The language of the form has been compared with every known language family on Terra. It has no relatives. The Foundation suspects the Belt Authority invented it.`,   // redacted: the hidden texts come with XXX
   duck: c => `Site KR-1, Crater ${c}. A rubber duck, yellow polymer, faded. Recovered from a layer with no history of water. The Foundation believes it arrived by current. There is no current on Korova Rock.`,
-  parmesan: c => `Site KR-1, Crater ${c}. A wedge of Parmigiano, rind intact, aged an estimated four thousand years. Edible, and rich in lysine, according to the bartender at the Milk+ bar, who has asked for it back. The Foundation has accepted it as collateral. Tool marks indicate at least one attempt to take a piece. The attempt failed.`,   // the bartender: Jizz+'s, later
+  parmesan: c => `Site KR-1, Crater ${c}. A wedge of Parmigiano, rind intact, aged an estimated four thousand years. Edible, and rich in lysine, according to the bartender at the Milk+ bar, who has asked for it back. The Foundation has accepted it as collateral. Tool marks indicate at least one attempt to take a piece. The attempt failed.`,   // the bartender: Doppio+'s, later
   villain: c => `Site KR-1, Crater ${c}. A signet ring in pure chrome, heavy, worn smooth on the inside, engraved with the initials ██. The seal matches every Näsa claim filed on this vein. The documents it signed have not been found. The Foundation has locked the ring in the vault and removed the key.`,   // the villain item: who's behind Näsa is the XXX reveal
   polaroid: c => `Site KR-1, Crater ${c}. A Polaroid, undeveloped. The image never appeared. Prospectors have shaken it for years. The Foundation notes that shaking does not help. It never did.`,
   core: () => '█████ ███ ████████ ██ ███ ████. ████████ ██████ ███ ███ █████████. ██ ████.<br>Redacted by the Belt Authority.',
@@ -652,7 +653,7 @@ function radioNow() {
   if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
   if (s && s.drift) return { key: 'oddity', song: 0 };
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
-  if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Jizz+. Doubles, darling.' };   // once the song is unlocked
+  if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Doppio+. Doubles, darling.' };   // once the song is unlocked
   if (s && candy()) return { key: 'pump', song: 0, track: CANDY_SONG, cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
 }
@@ -849,7 +850,7 @@ let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastF
 
 const layer = () => CONFIG.layers[s.layer];
 const active = v => s.fx[v] > now();
-const jizz = () => s.fx.jizz > now();     // Jizz+: every shake, two bottles
+const jizz = () => s.fx.jizz > now();     // Doppio+: every shake, two bottles
 const candy = () => s.fx.candy > now();   // Candygirl: running upwards
 // Pink, mint, blue and lilac (no yellow: cool tones, 2026-11-16). Safe for photosensitive players (2026-11-14): the four pastels lie within 7% brightness of each other (no change counts as
 // a flash), the stripes glide slowly instead of stepping, the colour fades in and out over a second, and with the
@@ -1292,7 +1293,7 @@ const shaking = () => s.shake && s.shake.until > now();
 
 function mix(v) {
   if (!running || shaking() || !canMix(v)) return;
-  const two = jizz() && Object.entries(CONFIG.recipes[v]).every(([k, n]) => s.inv[k] >= n * 2);   // Jizz+: two bottles in one shake, if you can pay for both
+  const two = jizz() && Object.entries(CONFIG.recipes[v]).every(([k, n]) => s.inv[k] >= n * 2);   // Doppio+: two bottles in one shake, if you can pay for both
   for (const [k, n] of Object.entries(CONFIG.recipes[v])) s.inv[k] -= n * (two ? 2 : 1);
   s.shake = { v, two, until: now() + CONFIG.mix.shakeMs };
   held = null; pendingTap = null;
@@ -1323,7 +1324,7 @@ function press(v) {
 // The secret menu. Candygirl isn't on the menu: you know the recipe from the song, or you don't.
 // Holding one Chrome Filings and one Crack Spores, 0 shakes it, and it goes down as soon as it is ready.
 const candyRecipe = () => Object.entries(CONFIG.candy.recipe).map(([k, n]) => `${n}× ${ING[k].name}`).join(' + ');
-// Jizz+: the bartender at the Milk+ bar pours doubles. Two Regolith Whey and one Legacy Powder, 9.
+// Doppio+: the bartender at the Milk+ bar pours doubles. Two Regolith Whey and one Legacy Powder, 9.
 const jizzRecipe = () => Object.entries(CONFIG.jizz.recipe).map(([k, n]) => `${n}× ${ING[k].name}`).join(' + ');
 function secretJizz() {
   if (!running || !sound.on || shaking()) return;
@@ -1337,9 +1338,9 @@ function secretJizz() {
 function drinkJizz() {
   s.fx.jizz = now() + CONFIG.jizz.durationMs;
   if (!s.jizzFound) {
-    s.jizzFound = true; radio.unlocked.jizz = true; unlock('secret_jizz'); renderGuide();
-    celebrate(); announce(`Secret menu: ${em('Jizz+')}. Two whey and a powder, poured by the bartender. For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles.`, 0, true);
-  } else say('Jizz+. Doubles, darling.');
+    s.jizzFound = true; radio.unlocked.jizz = true; for (const k in SECRET.doppio.clues) s.clues[k] = true; unlock('secret_jizz'); renderGuide();   // the card, complete
+    celebrate(); announce(`Secret menu: ${em('Doppio+')}. Two whey and a powder, poured by the bartender. For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles.`, 0, true);
+  } else say('Doppio+. Doubles, darling.');
 }
 function secretCandy() {
   if (!running || !sound.on || shaking()) return;
@@ -1408,25 +1409,33 @@ function drink(v, fromShaker = false) {
 // The secret menu in the Field Guide: a redacted card that appears with the first clue you find,
 // and fills in, piece by piece, from graffiti in the rock and a rumour.
 const SECRET = {
-  candy: { clues: { crack: 'Crack', chrome: 'chrome', zero: '0' },
-           text: c => `${c.crack} and ${c.chrome}, shaken with ${c.zero}.` },
+  candy:  { id: 'secret_candy', clues: { crack: 'Crack', chrome: 'chrome', zero: '0' },
+            text: c => `${c.crack} and ${c.chrome}, shaken with ${c.zero}.` },
+  doppio: { id: 'secret_jizz', clues: { doppioWhey: 'Two whey', doppioPowder: 'a powder', doppioNine: '9' },
+            text: c => `${c.doppioWhey} and ${c.doppioPowder}, and ask the bartender for ${c.doppioNine}.` },
 };
+const secretOf = k => Object.values(SECRET).find(x => k in x.clues);
 const CLUE_FOUND = {
   chrome: 'Scratched into the rock: “…AND CHROME.” The rest is scraped away.',
   crack:  'Scratched into the rock: “CRACK AND…” The rest runs under the Näsa chrome.',
+  doppioWhey:   'Scratched into the rock: “TWO WHEY AND…” The rest is scraped away.',
+  doppioPowder: 'Scratched into the rock: “…A POWDER, DARLING.” Someone drew a heart.',
 };
-function secretCard() {
-  const known = Object.fromEntries(Object.entries(SECRET.candy.clues).map(([k, w]) => [k, s.clues[k] ? w : '█'.repeat(Math.max(1, w.length))]));
-  const done = Object.keys(SECRET.candy.clues).every(k => s.clues[k]);
-  return { id: 'secret_candy', cat: 'Secret menu', label: s.candyFound ? 'Candygirl' : '█████████', title: s.candyFound ? 'Candygirl' : 'Secret menu',
-    body: SECRET.candy.text(known) + (s.candyFound ? ` For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.` : done ? ' Not endorsed.' : '<br><i>Redacted. Some of it is written in the rock.</i>') };
+function secretCard(key) {
+  const S = SECRET[key], found = key === 'candy' ? s.candyFound : s.jizzFound;
+  const known = Object.fromEntries(Object.entries(S.clues).map(([k, w]) => [k, s.clues[k] ? w : '█'.repeat(Math.max(1, w.length))]));
+  const done = Object.keys(S.clues).every(k => s.clues[k]), name = key === 'candy' ? 'Candygirl' : 'Doppio+';
+  const after = key === 'candy' ? ` For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.` : ` For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles. Doubles, darling.`;
+  return { id: S.id, cat: 'Secret menu', label: found ? name : '█'.repeat(name.length), title: found ? name : 'Secret menu',
+    body: S.text(known) + (found ? after : done ? ' Not endorsed.' : '<br><i>Redacted. Some of it is written in the rock.</i>') };
 }
 function clue(k, line) {
   if (s.clues[k]) return;
   s.clues[k] = true;
-  if (line) { celebrate(); announce(line + (s.guide.includes('secret_candy') ? ' The Field Guide fills in a word.' : ' The Field Guide has a new card: Secret menu.'), 0, true); }
-  if (s.guide.includes('secret_candy')) renderGuide();
-  else if (line) unlock('secret_candy');                  // the card appears with the first thing you find
+  const id = secretOf(k).id;
+  if (line) { celebrate(); announce(line + (s.guide.includes(id) ? ' The Field Guide fills in a word.' : ' The Field Guide has a new card: Secret menu.'), 0, true); }
+  if (s.guide.includes(id)) renderGuide();
+  else if (line) unlock(id);                              // the card appears with the first thing you find
 }
 function guideEntries() {
   return [
@@ -1435,8 +1444,8 @@ function guideEntries() {
     ...CONFIG.artefacts.filter(a => !a.withdrawn).map(a => ({ id: a.id, cat: 'Archive', art: a, label: String(a.no),
       title: `${catNo(a)} · ${a.name}`,
       body: ARTEFACT_CARD[a.id]((s && s.artCrater[a.id]) || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
-    ...(s && s.guide.includes('secret_candy') ? [secretCard()] : []),
-    ...(s && s.guide.includes('secret_jizz') ? [{ id: 'secret_jizz', cat: 'Secret menu', label: 'Jizz+', title: 'Jizz+', body: `Two Regolith Whey and one Legacy Powder, shaken with 9. Poured by the bartender at the Milk+ bar. For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles; you pay for both.` }] : []),   // only once found: not a ? slot
+    ...(s && s.guide.includes('secret_candy') ? [secretCard('candy')] : []),
+    ...(s && s.guide.includes('secret_jizz') ? [secretCard('doppio')] : []),
   ];
 }
 
@@ -1924,11 +1933,11 @@ function update(dt) {
     // The secret menu's rumour: once, when you first hold its ingredients. And once more in The Crack, the whole recipe this time,
     // if you still haven't had Candygirl: the last layer is the last chance.
     const lastLayer = s.layer === CONFIG.layers.length - 1;
-    // Jizz+, the same way as Candygirl (2026-11-16): a rumour once, when you first hold its ingredients (from the Shaker Strata on: the opening
+    // Doppio+, the same way as Candygirl (2026-11-16): a rumour once, when you first hold its ingredients (from the Shaker Strata on: the opening
     // teaches one thing at a time); and once more in the last layer, louder, if you still haven't had it. No radio condition.
     if (!s.jizzFound && s.layer >= 1 && s.inv.whey >= 2 && s.inv.powder >= 1 && s.announceUntil < t) {
-      if (!s.jizzRumour) { s.jizzRumour = true; announce('Rumour: the bartender at the Milk+ bar pours doubles. Two whey and a powder, and ask for 9.'); }
-      else if (lastLayer && !s.jizzRumour2) { s.jizzRumour2 = true; announce('Rumour, louder down here: two Regolith Whey and a Legacy Powder, and ask the bartender for 9. You have them.'); }
+      if (!s.jizzRumour) { s.jizzRumour = true; clue('doppioNine'); announce('Rumour: the bartender at the Milk+ bar pours doubles. You order it with 9.' + (s.guide.includes('secret_jizz') ? ' The Field Guide fills in a word.' : '')); }
+      else if (lastLayer && !s.jizzRumour2) { s.jizzRumour2 = true; for (const k in SECRET.doppio.clues) s.clues[k] = true; if (s.guide.includes('secret_jizz')) renderGuide(); else unlock('secret_jizz'); announce('Rumour, louder down here: two Regolith Whey and a Legacy Powder, and ask the bartender for 9. You have them.'); }
     }
     if (!s.candyFound && s.inv.chrome >= 1 && s.inv.spores >= 1 && s.announceUntil < t) {
       if (!s.candyRumour) { s.candyRumour = true; clue('zero'); announce('Rumour: the Milk+ bar serves one drink that isn’t on the menu. You order it with 0.' + (s.guide.includes('secret_candy') ? ' The Field Guide fills in a word.' : '')); }
@@ -2019,7 +2028,7 @@ function draw() {
       case SEAM: case ART: (seamAnswers(c.kind) ? FIND.seamOpen : FIND.seam)(ctx, x, y); break;
       case SEALED: (seamAnswers(c.kind) ? FIND.sealedOpen : FIND.sealed)(ctx, x, y); break;
       case SHAKER: FIND.shaker(ctx, x, y); break;
-      case GRAFFITI: (c.clue === 'crack' ? FIND.graffiti2 : FIND.graffiti)(ctx, x, y); break;
+      case GRAFFITI: (c.clue === 'crack' || c.clue === 'doppioPowder' ? FIND.graffiti2 : FIND.graffiti)(ctx, x, y); break;
       case SLAB: {
         FIND.slab(ctx, x, y);
         const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * Math.max(0, now() - c.hotAt - CONFIG.chrome.heatEveryMs * 2) / 1000) / CONFIG.chrome.meltHeat : 0;
@@ -2236,7 +2245,7 @@ function renderStatic() {
       <button id="act_${v}" class="key" aria-label="Shake"><span class="no">${i + 1}</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`).join('') + `
     <div class="recipe later" data-reveal="recipe_jizz">
-      <div class="name"><b>[9] Jizz+</b><br><span class="small">${jizzRecipe()}</span></div>
+      <div class="name"><b>[9] Doppio+</b><br><span class="small">${jizzRecipe()}</span></div>
       <button id="act_jizz" class="key jizz" aria-label="Shake"><span class="no">9</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>
     <div class="recipe later" data-reveal="recipe_candy">
@@ -2284,7 +2293,7 @@ function hintHTML(t) {
 function discoveryTag(t) {
   const m = /^(New compound|Recovered|Secret menu|New|Rumour)(?:, [^:]*)?: /.exec(t); if (!m) return null;
   let body = t.slice(m[0].length); const at = body.search(/[a-z]/i); if (at >= 0) body = body.slice(0, at) + body[at].toUpperCase() + body.slice(at + 1);
-  const role = m[1] === 'Rumour' ? 'steel' : m[1] === 'Secret menu' ? (/Jizz\+/.test(t) ? 'jizz' : /Candygirl/.test(t) ? 'candy' : 'violet') : 'fluo';
+  const role = m[1] === 'Rumour' ? 'steel' : m[1] === 'Secret menu' ? (/Doppio\+/.test(t) ? 'jizz' : /Candygirl/.test(t) ? 'candy' : 'violet') : 'fluo';
   return { label: m[1], role, body };
 }
 const TAG_CONFETTI = { fluo: ['#34e6ff', '#e1e4e6', '#969da4', '#c9ccc9'], jizz: ['#b9d3f0', '#a993d6', '#e1e4e6'], candy: ['#f2b8d6', '#a993d6', '#e1e4e6'], violet: ['#a993d6', '#e1e4e6', '#969da4'], steel: ['#e1e4e6', '#c9ccc9', '#969da4', '#5f656b'] };
@@ -2395,7 +2404,7 @@ function hud() {
   { const b = $('act_candy'), mine = shaking() && s.shake.v === 'candy'; b.disabled = !running || shaking() || !Object.entries(CONFIG.candy.recipe).every(([k, n]) => s.inv[k] >= n); keyState(b, mine ? 'shaking' : b.disabled ? 'off' : 'can'); }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
   if (candy()) fx.push(`Candygirl ${Math.ceil((s.fx.candy - t) / 1000)}s`);
-  if (jizz()) fx.push(`Jizz+ ${Math.ceil((s.fx.jizz - t) / 1000)}s`);
+  if (jizz()) fx.push(`Doppio+ ${Math.ceil((s.fx.jizz - t) / 1000)}s`);
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
