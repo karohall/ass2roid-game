@@ -533,7 +533,10 @@ Prototype 4 starts with the interface: the rover's control panel from the GDD's 
 - **The deck:** one gunmetal housing with screws and seams; engraved name plates with a lamp; the rover panel as instruments (counters behind glass, digging power as pips with the crust's need notched, the drill as a segmented bar); indicator lamps for Radio, Drill, Focus and Charge; the shake keys as cockpit push-buttons, SHAKE above DRINK, the lit half is what pressing does.
 - **The dosage meter:** three rounds. A shallow sweep gauge first, which was too small; then a car cluster: a deep dial in the middle, the shake on the left, Next drink (the dose window: ×1.5, ×2, ×3 and its seconds) on the right. The dial got calmer by losing its scale words: the big word underneath already says where you are.
 - **Before it powers up:** panels still to come are drawn as faint ghost frames, so the deck reads as hardware waiting, not as empty space.
+- **The layout, last:** wider than tall, like the 1280 × 960 frame. The mining window got a column of its own for the full height and grows to fill it (a third bigger on screen); the cluster sits under the Milk+ menu, the radio is a long strip under both. A silver backplate with screws holds it all.
 
 **What I learnt.** The balance between crude and elegant is very difficult to calibrate. Here it helped to have a clear moodboard and vision, and to follow it, and to look back at the games I love and was inspired by (LINEAGE.md). It mirrors the balance throughout the ASS2ROID universe: crude and kitsch, smart and derp, stylish and hilarious.
+
+When vibecoding with Claude Code, knowing about pixels, margins and padding comes in handy. And again, having a grasp of the design DNA is a must.
 
 **Still to learn:** a large amount of information, with writing that is not too small, and everything still fitting on one screen.

@@ -16,15 +16,15 @@
           --chamfer-s:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:400 14px/1.45 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }   /* no orphans: never one word alone on a last line */
-  :root { --side:480px; --cluster:652px; }                                      /* the two side columns; wider than the 300 of before, since the game is wider than it is tall */
-  #wrap { display:grid; grid-template-columns:442px var(--side) var(--side); grid-template-rows:var(--row1, auto) 120px 100px auto; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
-  #stage { grid-area:1 / 1; } #panel { grid-area:1 / 2; } #panel2 { grid-area:1 / 3 / 3 / 4; align-self:stretch; }   /* the right column runs down to the radio, its log filling it */
-  #dosage { grid-area:2 / 1 / 4 / 3; width:var(--cluster); align-self:stretch; }   /* the cluster: rows 2 and 3, under the window and part of the Milk+ column */
-  #baseRow { grid-area:3 / 2 / 4 / 4; margin-left:calc(var(--cluster) - 442px); align-self:stretch; } #legend { grid-area:4 / 1 / 5 / 4; }   /* the radio beside the cluster's foot, to the right edge; then the legend */
+  :root { --mid:480px; --side:440px; --cvk:1; }   /* the Milk+ column (and the cluster under it), the right column; --cvk: the mining window's size, set by placeMeter() to fill the height */
+  #wrap { display:grid; grid-template-columns:calc(440px * var(--cvk) + 2px) var(--mid) var(--side); grid-template-rows:var(--row1, auto) 230px 100px; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
+  #stage { grid-area:1 / 1 / 4 / 2; } #panel { grid-area:1 / 2; } #panel2 { grid-area:1 / 3 / 3 / 4; align-self:stretch; }   /* the mining window down the whole left; the Milk+ column; the right column down to the radio, its log filling it */
+  #dosage { grid-area:2 / 2 / 3 / 3; align-self:stretch; }   /* the cluster, under the Milk+ column */
+  #baseRow { grid-area:3 / 2 / 4 / 4; align-self:stretch; }   /* the radio, a long strip under both columns */
   body.fitting #panel2 { align-self:start; }                  /* measured at its own height */
   html, body { overflow:hidden; }                                /* the game always fits; a page scrollbar coming and going would shift it */
-  #stage { position:relative; width:442px; }
-  canvas { display:block; width:442px; height:calc(var(--viewH) + 2px); border:1px solid var(--line); background:#08090a; transition:transform .3s; outline:none; }
+  #stage { position:relative; }
+  canvas { display:block; width:calc(440px * var(--cvk) + 2px); height:calc(var(--viewH) * var(--cvk) + 2px); border:1px solid var(--line); background:#08090a; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.blast { animation:jolt .35s ease-out; }
   @keyframes jolt { 0% { transform:translate(0,0); } 20% { transform:translate(-4px,3px); } 45% { transform:translate(3px,-2px); } 70% { transform:translate(-2px,1px); } 100% { transform:translate(0,0); } }
@@ -32,9 +32,9 @@
   canvas.still { filter:grayscale(.9) brightness(.82) contrast(.88) sepia(.25) hue-rotate(175deg) saturate(1.3); transition:filter 1.5s; }   /* Stillness: cold, drained, blue-grey */
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
-  #hint { width:442px; margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
+  #hint { margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
   #dosage { --step:40px; position:relative;   /* the cluster, recessed behind glass; its right end a step lower, like the frames' tabs */
-    clip-path:polygon(8px 0, calc(100% - 150px) 0, calc(100% - 134px) var(--step), 100% var(--step), 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    clip-path:polygon(8px 0, calc(100% - 118px) 0, calc(100% - 102px) var(--step), 100% var(--step), 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
   #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
   #gauge { display:block; }
@@ -78,7 +78,7 @@
   #radioKeys { white-space:nowrap; flex:none; }
   #radioBox > .row:last-child { flex-wrap:wrap; gap:4px 12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
   #radioBox .label { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:8px; }
-  #legend { min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
+  #legend { min-height:50px; padding:6px 10px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.12); clip-path:var(--chamfer-s); display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   /* The legend: each thing in the rock as it looks, a small plate in its role's colour. */
   #legend > span { display:inline-flex; align-items:center; gap:6px; }
   .sw { display:inline-grid; place-items:center; width:16px; height:16px; flex:none; font:700 9px/1 var(--f-title); font-style:normal; color:var(--concrete); background:var(--bg); box-shadow:inset 0 0 0 1px var(--concrete); }
@@ -177,7 +177,7 @@
   .box.later:not(.shown) { display:block !important; visibility:hidden; }
   #panel2 > .box.later:last-child:not(.shown) { display:flex !important; }
   .box.later:not(.shown) > svg.outline { visibility:visible; opacity:.28; }
-  #dosage.later:not(.shown)::before { content:''; position:absolute; inset:0; visibility:visible; background:rgba(150,157,164,.045); box-shadow:inset 0 0 0 1px rgba(150,157,164,.12); }
+  #dosage.later:not(.shown)::before { content:''; position:absolute; inset:0; visibility:visible; background:rgba(8,9,11,.26); box-shadow:inset 0 0 0 1px rgba(150,157,164,.12); }
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
   body.intro #milk > svg.outline { opacity:.28; }                     /* at first, only the shake button and the ghost of its frame: the frame lights with the first drink */
@@ -195,7 +195,7 @@
   body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
-  .overlay { position:absolute; inset:0; height:var(--viewH); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
+  .overlay { position:absolute; inset:0; height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
   .overlay h1, .overlay h2, .overlay .ttl { margin:-8px 0 0; font:700 30px/1.05 var(--f-title); letter-spacing:.01em; }
   .overlay p { margin:0; }
   .overlay .body { font:400 14px/1.55 var(--f-text); color:var(--text); max-width:340px; }
@@ -276,7 +276,7 @@
   #log, #cardDetail, #ingredients, #recipes { background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c;
     box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
   #cardDetail { border-top:0; }
-  #radioBox { clip-path:var(--chamfer); background:radial-gradient(120% 160% at 50% 130%, rgba(var(--fluo-rgb),.26), rgba(var(--fluo-rgb),.06) 55%, transparent 75%), linear-gradient(180deg, rgba(var(--fluo-rgb),.10), rgba(var(--fluo-rgb),.02)); }
+  #radioBox { clip-path:var(--chamfer); background:radial-gradient(120% 160% at 50% 130%, rgba(var(--fluo-rgb),.26), rgba(var(--fluo-rgb),.06) 55%, transparent 75%), linear-gradient(180deg, rgba(var(--fluo-rgb),.10), rgba(var(--fluo-rgb),.02)), #0b0e10; }   /* dark behind the glass: the plate around is silver */
   #radioBox > svg.outline path:first-child { fill:rgba(var(--fluo-rgb),.05); stroke:rgba(var(--fluo-rgb),.5); }
   #radioBox::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:var(--chamfer);
     background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
@@ -287,9 +287,9 @@
   #wrap::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; clip-path:polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);   /* screws set into the plate, clear of the cut corners and the bezels */
     background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(28%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") left 2.5px top 2.5px / 12px 12px no-repeat, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(-52%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") right 2.5px top 2.5px / 12px 12px no-repeat,
       url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(71%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") left 2.5px bottom 2.5px / 12px 12px no-repeat, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(-14%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") right 2.5px bottom 2.5px / 12px 12px no-repeat,
-      repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px),   /* brushed */
-      linear-gradient(112deg, transparent 18%, rgba(255,255,255,.07) 30%, transparent 41%, transparent 58%, rgba(255,255,255,.05) 67%, transparent 76%),   /* chrome: two sheens across the plate */
-      linear-gradient(180deg, #3b4046 0%, #24282c 7%, #1b1e21 26%, #2b2f34 48%, #191c1f 66%, #272b2f 86%, #1c1f22 100%);   /* and its reflection bands */
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27200%27%20height%3D%27200%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%271.1%20.08%27%20numOctaves%3D%272%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%20.09%200%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27200%27%20height%3D%27200%27%20filter%3D%27url(%23n)%27%2F%3E%3C%2Fsvg%3E") 0 0 / 200px 200px,   /* a fine grain, no lines (lines alias into stripes when the game is scaled) */
+      linear-gradient(115deg, transparent 25%, rgba(255,255,255,.10) 42%, transparent 58%),   /* one soft sheen */
+      linear-gradient(180deg, #7d848b 0%, #686f76 18%, #5b6168 50%, #656c73 78%, #51575d 100%);   /* silver */
     box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -1px 0 rgba(0,0,0,.7), inset 1px 0 0 rgba(255,255,255,.04), inset -1px 0 0 rgba(0,0,0,.5); transition:opacity 6s ease 3s; }
   body.wide #wrap::before { opacity:0; }
   #panel, #panel2 { position:relative; }
@@ -372,6 +372,7 @@
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
     <div id="hint"></div>
+    <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
 
   <div id="panel">
@@ -426,7 +427,6 @@
       <div class="row"><span class="small" id="radioLesson"></span><span class="small" id="radioKeys">R: next station · T: tape · V: volume</span></div>
     </div>
     </div>
-    <div id="legend" class="small later" data-reveal="dig"></div>
 </div>
 
 <script>
@@ -1678,9 +1678,9 @@ function skyBegin() {
   if (sky.width !== innerWidth || sky.height !== innerHeight) { sky.width = innerWidth; sky.height = innerHeight; }
   const W0 = cv.width, H0 = cv.height, r = cv.getBoundingClientRect(), b = r.width / (W0 + 2);   // b: the page's scale
   const grow = smooth(ramp(5000, 17000, performance.now() - s.drift.t0));
-  const pr = $('panel').getBoundingClientRect(), br = $('dosage').getBoundingClientRect();
+  const pr = $('panel').getBoundingClientRect();
   const from = { x: r.left + b, y: r.top + b, w: W0 * b, h: H0 * b };                       // the mining window
-  const to = { x: r.left + b, y: r.top + b, w: pr.right - r.left - 2 * b, h: br.top - r.top - 10 * b };   // it and the Milk+ column, down to the cluster
+  const to = { x: r.left + b, y: r.top + b, w: pr.right - r.left - 2 * b, h: H0 * b };   // it and the Milk+ column, at the window's height
   const box = { x: lerp(from.x, to.x, grow), y: lerp(from.y, to.y, grow), w: lerp(from.w, to.w, grow), h: lerp(from.h, to.h, grow) };
   const k = lerp(b, to.h / H0, grow);
   skyCtx.setTransform(1, 0, 0, 1, 0, 0); skyCtx.clearRect(0, 0, sky.width, sky.height);
@@ -2289,7 +2289,7 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
 // the shake on the left (amber while it shakes, blue when a bottle is ready) and the dose window on the right (×1.5, ×2, ×3 and its seconds).
-const GZ = { w: 652, h: 230, main: { cx: 336, cy: 250, R: 176, half: 54 }, shake: { cx: 74, cy: 116, R: 58, half: 125 }, win: { cx: 594, cy: 136, R: 36, half: 125 } };   // three sizes: the shake big, the dial, Next drink small under the step   // centred in whatever width the deck gives it (buildGauge)
+const GZ = { w: 652, h: 230, main: { cx: 252, cy: 230, R: 140, half: 48 }, shake: { cx: 58, cy: 110, R: 46, half: 125 }, win: { cx: 432, cy: 134, R: 32, half: 125 } };   // three sizes: the shake big, the dial, Next drink small under the step   // centred in whatever width the deck gives it (buildGauge)
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2297,7 +2297,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; GZ.main.cx = w / 2 + 10; GZ.win.cx = w - 58;
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; GZ.main.cx = (w + 24) / 2; GZ.win.cx = w - 48;   // the dial centred between the two small gauges
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
@@ -2312,7 +2312,7 @@ function buildGauge() {
   ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
-  h += txt('gword', M.cx, 210, 34, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
+  h += txt('gword', M.cx, 212, 28, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
   // the two small gauges
   for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge
@@ -2329,7 +2329,7 @@ function drawGaugeMeter(t) {
   const G = $('gauge'), M = GZ.main, u = gU(s.meter), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
-  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 84, M.R + 12); attr(ln, 'stroke', col); }
+  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 62, M.R + 12); attr(ln, 'stroke', col); }
   q('needle').classList.toggle('hot', !!st);
   attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
   G.querySelectorAll('.gl').forEach((el, i) => { const on = !st && i === lvl; attr(el, 'fill', on ? '#e1e4e6' : '#5f656b'); attr(el, 'font-weight', on ? 600 : 500); });
@@ -2337,7 +2337,7 @@ function drawGaugeMeter(t) {
   const word = (st === 'frenzy' ? 'Frenzy' : st === 'still' ? 'Get out into the vast|nothingness of space' : DOSAGE[lvl]).toUpperCase(), wEl = q('gword');
   if (wEl.dataset.w !== word) { wEl.dataset.w = word; const two = word.split('|');
     wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="${M.cx}" dy="${i ? 21 : -12}">${l}</tspan>`).join('') : word;
-    attr(wEl, 'font-size', two.length > 1 ? 18 : word.length > 10 ? 26 : 34); }
+    attr(wEl, 'font-size', two.length > 1 ? 16 : word.length > 10 ? 22 : 28); }
   attr(wEl, 'fill', st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#e1e4e6');
   // The shake gauge: amber while a bottle shakes (the seconds left), blue and full when one is ready to drink (and its key).
   const S = GZ.shake, ready = VARIANTS.findIndex(v => s.bottles[v] > 0), sh = shaking() ? Math.min(1, 1 - (s.shake.until - t) / CONFIG.mix.shakeMs) : null;
@@ -2355,7 +2355,7 @@ function drawGaugeMeter(t) {
   put(q('wsub'), active('focus') && !st ? 'steady hand' : open ? Math.ceil(left / 1000) + 's' : '');
   [['gs', CONFIG.push.strength, REVEAL.recipe_strength()], ['gc', CONFIG.push.calm, REVEAL.recipe_calm()]].forEach(([c, push, known]) => {
     const el = q(c); if (!open || !known) { attr(el, 'opacity', 0); return; }
-    gSeg(el, M, gU(Math.max(CONFIG.balance.min, Math.min(CONFIG.balance.max, s.meter + push * m))), M.R - 76, M.R + 10); attr(el, 'opacity', .75); });
+    gSeg(el, M, gU(Math.max(CONFIG.balance.min, Math.min(CONFIG.balance.max, s.meter + push * m))), M.R - 56, M.R + 10); attr(el, 'opacity', .75); });
 }
 
 function hud() {
@@ -2505,7 +2505,13 @@ function placeMeter() {
   put($('effects'), 'Active: Strength ×2 45s · Stamina 45s · FRENZY 12s');   // a long but real one
   const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it
   rows.forEach(el => el.classList.add('shown')); document.body.classList.add('fitting');
-  $('wrap').style.setProperty('--row1', Math.max($('stage').offsetHeight, $('panel').offsetHeight, panel2Need - 130) + 'px');   // the right column spans both rows
+  const row1 = Math.max($('panel').offsetHeight, panel2Need - 240), w = $('wrap');   // the right column has rows 1 and 2
+  w.style.setProperty('--row1', row1 + 'px');
+  // The mining window fills the left column: as tall as the rows beside it, less the hint and the legend under it (whose height depends on its width: settle in a few passes).
+  for (let i = 0; i < 4; i++) {
+    const fixed = $('hint').offsetHeight + $('legend').offsetHeight + 16 + 2;
+    w.style.setProperty('--cvk', Math.max(1, Math.min(1.6, (row1 + 350 - fixed) / cv.height)).toFixed(4));
+  }
   rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
   $('hint').innerHTML = hint0;
   if (!fitting) document.body.classList.remove('fitting');
@@ -2518,13 +2524,14 @@ function fit() {
   document.body.classList.add('fitting');                   // placeholders give way to the real rows they stand for
   const hidden = [...document.querySelectorAll('.later:not(.shown)')];
   hidden.forEach(el => el.classList.add('shown'));
-  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT; $('hint').style.minHeight = ''; $('hint').style.minHeight = $('hint').offsetHeight + 'px';   // the hint bar is always as tall as its longest hint: nothing below it moves
+  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT; $('hint').style.minHeight = '';   // the hint bar is always as tall as its longest hint (set below, once the window's width is settled): nothing below it moves
   // The card box is as tall as the longest card, so no card is ever cut off and choosing one never moves the page.
   const cd = $('cardDetail'), card0 = cd.innerHTML; cd.style.height = 'auto'; let tallest = 0;
   for (const e of guideEntries()) { cd.innerHTML = cardHTML(e).replace(/ src="[^"]*"/, ''); tallest = Math.max(tallest, cd.offsetHeight); }   // with room for its photo, without loading it
   cd.style.height = tallest + 'px'; $('panel2').style.height = ''; panel2Need = $('panel2').offsetHeight;   // the column, with the longest card
   cd.style.height = 'auto'; cd.innerHTML = card0;
   placeMeter();
+  $('hint').textContent = LONGEST_HINT; $('hint').style.minHeight = $('hint').offsetHeight + 'px';
   const height = w.offsetHeight, width = w.offsetWidth;
   hidden.forEach(el => el.classList.remove('shown'));
   $('hint').innerHTML = hint0;
