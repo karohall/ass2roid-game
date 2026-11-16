@@ -23,7 +23,7 @@
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.blast { animation:jolt .35s ease-out; }
   @keyframes jolt { 0% { transform:translate(0,0); } 20% { transform:translate(-4px,3px); } 45% { transform:translate(3px,-2px); } 70% { transform:translate(-2px,1px); } 100% { transform:translate(0,0); } }
-  @media (prefers-reduced-motion: reduce) { canvas.blast { animation:none; } }
+  @media (prefers-reduced-motion: reduce) { canvas.blast { animation:none; } canvas.frenzy { animation:none; transform:rotate(-4deg); } }   /* Frenzy still leans, but holds still */
   canvas.still { filter:grayscale(.9) brightness(.82) contrast(.88) sepia(.25) hue-rotate(175deg) saturate(1.3); transition:filter 1.5s; }   /* Stillness: cold, drained, blue-grey */
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
