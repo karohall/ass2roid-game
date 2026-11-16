@@ -800,7 +800,12 @@ function spray(c, gx, gy, col, path, drops = []) {                 // spray pain
 const FIND = {
   ingr: (c, x, y, letter) => { plate(c, x, y, COL.concrete); plateLabel(c, x, y, letter, COL.concrete); },
   sample: (c, x, y) => { plate(c, x, y, COL.concrete); diamond(c, x, y, 7, COL.concrete); },
-  shaker: (c, x, y) => { plate(c, x, y, COL.concrete); const X = x * T, Y = y * T; c.fillStyle = COL.concrete; c.beginPath(); c.moveTo(X + 18.5, Y + 10); c.lineTo(X + 21.5, Y + 10); c.lineTo(X + 21.5, Y + 14); c.lineTo(X + 24, Y + 17); c.lineTo(X + 24, Y + 31); c.lineTo(X + 16, Y + 31); c.lineTo(X + 16, Y + 17); c.lineTo(X + 18.5, Y + 14); c.closePath(); c.fill(); },
+  shaker: (c, x, y) => { plate(c, x, y, COL.concrete); const X = x * T, Y = y * T; c.fillStyle = COL.concrete;   // a protein shaker: domed lid, flip-top spout and loop, collar, tapered cup
+    c.beginPath(); c.moveTo(X + 13.5, Y + 18.5); c.lineTo(X + 26.5, Y + 18.5); c.lineTo(X + 25, Y + 33.5); c.lineTo(X + 15, Y + 33.5); c.closePath(); c.fill();
+    c.fillRect(X + 12, Y + 14.5, 16, 3);
+    c.beginPath(); c.moveTo(X + 13, Y + 13.5); c.quadraticCurveTo(X + 20, Y + 8, X + 27, Y + 13.5); c.closePath(); c.fill();
+    c.fillRect(X + 23, Y + 7.5, 2.5, 3.5);
+    c.strokeStyle = COL.concrete; c.lineWidth = 1.3; c.beginPath(); c.moveTo(X + 14, Y + 11.5); c.quadraticCurveTo(X + 17, Y + 6, X + 24, Y + 6.8); c.stroke(); },
   spores: (c, x, y) => { plate(c, x, y, COL.spore, { glow: true }); plateLabel(c, x, y, 'S', COL.spore, true); },
   band: (c, x, y) => { plate(c, x, y, COL.steel, { tint: .06 }); c.fillStyle = hexA(COL.steel, .8); for (let k = 0; k < 4; k++) c.fillRect(x * T + 8, y * T + 11 + k * 5.5, T - 16, 2.5); },   // stripes: a compressed stratum
   crust: (c, x, y) => { plate(c, x, y, COL.steel); c.strokeStyle = hexA(COL.steel, .6); c.lineWidth = 1; c.strokeRect(x * T + 9.5, y * T + 9.5, T - 19, T - 19); plateLabel(c, x, y, String(layer().crustMinPower), COL.steel, false, 15); },   // the digging power it needs
@@ -819,7 +824,7 @@ const FIND = {
     const gr = c.createLinearGradient(0, Y + g0, 0, Y + T - g0); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, v]) => gr.addColorStop(o, v));
     c.fillStyle = gr; c.fillRect(X + g0, Y + g0, T - 2 * g0, T - 2 * g0); c.fillStyle = 'rgba(255,255,255,.7)'; c.fillRect(X + g0, Y + g0, T - 2 * g0, 1.5); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(X + g0, Y + T - g0 - 2, T - 2 * g0, 2);
     c.fillStyle = 'rgba(255,255,255,.5)'; c.fillRect(X + g0, Y + g0, 1.5, T - 2 * g0); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(X + T - g0 - 1.5, Y + g0, 1.5, T - 2 * g0);
-    c.save(); c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans", sans-serif'; c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillText('™', X + T - 11, Y + 11); c.restore();
+    c.save(); c.fillStyle = '#0000dd'; c.font = '700 12px "IBM Plex Sans", sans-serif'; c.textAlign = 'left'; c.textBaseline = 'alphabetic'; c.fillText('™', X + T - 15, Y + 14); c.restore();
   },
 };
 // The prospector: the block, outlined in ink, a glint on the visor. A headlamp on the crown in the dark.
@@ -1033,8 +1038,10 @@ function hit(x, y, c) {
   bump(x, y, 10);
   if (c.t === GRAFFITI) clue(c.clue, CLUE_FOUND[c.clue]);
   if (c.t === SHAKER) {
-    const odds = layer().shakerOdds; let r = Math.random(), v = VARIANTS[VARIANTS.length - 1];
-    for (const k of VARIANTS) { r -= odds ? odds[k] || 0 : 1 / VARIANTS.length; if (r < 0) { v = k; break; } }   // weighted: mostly Strength
+    // Only a Milk+ you already know can be in it (2026-11-16: a Hyperfocus could turn up long before you could mix one); weighted, mostly Strength.
+    const odds = layer().shakerOdds, pool = VARIANTS.filter(k => k === 'strength' || REVEAL['recipe_' + k]()), w = k => odds ? odds[k] || 0 : 1;
+    let r = Math.random() * pool.reduce((a, k) => a + w(k), 0), v = 'strength';
+    for (const k of pool) { r -= w(k); if (r < 0) { v = k; break; } }
     s.mysteries++;                                         // drunk on the spot: you find out what it was once it's in you
     say(`Fossilised shaker, still sealed. Contents: ${VNAME[v]}. Down it goes.`);
     s.bottles[v]++; drink(v, true);
@@ -2194,7 +2201,7 @@ function hud() {
     ...Object.keys(ING).filter(known).map(k => `<span><i class="sw${k === 'spores' ? ' spore' : ''}">${ING[k].letter}</i>${ING[k].name}</span>`),
     '<span><i class="sw dash">?</i>Seam</span>',
     '<span><i class="sw dash">◈</i>Sealed find</span>',
-    ...(layer().shakers ? ['<span><i class="sw">▮</i>Fossil shaker</span>'] : []),
+    ...(layer().shakers ? ['<span><i class="sw"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5 8.5h6l-.7 6H5.7z M4 6.6h8v1.3H4z M4.5 6C5.5 3.6 10.5 3.6 11.5 6z M9.5 2.5h1.3v2H9.5z" fill="currentColor"/></svg></i>Fossil shaker</span>'] : []),
     '<span><i class="sw stripes"></i>Hard band: slow</span>',
     ...(layer().slabs ? ['<span><i class="sw chrome">™</i>Näsa chrome™</span>'] : []),
     `<span><i class="sw crust">${layer().crustMinPower}</i>Crust: power ${layer().crustMinPower}</span>`,

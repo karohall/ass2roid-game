@@ -54,7 +54,12 @@ const FIND = {
   powder: (c, x, y) => { plate(c, x, y, C.concrete); label(c, x, y, 'P', C.concrete); },
   chromeI: (c, x, y) => { plate(c, x, y, C.concrete); label(c, x, y, 'C', C.concrete); },
   sample: (c, x, y) => { plate(c, x, y, C.concrete); diamond(c, x, y, 7, C.concrete); },
-  shaker: (c, x, y) => { plate(c, x, y, C.concrete); const X = x * T, Y = y * T; c.fillStyle = C.concrete; c.beginPath(); c.moveTo(X + 18.5, Y + 10); c.lineTo(X + 21.5, Y + 10); c.lineTo(X + 21.5, Y + 14); c.lineTo(X + 24, Y + 17); c.lineTo(X + 24, Y + 31); c.lineTo(X + 16, Y + 31); c.lineTo(X + 16, Y + 17); c.lineTo(X + 18.5, Y + 14); c.closePath(); c.fill(); },
+  shaker: (c, x, y) => { plate(c, x, y, C.concrete); const X = x * T, Y = y * T; c.fillStyle = C.concrete;   // a protein shaker: domed lid, flip-top spout and loop, collar, tapered cup
+    c.beginPath(); c.moveTo(X + 13.5, Y + 18.5); c.lineTo(X + 26.5, Y + 18.5); c.lineTo(X + 25, Y + 33.5); c.lineTo(X + 15, Y + 33.5); c.closePath(); c.fill();
+    c.fillRect(X + 12, Y + 14.5, 16, 3);
+    c.beginPath(); c.moveTo(X + 13, Y + 13.5); c.quadraticCurveTo(X + 20, Y + 8, X + 27, Y + 13.5); c.closePath(); c.fill();
+    c.fillRect(X + 23, Y + 7.5, 2.5, 3.5);
+    c.strokeStyle = C.concrete; c.lineWidth = 1.3; c.beginPath(); c.moveTo(X + 14, Y + 11.5); c.quadraticCurveTo(X + 17, Y + 6, X + 24, Y + 6.8); c.stroke(); },
   spores: (c, x, y) => { plate(c, x, y, SPORE, { glow: true }); label(c, x, y, 'S', SPORE, true); },
   // Hard band: stripes, a compressed stratum. Two full rows mid-layer; the stripes run on from tile to tile. Slow: Strength, or blast it.
   band: (c, x, y) => { plate(c, x, y, C.steel, { tint: .06 }); c.fillStyle = hexA(C.steel, .8); for (let k = 0; k < 4; k++) c.fillRect(x * T + 8, y * T + 11 + k * 5.5, T - 16, 2.5); },
@@ -116,6 +121,6 @@ const SOLID = {
     const g = c.createLinearGradient(0, Y + g0, 0, Y + T - g0); [[0, '#f6f7fb'], [.22, '#c9cbd6'], [.48, '#8d90a0'], [.62, '#e9eaf2'], [.8, '#a7aab8'], [1, '#d8d9e3']].forEach(([o, s]) => g.addColorStop(o, s));
     c.fillStyle = g; c.fillRect(X + g0, Y + g0, T - 2 * g0, T - 2 * g0); c.fillStyle = 'rgba(255,255,255,.7)'; c.fillRect(X + g0, Y + g0, T - 2 * g0, 1.5); c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(X + g0, Y + T - g0 - 2, T - 2 * g0, 2);
     c.fillStyle = 'rgba(255,255,255,.5)'; c.fillRect(X + g0, Y + g0, 1.5, T - 2 * g0); c.fillStyle = 'rgba(0,0,0,.25)'; c.fillRect(X + T - g0 - 1.5, Y + g0, 1.5, T - 2 * g0);
-    c.fillStyle = '#0000dd'; c.font = '700 8px "IBM Plex Sans"'; c.fillText('™', X + T - 11, Y + 11); },
+    c.fillStyle = '#0000dd'; c.font = '700 12px "IBM Plex Sans"'; c.fillText('™', X + T - 15, Y + 14); },
 };
 function tile(c, kind, gx, gy) { if (SOLID[kind]) return SOLID[kind](c, gx, gy); rock(c, gx, gy); if (FIND[kind]) FIND[kind](c, gx, gy); }
