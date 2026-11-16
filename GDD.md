@@ -243,7 +243,7 @@ You reach the core: *"THE CORE. You are now further down than anyone asked you t
 - **Field Guide artefact: the VHS cassette.**
   > *Artefact, Site KR-1, Crater 7, Quadrant 2.*
   > VHS cassette, handwritten label: "VICE 2–6. DO NOT TAPE OVER." Recovered from the Shaker Strata, rewound.
-  > The series in question ran for five seasons. The Foundation has viewed season six, it was never released on Tellus. The Foundation has no further comment.
+  > The series in question ran for five seasons. The Foundation has viewed season six, it was never released on Terra. The Foundation has no further comment.
 - **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
 - **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
 - **The radio reacts to the balance meter (built in Prototype 3, with real sound):**
