@@ -1518,7 +1518,7 @@ function renderGuide() {
   const gap = /^gap/.test(selCard || '');
   if (gap) { $('cardDetail').innerHTML = `<b style="color:var(--text)">No. ${selCard.slice(3)}</b><br>Withdrawn by the Foundation. No further comment.`; return; }
   const e = entries.find(e => e.id === selCard);
-  if (!e) $('cardDetail').innerHTML = 'Select a card. Empty slots are things you haven't found yet.';
+  if (!e) $('cardDetail').innerHTML = 'Select a card. Empty slots are things you haven’t found yet.';
   else if (s.guide.includes(e.id)) $('cardDetail').innerHTML = cardHTML(e);
   else $('cardDetail').innerHTML = e.state
     ? `<b style="color:var(--text)">No. ${e.art.no} · ? ? ?</b><br><i>${ENDORSE}</i><br>Requires ${e.state === 'still' ? 'reduced' : 'elevated'} compound state.`
