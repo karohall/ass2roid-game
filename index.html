@@ -7,10 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Prototype 4, "Gunmetal" (mockups/design-system.html). No text under 11 px: the game is often shown scaled down (the itch.io frame). Neutral cold steel, a concrete hint, one glow (fluo: act now),
+  /* Prototype 4, "Gunmetal" (mockups/design-system.html). Fluo (act now) is the bioluminescent blue, the spores the green (swapped 2026-11-16). No text under 11 px: the game is often shown scaled down (the itch.io frame). Neutral cold steel, a concrete hint, one glow (fluo: act now),
      amber for warnings, a pastel for each secret. Sizes the layout depends on are unchanged (fit() measures the rest). */
   :root { --bg:#0b0c0e; --panel:#15171a; --raised:#1e2124; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --dim:#969da4; --faint:#5f656b; --hot:#ffffff;
-          --concrete:#c9ccc9; --fluo:#00ff73; --amber:#ffb43c; --violet:#a993d6; --candy:#f2b8d6; --jizz:#b9d3f0; --nasa:#0000dd; --spore:#34e6ff;
+          --concrete:#c9ccc9; --fluo:#34e6ff; --fluo-rgb:52,230,255; --amber:#ffb43c; --violet:#a993d6; --candy:#f2b8d6; --jizz:#b9d3f0; --nasa:#0000dd; --spore:#00ff73; --spore-rgb:0,255,115;
           --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; --cut:8px; --cut-s:5px;
           --chamfer:polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
           --chamfer-s:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); }
@@ -37,7 +37,7 @@
   #meter { height:22px; position:relative; background:repeating-linear-gradient(90deg, transparent 0 calc(20% - 1px), var(--line) calc(20% - 1px) 20%) 0 0 / 100% 100% no-repeat; }
   #meter::before { content:''; position:absolute; left:0; right:0; top:10px; height:2px; background:var(--line-2); }
   #meterFill { position:absolute; top:8px; height:6px; left:50%; width:0; background:var(--text); transition:left .15s, width .15s; }
-  #meterFill.hot { background:var(--fluo); box-shadow:0 0 8px rgba(0,255,115,.5); animation:throb .4s ease-in-out infinite alternate; }
+  #meterFill.hot { background:var(--fluo); box-shadow:0 0 8px rgba(var(--fluo-rgb),.5); animation:throb .4s ease-in-out infinite alternate; }
   #meter .mark { position:absolute; top:2px; bottom:2px; width:2px; background:var(--text); }
   #meter .mark.mid { left:calc(50% - 1px); background:var(--dim); }
   #meter .mark.tip { background:var(--amber); top:0; bottom:0; }
@@ -56,7 +56,7 @@
   #radioBox.call > svg.outline path:first-child { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
-  #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(0,255,115,.4);
+  #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
@@ -78,7 +78,7 @@
   .sw.dash { box-shadow:none; outline:1px dashed #b4bac0; outline-offset:-1px; color:#b4bac0; }
   .sw.stripes { background:repeating-linear-gradient(180deg, transparent 0 3px, #b4bac0 3px 4.5px), var(--bg); box-shadow:inset 0 0 0 1px #b4bac0; }
   .sw.chrome { background:linear-gradient(180deg, #f6f7fb 0%, #c9cbd6 22%, #8d90a0 48%, #e9eaf2 62%, #a7aab8 80%, #d8d9e3 100%); box-shadow:none; color:var(--nasa); font-size:7px; place-items:start end; padding:1px; }
-  .sw.spore { color:var(--spore); box-shadow:inset 0 0 0 1px var(--spore), 0 0 5px rgba(52,230,255,.5); }
+  .sw.spore { color:var(--spore); box-shadow:inset 0 0 0 1px var(--spore), 0 0 5px rgba(var(--spore-rgb),.5); }
   .sw.crust { background:repeating-linear-gradient(180deg, transparent 0 2px, #b4bac0 2px 3px) 4px 4px / 8px 8px no-repeat, var(--bg); box-shadow:inset 0 0 0 1px #b4bac0, inset 0 0 0 3px var(--bg), inset 0 0 0 4px rgba(180,186,192,.6); }
   #panel, #panel2 { width:300px; display:flex; flex-direction:column; gap:10px; }
   /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
@@ -105,7 +105,7 @@
   .recipe { display:grid; grid-template-columns:1fr 96px; gap:8px; align-items:center; margin-bottom:6px; padding-top:6px; border-top:1px solid var(--line); }
   .recipe:first-child { border-top:0; padding-top:0; }
   .recipe button { text-align:center; padding:9px 4px; }
-  .recipe button.ready { background:var(--fluo); color:var(--bg); filter:drop-shadow(0 0 6px rgba(0,255,115,.35)); }
+  .recipe button.ready { background:var(--fluo); color:var(--bg); filter:drop-shadow(0 0 6px rgba(var(--fluo-rgb),.35)); }
   .recipe button.ready::before { background:var(--fluo); }
   .recipe button.ready:hover { background:var(--fluo); color:var(--bg); }
   .recipe .name { line-height:1.3; }
@@ -176,7 +176,7 @@
   .ver { font:500 11px var(--f-small); color:var(--dim); letter-spacing:.04em; margin-top:-12px; }
   .overlay button { width:auto; text-align:center; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; font:500 13px/1.4 var(--f-text); letter-spacing:0; text-transform:none; }
-  .go { display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 16px 0 20px !important; font:600 12px/1 var(--f-small) !important; letter-spacing:.16em; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(0,255,115,.35)); }
+  .go { display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 16px 0 20px !important; font:600 12px/1 var(--f-small) !important; letter-spacing:.16em; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(var(--fluo-rgb),.35)); }
   .go::before { background:var(--fluo) !important; }
   .go kbd, .btn2 kbd { font:700 11px/1 var(--f-small); letter-spacing:.08em; padding:5px 6px; background:rgba(11,12,14,.85); color:var(--fluo); }
   .btn2 { display:inline-flex; align-items:center; gap:10px; height:32px; padding:0 10px 0 14px; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--text); box-shadow:inset 0 0 0 1px var(--line-2); clip-path:var(--chamfer-s); }
@@ -201,7 +201,7 @@
   .kv div:first-child { border-top:0; } .kv dt { font:400 12px var(--f-small); color:var(--dim); } .kv dd { margin:0; font:700 15px/1 var(--f-title); font-variant-numeric:tabular-nums; }
   .kv dd em { font:400 11px var(--f-small); font-style:normal; color:var(--faint); margin-left:3px; }
   /* The rover's drive: a rail, filling in fluo. */
-  .loadbar { width:260px; height:4px; background:var(--line); position:relative; } .loadbar i { position:absolute; left:0; top:0; bottom:0; width:0; background:var(--fluo); box-shadow:0 0 6px rgba(0,255,115,.5); }
+  .loadbar { width:260px; height:4px; background:var(--line); position:relative; } .loadbar i { position:absolute; left:0; top:0; bottom:0; width:0; background:var(--fluo); box-shadow:0 0 6px rgba(var(--fluo-rgb),.5); }
   /* The journey: the depth gauge's language on its side. Behind you, your rock; yours, framed; ahead, hatched. */
   .journey { display:flex; align-items:flex-start; width:100%; max-width:380px; margin:0; }
   .journey .step { width:58px; flex:none; font:500 11px/1.2 var(--f-small); color:var(--faint); text-align:center; }
@@ -241,64 +241,19 @@
                clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
   #hint .tag::before { content:''; width:5px; height:5px; background:currentColor; box-shadow:0 0 5px currentColor; }
   #hint .tag.violet { color:var(--violet); } #hint .tag.jizz { color:var(--jizz); } #hint .tag.candy { color:var(--candy); } #hint .tag.steel { color:var(--dim); } #hint .tag.steel::before { box-shadow:none; }
-  /* ── Skins (2026-11-16, exploring depth): ?skin=glass or ?skin=deck. The default stays as it is. ── */
-  #backdrop { position:fixed; inset:0; width:100vw; height:100vh; border:0; background:none; z-index:0; pointer-events:none; display:none; transition:none; }
-  .skin-glass #backdrop { display:block; }
-  #skinTag { position:fixed; right:10px; bottom:8px; z-index:9; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
-
-  /* Glass: frosted panels over the layer's own rock, blurred far behind; the radio green glass, lit from inside. */
-  .skin-glass { background:#05070a; }
-  .skin-glass .box { backdrop-filter:blur(18px) saturate(1.35); -webkit-backdrop-filter:blur(18px) saturate(1.35); clip-path:var(--chamfer); }
-  .skin-glass .box > svg.outline path:first-child { fill:rgba(20,24,30,.38); stroke:rgba(255,255,255,.16); }
-  .skin-glass .box::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:linear-gradient(180deg, rgba(255,255,255,.10) 0, rgba(255,255,255,.03) 18%, transparent 40%), radial-gradient(120% 60% at 0 0, rgba(255,255,255,.06), transparent 60%); }
-  .skin-glass #milk > svg.outline path:first-child { stroke:rgba(255,255,255,.3); }
-  .skin-glass canvas#c { border-color:rgba(255,255,255,.14); box-shadow:0 24px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.6); }
-  .skin-glass #hint { background:rgba(201,204,201,.9); box-shadow:inset 0 1px 0 rgba(255,255,255,.6); backdrop-filter:blur(10px); }
-  .skin-glass button { background:rgba(255,255,255,.04); }
-  .skin-glass button:hover:not(:disabled) { background:rgba(255,255,255,.1); }
-  .skin-glass #radioBox { backdrop-filter:blur(22px) saturate(1.6);
-    background:radial-gradient(120% 160% at 50% 130%, rgba(0,255,115,.28), rgba(0,255,115,.06) 55%, transparent 75%), linear-gradient(180deg, rgba(0,255,115,.10), rgba(0,255,115,.02)); }
-  .skin-glass #radioBox > svg.outline path:first-child { fill:rgba(6,30,18,.35); stroke:rgba(0,255,115,.5); }
-  .skin-glass #radioBox::after { background:linear-gradient(180deg, rgba(200,255,225,.16) 0, rgba(200,255,225,.04) 22%, transparent 45%); }
-  .skin-glass #radioBox .ticker { color:#5dffa2; text-shadow:0 0 6px rgba(0,255,115,.9), 0 0 18px rgba(0,255,115,.45); }
-  .skin-glass #radioFx { color:#c8ffe0; text-shadow:0 0 8px rgba(0,255,115,.35); }
-  .skin-glass #radioBox .small, .skin-glass #radioBox .label { color:rgba(170,255,205,.7); }
-
-  /* Deck: machined plates with bevels and screws on brushed gunmetal; readouts recessed behind glass; the radio a phosphor screen. */
-  .skin-deck { background:radial-gradient(130% 90% at 50% 0, #1a1d21, #0a0b0d 70%), #0b0c0e;
-    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px), radial-gradient(130% 90% at 50% 0, #1b1e22, #090a0c 72%); }
-  .skin-deck .box { clip-path:var(--chamfer); background:
-      radial-gradient(circle at 9px 9px, #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
-      radial-gradient(circle at calc(100% - 9px) 9px, #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
-      radial-gradient(circle at 9px calc(100% - 9px), #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
-      radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), #5a6168 0 1.6px, #0c0d0f 1.6px 2.6px, transparent 2.6px),
-      linear-gradient(180deg, #23272c 0, #181a1e 40%, #141619 100%); }
-  .skin-deck .box > svg.outline path:first-child { fill:transparent; stroke:rgba(255,255,255,.12); }
-  .skin-deck .box::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:var(--chamfer);
-    box-shadow:inset 1px 1px 0 rgba(255,255,255,.09), inset -1px -1px 0 rgba(0,0,0,.7), inset 0 0 0 3px rgba(0,0,0,.25); }
-  .skin-deck .box h3 { text-shadow:0 1px 0 rgba(0,0,0,.8); }
-  /* Recessed readouts: dark glass set into the plate. */
-  .skin-deck #log, .skin-deck #cardDetail, .skin-deck #ingredients, .skin-deck #recipes {
-    background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c; box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
-  .skin-deck #cardDetail { border-top:0; }
-  .skin-deck canvas#c { border:0; box-shadow:0 0 0 5px #15171a, 0 0 0 6px rgba(255,255,255,.07), 0 0 0 9px #0a0b0d, 0 18px 40px rgba(0,0,0,.7); }
-  .skin-deck #hint { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 -2px 0 rgba(0,0,0,.18); background:linear-gradient(180deg, #d3d6d3, #c3c6c3); }
-  .skin-deck button:not(.go):not(.ready) { background:linear-gradient(180deg, #2a2e33, #1c1f23); box-shadow:inset 0 1px 0 rgba(255,255,255,.08); }
-  /* The radio: a green phosphor screen behind glass, lit from inside. */
-  .skin-deck #radioBox { background:
-      linear-gradient(115deg, transparent 0 58%, rgba(255,255,255,.06) 58% 64%, transparent 64%),
-      repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px),
-      radial-gradient(110% 150% at 50% 50%, #0b3a22, #04170d 70%, #020a06); }
-  .skin-deck #radioBox::after { box-shadow:inset 0 0 28px rgba(0,255,115,.22), inset 0 3px 10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(0,255,115,.25); }
-  .skin-deck #radioBox > svg.outline path:first-child { stroke:rgba(0,255,115,.35); }
-  .skin-deck #radioBox .ticker { color:#6dffab; text-shadow:0 0 6px rgba(0,255,115,.9), 0 0 16px rgba(0,255,115,.4); }
-  .skin-deck #radioFx { color:#b5f7cf; text-shadow:0 0 6px rgba(0,255,115,.35); }
-  .skin-deck #radioBox .small, .skin-deck #radioBox .label { color:rgba(140,230,180,.65); }
+  /* Depth (2026-11-16): readouts recessed behind dark glass; the radio is glass, lit from inside. The page around stays flat. */
+  #log, #cardDetail, #ingredients, #recipes { background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
+  #cardDetail { border-top:0; }
+  #radioBox { clip-path:var(--chamfer); background:radial-gradient(120% 160% at 50% 130%, rgba(var(--fluo-rgb),.26), rgba(var(--fluo-rgb),.06) 55%, transparent 75%), linear-gradient(180deg, rgba(var(--fluo-rgb),.10), rgba(var(--fluo-rgb),.02)); }
+  #radioBox > svg.outline path:first-child { fill:rgba(var(--fluo-rgb),.05); stroke:rgba(var(--fluo-rgb),.5); }
+  #radioBox::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:var(--chamfer);
+    background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
+  #radioBox .ticker { text-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 18px rgba(var(--fluo-rgb),.45); }
+  #radioFx { text-shadow:0 0 8px rgba(var(--fluo-rgb),.3); }
 </style>
 </head>
 <body class="intro">
-<canvas id="backdrop"></canvas>
 <canvas id="sky"></canvas>
 <div id="wrap">
   <div id="stage">
@@ -813,7 +768,7 @@ const nextMult = () => { if (active('focus')) return 1; const m = CONFIG.balance
 // THE ROCK (Prototype 4): the tile lab's rock (CONFIG.layers[i].rock), the overlay plates, the prospector.
 // The rock is drawn once per layer into an offscreen image; each frame copies the visible slice and draws the rest live.
 // ─────────────────────────────────────────────────────────────────────────────
-const COL = { ink: '#0b0c0e', air: '#08090a', grout: '#060708', concrete: '#c9ccc9', steel: '#b4bac0', fluo: '#00ff73', amber: '#ffb43c', text: '#e1e4e6', spore: '#34e6ff' };
+const COL = { ink: '#0b0c0e', air: '#08090a', grout: '#060708', concrete: '#c9ccc9', steel: '#b4bac0', fluo: '#34e6ff', amber: '#ffb43c', text: '#e1e4e6', spore: '#00ff73' };
 let RP = null, rockSeed = 7;                                  // the rock settings being drawn, and this run's seed
 const vhash = (x, y, k) => { let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ Math.imul(k + rockSeed, 2147483647); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 function vnoise(x, y, k) { const ix = Math.floor(x), iy = Math.floor(y), tx = x - ix, ty = y - iy, sx = tx * tx * (3 - 2 * tx), sy = ty * ty * (3 - 2 * ty);
@@ -1921,7 +1876,7 @@ function update(dt) {
 
 function draw() {
   const L = layer();
-  if (rockFor !== g) { buildRock(); paintBackdrop(); }       // a new layer: draw its rock once
+  if (rockFor !== g) buildRock();                            // a new layer: draw its rock once
   ctx.fillStyle = COL.air; ctx.fillRect(0, 0, cv.width, cv.height);
   ctx.save();
   ctx.translate(0, -cam * T);
@@ -1989,7 +1944,7 @@ function draw() {
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
   if (L.dark) { drawDark(L, y0, y1); drawProspector(ctx, p.x * T + jx, p.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick(), dark: true }); }
   ctx.restore();
-  drawGauge();
+  drawMap(); drawGauge();
 }
 
 // Void FM in the dark: night vision.
@@ -2023,6 +1978,29 @@ function drawDark(L, y0, y1) {
     else if ((c.t === SEAM || c.t === ART) && seamAnswers(c.kind)) FIND.seamOpen(ctx, x, y);
     else if (c.t === SEALED && seamAnswers(c.kind)) FIND.sealedOpen(ctx, x, y);
   }
+}
+
+// The left wall: the map, once you start digging. The whole layer, flat and exact, a fine grid between rows like grout.
+// What it shows: your tunnel, hard bands and crust, Näsa slabs with their gaps; an open seam in the act-now colour. Never what is hidden.
+function drawMap() {
+  if (!(s.dug > 0)) return;                                  // before the first dig: bedrock
+  const mx = 6, mw = T - 12, my = 24, mh = cv.height - 48, cw = mw / (W - 2), rh = mh / H;
+  ctx.fillStyle = COL.ink; ctx.fillRect(0, 0, T, cv.height);
+  ctx.beginPath(); chamfer(ctx, 2.5, 2.5, T - 5, cv.height - 5, 6); ctx.strokeStyle = 'rgba(150,157,164,.42)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.save(); ctx.font = '600 10px "IBM Plex Sans", sans-serif'; ctx.letterSpacing = '1px'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#5f656b'; ctx.fillText('MAP', T / 2 + .5, 13); ctx.restore();
+  for (let y = 2; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+    const c = g[y][x], open = (c.t === SEAM || c.t === ART || c.t === SEALED) && seamAnswers(c.kind);
+    ctx.fillStyle = open ? COL.fluo : c.t === AIR ? '#7d848b' : c.t === SLAB ? '#b9bcc8' : c.t === CRUST ? '#3c4147' : c.t === BAND ? '#30353a' : '#1b1e21';
+    ctx.fillRect(mx + (x - 1) * cw, my + y * rh, cw + .02, rh - 1);
+  }
+  const vy = my + cam * rh, vh = VIEW * rh, bx = mx - 2.5, bw = mw + 5, k = 5;   // what is on screen: corner brackets, a faint wash
+  ctx.fillStyle = 'rgba(201,204,201,.05)'; ctx.fillRect(bx, vy, bw, vh);
+  ctx.strokeStyle = COL.concrete; ctx.lineWidth = 1.25; ctx.beginPath();
+  ctx.moveTo(bx, vy + k); ctx.lineTo(bx, vy); ctx.lineTo(bx + k, vy); ctx.moveTo(bx + bw - k, vy); ctx.lineTo(bx + bw, vy); ctx.lineTo(bx + bw, vy + k);
+  ctx.moveTo(bx, vy + vh - k); ctx.lineTo(bx, vy + vh); ctx.lineTo(bx + k, vy + vh); ctx.moveTo(bx + bw - k, vy + vh); ctx.lineTo(bx + bw, vy + vh); ctx.lineTo(bx + bw, vy + vh - k); ctx.stroke();
+  const ux = mx + (p.x - 1) * cw, uy = my + p.y * rh;          // you: the lightest thing on the wall, and a pointer at your row
+  ctx.fillStyle = '#fff'; ctx.strokeStyle = COL.ink; ctx.lineWidth = 1.5; ctx.strokeRect(ux - 1.5, uy - 1.5, cw + 3, rh + 2); ctx.fillRect(ux - 1.5, uy - 1.5, cw + 3, rh + 2);
+  ctx.beginPath(); ctx.moveTo(1, uy + rh / 2 - 3.5); ctx.lineTo(4.5, uy + rh / 2); ctx.lineTo(1, uy + rh / 2 + 3.5); ctx.closePath(); ctx.fill();
 }
 
 // The right wall: the depth gauge, once you start digging. The four layers as four segments with clear gaps; the one you are
@@ -2197,7 +2175,7 @@ function discoveryTag(t) {
   const role = m[1] === 'Rumour' ? 'steel' : m[1] === 'Secret menu' ? (/Jizz\+/.test(t) ? 'jizz' : /Candygirl/.test(t) ? 'candy' : 'violet') : 'fluo';
   return { label: m[1], role, body };
 }
-const TAG_CONFETTI = { fluo: ['#00ff73', '#e1e4e6', '#969da4', '#c9ccc9'], jizz: ['#b9d3f0', '#a993d6', '#e1e4e6'], candy: ['#f2b8d6', '#a993d6', '#e1e4e6'], violet: ['#a993d6', '#e1e4e6', '#969da4'], steel: ['#e1e4e6', '#c9ccc9', '#969da4', '#5f656b'] };
+const TAG_CONFETTI = { fluo: ['#34e6ff', '#e1e4e6', '#969da4', '#c9ccc9'], jizz: ['#b9d3f0', '#a993d6', '#e1e4e6'], candy: ['#f2b8d6', '#a993d6', '#e1e4e6'], violet: ['#a993d6', '#e1e4e6', '#969da4'], steel: ['#e1e4e6', '#c9ccc9', '#969da4', '#5f656b'] };
 function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTML[id] = v; } }
 
 function hud() {
@@ -2392,19 +2370,6 @@ addEventListener('resize', () => {
   const size = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4);   // ignore changes under ~4 px
   if (size !== fittedFor) { fittedFor = size; fit(); }
 });
-// Skins, to explore depth (2026-11-16): ?skin=glass (frosted panels over the layer's own rock, far behind) or ?skin=deck
-// (machined plates, recessed readouts, a phosphor radio). Without it, the default.
-const SKIN = new URLSearchParams(location.search).get('skin');
-if (SKIN === 'glass' || SKIN === 'deck') { document.body.classList.add('skin-' + SKIN); document.body.insertAdjacentHTML('beforeend', `<div id="skinTag">Skin: ${SKIN}</div>`); }
-// Glass: the backdrop is the current layer's rock, enlarged, blurred and dimmed, so the glass has something to look through.
-function paintBackdrop() {
-  if (SKIN !== 'glass' || !rockImg) return;
-  const bd = $('backdrop'), w = bd.width = Math.ceil(innerWidth / 3), h = bd.height = Math.ceil(innerHeight / 3), c = bd.getContext('2d');
-  const sh = Math.min(rockImg.height, rockImg.width * h / w * 1.6), sy = Math.max(0, Math.min(rockImg.height - sh, cam * T - sh / 3));
-  c.filter = 'blur(6px) brightness(.42) saturate(1.2)'; c.drawImage(rockImg, 0, sy, rockImg.width, sh, -w * .1, -h * .1, w * 1.2, h * 1.2); c.filter = 'none';
-  const v = c.createRadialGradient(w / 2, h * .45, h * .2, w / 2, h / 2, Math.max(w, h) * .75); v.addColorStop(0, 'rgba(5,7,10,0)'); v.addColorStop(1, 'rgba(5,7,10,.85)'); c.fillStyle = v; c.fillRect(0, 0, w, h);
-}
-addEventListener('resize', paintBackdrop);
 // Panels: the design system's frame. A vector outline at the panel's own size, cut corners, and a tab that fits its heading;
 // redrawn whenever the panel (or its heading) changes size, so it stays crisp at any scale.
 function drawFrame(el) {
