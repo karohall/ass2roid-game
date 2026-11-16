@@ -540,3 +540,5 @@ Prototype 4 starts with the interface: the rover's control panel from the GDD's 
 When vibecoding with Claude Code, knowing about pixels, margins and padding comes in handy. And again, having a grasp of the design DNA is a must.
 
 **Still to learn:** a large amount of information, with writing that is not too small, and everything still fitting on one screen.
+
+**Playtest, end of the day:** a full run took **14 minutes**, inside the 10–15 minute target. Small fixes after it: the Näsa pill taller, and Candygirl's pastels a notch deeper in the Chrome Vein, where the rock is light. Very close to finished.

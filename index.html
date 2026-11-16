@@ -247,7 +247,7 @@
   .journey .link { flex:1; height:1px; background:var(--line-2); margin-top:15px; }
   .journeyCap { font:500 11px var(--f-small); color:var(--faint); margin-top:-14px; }
   /* Näsa: Y2K chrome, the name in Näsa blue. The one rounded thing: a foreign brand, barging in at the top edge. */
-  #nasa { position:absolute; top:10px; left:50%; transform:translateX(-50%); width:max-content; max-width:420px; z-index:3; display:flex; align-items:center; gap:12px; padding:8px 20px 8px 16px; border-radius:999px;
+  #nasa { position:absolute; top:10px; left:50%; transform:translateX(-50%); width:max-content; max-width:420px; z-index:3; display:flex; align-items:center; gap:12px; padding:16px 24px 16px 20px; border-radius:999px;
           color:#24262f; font:500 12px/1.35 var(--f-text); text-align:left; background:linear-gradient(180deg, #ffffff 0%, #e4e3f3 30%, #b9b8cf 55%, #f1f0fb 75%, #cfcde2 100%);
           box-shadow:inset 0 2px 1px #fff, inset 0 -3px 4px rgba(80,78,110,.45), 0 0 0 1px rgba(255,255,255,.6), 0 8px 22px rgba(0,0,0,.6); animation:nasaIn .28s cubic-bezier(.3,1.5,.6,1); }
   #nasa .logo { flex:none; display:flex; align-items:flex-start; } #nasa .logo b { font:700 15px/1 var(--f-title); color:var(--nasa); letter-spacing:.02em; } #nasa .logo sup { font:700 12px var(--f-small); color:var(--nasa); margin-left:1px; }
@@ -484,7 +484,8 @@ const CONFIG = {
         { id: 5, label: 'Crater 5', note: 'Powder-rich. More Legacy Powder, fewer Chrome Filings.', mods: { powder: 1.5, chrome: 0.7 } },
         { id: 7, label: 'Crater 7', note: 'Metallic traces. More Chrome Filings, less Legacy Powder.', mods: { chrome: 1.5, powder: 0.7 } },
       ] },
-    { name: 'The Chrome Vein', rows: 60,
+    { name: 'The Chrome Vein', rows: 60, candyDeep: true,   // the chrome rock is light: Candygirl's pastels a notch deeper here
+     
       rock: { cells: 9, grout: 4, scale: 20, angle: 145, stretch: 8, detail: 1, base: 110, contrast: 200, levels: 16, jitter: 40, cool: 12, streaks: 0.92, veins: 0, bands: 0, bandSize: 30, bevel: 1, tileBevel: 1, dim: 0.72 },   // the tile lab (Prototype 4)
       hp: [28, 32], bandHp: 180, crustHp: 180, crustMinPower: 7, tipAt: 90, tint: '#4f5358',
       slabs: { rows: [8, 15, 22, 37, 44, 51], gap: 2 },   // Näsa chrome: can't be dug, find the gap
@@ -856,6 +857,7 @@ const candy = () => s.fx.candy > now();   // Candygirl: running upwards
 const CANDY_TILES = ['#f4d5e4', '#cdeadb', '#d3e0f3', '#ebe6cf'];
 const rgbOf = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
 const CANDY_RGB = CANDY_TILES.map(rgbOf);
+const CANDY_DEEP_RGB = ['#e9b5cf', '#90d1b1', '#adc5e7', '#d4c37f'].map(rgbOf);   // the same four hues, deeper, for light rock (layer candyDeep); still equal in brightness to each other
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const frenzy = () => s.frenzyUntil > now();
 const stillness = () => s.stillUntil > now();
@@ -2000,7 +2002,7 @@ function draw() {
   if (candy()) {
     const t = now(), k = Math.max(0, Math.min(1, (t - (s.candyFrom || 0)) / 1000, (s.fx.candy - t) / 1000));
     play((c, x, y) => { if (c.t !== DIRT && c.t !== BAND) return;
-      const ph = x + y + (reduceMotion.matches ? 0 : t / 1000 * CONFIG.candy.glide), i = Math.floor(ph), fr = ph - i, a = CANDY_RGB[i % 4], b = CANDY_RGB[(i + 1) % 4];
+      const ph = x + y + (reduceMotion.matches ? 0 : t / 1000 * CONFIG.candy.glide), i = Math.floor(ph), fr = ph - i, pal = layer().candyDeep ? CANDY_DEEP_RGB : CANDY_RGB, a = pal[i % 4], b = pal[(i + 1) % 4];
       const col = 'rgb(' + [0, 1, 2].map(j => Math.round(a[j] + (b[j] - a[j]) * fr)).join(',') + ')';
       ctx.save(); ctx.globalAlpha = k; ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = col; ctx.fillRect(x * T, y * T, T, T);
       ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .55 * k; ctx.fillRect(x * T + 2, y * T + 2, T - 4, T - 4); ctx.restore(); });
