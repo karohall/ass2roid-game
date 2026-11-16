@@ -107,10 +107,25 @@
   button:disabled { opacity:.4; cursor:default; }
   .recipe { display:grid; grid-template-columns:1fr 96px; gap:8px; align-items:center; margin-bottom:6px; padding-top:6px; border-top:1px solid var(--line); }
   .recipe:first-child { border-top:0; padding-top:0; }
-  .recipe button { text-align:center; padding:9px 4px; }
-  .recipe button.ready { background:var(--fluo); color:var(--bg); filter:drop-shadow(0 0 6px rgba(var(--fluo-rgb),.35)); }
-  .recipe button.ready::before { background:var(--fluo); }
-  .recipe button.ready:hover { background:var(--fluo); color:var(--bg); }
+  /* The shake key (mockups/keys.html, B): a cockpit push-button, SHAKE above DRINK; the lit half is what pressing does now.
+     Shaking fills SHAKE in amber over the two seconds; ready, DRINK lights blue. The number in a window on the bezel. */
+  .recipe button.key { justify-self:center; position:relative; width:84px; height:48px; padding:4px; letter-spacing:0; text-transform:none; text-align:center;
+    background:linear-gradient(180deg, #2b2f33, #1b1e21); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a; clip-path:var(--chamfer-s); }
+  .recipe button.key::before { display:none; }
+  .recipe button.key:disabled { opacity:1; }
+  .key .face { display:grid; grid-template-rows:1fr 1fr; gap:2px; height:100%; padding:2px; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); }
+  .key .face i { position:relative; display:grid; place-items:center; overflow:hidden; font:600 11px/1 var(--f-small); font-style:normal; letter-spacing:.14em; color:#353a3f; background:#0c0e10; }
+  .key .no { position:absolute; left:-1px; top:-1px; z-index:2; width:17px; height:15px; display:grid; place-items:center; font:700 11px/1 var(--f-title); color:#c3c8cc; background:#2b2f33;
+             box-shadow:0 0 0 1px #08090a; clip-path:polygon(0 0, 100% 0, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
+  .key.can .face i:first-child { color:var(--text); background:#16191c; }
+  .key.can:hover .face i:first-child { background:#1f2326; }
+  .key:active .face, .key.shaking .face { transform:translateY(1px); }
+  .key.shaking .face i:first-child { color:var(--amber); background:rgba(255,180,60,.14); }
+  .key.shaking .face i:first-child::after { content:attr(data-l); position:absolute; inset:0; display:grid; place-items:center; color:#1a1000; background:var(--amber); clip-path:inset(0 calc(100% - var(--p, 0%)) 0 0); }
+  .key.ready { box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a, 0 0 16px rgba(var(--fluo-rgb),.25); }
+  .key.ready .face i:last-child { color:#03262c; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow:0 0 12px rgba(var(--fluo-rgb),.6); }
+  .key.off .no { color:var(--faint); }
+  .key.jizz.can .face i:first-child { color:var(--jizz); } .key.candy.can .face i:first-child { color:var(--candy); }
   .recipe .name { line-height:1.3; }
   .recipe .name b { font:600 13px var(--f-text); }
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
@@ -296,7 +311,7 @@
   .dbar { position:relative; display:flex; gap:2px; height:14px; padding:2px; background:#07080a; box-shadow:inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.05); }
   .dbar i { flex:1; background:rgba(150,157,164,.08); }
   .dbar i.on { background:#c4c9cd; } .dbar.worn i.on { background:var(--amber); box-shadow:0 0 4px rgba(255,180,60,.45); }
-  .dbar.broken::after { content:'Pick axe'; position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
+  .dbar.broken::after { content:'Pickaxe'; position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
   /* Indicator lamps: a lens each, its name engraved beside it. Off is a dark lens; lit means on; blinking means look. */
   .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
@@ -393,7 +408,7 @@ const CONFIG = {
   calm:    { durationMs: 15000 },
   stamina: { stretch: 1.5 },     // instant: everything already in your system lasts 50% longer
   recovery: {},                  // instant: repairs the drill
-  drill:   { wearPerSec: 4, pickSlow: 2, warnBelow: 60 },   // Frenzy wears the drill; at 0 it breaks and the pick axe (always works) takes over
+  drill:   { wearPerSec: 4, pickSlow: 2, warnBelow: 60 },   // Frenzy wears the drill; at 0 it breaks and the pickaxe (always works) takes over
   focus:   { durationMs: 30000 },   // steady hand: drinks do not stack (window ×1) and the meter holds still
 
   // Balance meter: −100 Stillness … 0 balanced … +100 Frenzy. Drifts back toward 0.
@@ -1066,7 +1081,7 @@ function power() {
 }
 
 // How much slower digging is: everything slows in Stillness.
-// The drill works at full speed until it breaks; then the pick axe, which always works, is slower.
+// The drill works at full speed until it breaks; then the pickaxe, which always works, is slower.
 const onPick = () => s.drill <= 0;
 function slowFactor() { return (stillness() ? CONFIG.stillness.slowMult : 1) * (onPick() ? CONFIG.drill.pickSlow : 1) * (radio.on === 'pump' && !onPick() ? CONFIG.radio.pumpDigSpeed : 1); }
 
@@ -1106,7 +1121,7 @@ function hit(x, y, c) {
   if (frenzy() && !onPick()) {
     if (!s.drillWorn) say('The drill is complaining.');
     s.drill = Math.max(0, s.drill - CONFIG.drill.wearPerSec * (layer().drillWear || 1) * sinceHit / 1000); s.drillWorn = true;
-    if (onPick()) { s.drillBreaks++; say('The drill is done, and the radio with it. Out comes the pick axe; the tape deck runs on its own battery.'); }
+    if (onPick()) { s.drillBreaks++; say('The drill is done, and the radio with it. Out comes the pickaxe; the tape deck runs on its own battery.'); }
   }
   if (frenzy() && s.samples > 0 && Math.random() < CONFIG.frenzy.sampleLossChance) { s.samples--; s.lost++; say('The drill rattled a sample loose. Gone for good.'); loseSample(); }
   if (c.hp > 0) return;
@@ -1144,7 +1159,7 @@ function gain(k, n) {
 // melts, a new way down. Once it's hot, every hit may blow you up instead. Only the drill breaks.
 function slabHit(x, y, c) {
   const C = CONFIG.chrome, t = now();
-  if (!frenzy() || onPick()) { nasa(); warn(onPick() ? 'The pick axe bounces off the chrome.' : 'Näsa™ chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
+  if (!frenzy() || onPick()) { nasa(); warn(onPick() ? 'The pickaxe bounces off the chrome.' : 'Näsa™ chrome. It does not dig. Find the gap.'); bump(x, y, 2); return; }
   if (s.strStacks < C.stacks) { nasa(); warn('The chrome warms a little, then cools. More Strength might do it.'); bump(x, y, 3); return; }
   if (c.hotAt && t - c.hotAt < C.heatEveryMs) { bump(x, y, 2); return; }   // one heat step per half second: holding ↓ can't rush it, so you can watch it glow and choose
   const cooling = Math.max(0, t - (c.hotAt || t) - C.heatEveryMs * 2);   // it only cools once you stop hitting it
@@ -1169,7 +1184,7 @@ function blowUp(x, y, c) {
   if (!onPick()) { s.drill = 0; s.drillWorn = true; s.drillBreaks++; }
   for (let i = 0; i < CONFIG.chrome.throwRows && p.y > 2 && g[p.y - 1][p.x].t === AIR; i++) p.y--;
   s.blasts = (s.blasts || 0) + 1;
-  say('BOOM. The chrome blew. So did the drill. Out comes the pick axe.');
+  say('BOOM. The chrome blew. So did the drill. Out comes the pickaxe.');
   nasa('Näsa™ property damaged. An invoice has been issued.', true);
 }
 
@@ -1223,7 +1238,7 @@ function detonate(ch) {
   bump(ch.x, ch.y, 40);
   cv.classList.remove('blast'); void cv.offsetWidth; cv.classList.add('blast');   // the screen jolts
   say(frenzy() ? 'BOOM. A Frenzy blast: twice the hole, and the drill felt it.' : 'BOOM.' + (cracked ? ' The crust cracks, but holds. Dig through it.' : '') + (chrome ? ' Näsa™ chrome: not a scratch.' : ''));
-  if (frenzy() && !onPick()) { s.drill = Math.max(0, s.drill - C.frenzyWear); s.drillWorn = true; if (onPick()) { s.drillBreaks++; say('The drill is done, and the radio with it. Out comes the pick axe; the tape deck runs on its own battery.'); } }
+  if (frenzy() && !onPick()) { s.drill = Math.max(0, s.drill - C.frenzyWear); s.drillWorn = true; if (onPick()) { s.drillBreaks++; say('The drill is done, and the radio with it. Out comes the pickaxe; the tape deck runs on its own battery.'); } }
   if (chrome) nasa('Näsa™ chrome is blast-rated. An invoice has been issued anyway.', true);
 }
 
@@ -1337,7 +1352,7 @@ function drink(v, fromShaker = false) {
   // Recovery acts at once: the drill is good as new.
   if (v === 'recovery') {
     s.repaired = true;
-    say(onPick() ? 'Recovery. The drill is repaired; the pick axe goes back on its hook.' : s.drill < 100 ? 'Recovery. The drill is good as new.' : 'Recovery, with nothing to repair. The Foundation notes the waste.');
+    say(onPick() ? 'Recovery. The drill is repaired; the pickaxe goes back on its hook.' : s.drill < 100 ? 'Recovery. The drill is good as new.' : 'Recovery, with nothing to repair. The Foundation notes the waste.');
     s.drill = 100; return;
   }
   // Stamina acts at once: everything already in your system lasts 50% longer. No countdown of its own.
@@ -2153,8 +2168,8 @@ function hint() {
   if (tipS) return sealed && sealed.kind === 'still' ? 'One more quick Calm tips you into Stillness, and the sealed artefact (◈) gives way.' : 'One more quick Calm tips you into Stillness.';
   if (sealed) return `An artefact is sealed in the rock here (◈). ${sealedHow(sealed.kind)}`;
   if (s.announceUntil > t) return s.announce;
-  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pick axe: slower, but it always works. Recovery repairs the drill: press 3 (${repairText()}).`;
-  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pick axe. Recovery repairs it: press 3 (${repairText()}).`;
+  if (onPick() && !frenzy()) return `Your drill broke in the Frenzy. You\u2019re on the pickaxe: slower, but it always works. Recovery repairs the drill: press 3 (${repairText()}).`;
+  if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pickaxe. Recovery repairs it: press 3 (${repairText()}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view: break it and you drink whatever is inside.';
   if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while “next drink ×1.5” shows, and it pushes harder.';
@@ -2182,15 +2197,15 @@ function renderStatic() {
     <div class="ph" id="ph_${v}">[${i + 1}] ? ? ?</div>` : ''}
     <div class="recipe later" data-reveal="recipe_${v}">
       <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
-      <button id="act_${v}">Shake</button>
+      <button id="act_${v}" class="key" aria-label="Shake"><span class="no">${i + 1}</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`).join('') + `
     <div class="recipe later" data-reveal="recipe_jizz">
       <div class="name"><b>[9] Jizz+</b><br><span class="small">${jizzRecipe()}</span></div>
-      <button id="act_jizz">Shake</button>
+      <button id="act_jizz" class="key jizz" aria-label="Shake"><span class="no">9</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>
     <div class="recipe later" data-reveal="recipe_candy">
       <div class="name"><b>[0] Candygirl</b><br><span class="small">${candyRecipe()}</span></div>
-      <button id="act_candy">Shake</button>
+      <button id="act_candy" class="key candy" aria-label="Shake"><span class="no">0</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`;   // the secret menu: only once found
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
   $('act_candy').onclick = () => { secretCandy(); cv.focus(); };
@@ -2211,6 +2226,12 @@ function radioHud() {
   $('radioBox').classList.toggle('call', running && !musicOn());   // the drill is waiting: look here
 }
 
+// A shake key's state: can (SHAKE lit), shaking (SHAKE fills amber over the shake), ready (DRINK lit), off (dark: can't mix, or another is shaking).
+function keyState(b, st) {
+  for (const k of ['can', 'shaking', 'ready', 'off']) b.classList.toggle(k, k === st);
+  if (st === 'shaking') b.style.setProperty('--p', (Math.min(1, 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs) * 100).toFixed(1) + '%');
+  const label = st === 'shaking' ? 'Shaking' : st === 'ready' ? 'Drink' : 'Shake'; if (b.getAttribute('aria-label') !== label) b.setAttribute('aria-label', label);
+}
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
 const lastHTML = {};
 const EM = '\u0001', EM_END = '\u0002', em = t => EM + t + EM_END;   // emphasis markers: invisible, so the typewriter types through them
@@ -2285,7 +2306,7 @@ function hud() {
   setHTML('power', `${pw}<small>/${need}</small>`);
   $('powerRow').title = `Digging power ${pw}. The crust at the bottom of this layer needs ${need}.`;
   setText('chargeCost', s.charges.length ? 'fuse lit…' : `${CONFIG.charge.cost} drill samples`);
-  // The drill as a bar gauge: ten segments; amber once worn; broken, the bar reads "Pick axe".
+  // The drill as a bar gauge: ten segments; amber once worn; broken, the bar reads "Pickaxe".
   const worn = s.drill < CONFIG.drill.warnBelow, segs = Math.ceil(s.drill / 10);
   setHTML('dbar', Array.from({ length: 10 }, (_, i) => `<i class="${i < segs ? 'on' : ''}"></i>`).join(''));
   $('dbar').className = 'dbar' + (onPick() ? ' broken' : worn ? ' worn' : '');
@@ -2303,12 +2324,11 @@ function hud() {
   for (const v of VARIANTS) {
     setText('rc_' + v, recipeText(v));
     const b = $('act_' + v), ready = s.bottles[v] > 0, mine = shaking() && s.shake.v === v;
-    setText('act_' + v, mine ? 'Shaking…' : ready ? 'Drink' : 'Shake');
-    b.className = ready ? 'ready' : '';
     b.disabled = !running || (!ready && (shaking() || !canMix(v)));
+    keyState(b, mine ? 'shaking' : ready ? 'ready' : b.disabled ? 'off' : 'can');
   }
-  { const b = $('act_jizz'), mine = shaking() && s.shake.v === 'jizz'; setText('act_jizz', mine ? 'Shaking…' : 'Shake'); b.disabled = !running || shaking() || !Object.entries(CONFIG.jizz.recipe).every(([k, n]) => s.inv[k] >= n); }
-  { const b = $('act_candy'), mine = shaking() && s.shake.v === 'candy'; setText('act_candy', mine ? 'Shaking…' : 'Shake'); b.disabled = !running || shaking() || !Object.entries(CONFIG.candy.recipe).every(([k, n]) => s.inv[k] >= n); }
+  { const b = $('act_jizz'), mine = shaking() && s.shake.v === 'jizz'; b.disabled = !running || shaking() || !Object.entries(CONFIG.jizz.recipe).every(([k, n]) => s.inv[k] >= n); keyState(b, mine ? 'shaking' : b.disabled ? 'off' : 'can'); }
+  { const b = $('act_candy'), mine = shaking() && s.shake.v === 'candy'; b.disabled = !running || shaking() || !Object.entries(CONFIG.candy.recipe).every(([k, n]) => s.inv[k] >= n); keyState(b, mine ? 'shaking' : b.disabled ? 'off' : 'can'); }
   const fx = VARIANTS.filter(active).map(v => `${VNAME[v]}${v === 'strength' && s.strStacks > 1 ? ' ×' + s.strStacks : ''} ${Math.ceil((s.fx[v] - t) / 1000)}s`);
   if (candy()) fx.push(`Candygirl ${Math.ceil((s.fx.candy - t) / 1000)}s`);
   if (jizz()) fx.push(`Jizz+ ${Math.ceil((s.fx.jizz - t) / 1000)}s`);

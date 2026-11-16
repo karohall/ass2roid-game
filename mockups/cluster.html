@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instrument cluster · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* The dosage meter, meatier, as the centre of a cluster with smaller gauges beside it, like a car's or a cockpit's.
+   All at the meter's real width (758 px) and the height the game has free for it (230 px: the right column already pushes
+   the meter down that far, so the game's scale stays as it is). Tokens as in index.html. */
+:root { --ink:#0b0c0e; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --steel:#969da4; --faint:#5f656b;
+        --fluo:#34e6ff; --amber:#ffb43c; --cold:#8fa6c4; --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--ink); color:var(--text); font:14px/1.5 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }
+.doc { max-width:1180px; margin:0 auto; padding:48px 24px 96px; }
+.doc > header { padding-bottom:24px; border-bottom:1px solid var(--line-2); }
+.doc > header h1 { font:700 40px/1 var(--f-title); margin:8px 0 12px; } .doc > header p { color:var(--steel); max-width:780px; margin:0 0 8px; }
+.meta { font:500 11px/1.4 var(--f-small); color:var(--steel); }
+.sec { padding:36px 0; border-bottom:1px solid var(--line); }
+.sec > h2 { font:600 11px/1.6 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--steel); margin:0 0 6px; }
+.sec > p { margin:0 0 22px; color:var(--faint); font-size:13px; max-width:780px; }
+.states { display:flex; flex-direction:column; gap:22px; }
+.st { display:grid; grid-template-columns:150px 758px; gap:24px; align-items:center; }
+.st > span { font:500 12px/1.4 var(--f-small); color:var(--steel); } .st > span b { display:block; color:var(--text); font-weight:600; }
+/* The housing, as the game's meter: recessed behind dark glass, in the deck's gunmetal. */
+.housing { position:relative; background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06);
+           clip-path:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.housing::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
+.housing svg { display:block; }
+.now { padding:10px 14px; margin:0 0 18px; font:12px/1.5 var(--f-small); color:var(--steel); border-left:2px solid var(--line-2); max-width:780px; }
+.verdict { font:13px/1.6 var(--f-text); color:var(--steel); max-width:780px; margin:0; } .verdict b { color:var(--text); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header><div class="meta">ASS2ROID · Prototype 4 · the dosage meter, round 2</div><h1>A meatier meter, in a cluster</h1>
+    <p>Why the meter looks small now: its arc is so shallow and its radius so short that the dial itself only spans the middle 336 px of the 758 px band, and only 51 px tall. The rest is glass. Two ways out: the same curve, scaled up to fill the band; or a deeper curve (a real dial), which frees the sides for smaller gauges.</p>
+    <p>The meter can also grow from 160 to 230 px for free: the right-hand column already pushes it 80 px further down than it needs, so the game keeps its scale. The smaller gauges: the <b>shake</b> (two seconds, amber; then lit blue when the bottle is ready) and the <b>dose window</b> (the ×1.5, ×2, ×3 and its 20 seconds, now only a line of text under the word).</p></header>
+  <section class="sec" data-o="A"><h2>A · Full-width sweep</h2><p>The curve you have, scaled up until it fills the band: the dial is twice as wide and twice as deep, the redlines and the needle thicker, and a blue sweep from the centre to the needle so its position reads from across the room. The two small gauges are short arcs of the same curve in the lower corners.</p><div class="states"></div></section>
+  <section class="sec" data-o="B"><h2>B · Dial with edgewise strips</h2><p>A deeper dial, 124° of sweep, on the left, with its own hub; on the right, two vertical edgewise strips, like an aircraft's engine instruments: the shake fills upward, the dose window drains downward. The strips are the “on its side” version.</p><div class="states"></div></section>
+  <section class="sec" data-o="C"><h2>C · Car cluster</h2><p>A deep dial in the middle, flanked by two small round gauges like a fuel and a temperature gauge: the shake on the left, the dose window on the right. The most like a dashboard; every gauge the same family.</p><div class="states"></div></section>
+  <section class="sec"><h2>Recommendation</h2><p class="verdict"><b>C, the car cluster.</b> The deeper curve is what makes it meaty: the needle swings visibly with each drink, and the word sits in a real hub. The shake gauge left of the dial reads as “the next drink”, the dose window right of it as “what it will do”, so the cluster tells the drinking story left to right. A is the safest change (same look, bigger), B the most cockpit, but its strips are narrow at itch.io scale. The shake key keeps its own amber fill either way: the key says which bottle, the gauge says how long.</p></section>
+</div>
+<script>
+const W = 758, H = 230, TIP = .8, WORDS = ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'];
+const STATES = [
+  { k:'Balanced', d:'nothing shaking, no window', u:0 },
+  { k:'Shaking, leaning', d:'a Strength shaking (60%), one drink in the window', u:.32, shake:.6, win:{ m:1.5, left:12 }, next:.62 },
+  { k:'Ready, near the tip', d:'a bottle ready; the next Strength would tip it', u:.6, ready:true, win:{ m:2, left:6 }, next:.95 },
+  { k:'Frenzy', d:'pinned past the tip', u:1, state:'frenzy' },
+  { k:'Stillness', d:'pinned the other way', u:-1, state:'still' }];
+const word = u => WORDS[Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)))];
+const label = st => st.state === 'frenzy' ? 'FRENZY' : st.state === 'still' ? 'STILLNESS' : word(st.u);
+const col = st => st.state === 'frenzy' ? '#ffb43c' : st.state === 'still' ? '#8fa6c4' : '#e1e4e6';
+const ncol = st => st.state === 'frenzy' ? '#ffb43c' : st.state === 'still' ? '#8fa6c4' : '#34e6ff';
+const f1 = n => n.toFixed(1);
+let gid = 0;
+
+// One swept dial. u in -1…1 maps to ±half degrees around straight up.
+function dial(o) {
+  const { cx, cy, R, half } = o, a = u => (-90 + u * half) * Math.PI / 180, pt = (u, r) => [cx + r * Math.cos(a(u)), cy + r * Math.sin(a(u))];
+  const arc = (u0, u1, r) => { const [x0, y0] = pt(u0, r), [x1, y1] = pt(u1, r); return `M${f1(x0)} ${f1(y0)} A${r} ${r} 0 ${Math.abs(u1 - u0) * half > 180 ? 1 : 0} 1 ${f1(x1)} ${f1(y1)}`; };
+  const line = (u, r0, r1, attrs) => { const [x0, y0] = pt(u, r0), [x1, y1] = pt(u, r1); return `<line x1="${f1(x0)}" y1="${f1(y0)}" x2="${f1(x1)}" y2="${f1(y1)}" ${attrs}/>`; };
+  let s = `<path d="${arc(-1, 1, R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/>`;
+  if (o.track) s += `<path d="${arc(-1, 1, R - o.bw / 2 - 2)}" stroke="rgba(150,157,164,.08)" stroke-width="${o.bw}" fill="none"/>`;
+  if (o.zones) s += `<path d="${arc(TIP, 1, R - o.bw / 2 - 2)}" stroke="#ffb43c" stroke-width="${o.bw}" fill="none" opacity=".85"/><path d="${arc(-1, -TIP, R - o.bw / 2 - 2)}" stroke="#8fa6c4" stroke-width="${o.bw}" fill="none" opacity=".8"/>`;
+  if (o.fill && Math.abs(o.fill[1] - o.fill[0]) > .001) { const [u0, u1] = o.fill[0] < o.fill[1] ? o.fill : [o.fill[1], o.fill[0]];
+    s += `<path d="${arc(u0, u1, R - o.bw / 2 - 2)}" stroke="${o.fillCol}" stroke-width="${o.bw}" fill="none" opacity="${o.fillOp || .35}"/>`; }
+  const n = o.ticks || 20;
+  for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % (o.every || 5) === 0; s += line(u, R + 2, R + (major ? o.tl : o.tl / 2), `stroke="${major ? '#e1e4e6' : 'rgba(150,157,164,.55)'}" stroke-width="${major ? 2 : 1}"`); }
+  if (o.words) o.words.forEach((w, i) => { const u = -.8 + i * .4, [x, y] = pt(u, R + o.tl + 13), on = o.on === i; s += `<text x="${f1(x)}" y="${f1(y + 4)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="${on ? 600 : 500}" fill="${on ? '#e1e4e6' : '#5f656b'}">${w}</text>`; });
+  for (const nx of o.next || []) s += line(nx, R - o.nl + 8, R + 10, 'stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity=".75"');
+  if (o.u !== null && o.u !== undefined) {
+    const id = 'g' + (++gid);
+    s += `<defs><filter id="${id}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${o.nw}"/></filter></defs>`;
+    s += line(o.u, R - o.nl, R + 12, `stroke="${o.ncol}" stroke-width="${o.nw * 2.4}" filter="url(#${id})" opacity=".75"`) + line(o.u, R - o.nl, R + 12, `stroke="${o.ncol}" stroke-width="${o.nw}" stroke-linecap="round"`);
+  }
+  if (o.hub) s += `<circle cx="${cx}" cy="${cy}" r="${o.hub}" fill="#15171a" stroke="rgba(150,157,164,.35)"/>`;
+  return s;
+}
+const text = (x, y, t, size, fill, weight = 700, fam = 'Chakra Petch', extra = '') => `<text x="${x}" y="${y}" text-anchor="middle" font-family="${fam}" font-weight="${weight}" font-size="${size}" fill="${fill}" ${extra}>${t}</text>`;
+const lbl = (x, y, t) => text(x, y, t, 11, '#5f656b', 600, 'IBM Plex Sans', 'letter-spacing="1.6"');
+// The two small gauges' readings.
+const shakeOf = st => st.ready ? { u:1, col:'#34e6ff', read:'DRINK', rc:'#34e6ff' } : st.shake != null ? { u:st.shake * 2 - 1, col:'#ffb43c', read:f1(st.shake * 2) + 's', rc:'#ffb43c' } : { u:null, col:'#5f656b', read:'—', rc:'#5f656b' };
+const winOf = st => st.win ? { u:st.win.left / 20 * 2 - 1, read:'×' + st.win.m, sub:st.win.left + 's', rc:'#34e6ff' } : { u:null, read:'×1', sub:'', rc:'#5f656b' };
+const lvl = st => st.state ? -1 : Math.max(0, Math.min(4, Math.floor((st.u + 1) / 2 * 5 - 1e-9)));
+
+// A · the curve you have, full width
+function A(st) {
+  const c = 340, sag = 104, R = Math.round((c * c + sag * sag) / (2 * sag)), half = Math.asin(c / R) * 180 / Math.PI, cx = W / 2, cy = 46 + R;
+  let s = dial({ cx, cy, R, half, u:st.u, ncol:ncol(st), nw:3.5, nl:76, bw:14, tl:20, ticks:40, every:4, zones:true, track:true, fill:st.state ? null : [0, st.u], fillCol:'#34e6ff', words:WORDS, on:lvl(st), next:st.next ? [st.next] : [] });
+  s += text(cx, 178, label(st).toUpperCase(), label(st).length > 10 ? 26 : 32, col(st), 700, 'Chakra Petch', 'letter-spacing="1.5"');
+  // small arcs of the same curve, lower corners
+  const sh = shakeOf(st), wi = winOf(st), small = (x, r, g) => dial({ cx:x, cy:184 + 120, R:120, half:30, u:g.u, ncol:g.col || '#34e6ff', nw:2.5, nl:24, bw:7, tl:9, ticks:10, track:true, fill:g.u != null ? [-1, g.u] : null, fillCol:g.col || '#34e6ff', fillOp:.6 });
+  s += small(110, 0, sh) + lbl(84, 224, 'SHAKE') + text(140, 224, sh.read, 13, sh.rc, 700);
+  s += small(W - 110, 0, { ...wi, col:'#34e6ff' }) + lbl(W - 78, 224, 'WINDOW') + text(W - 140, 224, wi.read + (wi.sub ? ' ' + wi.sub : ''), 13, wi.rc, 700);
+  return s;
+}
+// B · a deeper dial, left; edgewise strips, right
+function B(st) {
+  const cx = 300, cy = 204, R = 150, half = 62;
+  let s = dial({ cx, cy, R, half, u:st.u, ncol:ncol(st), nw:3.5, nl:68, bw:14, tl:18, ticks:40, every:4, zones:true, track:true, fill:st.state ? null : [0, st.u], fillCol:'#34e6ff', words:WORDS, on:lvl(st), next:st.next ? [st.next] : [], hub:14 });
+  s += text(cx, 178, label(st).toUpperCase(), label(st).length > 10 ? 22 : 28, col(st), 700, 'Chakra Petch', 'letter-spacing="1.2"');
+  const strip = (x, frac, c, title, read, rc, sub) => {
+    const y0 = 34, h = 152, w = 26; let t = `<rect x="${x}" y="${y0}" width="${w}" height="${h}" fill="#050607" stroke="rgba(150,157,164,.3)"/>`;
+    for (let i = 0; i <= 10; i++) { const y = y0 + h - i * h / 10, major = i % 5 === 0; t += `<line x1="${x + w}" y1="${y}" x2="${x + w + (major ? 9 : 5)}" y2="${y}" stroke="${major ? '#e1e4e6' : 'rgba(150,157,164,.55)'}" stroke-width="${major ? 1.5 : 1}"/>`; }
+    if (frac != null) { const fh = frac * (h - 4); t += `<rect x="${x + 2}" y="${y0 + h - 2 - fh}" width="${w - 4}" height="${fh}" fill="${c}" opacity=".8"/><rect x="${x - 4}" y="${y0 + h - 2 - fh - 1.5}" width="${w + 8}" height="3" fill="${c}"/>`; }
+    return t + lbl(x + w / 2 + 4, 206, title) + text(x + w / 2 + 4, y0 - 12, read, 14, rc, 700) + (sub ? text(x + w / 2 + 4, 222, sub, 11, rc, 600, 'IBM Plex Sans') : '');
+  };
+  const sh = shakeOf(st), wi = winOf(st);
+  s += `<line x1="520" y1="30" x2="520" y2="210" stroke="rgba(150,157,164,.18)"/>`;
+  s += strip(574, st.ready ? 1 : st.shake ?? null, sh.col, 'SHAKE', sh.read, sh.rc);
+  s += strip(674, st.win ? st.win.left / 20 : null, '#34e6ff', 'WINDOW', wi.read, wi.rc, wi.sub);
+  return s;
+}
+// C · car cluster: small round gauge, deep dial, small round gauge
+function C(st) {
+  const cx = W / 2, cy = 212, R = 162, half = 56;
+  let s = dial({ cx, cy, R, half, u:st.u, ncol:ncol(st), nw:3.5, nl:72, bw:14, tl:18, ticks:40, every:4, zones:true, track:true, fill:st.state ? null : [0, st.u], fillCol:'#34e6ff', words:WORDS, on:lvl(st), next:st.next ? [st.next] : [], hub:15 });
+  s += text(cx, 180, label(st).toUpperCase(), label(st).length > 10 ? 22 : 28, col(st), 700, 'Chakra Petch', 'letter-spacing="1.2"');
+  const round = (x, g, title, read, sub, rc, fc) => dial({ cx:x, cy:122, R:56, half:125, u:g.u, ncol:fc, nw:2.5, nl:40, bw:7, tl:9, ticks:10, track:true, fill:g.u != null ? [-1, g.u] : null, fillCol:fc, fillOp:.55, hub:7 })
+    + text(x, 172, read, 16, rc, 700) + lbl(x, 196, title) + (sub ? text(x, 214, sub, 11, rc, 600, 'IBM Plex Sans') : '');
+  const sh = shakeOf(st), wi = winOf(st);
+  s += round(94, sh, 'SHAKE', sh.read, '', sh.rc, sh.col);
+  s += round(W - 94, wi, 'WINDOW', wi.read, wi.sub, wi.rc, '#34e6ff');
+  return s;
+}
+const svg = inner => `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+const NOW = `<div class="st"><span><b>Now, for scale</b>the meter in the game today, 160 px</span><div class="housing" style="height:160px">${svg(dial({ cx:379, cy:356, R:300, half:34, u:.32, ncol:'#34e6ff', nw:2.5, nl:46, bw:10, tl:18, ticks:40, every:4, zones:true, words:WORDS, on:3 }) + text(379, 124, 'We see you', 26, '#e1e4e6')).replace(`height="${H}"`, 'height="160"').replace(`0 0 ${W} ${H}`, `0 0 ${W} 160`)}</div></div>`;
+document.fonts.ready.then(() => Promise.all(['700 22px "Chakra Petch"', '600 11px "IBM Plex Sans"'].map(f => document.fonts.load(f)))).then(() => {
+  for (const [o, fn] of [['A', A], ['B', B], ['C', C]]) document.querySelector(`[data-o="${o}"] .states`).innerHTML = (o === 'A' ? NOW : '') + STATES.map(st => `<div class="st"><span><b>${st.k}</b>${st.d}</span><div class="housing">${svg(fn(st))}</div></div>`).join('');
+});
+</script>
+</body>
+</html>
