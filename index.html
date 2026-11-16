@@ -545,19 +545,20 @@ const songOf = n => { const st = RADIO[n.key]; if (n.track) return n.track; retu
 // A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
 function pickRare(key) { const r = (RADIO[key].rare || []).filter(x => !x.unlock || radio.unlocked[x.unlock]); radio.rare[key] = r.length && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
-// The DJs (ElevenLabs voices). Each has a folder of clips in its station's folder. They talk between songs now
-// and then, and at a few moments, as if they are watching. Only on their own station, never in the Drift or
-// on the tape. The music ducks under them.
+// The DJs (ElevenLabs voices). Each has a folder of clips in its station's folder. They talk over the end of a song now
+// and then, over the opening of a song a line belongs to, and at a few moments, as if they are watching. Only on their own
+// station, never in the Drift or on the tape. Always over music, never on their own (2026-11-16): the music ducks under them.
 // Coach Rocky, the Pump Zone: loud, German, counting reps. The Broadcaster, Void FM: calm, facts about the dark.
 const clip = (folder, name) => `audio/Radio/${folder}/${name}.mp3`;
-const ROCKY = name => clip('The Pump Zone/Coach Rocky', name), VOICE = name => clip('Void FM/The Broadcaster', name);
+const ROCKY = name => `audio/Radio/The Pump Zone/coach rocky compressed/${name}.wav`, VOICE = name => clip('Void FM/The Broadcaster', name);   // Rocky: the user's compressed takes
 const DJS = {
   pump: {
-    breaks: ['Hydrate dominate excavate', 'No pain no gain', 'Heartrate', 'Näsa jab', 'Never leave a brother hanging', 'Side effects are not bad'].map(ROCKY),
-    hello: ROCKY('Good morning Korova'),                          // Begin shift, if the shift starts on the Pump Zone
-    frenzy: ROCKY('Frenzy is not a problem'),                     // a Frenzy starts: he breaks in on any station
-    fromVoid: ROCKY('If you switch to Void FM I will know.'),     // back from Void FM
-    secret: ROCKY('There is one song on this station that is not on the menu. I did not tell you that.'),   // rare: the radio teaches you things (Candygirl)
+    breaks: ['hydrate dominate excavate', 'no pain no gain', 'heartrate', 'näsa jab', 'side effects'].map(ROCKY),
+    songs: { 'Hard Hat, Hard Body': ROCKY('never leave a bro') },   // a line that belongs to a song: over its opening, every time it comes on
+    hello: ROCKY('good morning'),                                 // Begin shift, if the shift starts on the Pump Zone
+    frenzy: ROCKY('frenzy not a problem'),                        // a Frenzy starts: he breaks in on any station
+    fromVoid: ROCKY('void fm jab'),                               // back from Void FM: if you switch to Void FM, he will know
+    secret: ROCKY('secret song'),                                 // rare: the radio teaches you things (Candygirl)
   },
   void: {
     breaks: ['Dante fact', 'Galaxy fact', 'Sappho fact', 'Static fact', 'Some of the stars you see may already be gone. And yet they shine.',
@@ -571,13 +572,17 @@ const dj = new Audio(); dj.preload = 'auto'; let djLast = '', djOn = '';
 let djCue = 0;                                              // a voice about to start: the music is already dipping
 const djTalking = () => !!djCue || (!!dj.src && !dj.paused && !dj.ended);
 const djOnAir = key => sound.on && !(s && s.drift) && (key === '*' ? radioNow().key !== 'tape' : radioNow().key === key);   // '*': breaking in on any station
+// The music must already be playing: a voice is never heard on its own.
+const musicPlaying = () => !!player.src && !player.paused && player.currentTime > 1 && sound.vol > 0.05;
+let djWait = null;                                          // a line waiting for the music to start (up to 6 s), then it speaks over it
 function djSay(key, file, any) {
   if (any) key = '*';
   if (!djOnAir(key) || djTalking()) return;
+  if (!musicPlaying()) { djWait = { key, file, until: performance.now() + 6000 }; return; }
   dj.src = encodeURI(file); djLast = file; djOn = key;
-  djCue = setTimeout(() => { djCue = 0; if (djOnAir(djOn)) dj.play().catch(() => {}); }, CONFIG.radio.djLead);
+  djCue = setTimeout(() => { djCue = 0; if (djOnAir(djOn) && musicPlaying()) dj.play().catch(() => {}); }, CONFIG.radio.djLead);
 }
-function djHush() { clearTimeout(djCue); djCue = 0; dj.pause(); }
+function djHush() { clearTimeout(djCue); djCue = 0; dj.pause(); djWait = null; }
 const rocky = file => djSay('pump', file);
 // The radio's sound, through Web Audio. Songs and voices share one bus, so the state changes both.
 // Stillness: muffled and slower, as if through rock. Frenzy: faster, thinner, a little distorted.
@@ -643,7 +648,6 @@ function songEnded() {
   if (n.song === undefined && radio.rare[n.key]) radio.rare[n.key] = null;     // a rare song gives way to the rotation
   else if (n.song === undefined) { radio.idx[n.key] = (radio.idx[n.key] || 0) + 1; pickRare(n.key); }   // the next song on this station
   else { player.currentTime = 0; player.play().catch(() => {}); return; }     // a song that cut in plays again
-  djBreak(n.key);                                                            // between songs, the DJ may have a word
 }
 // V: loud, soft, muted. Sound is input too; the player decides how much of it. A muted radio still counts as music.
 const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
@@ -681,6 +685,12 @@ function soundTick(dt) {
     else if (radio.on === 'void' && k === 'void' && !s.djHello.void && !djTalking()) { s.djHello.void = true; djSay('void', DJS.void.hello); }   // tuning in to Void FM: welcome
   }
   if (djTalking() && !djOnAir(djOn)) djHush();                                                          // off their station, the DJ goes quiet
+  if (djWait && !djTalking()) { if (performance.now() > djWait.until || !djOnAir(djWait.key)) djWait = null; else if (musicPlaying()) { const w = djWait; djWait = null; djSay(w.key, w.file); } }
+  if (s && running && sound.on && !djTalking() && !djWait && musicPlaying() && player.duration) {
+    const k = radioNow().key, d = DJS[k], tag = player.src, at = player.currentTime, left = player.duration - at;
+    if (d && d.songs && radio.djSong !== tag && at > 4 && at < 20) { radio.djSong = tag; const line = d.songs[songOf(radioNow()).title]; if (line) djSay(k, line); }   // over the opening of its own song
+    else if (radio.djOut !== tag && left < 9 && left > 5) { radio.djOut = tag; djBreak(k); }   // over the last seconds of a song, now and then
+  }
   dj.volume = menuK;
   stateSound();
   const level = CONFIG.radio.volume * menuK * (djTalking() ? CONFIG.radio.djDuck : 1);                    // the music ducks under the DJ
