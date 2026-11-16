@@ -419,7 +419,7 @@
   </div>
 
     <div id="dosage" class="later" data-reveal="drink">
-      <svg id="gauge" width="480" height="230" viewBox="0 0 480 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
+      <svg id="gauge" width="480" height="230" viewBox="0 0 480 230" role="img" aria-label="Dosage scale and next drink"></svg>
     </div>
     <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
     <div class="box" id="radioBox">
@@ -2289,15 +2289,8 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // The dosage meter as a car cluster (mockups/cluster.html, C): a deep dial in the middle, from Stillness (left) to Frenzy (right),
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
-// the shake on the left (amber while it shakes, blue when a bottle is ready) and the dose window on the right (×1.5, ×2, ×3 and its seconds).
-const GZ = { w: 480, h: 230, main: { half: 48 }, shake: { half: 125 }, win: { half: 125 } };
-// Three layouts for the small gauges (2026-11-16, to compare in play: ?cluster=a, b or c). "in": the reading sits on the gauge's face.
-const CLUSTER = ({ a: 1, b: 1, c: 1 })[new URLSearchParams(location.search).get('cluster')] ? new URLSearchParams(location.search).get('cluster') : 'b';
-const CLUSTERS = {
-  a: w => ({ shake: { cx: 48, cy: 112, R: 38 }, win: { cx: w - 40, cy: 134, R: 28 }, main: { cx: (w + 18) / 2, cy: 244, R: 172 } }),                         // smaller gauges either side
-  b: w => ({ shake: { cx: w - 56, cy: 84, R: 32, in: true }, win: { cx: w - 56, cy: 170, R: 24, in: true }, main: { cx: 188, cy: 250, R: 180 } }),          // both stacked on the right, under the step
-  c: w => ({ shake: { cx: 46, cy: 118, R: 34 }, win: { cx: w - 48, cy: 84, R: 24, in: true }, main: { cx: 232, cy: 244, R: 166 } }),                       // Next drink up in the corner under the step
-};   // three sizes: the shake big, the dial, Next drink small under the step   // centred in whatever width the deck gives it (buildGauge)
+// Next drink, the dose window (×1.5, ×2, ×3 and its seconds), small in the corner under the step. The shake is shown on its key, where you press (mockups/cluster2.html, 2).
+const GZ = { w: 480, h: 230, main: { half: 50 }, win: { half: 125, R: 26, cy: 88, in: true } };
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2305,7 +2298,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; const L = CLUSTERS[CLUSTER](w); for (const k of ['main', 'shake', 'win']) GZ[k] = { ...L[k], half: GZ[k].half };
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w * .475), cy: 250, R: 160 }); GZ.win.cx = w - 52;   // the dial a little left of centre, Next drink in the corner
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
@@ -2317,20 +2310,20 @@ function buildGauge() {
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
-  h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 20, 5, 18);
+  h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 10, 5, 16);   // few ticks: calm
   // the milestones, above the arc: every state named, the one you are in lit
-  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
+  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 28); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
   h += '<text class="gword" x="16" y="34" text-anchor="start" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-left corner, like a readout: the dial gets the room under it
   // the two small gauges
-  for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'NEXT DRINK']]) {
+  for (const [k, d, title] of [['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
     h += `<path d="${gArc(d, -1, 1, d.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(d, -1, 1, r)}" stroke="rgba(150,157,164,.08)" stroke-width="7" fill="none"/>`;
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
     const lab = t => `<text x="${d.cx}" y="${t}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>`;
-    if (d.in) h += txt(k + 'read', d.cx, d.cy + 5, 13, '#5f656b', 700, 'Chakra Petch') + txt(k + 'sub', d.cx, d.cy + 19, 11, '#34e6ff', 600, 'IBM Plex Sans') + lab(d.cy + d.R + 16);
+    if (d.in) h += txt(k + 'read', d.cx, d.cy + 5, 14, '#5f656b', 700, 'Chakra Petch') + txt(k + 'sub', d.cx, d.cy + 19, 11, '#34e6ff', 600, 'IBM Plex Sans') + lab(d.cy + d.R + 18);
     else h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>` + txt(k + 'read', d.cx, ry, d.R > 36 ? 16 : 14, '#5f656b', 700, 'Chakra Petch') + lab(ry + 20) + txt(k + 'sub', d.cx, ry + 37, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
@@ -2340,7 +2333,7 @@ function drawGaugeMeter(t) {
   const G = $('gauge'), M = GZ.main, u = gU(s.meter), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
-  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 92, M.R + 12); attr(ln, 'stroke', col); }
+  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 96, M.R + 12); attr(ln, 'stroke', col); }
   q('needle').classList.toggle('hot', !!st);
   attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
   G.querySelectorAll('.gl').forEach((el, i) => { const on = !st && i === lvl; attr(el, 'fill', on ? '#e1e4e6' : '#5f656b'); attr(el, 'font-weight', on ? 600 : 500); });
@@ -2350,13 +2343,6 @@ function drawGaugeMeter(t) {
     wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="16" dy="${i ? 19 : -6}">${l}</tspan>`).join('') : word;
     attr(wEl, 'font-size', two.length > 1 ? 15 : word.length > 12 ? 19 : 24); }
   attr(wEl, 'fill', st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#e1e4e6');
-  // The shake gauge: amber while a bottle shakes (the seconds left), blue and full when one is ready to drink (and its key).
-  const S = GZ.shake, ready = VARIANTS.findIndex(v => s.bottles[v] > 0), sh = shaking() ? Math.min(1, 1 - (s.shake.until - t) / CONFIG.mix.shakeMs) : null;
-  const sU = sh !== null ? sh * 2 - 1 : ready >= 0 ? 1 : -1, sCol = sh !== null ? '#ffb43c' : ready >= 0 ? '#34e6ff' : '#5f656b';
-  for (const ln of G.querySelectorAll('.sneedle line')) { gSeg(ln, S, sU, S.R * (S.in ? .58 : .28), S.R + 8); attr(ln, 'stroke', sCol); }
-  attr(q('sfill'), 'd', sU > -1 ? gArc(S, -1, sU, S.R - 5.5) : ''); attr(q('sfill'), 'stroke', sCol);
-  put(q('sread'), sh !== null ? Math.max(0, (s.shake.until - t) / 1000).toFixed(1) + 's' : ready >= 0 ? 'DRINK' : '—'); attr(q('sread'), 'fill', sCol);
-  put(q('ssub'), sh === null && ready >= 0 ? 'press ' + (ready + 1) : '');
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
   const W = GZ.win, win = windowDrinks(), open = win.length && !st && !active('focus'), m = nextMult(), left = open ? Math.max(0, Math.max(...win) + CONFIG.balance.windowMs - t) : 0;
   const wU = open ? left / CONFIG.balance.windowMs * 2 - 1 : -1, wCol = open ? '#34e6ff' : '#5f656b';
