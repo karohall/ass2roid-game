@@ -1497,7 +1497,9 @@ function finishGame(drifted = false) {
   // What's still out there: a quiet reason to play again, without explaining the whole system.
   const finds = CONFIG.artefacts.filter(a => !a.withdrawn), missing = finds.filter(a => !s.guide.includes(a.id));
   const nos = missing.map(a => a.no === 'E' ? 'E' : a.no), list = nos.length > 1 ? nos.slice(0, -1).join(', ') + ' and ' + nos[nos.length - 1] : nos[0];
-  const unrecovered = missing.length ? `<p class="note">Still in the rock: ${nos.length > 1 ? 'Nos.' : 'No.'} ${list}.<br><b>The archive cabinet waits.</b></p>` : '';   // the numbers, as the cabinet shows them
+  // A few missing: their numbers, each a target. Many: just how many, so the line stays short (2026-11-16).
+  const what = nos.length <= 4 ? `${nos.length > 1 ? 'Nos.' : 'No.'} ${list}` : nos.length === finds.length ? `all ${finds.length} finds` : `${nos.length} of ${finds.length} finds`;
+  const unrecovered = missing.length ? `<p class="note">Still in the rock: ${what}.<br><b>The archive cabinet waits.</b></p>` : '';   // the numbers, as the cabinet shows them
   showMenu(`${drifted
       ? '<span class="lbl">Contact lost</span><h2 class="ttl">The drift.</h2><p class="body">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet.<br>It was not unpleasant.</p>'
       : '<span class="lbl live">Shift complete</span><h2 class="ttl">The Core.</h2><p class="body">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</p>'}
