@@ -166,9 +166,15 @@
   /* Sparse opening: until the first drink, only the prospector, the hint and the Strength shake button. */
   .later:not(.shown) { display:none !important; }                    /* hidden parts take no space */
   #dosage.later:not(.shown) { display:block !important; visibility:hidden; }   /* except the meter: its place is kept, so the radio below never jumps */
+  /* Ghosts (2026-11-16): a panel still to come keeps its place, its frame drawn very faintly, so the deck reads as hardware waiting
+     to power up rather than empty. Nothing jumps when it arrives: it fills its own outline. */
+  .box.later:not(.shown) { display:block !important; visibility:hidden; }
+  #panel2 > .box.later:last-child:not(.shown) { display:flex !important; }
+  .box.later:not(.shown) > svg.outline { visibility:visible; opacity:.28; }
+  #dosage.later:not(.shown)::before { content:''; position:absolute; inset:0; visibility:visible; background:rgba(150,157,164,.045); box-shadow:inset 0 0 0 1px rgba(150,157,164,.12); }
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
-  body.intro #milk > svg.outline { opacity:0; }                       /* at first, only the shake button: the frame arrives with the first drink */
+  body.intro #milk > svg.outline { opacity:.28; }                     /* at first, only the shake button and the ghost of its frame: the frame lights with the first drink */
   #hint:empty { visibility:hidden; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
@@ -320,6 +326,25 @@
   .ind.blink i { animation:blink 1s steps(1, end) infinite; }
   @keyframes blink { 50% { background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607; } }
   @media (prefers-reduced-motion: reduce) { .ind.blink i { animation:none; } }
+  /* The screens, in the deck's hardware (2026-11-16): the label an engraved plate with its lamp, the title a screwed-on name plate. */
+  .overlay .lbl { padding:5px 9px 5px 8px; color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s);
+                  text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
+  .overlay .lbl::before { width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }
+  .overlay .lbl.live::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 0 1px #08090a, 0 0 6px var(--fluo); }
+  .overlay .ttl { padding:10px 30px 12px; color:#d3d8dc; clip-path:var(--chamfer); text-shadow:0 -1px 0 rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.14);
+    background:radial-gradient(circle at 12px 50%, #7a8187 0 1.8px, #0b0c0e 2.4px 3.2px, transparent 3.7px), radial-gradient(circle at calc(100% - 12px) 50%, #7a8187 0 1.8px, #0b0c0e 2.4px 3.2px, transparent 3.7px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px), linear-gradient(180deg, #353a3f, #24282c);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), inset 0 -2px 0 rgba(0,0,0,.45); }
+  /* The check engine light: a real dashboard lamp, the icon lit amber behind dark glass. It is on. */
+  .lamprow .lamp { width:48px; height:34px; padding:7px 9px; margin:0; border-radius:5px; filter:none; animation:none; overflow:visible;
+    background:radial-gradient(70% 90% at 50% 45%, rgba(255,180,60,.22), transparent 70%), #0a0b0d; box-shadow:0 0 0 2px #2c3034, 0 0 0 3px #08090a, inset 0 2px 5px rgba(0,0,0,.9); }
+  .lamprow .lamp path { fill:var(--amber); animation:celamp 1.8s ease-in-out infinite; }
+  @keyframes celamp { 0%, 100% { fill:#ffc35e; } 50% { fill:#5a3d12; } }
+  @media (prefers-reduced-motion: reduce) { .lamprow .lamp path { animation:none; } }
+  /* The rover's drive: segments lighting up, like the drill's bar. */
+  .loadbar { height:12px; padding:2px; background:#07080a; box-shadow:inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.06); }
+  .loadbar i { left:2px; top:2px; bottom:2px; max-width:calc(100% - 4px); box-shadow:none; filter:drop-shadow(0 0 4px rgba(var(--fluo-rgb),.6));
+               background:repeating-linear-gradient(90deg, var(--fluo) 0 9px, transparent 9px 12px); }
 </style>
 </head>
 <body class="intro">
@@ -340,7 +365,7 @@
     <div id="nasa" class="hidden"></div>
     <div id="hint"></div>
     <div id="dosage" class="later" data-reveal="drink">
-      <svg id="gauge" width="758" height="230" viewBox="0 0 758 230" role="img" aria-label="Dosage scale, shake and dose window"></svg>
+      <svg id="gauge" width="758" height="230" viewBox="0 0 758 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
     </div>
     <div id="baseRow">                                      <!-- the radio, under the meter -->
     <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
@@ -356,7 +381,6 @@
     <div class="box" id="milk">
       <h3 class="later" data-reveal="drink">Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small later" data-reveal="learning" style="margin-top:6px;color:var(--text)">Press once to shake (2 s, no digging). Press again to drink, instantly.</div>
       <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
@@ -2108,7 +2132,6 @@ const known = k => s.guide.includes('ing_' + k);
 // Bit by bit: each part of the interface appears when it first matters.
 const REVEAL = {
   drink:  () => s.drinks > 0,
-  learning: () => s.drinks > 0 && s.drinks < 3,
   started: () => $('start').classList.contains('hidden'),   // the shift has begun (Enter)
   dig:    () => s.dug > 0,
   pickup: () => s.pickups > 0,
@@ -2171,7 +2194,7 @@ function hint() {
   if (s.drill < CONFIG.drill.warnBelow && !s.repaired && !frenzy()) return `The Frenzy wore your drill down to ${Math.round(s.drill)}%. At 0 it breaks and you\u2019re on the pickaxe. Recovery repairs it: press 3 (${repairText()}).`;
   if (g[p.y + 1] && g[p.y + 1][p.x].t === SLAB) return 'Näsa™ chrome below. It does not dig: dig sideways and find the gap. Näsa™ property. Do not attempt to mine when in a Frenzy. It might melt.';
   if (layer().shakers && !s.mysteries && g.slice(Math.floor(cam), Math.floor(cam) + VIEW).some(r => r.some(c => c.t === SHAKER))) return 'A fossilised shaker in view: break it and you drink whatever is inside.';
-  if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while the Window gauge shows ×1.5, and it pushes harder.';
+  if (s.frenzies === 0 && s.stills === 0 && s.drinks < 4 && windowDrinks().length && !active('focus')) return 'Rumour: the Foundation measures how fast, not just how much. Drink again while Next drink shows ×1.5, and it pushes harder.';
   if (nearCrust && power() < L.crustMinPower && p.y === H - 4 && !canMix('strength') && !s.bottles.strength) return 'The last survey left Regolith Whey in this row, just above the crust. Dig sideways.';
   if (nearCrust && power() < L.crustMinPower) return `The crust below needs digging power ${L.crustMinPower}. You have ${power()}. ${L.crustMinPower > 4 ? 'Stack Strength: drink it twice. Hyperfocus first keeps it safe.' : 'Drink Strength.'}`;
   if (seamWaiting('frenzy')) return 'The ? seam has sealed. It responds to Frenzy only.';
@@ -2257,7 +2280,7 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
 // the shake on the left (amber while it shakes, blue when a bottle is ready) and the dose window on the right (×1.5, ×2, ×3 and its seconds).
-const GZ = { w: 758, h: 230, main: { cx: 363, cy: 212, R: 162, half: 56 }, shake: { cx: 84, cy: 122, R: 56, half: 125 }, win: { cx: 664, cy: 122, R: 56, half: 125 } };
+const GZ = { w: 758, h: 230, main: { cx: 338, cy: 222, R: 182, half: 54 }, shake: { cx: 76, cy: 116, R: 50, half: 125 }, win: { cx: 650, cy: 116, R: 50, half: 125 } };   // the dial sits left of centre: under the Milk+ column the housing starts lower
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2265,7 +2288,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const M = GZ.main, tu = gU(tipAt()), bw = 14, rb = M.R - bw / 2 - 2;
+  const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
     h += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${major ? '#e1e4e6' : 'rgba(150,157,164,.55)'}" stroke-width="${major ? 2 : 1}"/>`; } return h; };
   const txt = (cls, x, y, size, fill, weight, fam, extra = '') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="middle" font-family="${fam}" font-weight="${weight}" font-size="${size}" fill="${fill}" ${extra}></text>`;
@@ -2273,20 +2296,18 @@ function buildGauge() {
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
-  h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 40, 4, 18);
-  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R - 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="11">${w}</text>`; });
+  h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 20, 5, 18);   // calm: the word below says where you are, so the scale carries no words
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
-  h += `<circle cx="${M.cx}" cy="${M.cy}" r="15" fill="#15171a" stroke="rgba(150,157,164,.35)"/>`;
-  h += txt('gword', M.cx, 180, 28, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
+  h += txt('gword', M.cx, 198, 34, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
   // the two small gauges
-  for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'WINDOW']]) {
+  for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2;
     h += `<path d="${gArc(d, -1, 1, d.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(d, -1, 1, r)}" stroke="rgba(150,157,164,.08)" stroke-width="7" fill="none"/>`;
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
     h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>`;
-    h += txt(k + 'read', d.cx, 172, 16, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx}" y="196" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + txt(k + 'sub', d.cx, 214, 11, '#34e6ff', 600, 'IBM Plex Sans');
+    h += txt(k + 'read', d.cx, 166, 16, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx}" y="188" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + txt(k + 'sub', d.cx, 206, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt();
 }
@@ -2295,15 +2316,15 @@ function drawGaugeMeter(t) {
   const G = $('gauge'), M = GZ.main, u = gU(s.meter), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
-  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 72, M.R + 12); attr(ln, 'stroke', col); }
+  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 84, M.R + 12); attr(ln, 'stroke', col); }
   q('needle').classList.toggle('hot', !!st);
-  attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 9));
+  attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
   G.querySelectorAll('.gl').forEach((el, i) => { const on = !st && i === lvl; attr(el, 'fill', on ? '#e1e4e6' : '#5f656b'); attr(el, 'font-weight', on ? 600 : 500); });
   // The word, in capitals; Stillness's long line on two.
   const word = (st === 'frenzy' ? 'Frenzy' : st === 'still' ? 'Get out into the vast|nothingness of space' : DOSAGE[lvl]).toUpperCase(), wEl = q('gword');
   if (wEl.dataset.w !== word) { wEl.dataset.w = word; const two = word.split('|');
     wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="${M.cx}" dy="${i ? 21 : -12}">${l}</tspan>`).join('') : word;
-    attr(wEl, 'font-size', two.length > 1 ? 18 : word.length > 10 ? 22 : 28); }
+    attr(wEl, 'font-size', two.length > 1 ? 18 : word.length > 10 ? 26 : 34); }
   attr(wEl, 'fill', st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#e1e4e6');
   // The shake gauge: amber while a bottle shakes (the seconds left), blue and full when one is ready to drink (and its key).
   const S = GZ.shake, ready = VARIANTS.findIndex(v => s.bottles[v] > 0), sh = shaking() ? Math.min(1, 1 - (s.shake.until - t) / CONFIG.mix.shakeMs) : null;
@@ -2312,7 +2333,7 @@ function drawGaugeMeter(t) {
   attr(q('sfill'), 'd', sU > -1 ? gArc(S, -1, sU, S.R - 5.5) : ''); attr(q('sfill'), 'stroke', sCol);
   put(q('sread'), sh !== null ? Math.max(0, (s.shake.until - t) / 1000).toFixed(1) + 's' : ready >= 0 ? 'DRINK' : '—'); attr(q('sread'), 'fill', sCol);
   put(q('ssub'), sh === null && ready >= 0 ? 'press ' + (ready + 1) : '');
-  // The dose window gauge: what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
+  // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
   const W = GZ.win, win = windowDrinks(), open = win.length && !st && !active('focus'), m = nextMult(), left = open ? Math.max(0, Math.max(...win) + CONFIG.balance.windowMs - t) : 0;
   const wU = open ? left / CONFIG.balance.windowMs * 2 - 1 : -1, wCol = open ? '#34e6ff' : '#5f656b';
   for (const ln of G.querySelectorAll('.wneedle line')) { gSeg(ln, W, wU, W.R - 40, W.R + 10); attr(ln, 'stroke', wCol); }
@@ -2321,7 +2342,7 @@ function drawGaugeMeter(t) {
   put(q('wsub'), active('focus') && !st ? 'steady hand' : open ? Math.ceil(left / 1000) + 's' : '');
   [['gs', CONFIG.push.strength, REVEAL.recipe_strength()], ['gc', CONFIG.push.calm, REVEAL.recipe_calm()]].forEach(([c, push, known]) => {
     const el = q(c); if (!open || !known) { attr(el, 'opacity', 0); return; }
-    gSeg(el, M, gU(Math.max(CONFIG.balance.min, Math.min(CONFIG.balance.max, s.meter + push * m))), M.R - 64, M.R + 10); attr(el, 'opacity', .75); });
+    gSeg(el, M, gU(Math.max(CONFIG.balance.min, Math.min(CONFIG.balance.max, s.meter + push * m))), M.R - 76, M.R + 10); attr(el, 'opacity', .75); });
 }
 
 function hud() {

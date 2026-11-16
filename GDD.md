@@ -245,7 +245,7 @@ You reach the core: *"THE CORE. You are now further down than anyone asked you t
   > VHS cassette, handwritten label: "VICE 2–6. DO NOT TAPE OVER." Recovered from the Shaker Strata, rewound.
   > The series in question ran for five seasons. The Foundation has viewed season six, it was never released on Terra. The Foundation has no further comment.
 - **Level overview:** design it so it logically illustrates the progression from beginner at the surface to the deepest depths.
-- **A sleeker default interface, with an optional overlay** for players who want the numbers: the dose window multiplier (×1.5), effect durations and tip points. The current dosage scale, with its dashed tip lines, is prototype mode and needs a proper design.
+- ~~**A sleeker default interface, with an optional overlay** for the numbers~~ Done differently in Prototype 4 (2026-11-16): the dosage meter is a car cluster, and its **Next drink** gauge shows the dose window (×1.5, ×2, ×3 and its seconds), so no overlay. Less on the meter, not more: the dial has no scale words, the word under it says where you are.
 - **The radio reacts to the balance meter (built in Prototype 3, with real sound):**
   - **The state changes the sound, not the station (2026-11-14).** The station switch overrode your choice; with DJs and personalities on each station, it felt like being interrupted. Now you keep your station, and the room changes around it:
   - In **Stillness**, the music goes muffled and slower, lower like a slowed tape, as if heard through rock. As it lifts, the sound returns slowly. The Broadcaster comes through on any station: *"Space is not scary, it is restful."* (The You Show is saved for the Drift.)

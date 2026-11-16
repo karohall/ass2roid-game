@@ -521,3 +521,19 @@ Prototype 3 is done (tag `prototype-3`). What it became:
 - **Accessibility:** no flashes, reduce motion respected, no orphans.
 
 **Prototype 4 begins with the interface:** the rover's control panel from the GDD, starting with a whole-screen mockup. Waiting for songs: Jizz+ (locked in Suno) and the new Stella Solaris for the Drift.
+
+## 2026-11-16 — Prototype 4: the control panel
+
+Prototype 4 starts with the interface: the rover's control panel from the GDD's visual direction. Two days, from moodboard to a re-skinned game.
+
+**How it went.** Six whole-screen mockups first (instrument-grade, retro CRT, editorial, then an identity from the moodboards in three palettes: Night shift, Steel, Gunmetal). Gunmetal won: neutral cold steel, a concrete hint bar, one glow colour for "act now". Then a design system before any real work (type, a 4/8 grid, colour tokens, one frame with cut corners, every component in all its states), and only then the re-skin of the real game, on its own branch. The fast mockups looked made in five minutes and broke layouts the game had already solved; working in fewer, deeper rounds on the real thing fixed that.
+- **The world:** the rock from my tile lab, one material per layer, every find on a plate in its role's colour, the prospector as a block with a headlamp in The Crack. I kept the textures complex and flowing; contrast comes from dimming and plates, never from simplifying the rock.
+- **The type:** Chakra Petch for titles and numbers, Inter for text, IBM Plex Sans for small print. Architype Ballmer is dropped; Chakra Petch it is. No text under 11 px, and the itch.io frame grows to 1280 × 960.
+- **The wordmark:** ASS2ROID with the 2 as ink on a concrete block, Ex Profundo underneath. Now exported as a logo (SVG and PNG) for the case study.
+- **The deck:** one gunmetal housing with screws and seams; engraved name plates with a lamp; the rover panel as instruments (counters behind glass, digging power as pips with the crust's need notched, the drill as a segmented bar); indicator lamps for Radio, Drill, Focus and Charge; the shake keys as cockpit push-buttons, SHAKE above DRINK, the lit half is what pressing does.
+- **The dosage meter:** three rounds. A shallow sweep gauge first, which was too small; then a car cluster: a deep dial in the middle, the shake on the left, Next drink (the dose window: ×1.5, ×2, ×3 and its seconds) on the right. The dial got calmer by losing its scale words: the big word underneath already says where you are.
+- **Before it powers up:** panels still to come are drawn as faint ghost frames, so the deck reads as hardware waiting, not as empty space.
+
+**What I learnt.** The balance between crude and elegant is very difficult to calibrate. Here it helped to have a clear moodboard and vision, and to follow it, and to look back at the games I love and was inspired by (LINEAGE.md). It mirrors the balance throughout the ASS2ROID universe: crude and kitsch, smart and derp, stylish and hilarious.
+
+**Still to learn:** a large amount of information, with writing that is not too small, and everything still fitting on one screen.
