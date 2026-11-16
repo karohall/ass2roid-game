@@ -64,10 +64,9 @@
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
-  #rover .row + .row { font-size:12px; line-height:1.5; }   /* the stats, smaller than the layer name above them */
-  #rover .row + .row > span:first-child { font:400 12px var(--f-small); color:var(--dim); }
-  #depth, #samples, #power, #drill { font:700 14px/1.5 var(--f-title); font-variant-numeric:tabular-nums; }
-  #power .small { font-family:var(--f-small); font-weight:400; }
+  #rover > .row:not(:first-child) { font-size:12px; line-height:1.5; }   /* the layer and blast rows, small */
+  #rover > .row.later { margin-top:6px; } #rover > .row.later > span:first-child { font:400 12px var(--f-small); color:var(--dim); }
+  #rover .row:nth-child(2) { margin-bottom:1px; }
   #layerName { font:600 13px var(--f-text); }
   #radioFx { font-size:14px; color:var(--text); min-height:2.8em; }   /* the station's effect, across the full width: room for two lines, so the box never changes height */
   #radioKeys { white-space:nowrap; flex:none; margin-left:12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
@@ -255,6 +254,58 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
   #radioBox .ticker { text-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 18px rgba(var(--fluo-rgb),.45); }
   #radioFx { text-shadow:0 0 8px rgba(var(--fluo-rgb),.3); }
+  /* Control panel (2026-11-16, round 5). One housing for the whole deck: brushed gunmetal with screws, the columns set in it with seams;
+     the panels are bays cut into it. A pseudo-element, so the Drift can fade it and leave the sky. */
+  #wrap::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; clip-path:polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px);
+    background:radial-gradient(circle at 9px 9px, #5d646b 0 2px, #0b0c0e 2.6px 3.4px, transparent 4px) 0 0 / 100% 100% no-repeat,
+      radial-gradient(circle at calc(100% - 9px) 9px, #5d646b 0 2px, #0b0c0e 2.6px 3.4px, transparent 4px),
+      radial-gradient(circle at 9px calc(100% - 9px), #5d646b 0 2px, #0b0c0e 2.6px 3.4px, transparent 4px),
+      radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), #5d646b 0 2px, #0b0c0e 2.6px 3.4px, transparent 4px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px), linear-gradient(180deg, #1d2023, #16181b 40%, #141619);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -1px 0 rgba(0,0,0,.7), inset 1px 0 0 rgba(255,255,255,.04), inset -1px 0 0 rgba(0,0,0,.5); transition:opacity 6s ease 3s; }
+  body.wide #wrap::before { opacity:0; }
+  #panel, #panel2 { position:relative; }
+  #panel::before, #panel2::before { content:''; position:absolute; left:-9px; top:0; bottom:0; width:2px; background:linear-gradient(90deg, rgba(0,0,0,.75) 0 1px, rgba(255,255,255,.06) 1px); }   /* the seams between the columns */
+  body.wide #panel2::before { opacity:0; }
+  .box { --bay:#121417; }
+  .box > svg.outline path:first-child { fill:var(--bay); }
+  canvas#c { box-shadow:0 0 0 3px #07080a, 0 0 0 4px rgba(255,255,255,.07); }   /* the mining window, set in a bezel */
+  /* Name plates: engraved in a raised steel plate, the letters cut in (shadow above, light below). The square becomes a lamp. */
+  .box h3 { padding:3px 8px 3px 7px; margin:0 0 4px -2px; width:max-content; color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s);
+            text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
+  .box h3::before { width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }
+  #milk h3::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 0 1px #08090a, 0 0 6px var(--fluo); }
+  .box h3 .org { text-shadow:none; color:#6f767c; }
+  #rover > .row:first-child h3 { margin:0; }
+  /* The rover's instruments: an engraved name, then the instrument, then its value. */
+  .inst { display:grid; grid-template-columns:104px 1fr auto; align-items:center; gap:8px; min-height:24px; margin-top:2px; }
+  .inst .eng { font:500 11px/1.2 var(--f-small); letter-spacing:.04em; white-space:nowrap; text-transform:uppercase; color:var(--dim); }
+  .inst .win { grid-column:2 / -1; display:flex; justify-content:flex-end; align-items:center; height:24px; padding:0 8px; background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 40%), #07080a;
+               box-shadow:inset 0 2px 4px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); }   /* a counter behind glass */
+  .inst .win > span, .inst .val { font:700 15px/1 var(--f-title); font-variant-numeric:tabular-nums; color:var(--hot); }
+  .inst .win > span { text-shadow:0 0 6px rgba(255,255,255,.25); }
+  .inst .val { min-width:40px; text-align:right; } .inst .val small { font:500 11px var(--f-small); color:var(--dim); margin-left:1px; }
+  /* Digging power as pips: one per point, the crust's need marked by a notch; in a Frenzy they burn amber. */
+  .pips { display:flex; gap:3px; height:14px; }
+  .pips i { position:relative; flex:1; background:#0a0b0d; box-shadow:inset 0 1px 2px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
+  .pips i.on { background:linear-gradient(180deg, #f2f4f5, #b9bec3); box-shadow:0 0 5px rgba(255,255,255,.25); }
+  .pips.frenzy i.on { background:linear-gradient(180deg, #ffd38a, var(--amber)); box-shadow:0 0 6px rgba(255,180,60,.6); }
+  .pips i.need::after { content:''; position:absolute; left:-2px; right:-2px; bottom:-5px; height:2px; background:var(--amber); }
+  .pips.ok i.need::after { background:var(--fluo); box-shadow:0 0 4px var(--fluo); }
+  /* The drill as a bar gauge: ten segments, amber once worn; broken, the bar says so. */
+  .dbar { position:relative; display:flex; gap:2px; height:14px; padding:2px; background:#07080a; box-shadow:inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.05); }
+  .dbar i { flex:1; background:rgba(150,157,164,.08); }
+  .dbar i.on { background:#c4c9cd; } .dbar.worn i.on { background:var(--amber); box-shadow:0 0 4px rgba(255,180,60,.45); }
+  .dbar.broken::after { content:'Pick axe'; position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
+  /* Indicator lamps: a lens each, its name engraved beside it. Off is a dark lens; lit means on; blinking means look. */
+  .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
+  .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
+  .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607, inset 0 -1px 1px rgba(0,0,0,.6); }
+  .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 35% 30%, #e6fdff, var(--fluo) 60%); box-shadow:0 0 0 1px #050607, 0 0 7px var(--fluo); }
+  .ind.warn { color:var(--text); } .ind.warn i { background:radial-gradient(circle at 35% 30%, #fff0d2, var(--amber) 60%); box-shadow:0 0 0 1px #050607, 0 0 7px var(--amber); }
+  .ind.blink i { animation:blink 1s steps(1, end) infinite; }
+  @keyframes blink { 50% { background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607; } }
+  @media (prefers-reduced-motion: reduce) { .ind.blink i { animation:none; } }
 </style>
 </head>
 <body class="intro">
@@ -306,11 +357,15 @@
     <div class="box later" data-reveal="dig" id="rover">
       <div class="row" style="align-items:center"><h3 style="margin:0">Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button></div>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
-      <div class="row"><span>Depth</span><span id="depth">0 m</span></div>
-      <div class="row"><span>Drill samples</span><span id="samples">0</span></div>
-      <div class="row"><span>Digging power</span><span id="power">1</span></div>
-      <div class="row"><span>Drill</span><span id="drill">100%</span></div>
+      <div class="inst"><span class="eng">Depth</span><span class="win"><span id="depth">0 m</span></span></div>
+      <div class="inst"><span class="eng">Drill samples</span><span class="win"><span id="samples">0</span></span></div>
+      <div class="inst" id="powerRow"><span class="eng">Digging power</span><span class="pips" id="pips"></span><span class="val" id="power">1</span></div>
+      <div class="inst" id="drillRow"><span class="eng">Drill</span><span class="dbar" id="dbar"></span><span class="val" id="drill">100%</span></div>
       <div class="row later" data-reveal="blast"><span>B: blast the rock below</span><span id="chargeCost" class="small"></span></div>
+      <div class="lamps">                                   <!-- indicator lamps: what is on, at a glance -->
+        <span class="ind" id="lampRadio"><i></i>Radio</span><span class="ind later" data-reveal="drill" id="lampDrill"><i></i>Drill</span>
+        <span class="ind later" data-reveal="recipe_focus" id="lampFocus"><i></i>Focus</span><span class="ind later" data-reveal="blast" id="lampCharge"><i></i>Charge</span>
+      </div>
     </div>
 
     <div class="box later" data-reveal="guide">
@@ -2223,10 +2278,24 @@ function hud() {
   const t = now();
   setText('depth', `${depthNow()} m`);
   setText('samples', s.samples);
-  const need = layer().crustMinPower;   // digging power, against what this layer's crust needs
-  setHTML('power', `${power()} <span class="small">· crust needs ${need} ${power() >= need ? '✓' : '✗'}</span>`);
+  // Digging power as pips, one per point (7 at most: base and two Strengths); the crust's need is the notched pip, and the value reads "have/need".
+  const need = layer().crustMinPower, pw = power(), np = Math.max(7, need);
+  setHTML('pips', Array.from({ length: np }, (_, i) => `<i class="${i < pw ? 'on' : ''}${i === need - 1 ? ' need' : ''}"></i>`).join(''));
+  $('pips').className = 'pips' + (frenzy() ? ' frenzy' : '') + (pw >= need ? ' ok' : '');
+  setHTML('power', `${pw}<small>/${need}</small>`);
+  $('powerRow').title = `Digging power ${pw}. The crust at the bottom of this layer needs ${need}.`;
   setText('chargeCost', s.charges.length ? 'fuse lit…' : `${CONFIG.charge.cost} drill samples`);
-  setText('drill', onPick() ? 'broken · pick axe' : Math.round(s.drill) + '%' + (s.drill < CONFIG.drill.warnBelow ? ' · worn' : ''));
+  // The drill as a bar gauge: ten segments; amber once worn; broken, the bar reads "Pick axe".
+  const worn = s.drill < CONFIG.drill.warnBelow, segs = Math.ceil(s.drill / 10);
+  setHTML('dbar', Array.from({ length: 10 }, (_, i) => `<i class="${i < segs ? 'on' : ''}"></i>`).join(''));
+  $('dbar').className = 'dbar' + (onPick() ? ' broken' : worn ? ' worn' : '');
+  setText('drill', onPick() ? '0%' : Math.round(s.drill) + '%');
+  // Indicator lamps: lit is on, amber is a warning, blinking means look now.
+  const lamp = (id, st) => { const cl = $(id).classList; for (const k of ['on', 'warn', 'blink']) cl.toggle(k, st.split(' ').includes(k)); };
+  lamp('lampRadio', running && !musicOn() ? 'warn blink' : musicOn() ? 'on' : '');
+  lamp('lampDrill', onPick() ? 'warn blink' : worn ? 'warn' : '');
+  lamp('lampFocus', active('focus') ? 'on' : '');
+  lamp('lampCharge', s.charges.length ? 'warn blink' : s.layer >= 1 && s.samples >= CONFIG.charge.cost ? 'on' : '');
   for (const k of Object.keys(ING)) {
     setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
     setText('iv_' + k, s.inv[k]);

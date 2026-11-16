@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shake and drink keys · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* The Milk+ menu's Shake/Drink button as a piece of hardware: three directions, each in the 96 px the menu gives it, in every state,
+   then live in the real Milk+ column (keys 1-5 work). Tokens as in index.html: act-now blue, amber for "busy", pastels for the secret menu. */
+:root { --bg:#0b0c0e; --panel:#15171a; --raised:#1e2124; --line:rgba(150,157,164,.2); --line-2:rgba(150,157,164,.42); --text:#e1e4e6; --dim:#969da4; --faint:#5f656b;
+        --fluo:#34e6ff; --fluo-rgb:52,230,255; --amber:#ffb43c; --amber-rgb:255,180,60; --jizz:#b9d3f0; --candy:#f2b8d6;
+        --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif;
+        --chamfer:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+        --chamfer-s:polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:14px/1.5 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }
+.doc { max-width:1180px; margin:0 auto; padding:48px 24px 96px; }
+.doc > header { padding-bottom:24px; border-bottom:1px solid var(--line-2); }
+.doc > header h1 { font:700 40px/1 var(--f-title); margin:8px 0 12px; } .doc > header p { color:var(--dim); max-width:760px; margin:0 0 8px; }
+.meta { font:500 11px/1.4 var(--f-small); color:var(--dim); }
+.sec { padding:36px 0; border-bottom:1px solid var(--line); }
+.sec > h2 { font:600 11px/1.6 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin:0 0 6px; }
+.sec > p { margin:0 0 24px; color:var(--faint); font-size:13px; max-width:780px; }
+.cols { display:grid; grid-template-columns:minmax(0, 1fr) 300px; gap:48px; align-items:start; }
+/* The states: each key on a strip of the deck's steel, its name under it. */
+.strip { display:grid; grid-template-columns:repeat(3, 1fr); gap:22px 18px; }
+.cell { display:flex; flex-direction:column; gap:10px; }
+.bed { height:76px; display:grid; place-items:center; background:linear-gradient(180deg, #1a1d20, #131518); box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(0,0,0,.6); clip-path:var(--chamfer-s); }
+.cell > span { font:500 11px/1.4 var(--f-small); color:var(--dim); } .cell > span b { color:var(--text); font-weight:600; }
+.ctx-cap { font:500 11px/1.4 var(--f-small); color:var(--faint); margin-top:10px; }
+.ctx-cap kbd { font:700 11px var(--f-title); color:var(--text); background:var(--raised); padding:1px 5px; }
+
+/* The real Milk+ column, as in index.html (frame simplified: one hairline with cut corners). */
+.milk { width:300px; padding:10px 12px 12px; background:linear-gradient(180deg, #17191c, #121417); box-shadow:inset 0 0 0 1px rgba(150,157,164,.55); clip-path:var(--chamfer); }
+.milk h3 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; }
+.milk h3::before { content:''; width:6px; height:6px; background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
+.recipes { padding:8px 10px; background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c; box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); }
+.recipe { display:grid; grid-template-columns:1fr 96px; gap:8px; align-items:center; margin-bottom:6px; padding-top:6px; border-top:1px solid var(--line); }
+.recipe:first-child { border-top:0; padding-top:0; } .recipe:last-child { margin-bottom:0; }
+.recipe .name { line-height:1.3; } .recipe .name > * { display:block; }
+.recipe .name b { font:600 13px var(--f-text); } .recipe.jizz .name b { color:var(--jizz); } .recipe.candy .name b { color:var(--candy); }
+.recipe .does { font-size:12px; color:var(--dim); }
+.small { font:400 11px/1.45 var(--f-small); color:var(--dim); }
+.k { justify-self:center; }
+
+/* ── A · Backlit keycap ─────────────────────────────────────────────────────────────────────────────
+   A square cap in a bezel with the number engraved; beside it a lit legend window, SHAKE or DRINK. The cap goes down while it shakes;
+   ready, it is lit from below in blue. */
+.kA { display:flex; align-items:center; gap:7px; cursor:pointer; user-select:none; }
+.kA .well { width:40px; height:40px; padding:3px; background:#050607; box-shadow:inset 0 2px 4px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.07); clip-path:var(--chamfer-s); }
+.kA .cap { width:100%; height:100%; display:grid; place-items:center; font:700 17px/1 var(--f-title); color:#c3c8cc;
+           background:linear-gradient(180deg, #3a3f44, #24282c 55%, #1d2023); box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -3px 0 rgba(0,0,0,.45), 0 2px 0 #0a0b0c;
+           clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); transition:transform .08s, box-shadow .08s; text-shadow:0 -1px 0 rgba(0,0,0,.6); }
+.kA .leg { width:49px; height:22px; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.1em; color:#3c4146; background:#070809;
+           box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06); }
+.kA.can .leg { color:var(--text); }
+.kA.can:hover .cap { box-shadow:inset 0 1px 0 rgba(255,255,255,.26), inset 0 -3px 0 rgba(0,0,0,.45), 0 2px 0 #0a0b0c; }
+.kA.locked .cap { color:#4c5257; background:linear-gradient(180deg, #24272a, #1a1c1f); box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 2px 0 #0a0b0c; }
+.kA.shaking .cap { transform:translateY(2px); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.45); animation:jig .18s linear infinite alternate; }
+.kA.shaking .leg { color:var(--amber); text-shadow:0 0 6px rgba(var(--amber-rgb),.7); background:linear-gradient(90deg, rgba(var(--amber-rgb),.16) var(--p, 0%), #070809 var(--p, 0%)); }
+.kA.ready .cap { color:#062a30; background:linear-gradient(180deg, #b9f6ff, var(--fluo) 55%, #22b9cf); box-shadow:inset 0 1px 0 #fff, inset 0 -3px 0 rgba(0,40,48,.35), 0 0 14px rgba(var(--fluo-rgb),.55), 0 2px 0 #0a0b0c; text-shadow:none; }
+.kA.ready .leg { color:var(--fluo); text-shadow:0 0 6px rgba(var(--fluo-rgb),.9); }
+.kA.busy .cap { opacity:.55; } .kA.busy .leg { color:#3c4146; }
+.kA.jizz.ready .cap { background:linear-gradient(180deg, #eef5ff, var(--jizz) 55%, #8eaed3); box-shadow:inset 0 1px 0 #fff, inset 0 -3px 0 rgba(0,0,0,.25), 0 0 14px rgba(185,211,240,.55), 0 2px 0 #0a0b0c; color:#1b2433; }
+.kA.jizz.ready .leg { color:var(--jizz); text-shadow:0 0 6px rgba(185,211,240,.8); }
+.kA.candy.ready .cap { background:linear-gradient(180deg, #fff1f8, var(--candy) 55%, #d98fb6); box-shadow:inset 0 1px 0 #fff, inset 0 -3px 0 rgba(0,0,0,.25), 0 0 14px rgba(242,184,214,.55), 0 2px 0 #0a0b0c; color:#3a1a2b; }
+.kA.candy.ready .leg { color:var(--candy); text-shadow:0 0 6px rgba(242,184,214,.8); }
+@keyframes jig { from { translate:-1px 0; } to { translate:1px 0; } }
+
+/* ── B · Annunciator push-button ────────────────────────────────────────────────────────────────────
+   Like a cockpit's lit push-button: one square face, two engraved legends, SHAKE above DRINK. Whichever half is lit is what pressing
+   does now. Shaking, the SHAKE half fills in amber; ready, the DRINK half lights blue. The number sits in a small window on the bezel. */
+.kB { position:relative; width:84px; height:56px; padding:4px; cursor:pointer; user-select:none; background:linear-gradient(180deg, #2b2f33, #1b1e21); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a; clip-path:var(--chamfer-s); }
+.kB .face { height:100%; display:grid; grid-template-rows:1fr 1fr; gap:2px; background:#050607; padding:2px; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); }
+.kB .face i { display:grid; place-items:center; font:600 11px/1 var(--f-small); font-style:normal; letter-spacing:.14em; color:#353a3f; background:#0c0e10; position:relative; overflow:hidden; }
+.kB .no { position:absolute; left:-1px; top:-1px; width:17px; height:15px; display:grid; place-items:center; z-index:2; font:700 11px/1 var(--f-title); color:#c3c8cc; background:#2b2f33; box-shadow:0 0 0 1px #08090a; clip-path:polygon(0 0, 100% 0, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
+.kB.can .face i:first-child { color:var(--text); background:#16191c; }
+.kB.can:hover .face i:first-child { background:#1d2124; }
+.kB:active .face, .kB.shaking .face { transform:translateY(1px); }
+.kB.shaking .face i:first-child { color:var(--amber); background:rgba(var(--amber-rgb),.14); }
+.kB.shaking .face i:first-child::after { content:attr(data-l); position:absolute; inset:0; display:grid; place-items:center; color:#1a1000; background:var(--amber);
+                                         clip-path:inset(0 calc(100% - var(--p, 0%)) 0 0); }   /* the fill, with the word in ink over it */
+.kB.ready .face i:last-child { color:#03262c; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow:0 0 12px rgba(var(--fluo-rgb),.6); }
+.kB.ready { box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a, 0 0 16px rgba(var(--fluo-rgb),.25); }
+.kB.locked .no, .kB.busy .no { color:#5f656b; }
+.kB.busy .face i { color:#2a2e32; }
+.kB.jizz.ready .face i:last-child { background:radial-gradient(120% 140% at 50% 0%, #f2f7ff, var(--jizz) 60%, #8eaed3); color:#1b2433; box-shadow:0 0 12px rgba(185,211,240,.55); }
+.kB.candy.ready .face i:last-child { background:radial-gradient(120% 140% at 50% 0%, #fff2f9, var(--candy) 60%, #d98fb6); color:#3a1a2b; box-shadow:0 0 12px rgba(242,184,214,.55); }
+
+/* ── C · Pilot-lamp button ──────────────────────────────────────────────────────────────────────────
+   A round lit push-button in a machined ring: the number on the lens. The ring is the 2-second shake, filling amber; ready, the lens
+   glows blue. Its word on an engraved plate beside it. */
+.kC { display:flex; align-items:center; gap:7px; cursor:pointer; user-select:none; }
+.kC .ring { position:relative; width:44px; height:44px; flex:none; border-radius:50%; display:grid; place-items:center;
+            background:conic-gradient(from 0deg, var(--rc, transparent) var(--p, 0%), #0a0b0d var(--p, 0%)); box-shadow:inset 0 0 0 1px #000, 0 1px 0 rgba(255,255,255,.07); }
+.kC .ring::before { content:''; position:absolute; inset:4px; border-radius:50%; background:linear-gradient(180deg, #4a5056, #22262a); box-shadow:0 1px 2px rgba(0,0,0,.8); }   /* the chrome bezel */
+.kC .lens { position:relative; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font:700 14px/1 var(--f-title); color:#5c6268;
+            background:radial-gradient(70% 70% at 40% 30%, #2b3034, #121417); box-shadow:inset 0 1px 2px rgba(255,255,255,.1), inset 0 -2px 3px rgba(0,0,0,.6); transition:transform .08s; }
+.kC .plate { width:42px; height:20px; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.08em; color:#3c4146; background:#0d0f11; box-shadow:inset 0 1px 0 rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.05); }
+.kC.can .lens { color:#d6dadd; background:radial-gradient(70% 70% at 40% 30%, #3b4146, #1a1d20); }
+.kC.can .plate { color:var(--text); }
+.kC.shaking { --rc:var(--amber); } .kC.shaking .lens { transform:scale(.94); color:var(--amber); } .kC.shaking .plate { color:var(--amber); }
+.kC.ready { --p:100%; --rc:rgba(var(--fluo-rgb),.35); }
+.kC.ready .lens { color:#03262c; background:radial-gradient(70% 70% at 40% 30%, #e6fdff, var(--fluo) 55%, #1a9fb3); box-shadow:inset 0 1px 1px #fff, 0 0 14px rgba(var(--fluo-rgb),.75); }
+.kC.ready .plate { color:var(--fluo); text-shadow:0 0 6px rgba(var(--fluo-rgb),.9); }
+.kC.busy .lens { color:#3c4146; }
+.kC.jizz.ready { --rc:rgba(185,211,240,.35); } .kC.jizz.ready .lens { background:radial-gradient(70% 70% at 40% 30%, #fff, var(--jizz) 55%, #7f9fc6); color:#1b2433; box-shadow:inset 0 1px 1px #fff, 0 0 14px rgba(185,211,240,.7); } .kC.jizz.ready .plate { color:var(--jizz); text-shadow:none; }
+.kC.candy.ready { --rc:rgba(242,184,214,.35); } .kC.candy.ready .lens { background:radial-gradient(70% 70% at 40% 30%, #fff, var(--candy) 55%, #cf86ad); color:#3a1a2b; box-shadow:inset 0 1px 1px #fff, 0 0 14px rgba(242,184,214,.7); } .kC.candy.ready .plate { color:var(--candy); text-shadow:none; }
+
+@media (prefers-reduced-motion: reduce) { .kA.shaking .cap { animation:none; } }
+.verdict { margin-top:12px; font:13px/1.6 var(--f-text); color:var(--dim); max-width:780px; } .verdict b { color:var(--text); font-weight:600; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header><div class="meta">ASS2ROID · Prototype 4 · round 5: control panel feel</div><h1>Shake and drink keys, as hardware</h1>
+    <p>The Milk+ menu’s button is the one thing in the deck you press most. Three ways to make it a real key, each in the 96 px the menu gives it. Every key carries its number, so the keyboard (1–5, 9, 0) is printed on the hardware.</p>
+    <p>On the left, every state. On the right, the real Milk+ column, live: click a key, or press <b>1–5</b> (and 9, 0) to shake for two seconds, then again to drink.</p></header>
+  <section class="sec" data-o="A"><h2>A · Backlit keycap</h2><p>A square keycap in a recessed well, the number engraved on it; beside it, a lit legend window that says what pressing does now. The cap sits down and jitters while it shakes; ready, it is lit from below.</p></section>
+  <section class="sec" data-o="B"><h2>B · Annunciator push-button</h2><p>A cockpit-style lit push-button: one face, two engraved legends, SHAKE above DRINK. The lit half is what pressing does now; shaking fills the SHAKE half in amber, left to right. The number in a small window on the bezel. Both words are always there, so the cycle explains itself.</p></section>
+  <section class="sec" data-o="C"><h2>C · Pilot-lamp button</h2><p>A round lit push-button in a machined ring, the number on the lens. The ring is the two-second shake, filling amber like a clock; ready, the lens glows. Its word on an engraved plate beside it. The softest of the three; the most like the dosage gauge.</p></section>
+  <section class="sec"><h2>Recommendation</h2><p class="verdict"><b>B, the annunciator.</b> It is the only one where both words are always on the key, so a new player sees the whole cycle (shake, then drink) before pressing anything: the onboarding’s “press once to shake, press again to drink” line could go. The amber fill reads as the two-second wait without a separate bar. A is the most tactile but needs the legend to change words; C is the prettiest, but its ring is small at itch.io scale (≈ 31 px). Any of them keeps the number on the key and the row as it is.</p></section>
+</div>
+<script>
+const STATES = [
+  { cls:'locked', name:'<b>Can’t mix</b> · missing ingredients' },
+  { cls:'can', name:'<b>Shake</b> · pressing starts it' },
+  { cls:'shaking', p:55, name:'<b>Shaking</b> · 2 s, no digging' },
+  { cls:'ready', name:'<b>Ready</b> · pressing drinks it' },
+  { cls:'busy', name:'<b>Waiting</b> · another one is shaking' },
+  { cls:'ready jizz', name:'<b>Secret menu, ready</b> · in its own colour', n:'9' }];
+const label = c => c.includes('ready') ? 'DRINK' : c.includes('shaking') ? 'SHAKING' : 'SHAKE';
+const KEY = {
+  A: (n, c, p) => `<div class="kA ${c}" style="--p:${p || 0}%"><div class="well"><div class="cap">${n}</div></div><div class="leg">${c.includes('ready') ? 'DRINK' : 'SHAKE'}</div></div>`,
+  B: (n, c, p) => `<div class="kB ${c}" style="--p:${p || 0}%"><span class="no">${n}</span><div class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></div></div>`,
+  C: (n, c, p) => `<div class="kC ${c}" style="--p:${p || 0}%"><div class="ring"><div class="lens">${n}</div></div><div class="plate">${c.includes('ready') ? 'DRINK' : 'SHAKE'}</div></div>`,
+};
+const MENU = [
+  { n:'1', name:'Strength', does:'Dig harder. Stacks. Pushes toward Frenzy.', rc:'2 Regolith Whey · 1 Legacy Powder', st:'can' },
+  { n:'2', name:'Calm', does:'Pulls toward Stillness, where everything comes out double.', rc:'2 Regolith Whey · 1 Chrome Filings', st:'ready' },
+  { n:'3', name:'Recovery', does:'Repairs the drill after a Frenzy.', rc:'needs 1 Chrome Filings (have 0)', st:'locked' },
+  { n:'9', name:'Jizz+', rc:'1 of each, shaken twice', st:'can', sec:'jizz' },
+];
+function cellsFor(o) {
+  return `<div class="cols"><div class="strip">${STATES.map(s => `<div class="cell"><div class="bed">${KEY[o](s.n || '1', s.cls, s.p)}</div><span>${s.name}</span></div>`).join('')}</div>
+    <div><div class="milk"><h3>Milk+ menu</h3><div class="recipes">${MENU.map((m, i) => `<div class="recipe ${m.sec || ''}"><div class="name"><b>[${m.n}] ${m.name}</b>${m.does ? `<span class="does">${m.does}</span>` : ''}<span class="small">${m.rc}</span></div>
+      <div class="k" data-o="${o}" data-i="${i}">${KEY[o](m.n, (m.sec || '') + ' ' + m.st)}</div></div>`).join('')}</div></div>
+      <div class="ctx-cap">Live: click, or press <kbd>1</kbd> <kbd>2</kbd> <kbd>9</kbd>. Strength and Jizz+ shake, Calm is ready to drink, Recovery is missing its filings.</div></div></div>`;
+}
+document.querySelectorAll('.sec[data-o]').forEach(sec => sec.insertAdjacentHTML('beforeend', cellsFor(sec.dataset.o)));
+
+// Live: one shake at a time, 2 s; a drink empties the bottle (back to SHAKE).
+const live = { A: MENU.map(m => ({ ...m })), B: MENU.map(m => ({ ...m })), C: MENU.map(m => ({ ...m })) };
+let shaking = null;   // { i, until }
+function paint() {
+  const t = performance.now();
+  for (const o of 'ABC') live[o].forEach((m, i) => {
+    let st = m.st, p = 0;
+    if (shaking && shaking.i === i) { st = 'shaking'; p = Math.min(100, (1 - (shaking.until - t) / 2000) * 100); }
+    else if (shaking && st === 'can') st = 'busy';
+    const host = document.querySelector(`.k[data-o="${o}"][data-i="${i}"]`), html = KEY[o](m.n, (m.sec || '') + ' ' + st, p.toFixed(1));
+    if (host.innerHTML !== html) host.innerHTML = html;
+  });
+  if (shaking && t >= shaking.until) { for (const o of 'ABC') live[o][shaking.i].st = 'ready'; shaking = null; }
+  requestAnimationFrame(paint);
+}
+function press(i) {
+  const m = live.A[i]; if (!m) return;
+  if (m.st === 'ready') { for (const o of 'ABC') live[o][i].st = 'can'; return; }   // drink
+  if (m.st === 'can' && !shaking) shaking = { i, until: performance.now() + 2000 };
+}
+document.addEventListener('click', e => { const k = e.target.closest('.k'); if (k) press(+k.dataset.i); });
+document.addEventListener('keydown', e => { const i = MENU.findIndex(m => m.n === e.key); if (i >= 0) press(i); });
+requestAnimationFrame(paint);
+</script>
+</body>
+</html>
