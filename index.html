@@ -16,9 +16,13 @@
           --chamfer-s:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:400 14px/1.45 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }   /* no orphans: never one word alone on a last line */
-  #wrap { display:flex; gap:16px; align-items:flex-start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
+  :root { --side:480px; }                                      /* the two side columns; wider than the 300 of before, since the game is wider than it is tall */
+  #wrap { display:grid; grid-template-columns:442px var(--side) var(--side); grid-template-rows:var(--row1, auto) auto auto; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
+  #stage { grid-area:1 / 1; } #panel { grid-area:1 / 2; } #panel2 { grid-area:1 / 3 / 3 / 4; align-self:stretch; }   /* row 1: the window and the Milk+ column; the right column runs down both rows, its log filling it */
+  #band { grid-area:2 / 1 / 3 / 3; display:flex; gap:16px; } #dosage { flex:1; min-width:0; } #baseRow { flex:none; width:270px; } #legend { grid-area:3 / 1 / 4 / 4; }   /* row 2: the cluster and the radio; row 3: the legend */
+  body.fitting #panel2 { align-self:start; }                  /* measured at its own height */
   html, body { overflow:hidden; }                                /* the game always fits; a page scrollbar coming and going would shift it */
-  #stage { position:relative; width:442px; }                   /* the meter may reach past it, under the Milk+ column */
+  #stage { position:relative; width:442px; }
   canvas { display:block; width:442px; height:calc(var(--viewH) + 2px); border:1px solid var(--line); background:#08090a; transition:transform .3s; outline:none; }
   canvas.frenzy { animation:tilt 1.6s ease-in-out infinite; }
   canvas.blast { animation:jolt .35s ease-out; }
@@ -28,8 +32,7 @@
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
   #hint { width:442px; margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:500 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
-  #dosage { --step:56px; width:758px; margin-top:10px; position:relative;   /* the cluster, recessed behind glass. Its left part reaches up under the hint; under the Milk+ column it starts --step lower (placeMeter) */
-    clip-path:polygon(8px 0, 440px 0, 456px var(--step), 100% var(--step), 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  #dosage { position:relative; clip-path:var(--chamfer);   /* the cluster, recessed behind glass */
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
   #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
   #gauge { display:block; }
@@ -56,12 +59,12 @@
   #scale { display:flex; margin-top:5px; font:500 11px var(--f-small); color:var(--faint); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
-  #baseRow { width:758px; display:flex; gap:16px; margin-top:10px; }   /* the radio, under the meter and the Milk+ column */
-  #radioBox { width:758px; flex:none; padding:8px 12px 10px; }   /* as long as the meter */
+  #baseRow { display:flex; }                                   /* the radio, beside the cluster */
+  #radioBox { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:10px 14px 12px; }   /* as tall as the cluster */
   #radioBox.call > svg.outline path:first-child { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
-  #radioBox .ticker { flex:1; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
+  #radioBox .ticker { flex:1; min-width:0; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
@@ -70,9 +73,10 @@
   #rover .row:nth-child(2) { margin-bottom:1px; }
   #layerName { font:600 13px var(--f-text); }
   #radioFx { font-size:14px; color:var(--text); min-height:2.8em; }   /* the station's effect, across the full width: room for two lines, so the box never changes height */
-  #radioKeys { white-space:nowrap; flex:none; margin-left:12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
+  #radioKeys { white-space:nowrap; flex:none; }
+  #radioBox > .row:last-child { flex-wrap:wrap; gap:4px 12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
   #radioBox .label { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:8px; }
-  #legend { width:758px; min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
+  #legend { min-height:38px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   /* The legend: each thing in the rock as it looks, a small plate in its role's colour. */
   #legend > span { display:inline-flex; align-items:center; gap:6px; }
   .sw { display:inline-grid; place-items:center; width:16px; height:16px; flex:none; font:700 9px/1 var(--f-title); font-style:normal; color:var(--concrete); background:var(--bg); box-shadow:inset 0 0 0 1px var(--concrete); }
@@ -84,7 +88,7 @@
   .sw.chrome { background:linear-gradient(180deg, #f6f7fb 0%, #c9cbd6 22%, #8d90a0 48%, #e9eaf2 62%, #a7aab8 80%, #d8d9e3 100%); box-shadow:none; color:var(--nasa); font-size:7px; place-items:start end; padding:1px; }
   .sw.spore { color:var(--spore); box-shadow:inset 0 0 0 1px var(--spore), 0 0 5px rgba(var(--spore-rgb),.5); }
   .sw.crust { background:repeating-linear-gradient(180deg, transparent 0 2px, #b4bac0 2px 3px) 4px 4px / 8px 8px no-repeat, var(--bg); box-shadow:inset 0 0 0 1px #b4bac0, inset 0 0 0 3px var(--bg), inset 0 0 0 4px rgba(180,186,192,.6); }
-  #panel, #panel2 { width:300px; display:flex; flex-direction:column; gap:10px; }
+  #panel, #panel2 { display:flex; flex-direction:column; gap:10px; }
   /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
   .box { position:relative; padding:10px 12px 12px; --frame:var(--line-2); }
   .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
@@ -281,7 +285,9 @@
   #wrap::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; clip-path:polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);   /* screws set into the plate, clear of the cut corners and the bezels */
     background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(28%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") left 2.5px top 2.5px / 12px 12px no-repeat, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(-52%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") right 2.5px top 2.5px / 12px 12px no-repeat,
       url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(71%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") left 2.5px bottom 2.5px / 12px 12px no-repeat, url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cdefs%3E%3CradialGradient%20id%3D%27h%27%20cx%3D%27.38%27%20cy%3D%27.32%27%20r%3D%27.75%27%3E%3Cstop%20offset%3D%270%27%20stop-color%3D%27%239aa1a8%27%2F%3E%3Cstop%20offset%3D%27.55%27%20stop-color%3D%27%235b6268%27%2F%3E%3Cstop%20offset%3D%271%27%20stop-color%3D%27%232a2e32%27%2F%3E%3C%2FradialGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276.4%27%20r%3D%275.6%27%20fill%3D%27%230a0b0d%27%20opacity%3D%27.85%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%275.2%27%20fill%3D%27none%27%20stroke%3D%27%2333383d%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%276%27%20cy%3D%276%27%20r%3D%274%27%20fill%3D%27url(%23h)%27%2F%3E%3Cg%20transform%3D%27rotate(-14%206%206)%27%3E%3Crect%20x%3D%272.4%27%20y%3D%275.25%27%20width%3D%277.2%27%20height%3D%271.5%27%20fill%3D%27%23111316%27%2F%3E%3Crect%20x%3D%272.4%27%20y%3D%276.6%27%20width%3D%277.2%27%20height%3D%27.5%27%20fill%3D%27%238d949a%27%20opacity%3D%27.5%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") right 2.5px bottom 2.5px / 12px 12px no-repeat,
-      repeating-linear-gradient(90deg, rgba(255,255,255,.014) 0 1px, transparent 1px 3px), linear-gradient(180deg, #1d2023, #16181b 40%, #141619);
+      repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px),   /* brushed */
+      linear-gradient(112deg, transparent 18%, rgba(255,255,255,.07) 30%, transparent 41%, transparent 58%, rgba(255,255,255,.05) 67%, transparent 76%),   /* chrome: two sheens across the plate */
+      linear-gradient(180deg, #3b4046 0%, #24282c 7%, #1b1e21 26%, #2b2f34 48%, #191c1f 66%, #272b2f 86%, #1c1f22 100%);   /* and its reflection bands */
     box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -1px 0 rgba(0,0,0,.7), inset 1px 0 0 rgba(255,255,255,.04), inset -1px 0 0 rgba(0,0,0,.5); transition:opacity 6s ease 3s; }
   body.wide #wrap::before { opacity:0; }
   #panel, #panel2 { position:relative; }
@@ -364,17 +370,6 @@
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
     <div id="hint"></div>
-    <div id="dosage" class="later" data-reveal="drink">
-      <svg id="gauge" width="758" height="230" viewBox="0 0 758 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
-    </div>
-    <div id="baseRow">                                      <!-- the radio, under the meter -->
-    <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
-      <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
-      <div class="small" id="radioFx"></div>                 <!-- the station's effect, the full width -->
-      <div class="row"><span class="small" id="radioLesson"></span><span class="small" id="radioKeys">R: next station · T: tape · V: volume</span></div>
-    </div>
-    </div>
-    <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
 
   <div id="panel">
@@ -418,6 +413,20 @@
     </div>
 
   </div>
+
+    <div id="band">                                         <!-- the cluster, and the radio beside it like a car stereo -->
+    <div id="dosage" class="later" data-reveal="drink">
+      <svg id="gauge" width="612" height="230" viewBox="0 0 612 230" role="img" aria-label="Dosage scale, shake and next drink"></svg>
+    </div>
+    <div id="baseRow">                                      <!-- the radio, under the meter -->
+    <div class="box" id="radioBox">                         <!-- long and slim, under the meter -->
+      <div class="row" style="align-items:baseline"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
+      <div class="small" id="radioFx"></div>                 <!-- the station's effect, the full width -->
+      <div class="row"><span class="small" id="radioLesson"></span><span class="small" id="radioKeys">R: next station · T: tape · V: volume</span></div>
+    </div>
+    </div>
+    </div>
+    <div id="legend" class="small later" data-reveal="dig"></div>
 </div>
 
 <script>
@@ -1669,9 +1678,9 @@ function skyBegin() {
   if (sky.width !== innerWidth || sky.height !== innerHeight) { sky.width = innerWidth; sky.height = innerHeight; }
   const W0 = cv.width, H0 = cv.height, r = cv.getBoundingClientRect(), b = r.width / (W0 + 2);   // b: the page's scale
   const grow = smooth(ramp(5000, 17000, performance.now() - s.drift.t0));
-  const pr = $('panel').getBoundingClientRect(), br = $('baseRow').getBoundingClientRect();
+  const pr = $('panel').getBoundingClientRect(), br = $('band').getBoundingClientRect();
   const from = { x: r.left + b, y: r.top + b, w: W0 * b, h: H0 * b };                       // the mining window
-  const to = { x: r.left + b, y: r.top + b, w: pr.right - r.left - 2 * b, h: br.top - r.top - 10 * b };   // it, the Milk+ column and the meter
+  const to = { x: r.left + b, y: r.top + b, w: pr.right - r.left - 2 * b, h: br.top - r.top - 10 * b };   // it and the Milk+ column, down to the cluster
   const box = { x: lerp(from.x, to.x, grow), y: lerp(from.y, to.y, grow), w: lerp(from.w, to.w, grow), h: lerp(from.h, to.h, grow) };
   const k = lerp(b, to.h / H0, grow);
   skyCtx.setTransform(1, 0, 0, 1, 0, 0); skyCtx.clearRect(0, 0, sky.width, sky.height);
@@ -2280,7 +2289,7 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
 // the shake on the left (amber while it shakes, blue when a bottle is ready) and the dose window on the right (×1.5, ×2, ×3 and its seconds).
-const GZ = { w: 758, h: 230, main: { cx: 338, cy: 222, R: 182, half: 54 }, shake: { cx: 76, cy: 116, R: 50, half: 125 }, win: { cx: 650, cy: 116, R: 50, half: 125 } };   // the dial sits left of centre: under the Milk+ column the housing starts lower
+const GZ = { w: 612, h: 230, main: { cx: 306, cy: 250, R: 176, half: 54 }, shake: { cx: 64, cy: 120, R: 46, half: 125 }, win: { cx: 548, cy: 120, R: 46, half: 125 } };   // centred in whatever width the deck gives it (buildGauge)
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2288,6 +2297,8 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; GZ.main.cx = w / 2; GZ.win.cx = w - 64;
+  $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
     h += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${major ? '#e1e4e6' : 'rgba(150,157,164,.55)'}" stroke-width="${major ? 2 : 1}"/>`; } return h; };
@@ -2296,10 +2307,12 @@ function buildGauge() {
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
-  h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 20, 5, 18);   // calm: the word below says where you are, so the scale carries no words
+  h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 20, 5, 18);
+  // the milestones, above the arc: every state named, the one you are in lit
+  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
-  h += txt('gword', M.cx, 198, 34, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
+  h += txt('gword', M.cx, 210, 34, '#e1e4e6', 700, 'Chakra Petch', 'letter-spacing="1.2"');
   // the two small gauges
   for (const [k, d, title] of [['s', GZ.shake, 'SHAKE'], ['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2;
@@ -2309,10 +2322,10 @@ function buildGauge() {
     h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>`;
     h += txt(k + 'read', d.cx, 166, 16, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx}" y="188" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + txt(k + 'sub', d.cx, 206, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
-  $('gauge').innerHTML = h; gaugeFor = tipAt();
+  $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
 }
 function drawGaugeMeter(t) {
-  if (gaugeFor !== tipAt()) buildGauge();
+  if (gaugeFor !== tipAt() + '/' + Math.round($('dosage').clientWidth || GZ.w)) buildGauge();
   const G = $('gauge'), M = GZ.main, u = gU(s.meter), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
@@ -2484,23 +2497,15 @@ const LONGEST_HINT = 'Frenzy and Stillness are documented. Certain strata are on
 // (Candygirl included). Measured with them all shown, at the page's own scale.
 let panel2Need = 0;                                         // the right column's height with the longest card (fit() measures it)
 function placeMeter() {
-  const dz = $('dosage'), rows = [...document.querySelectorAll('#panel .later:not(.shown), #stage .later:not(.shown)')], saved = [];   // the legend too: it sets where the game ends
+  const rows = [...document.querySelectorAll('#panel .later:not(.shown), #stage .later:not(.shown)')], saved = [];
   const put = (el, t) => { if (el) { saved.push([el, el.textContent]); el.textContent = t; } };
   // The worst case: every ingredient known (full names wrap), the longest effects line, every row shown.
   for (const v of VARIANTS) put($('rc_' + v), Object.entries(CONFIG.recipes[v]).map(([k, n]) => n + '× ' + ING[k].name).join(' + '));
   for (const k in ING) put($('in_' + k), '[' + ING[k].letter + '] ' + ING[k].name);
   put($('effects'), 'Active: Strength ×2 45s · Stamina 45s · FRENZY 12s');   // a long but real one
-  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it, so the meter sits the same every time
-  rows.forEach(el => el.classList.add('shown')); document.body.classList.add('fitting'); dz.style.marginTop = '';
-  const m = parseFloat($('wrap').style.transform.split('scale(')[1]) || 1;   // the page's scale
-  const step = parseFloat(getComputedStyle(dz).getPropertyValue('--step')) || 0;   // under the Milk+ column the cluster starts this much lower
-  const gap = ($('panel').getBoundingClientRect().bottom - dz.getBoundingClientRect().top) / m + 10 - step;
-  if (gap > 0) dz.style.marginTop = (10 + gap) + 'px';
-  if (panel2Need) {                                        // the right column runs to the bottom of the game (and pushes the meter only if it must)
-    const p2 = $('panel2'), room = ($('stage').getBoundingClientRect().bottom - p2.getBoundingClientRect().top) / m;
-    if (room < panel2Need) dz.style.marginTop = ((parseFloat(dz.style.marginTop) || 10) + panel2Need - room) + 'px';
-    p2.style.height = Math.max(room, panel2Need) + 'px';
-  }
+  const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it
+  rows.forEach(el => el.classList.add('shown')); document.body.classList.add('fitting');
+  $('wrap').style.setProperty('--row1', Math.max($('stage').offsetHeight, $('panel').offsetHeight, panel2Need - $('band').offsetHeight - 10) + 'px');   // the right column spans both rows
   rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
   $('hint').innerHTML = hint0;
   if (!fitting) document.body.classList.remove('fitting');
