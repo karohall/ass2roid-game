@@ -1881,6 +1881,51 @@ function saucer(x, y, s, a, t, tilt, beam) {               // the saucer (round 
   const blink = Math.pow(Math.max(0, Math.sin(t * 1.9)), 10); ctx.fillStyle = `rgba(255,196,160,${.2 + .8 * blink})`; ctx.beginPath(); ctx.arc(22, 1, 1.2, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
+// Things adrift (2026-11-17): small, painted, tumbling slowly past at their own depths. Nods for those who know.
+function driftThing(kind) {
+  const sz = { bag: [52, 50], disc: [42, 42], petunias: [52, 48], bit: [18, 66], teapot: [58, 44], slab: [22, 52] }[kind], c = document.createElement('canvas');
+  c.width = sz[0]; c.height = sz[1]; const x = c.getContext('2d'), lin = (y0, y1, a, b) => { const g = x.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
+  x.filter = 'blur(.35px)';
+  if (kind === 'bag') {                                     // the tool bag that slipped away on a spacewalk: white cloth, a strap, a tool handle poking out
+    x.translate(26, 28);
+    x.save(); x.rotate(.35); x.fillStyle = '#a84a3c'; x.fillRect(-3, -25, 6, 14); x.fillStyle = '#c9cfd3'; x.fillRect(-4, -28, 8, 4); x.restore();
+    x.strokeStyle = '#8f9aa3'; x.lineWidth = 2.5; x.beginPath(); x.arc(-2, -13, 10, Math.PI, 0); x.stroke();
+    x.fillStyle = lin(-14, 16, '#f4f2ec', '#9c9e9b'); x.beginPath(); x.roundRect(-18, -14, 36, 30, 7); x.fill();
+    x.fillStyle = 'rgba(120,124,128,.35)'; x.fillRect(-18, -14, 36, 7);
+    x.strokeStyle = 'rgba(70,74,78,.35)'; x.lineWidth = 1; x.setLineDash([2, 2]); x.beginPath(); x.moveTo(-14, -6); x.lineTo(14, -6); x.stroke(); x.setLineDash([]);
+  } else if (kind === 'disc') {                             // a golden disc, sounds and greetings for whoever finds it
+    x.translate(21, 21); const g = x.createRadialGradient(-5, -6, 1, 0, 0, 19); g.addColorStop(0, '#fff2c0'); g.addColorStop(.5, '#d8a646'); g.addColorStop(1, '#7e5418');
+    x.fillStyle = g; x.beginPath(); x.arc(0, 0, 19, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = 'rgba(110,70,16,.28)'; x.lineWidth = .6; for (let r = 7; r < 18.5; r += 1.6) { x.beginPath(); x.arc(0, 0, r, 0, Math.PI * 2); x.stroke(); }
+    x.fillStyle = '#c4902c'; x.beginPath(); x.arc(0, 0, 5.5, 0, Math.PI * 2); x.fill(); x.fillStyle = '#2a1c08'; x.beginPath(); x.arc(0, 0, 1.3, 0, Math.PI * 2); x.fill();
+    x.globalCompositeOperation = 'screen'; x.fillStyle = 'rgba(255,248,220,.45)'; x.beginPath(); x.moveTo(0, 0); x.arc(0, 0, 19, -2.4, -1.9); x.closePath(); x.fill();
+  } else if (kind === 'petunias') {                         // a bowl of petunias, thinking only: oh no, not again
+    x.translate(26, 26);
+    x.fillStyle = '#4f7a5a'; for (const [a, b] of [[-11, -6], [9, -7], [-2, -9]]) { x.beginPath(); x.ellipse(a, b, 6, 2.6, a * .05, 0, Math.PI * 2); x.fill(); }
+    for (const [fx, fy, col] of [[-10, -10, '#9a4fb8'], [0, -15, '#c06aa8'], [10, -10, '#7a3fa0'], [-4, -6, '#b25aa6'], [6, -5, '#8e48b0']]) {
+      x.fillStyle = col; for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2; x.beginPath(); x.arc(fx + Math.cos(a) * 3.2, fy + Math.sin(a) * 3.2, 3, 0, Math.PI * 2); x.fill(); }
+      x.fillStyle = '#f4e3a4'; x.beginPath(); x.arc(fx, fy, 1.2, 0, Math.PI * 2); x.fill(); }
+    x.fillStyle = lin(-2, 18, '#c47a58', '#6e3424'); x.beginPath(); x.moveTo(-17, -2); x.lineTo(17, -2); x.quadraticCurveTo(15, 18, 0, 18); x.quadraticCurveTo(-15, 18, -17, -2); x.fill();
+    x.fillStyle = '#d99a78'; x.beginPath(); x.ellipse(0, -2, 17, 3, 0, 0, Math.PI * 2); x.fill();
+  } else if (kind === 'bit') {                              // a loose drill bit, from the rock below
+    x.translate(9, 0); x.fillStyle = lin(0, 1, '#d6dce0', '#d6dce0'); const sg = x.createLinearGradient(-5, 0, 5, 0); sg.addColorStop(0, '#eef2f4'); sg.addColorStop(.5, '#9aa3aa'); sg.addColorStop(1, '#4e565d');
+    x.fillStyle = sg; x.fillRect(-3, 3, 6, 20); x.fillRect(-4.5, 23, 9, 34);
+    x.strokeStyle = 'rgba(28,34,40,.65)'; x.lineWidth = 2; for (let y = 23; y < 56; y += 6) { x.beginPath(); x.moveTo(-4.5, y); x.lineTo(4.5, y + 5); x.stroke(); }
+    x.fillStyle = sg; x.beginPath(); x.moveTo(-4.5, 57); x.lineTo(4.5, 57); x.lineTo(0, 63); x.closePath(); x.fill();
+  } else if (kind === 'teapot') {                           // a china teapot in orbit, too small to see, impossible to disprove
+    x.translate(28, 24); const bg = x.createRadialGradient(-5, -5, 2, 0, 0, 17); bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#a9b4c0');
+    x.strokeStyle = '#c3ccd5'; x.lineWidth = 3.2; x.beginPath(); x.arc(-15, 0, 7, Math.PI * .5, Math.PI * 1.5); x.stroke();
+    x.fillStyle = bg; x.beginPath(); x.moveTo(12, 2); x.quadraticCurveTo(20, -2, 25, -10); x.lineTo(26.5, -8); x.quadraticCurveTo(22, 2, 13, 7); x.closePath(); x.fill();
+    x.beginPath(); x.ellipse(0, 1, 16, 12, 0, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = 'rgba(58,88,168,.65)'; x.lineWidth = 1.6; x.beginPath(); x.ellipse(0, 1, 16, 4, 0, .15, Math.PI - .15); x.stroke();
+    x.fillStyle = '#dfe5ea'; x.beginPath(); x.ellipse(0, -10, 8, 2.6, 0, 0, Math.PI * 2); x.fill(); x.beginPath(); x.arc(0, -13.5, 2.2, 0, Math.PI * 2); x.fill();
+  } else if (kind === 'slab') {                             // a black slab, perfectly made, saying nothing; the sunrise catches its edge
+    x.fillStyle = '#05060a'; x.fillRect(3, 3, 16, 46);
+    const eg = x.createLinearGradient(16, 0, 19, 0); eg.addColorStop(0, 'rgba(255,222,190,0)'); eg.addColorStop(1, 'rgba(255,226,196,.55)'); x.fillStyle = eg; x.fillRect(16, 3, 3, 46);
+    x.fillStyle = 'rgba(200,214,236,.18)'; x.fillRect(3, 3, 16, 1); x.fillStyle = 'rgba(150,175,220,.22)'; x.fillRect(3, 3, 1, 46);   // a faint cool edge on the dark side
+  }
+  return c;
+}
 function startDrift() {
   running = false; held = null; pendingTap = null;
   const R = Math.random, W0 = cv.width, H0 = cv.height;
@@ -1937,9 +1982,16 @@ function startDrift() {
       { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one
     d.planets.push({ x: W0 * 1.2, y: H0 * .3, at: SC.verse1 + 28, img: P(24, '#f0d462', '#fffef0', ['#fff6c4', '#f6e28a', '#fffef6', '#ecd06a'], { tilt: .18 }), par: .09 },   // round 12: pale bright yellow
       { x: W0 * 1.2, y: H0 * .6, at: SC.chorus + 36, img: P(36, '#0c2462', '#7fa6e6', ['#1c3f8a', '#06143a', '#3a64b4', '#0f2c70'], { tilt: -.22 }), par: .11 });   // and a deep blue
+    d.planets.push(   // round 13: things adrift, tumbling slowly, one per stretch of the song
+      { x: W0 * 1.1, y: H0 * .4, at: SC.verse1 + 12, img: driftThing('bag'), v: 15 + Math.random() * 4, par: .08, spin: .14 },
+      { x: W0 * 1.1, y: H0 * .5, at: SC.pre + 12, img: driftThing('disc'), v: 15 + Math.random() * 4, par: .06, spin: .22 },
+      { x: W0 * 1.1, y: H0 * .35, at: SC.verse2 + 16, img: driftThing('petunias'), v: 15 + Math.random() * 4, par: .07, spin: .1 },
+      { x: W0 * 1.1, y: H0 * .55, at: SC.chorus + 24, img: driftThing('bit'), v: 15 + Math.random() * 4, par: .09, spin: .3 },
+      { x: W0 * 1.1, y: H0 * .3, at: SC.bridge + 6, img: driftThing('teapot'), v: 15 + Math.random() * 4, par: .06, spin: .08 },
+      { x: W0 * .8, y: H0 * .3, at: SC.outro - 2, img: driftThing('slab'), par: .04, spin: .035, fixed: true });   // the slab above the sunrise, so it catches the light
     d.planets.push({ x: W0 * 1.5 + 330, y: H0 + 100, at: SC.verse2 + 46, lead: 0, fixed: true, par: .3,   // round 11: a giant passing close, never seen whole
       img: P(300, '#7a4c32', '#f2dcbc', ['#ecd0ac', '#6e3e28', '#c9966c', '#f8ead6', '#4e2e20', '#a8704e', '#e2bc94', '#8a5236'], { tilt: -.07, nb: 22, calm: .25, bandA: .16, bandBlur: 14, storm: '#8e3424', glow: 'rgba(255,226,190,' }) });
-    { const v = pl => 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 10: spread evenly
+    { const v = pl => pl.v || 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 10: spread evenly
       const vis = x => x > -W0 * .6 - 60 && x < W0 * 1.5 + 60;
       const cost = (pl, y) => { let c = Math.abs(y - pl.y0) * .02;
         for (let t = pl.at; t < 280; t += 2) { const ax = X(pl, t); if (!vis(ax)) continue; const on = placed.filter(o => t >= o.at && vis(X(o, t)));
@@ -1952,11 +2004,13 @@ function startDrift() {
             const p = [X(on[i], t) - ax, on[i].y - y], q = [X(on[j], t) - ax, on[j].y - y], L = Math.max(Math.hypot(...p), Math.hypot(...q), 1);
             if (Math.abs(p[0] * q[1] - q[0] * p[1]) / L < 40) c += 4; } }
         return c; };
-      for (const pl of [...d.planets].sort((a, b) => b.par - a.par)) {   // the near ones first; the rest find their places around them
+      for (const pl of [...d.planets].sort((a, b) => (b.fixed ? 1 : 0) - (a.fixed ? 1 : 0) || b.par - a.par)) {   // the fixed ones, then the near ones first; the rest find their places around them
         if (pl.fixed) { placed.push(pl); continue; }
         pl.y0 = pl.y; const at0 = pl.at; let best = null;
         for (let w = 0; w < 6; w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 16) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }
-        pl.at = best.at; pl.y = best.y; placed.push(pl); } }   // no veils: fewer layers
+        if (!isFinite(best.c)) { pl.gone = true; pl.at = at0; continue; }   // no clear lane anywhere: it stays out of this Drift
+        pl.at = best.at; pl.y = best.y; placed.push(pl); }
+      d.planets = d.planets.filter(p => !p.gone); }   // no veils: fewer layers
     d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
@@ -2057,7 +2111,7 @@ function drawDrift() {
   // Planets in watercolour, arriving with the song; they sit far off, so they move only a little when you steer.
   for (const pl of d.planets) {
     const a = space * smooth(ramp(pl.at, pl.at + 10, t)); if (a <= 0) continue;
-    ctx.globalAlpha = a * .96 * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par - (t - pl.at - (pl.lead || 15)) * (2 + pl.par * 45), Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
+    ctx.globalAlpha = a * .96 * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par - (t - pl.at - (pl.lead || 15)) * (pl.v || 2 + pl.par * 45), Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
     if (pl.spin) { ctx.save(); ctx.translate(X, Y); ctx.rotate(t * pl.spin); ctx.drawImage(pl.img, -pl.img.width / 2, -pl.img.height / 2); ctx.restore(); } else ctx.drawImage(pl.img, X - pl.img.width / 2, Y - pl.img.height / 2);
   }
   ctx.globalAlpha = 1;
