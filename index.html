@@ -1789,7 +1789,7 @@ const WC = {
       const g = x.createLinearGradient(0, base + h * .12, 0, top); g.addColorStop(0, 'rgba(127,224,200,0)'); g.addColorStop(.18, 'rgba(127,224,200,.5)');   // a soft foot, no edge g.addColorStop(.5, 'rgba(110,170,220,.22)'); g.addColorStop(1, 'rgba(80,130,210,0)');
       x.globalAlpha = .3 + R() * .4; x.fillStyle = g; x.fillRect(i, top, 3 + R() * 3, base + h * .12 - top); }
     x.filter = 'none'; x.globalAlpha = 1; x.globalCompositeOperation = 'destination-in';   // round 9: it fades out on every side, no edge anywhere
-    const gh = x.createLinearGradient(0, 0, w, 0); gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(.25, 'rgba(0,0,0,1)'); gh.addColorStop(.75, 'rgba(0,0,0,1)'); gh.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gh; x.fillRect(0, 0, w, h);
+    const gh = x.createLinearGradient(0, 0, w, 0); gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(.32, 'rgba(0,0,0,1)'); gh.addColorStop(.68, 'rgba(0,0,0,1)'); gh.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gh; x.fillRect(0, 0, w, h);
     const gv = x.createLinearGradient(0, 0, 0, h); gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(.3, 'rgba(0,0,0,1)'); gv.addColorStop(1, 'rgba(0,0,0,1)'); x.fillStyle = gv; x.fillRect(0, 0, w, h);
     return c;
   },
@@ -1910,7 +1910,7 @@ function startDrift() {
       { x: W0 * .88, y: H0 * .84, at: SC.chorus + 14, img: P(34, '#2d7f86', '#c7f2ef', ['#ffffff', '#5fb7b4', '#1d5f69', '#e2fbf8'], { tilt: -.15 }), par: .08 },
       { x: W0 * .62, y: H0 + 40, at: SC.bridge - 24, img: P(120, '#7a7590', '#efeaff', ['#bdb6d6', '#9a93b8'], { craters: 34, tilt: .3 }), par: .32 },   // a great moon close by, rising at the bottom edge
     ];
-    d.ribbons = [{ img: WC.ribbon(900, 180, R), from: 22, to: 60, y: 10 }, { img: WC.ribbon(900, 180, R), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
+    d.ribbons = [{ img: WC.ribbon(1400, 180, R), from: 22, to: 60, y: 10 }, { img: WC.ribbon(1400, 180, R), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
     setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
@@ -1932,8 +1932,8 @@ function startDrift() {
     { const v = pl => 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 9: no two ever overlap
       for (const pl of [...d.planets].sort((a, b) => b.par - a.par)) {   // the near ones keep their places; the far ones move aside
         const clear = y => placed.every(o => { for (let t = Math.max(pl.at, o.at); t < 280; t += 1) { const a = X(pl, t), b = X(o, t);
-          if ((a < -W0 * .9 || a > W0 * 1.9) && (b < -W0 * .9 || b > W0 * 1.9)) continue; if (Math.hypot(a - b, y - o.y) < rad(pl) + rad(o) + 40) return false; } return true; });
-        for (let k = 0; k < 50; k++) { const y = pl.y + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 16; if (y < 10 || y > H0 - 10) continue; if (clear(y)) { pl.y = y; break; } }
+          if ((a < -W0 * .6 - 80 || a > W0 * 1.5 + 80) && (b < -W0 * .6 - 80 || b > W0 * 1.5 + 80)) continue; if (Math.hypot(a - b, y - o.y) < rad(pl) + rad(o) + 28) return false; } return true; });
+        place: for (let w = 0; w < 12; w++, pl.at += 8) for (let k = 0; k < 50; k++) { const y = pl.y + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 16; if (y < 30 || y > H0 - 60) continue; if (clear(y)) { pl.y = y; break place; } }   // no lane free: it waits a little, then tries again
         placed.push(pl); } }   // no veils: fewer layers
     d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
@@ -2043,7 +2043,7 @@ function drawDrift() {
   { ctx.save(); ctx.globalCompositeOperation = 'screen'; for (const v of d.veils) { ctx.globalAlpha = .22 * space; ctx.drawImage(v.img, v.x - v.img.width / 2 - d.ox * .4, v.y - v.img.height / 2 - d.oy * .4 + Math.sin(t * .02 + v.x) * 10); } ctx.restore(); }
   // Auroras: one soon after the wormhole, one from the pre-chorus into the chorus: curtains of light, drifting.
   for (const rb of d.ribbons) { const k = smooth(ramp(rb.from, rb.from + 10, t)) * (1 - smooth(ramp(rb.to, rb.to + 12, t)));
-    if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = Math.min(1, k * .65 * space); ctx.drawImage(rb.img, -W0 * .6 + Math.sin(t * .03 + rb.y) * 40 - d.ox * .04 - (t - rb.from) * 1.5, rb.y); ctx.restore(); } }
+    if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = Math.min(1, k * .65 * space); ctx.drawImage(rb.img, -W0 * 1.1 + Math.sin(t * .03 + rb.y) * 40 - d.ox * .04 - (t - rb.from) * 1.5, rb.y); ctx.restore(); } }
   // A star cluster in verse 2: a knot of light that twinkles slowly.
   { const k = smooth(ramp(S.verse2 + 18, S.verse2 + 30, t)); if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen';
     for (const [x, y, ph, sp] of d.cluster) { ctx.globalAlpha = k * (.35 + .65 * Math.pow(Math.max(0, Math.sin(t * sp * .6 + ph)), 4)); ctx.fillStyle = '#eef3ff'; ctx.fillRect(x - d.ox * .02, y, 1.6, 1.6); }
