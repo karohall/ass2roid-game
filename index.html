@@ -218,9 +218,10 @@
   .go { display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 16px 0 20px !important; font:600 12px/1 var(--f-small) !important; letter-spacing:.16em; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(var(--fluo-rgb),.35)); }
   .go::before { background:var(--fluo) !important; }
   /* Begin shift: amber, the guide's colour: the very first step, glowing in the guide's rhythm (2026-11-17). The other screens' ways on stay fluo. */
-  #go.go { background:var(--amber) !important; filter:drop-shadow(0 0 8px rgba(255,180,60,.4)); animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:var(--amber) !important; } #go.go kbd { color:var(--amber); }
-  @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 4px rgba(255,180,60,.25)); } 50% { filter:drop-shadow(0 0 12px rgba(255,180,60,.75)); } }
-  @media (prefers-reduced-motion: reduce) { #go.go { animation:none; } }
+  #go.go { background:var(--amber) !important; filter:none; }
+  #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:var(--amber) !important; } #go.go kbd { color:var(--amber); }
+  @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
+  @media (prefers-reduced-motion: reduce) { #goGlow { animation:none; filter:drop-shadow(0 0 8px rgba(255,180,60,.6)); } }
   .go kbd, .btn2 kbd { font:700 11px/1 var(--f-small); letter-spacing:.08em; padding:5px 6px; background:rgba(11,12,14,.85); color:var(--fluo); }
   .btn2 { display:inline-flex; align-items:center; gap:10px; height:32px; padding:0 10px 0 14px; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--text); box-shadow:inset 0 0 0 1px var(--line-2); clip-path:var(--chamfer-s); }
   .btn2 kbd { background:var(--raised); color:var(--text); }
@@ -380,7 +381,7 @@
         <ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
       <div class="keys"><span><kbd class="k ar">←</kbd><kbd class="k ar">↓</kbd><kbd class="k ar">→</kbd></span><span>Move and dig (or WASD)</span><span><kbd class="k">1–5</kbd></span><span>Shake, then drink Milk+</span>
         <span><kbd class="k">R</kbd><kbd class="k">T</kbd><kbd class="k">V</kbd></span><span>Radio, tape, volume</span><span><kbd class="k">Space</kbd></span><span>Pause</span></div>
-      <button id="go" class="go">Begin shift <kbd>Enter</kbd></button>
+      <span id="goGlow"><button id="go" class="go">Begin shift <kbd>Enter</kbd></button></span>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
@@ -2615,9 +2616,9 @@ setTimeout(() => { fittedFor = Math.round(innerWidth / 4) + 'x' + Math.round(inn
 window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
-// The start button always shows its key (2026-11-17, was 'Click to begin shift' without the keyboard). The game takes the keyboard as it opens
-// (itch.io's frame included), and a click anywhere on it gives it back; the button itself starts the shift on a click too.
-$('go').innerHTML = 'Begin shift <kbd>Enter</kbd>';
+// The start button says what works right now: Enter only when the game has the keyboard.
+const startLabel = () => { $('go').innerHTML = document.hasFocus() ? 'Begin shift <kbd>Enter</kbd>' : 'Click to begin shift'; };
+addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 </body>
 </html>
