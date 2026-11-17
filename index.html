@@ -995,7 +995,7 @@ const FIND = {
 function chamfer(c, x, y, w, h, k) { c.moveTo(x + k, y); c.lineTo(x + w - k, y); c.lineTo(x + w, y + k); c.lineTo(x + w, y + h - k); c.lineTo(x + w - k, y + h); c.lineTo(x + k, y + h); c.lineTo(x, y + h - k); c.lineTo(x, y + k); c.closePath(); }
 function drawProspector(c, X, Y, o) {
   const sc = 1 + (o.str || 0) * .09; c.save(); c.translate(X + T / 2, Y + T - 3); c.scale(sc, sc); c.translate(-(X + T / 2), -(Y + T - 3));
-  c.beginPath(); chamfer(c, X + 8, Y + 6, 24, 30, 4); c.lineJoin = 'miter'; c.strokeStyle = COL.ink; c.lineWidth = 3; c.stroke(); c.fillStyle = o.frenzy ? '#ffffff' : COL.concrete; c.fill();
+  c.beginPath(); chamfer(c, X + 8, Y + 6, 24, 30, 4); c.lineJoin = 'miter'; c.strokeStyle = COL.ink; c.lineWidth = 3; if (!o.bare) c.stroke(); c.fillStyle = o.frenzy ? '#ffffff' : COL.concrete; c.fill();
   c.fillStyle = COL.ink; c.fillRect(X + 13, Y + 12, 14, 6); c.fillStyle = COL.steel; c.fillRect(X + 15, Y + 13, 5, 1);
   if (o.pick) { const mx = X + T / 2; c.strokeStyle = COL.ink; c.lineWidth = 2; c.beginPath(); c.moveTo(mx, Y + 21); c.lineTo(mx, Y + 32); c.moveTo(mx - 7, Y + 23); c.quadraticCurveTo(mx, Y + 18, mx + 7, Y + 23); c.stroke(); }
   if (o.dark) { const lx = X + 20, ly = Y + 5, R = 13, h = c.createRadialGradient(lx, ly, 0, lx, ly, R);
@@ -1867,6 +1867,8 @@ const WC = {
 function saucer(x, y, s, a, t, tilt, beam) {               // the saucer (round 9): a slim gunmetal lens, a dark canopy, one slow light; a faint glow beneath when it stops to look
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(tilt + Math.sin(t * 2.3) * .03); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'source-over';
   const ug = ctx.createRadialGradient(0, 10, 0, 0, 10, 44); ug.addColorStop(0, `rgba(150,215,230,${.08 + .22 * beam})`); ug.addColorStop(1, 'rgba(150,215,230,0)'); ctx.fillStyle = ug; ctx.fillRect(-44, -34, 88, 88);
+  if (beam > .02) { ctx.save(); ctx.filter = 'blur(3px)'; const bm = ctx.createLinearGradient(0, 4, 0, 84); bm.addColorStop(0, `rgba(170,225,240,${.42 * beam})`); bm.addColorStop(.6, `rgba(150,210,235,${.14 * beam})`); bm.addColorStop(1, 'rgba(150,210,235,0)');   // round 10: the beam, when it stops
+    ctx.fillStyle = bm; ctx.beginPath(); ctx.moveTo(-10, 4); ctx.lineTo(10, 4); ctx.lineTo(30, 84); ctx.lineTo(-30, 84); ctx.closePath(); ctx.fill(); ctx.restore(); }
   const hg = ctx.createLinearGradient(0, -6, 0, 6); hg.addColorStop(0, '#c9d3d8'); hg.addColorStop(.45, '#7d8a92'); hg.addColorStop(.55, '#3c464e'); hg.addColorStop(1, '#1b2127');
   ctx.fillStyle = hg; ctx.beginPath(); ctx.ellipse(0, 0, 30, 5, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = 'rgba(22,34,44,.96)'; ctx.beginPath(); ctx.ellipse(0, -3, 10, 5, 0, Math.PI, 0); ctx.fill();
@@ -1929,12 +1931,23 @@ function startDrift() {
     d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];
     d.planets.push({ x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: P(26, '#5e1422', '#f0b8a8', ['#9a2a36', '#c8645a', '#3e0a16', '#e8a090'], { tilt: -.2 }), par: .1 },   // a dark red one
       { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one
-    { const v = pl => 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 9: no two ever overlap
-      for (const pl of [...d.planets].sort((a, b) => b.par - a.par)) {   // the near ones keep their places; the far ones move aside
-        const clear = y => placed.every(o => { for (let t = Math.max(pl.at, o.at); t < 280; t += 1) { const a = X(pl, t), b = X(o, t);
-          if ((a < -W0 * .6 - 80 || a > W0 * 1.5 + 80) && (b < -W0 * .6 - 80 || b > W0 * 1.5 + 80)) continue; if (Math.hypot(a - b, y - o.y) < rad(pl) + rad(o) + 28) return false; } return true; });
-        place: for (let w = 0; w < 12; w++, pl.at += 8) for (let k = 0; k < 50; k++) { const y = pl.y + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 16; if (y < 30 || y > H0 - 60) continue; if (clear(y)) { pl.y = y; break place; } }   // no lane free: it waits a little, then tries again
-        placed.push(pl); } }   // no veils: fewer layers
+    { const v = pl => 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 10: spread evenly
+      const vis = x => x > -W0 * .6 - 60 && x < W0 * 1.5 + 60;
+      const cost = (pl, y) => { let c = Math.abs(y - pl.y0) * .02;
+        for (let t = pl.at; t < 280; t += 2) { const ax = X(pl, t); if (!vis(ax)) continue; const on = placed.filter(o => t >= o.at && vis(X(o, t)));
+          for (const o of on) { const dx = ax - X(o, t), dy = y - o.y, dist = Math.hypot(dx, dy), need = rad(pl) + rad(o) + 70;
+            if (dist < need) return Infinity;                          // never overlapping, never close
+            if (dist < need * 2) c += (need * 2 - dist) * .05;         // and the further the better
+            if (Math.abs(dx) < 50 + rad(pl) * .5) c += 3;              // not stacked in a column
+            if (Math.abs(dy) < 34) c += 3; }                           // not in a row
+          for (let i = 0; i < on.length; i++) for (let j = i + 1; j < on.length; j++) {   // not three in a line
+            const p = [X(on[i], t) - ax, on[i].y - y], q = [X(on[j], t) - ax, on[j].y - y], L = Math.max(Math.hypot(...p), Math.hypot(...q), 1);
+            if (Math.abs(p[0] * q[1] - q[0] * p[1]) / L < 40) c += 4; } }
+        return c; };
+      for (const pl of [...d.planets].sort((a, b) => b.par - a.par)) {   // the near ones first; the rest find their places around them
+        pl.y0 = pl.y; const at0 = pl.at; let best = null;
+        for (let w = 0; w < 6; w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 16) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }
+        pl.at = best.at; pl.y = best.y; placed.push(pl); } }   // no veils: fewer layers
     d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
@@ -2092,7 +2105,7 @@ function drawDrift() {
   }
   if (gone < 1) {
     ctx.save(); ctx.translate(px, py); ctx.rotate(ang); ctx.scale(scale, scale); ctx.globalAlpha = 1 - gone;
-    drawProspector(ctx, -T / 2, -21, {});   // the prospector as in the rock (round 9): the chamfered block, outlined in ink, the visor's glint
+    drawProspector(ctx, -T / 2, -21, { bare: true });   // round 10: no ink outline out here   // the prospector as in the rock (round 9): the chamfered block, outlined in ink, the visor's glint
     ctx.restore(); ctx.globalAlpha = 1;
   }
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
