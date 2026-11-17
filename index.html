@@ -1937,7 +1937,7 @@ function startDrift() {
       { x: W0 * 1.05, y: 300, at: 34, img: P(5, '#b07ac9', '#f3dcff', ['#ffffff']), par: .01, far: .5 },
       { x: -W0 * .15, y: 210, at: 52, img: P(9, '#5aa7a8', '#d8fffb', ['#ffffff']), par: .015, far: .6 },
       { x: -W0 * .25, y: H0 * .6, at: SC.verse2 + 4, img: P(78, '#1f3f8c', '#e8f2ff', ['#ffffff', '#5f95d8', '#0f3478', '#dbe9ff', '#2f5fb0'], { tilt: .12 }), par: .22, lead: 42 },   // the striped blue-and-white one, kept
-      { x: W0 * 1.12, y: 150, at: SC.verse1 + 6, img: driftThing('teal'), par: .16 },         // teal bands, large
+      { x: W0 * 1.12, y: 150, at: 21, img: driftThing('teal'), par: .16 },         // teal bands, large; a body arrives as the wormhole closes (2026-11-17: something soon after it)
       { x: W0 * 1.45, y: H0 * .55, at: SC.verse1 + 22, img: driftThing('moon'), par: .03 },   // a small grey moon, far
       { x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: driftThing('coral'), par: .06 },  // coral bands, small
       { x: W0 * 1.2, y: H0 * .3, at: SC.verse1 + 28, img: P(24, '#f0d462', '#fffef0', ['#fff6c4', '#f6e28a', '#fffef6', '#ecd06a'], { tilt: .18 }), par: .09 },   // the small pale yellow one, back
@@ -1969,6 +1969,7 @@ function startDrift() {
       { const m = shuffle([pick([SC.verse1 + 12, SC.pre + 12]), pick([SC.chorus + 24, SC.bridge + 6])]); d.planets.filter(p => p.thing).forEach((p, i) => p.at = m[i]); }   // one early, one late, every Drift
       const swapAt = list => { const ats = shuffle(list.map(p => p.at)); list.forEach((p, i) => p.at = ats[i]); };   // the same moments, in a new order
       swapAt(bodies.filter(p => !drop.includes(p))); swapAt(d.galaxies);
+      { const kept = bodies.filter(p => !drop.includes(p) && p.lead !== 42); if (kept.length) { const e = kept.find(p => p.at <= 24) || pick(kept); e.at = 21; e.early = true; } }   // always a body as the wormhole closes
       if (giant) { if (R() < .25) d.planets = d.planets.filter(p => p !== giant); else giant.at = pick([SC.verse1 + 20, SC.verse2 + 46, SC.chorus + 10]); }
       d.saucerAt = pick([SC.pre + 2, SC.verse2 + 8, SC.chorus + 18]);
       { const from = pick([SC.pre + 16, SC.verse2 + 24, SC.bridge - 12]); Object.assign(d.ribbons[1], { from, to: from + 44 }); } }
@@ -1986,10 +1987,10 @@ function startDrift() {
             const p = [X(on[i], t) - ax, on[i].y - y], q = [X(on[j], t) - ax, on[j].y - y], L = Math.max(Math.hypot(...p), Math.hypot(...q), 1);
             if (Math.abs(p[0] * q[1] - q[0] * p[1]) / L < 40) c += 4; } }
         return c; };
-      for (const pl of [...d.planets].sort((a, b) => (b.fixed ? 1 : 0) - (a.fixed ? 1 : 0) || b.par - a.par)) {   // the fixed ones, then the near ones first; the rest find their places around them
+      for (const pl of [...d.planets].sort((a, b) => (b.fixed ? 1 : 0) - (a.fixed ? 1 : 0) || (b.early ? 1 : 0) - (a.early ? 1 : 0) || b.par - a.par)) {   // the fixed ones, then the near ones first; the rest find their places around them
         if (pl.fixed) { placed.push(pl); continue; }
         pl.y0 = pl.y; const at0 = pl.at; let best = null;
-        for (let w = 0; w < 6; w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 20) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }
+        for (let w = 0; w < (pl.early ? 1 : 6); w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 20) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }   // the early one keeps its moment
         if (!isFinite(best.c)) { pl.gone = true; pl.at = at0; continue; }   // no clear lane anywhere: it stays out of this Drift
         pl.at = best.at; pl.y = best.y; placed.push(pl); }
       d.planets = d.planets.filter(p => !p.gone); }   // no veils: fewer layers
@@ -1998,7 +1999,8 @@ function startDrift() {
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
         d.falls.push({ at, x: -160 + R() * W0 * 1.7, y: -40 + R() * H0 * .5, len: 120 + R() * 280, dur: 1.2 + R() * 2.4, ang: dir, w: .7 + R() * 1.3, tail: 40 + R() * 100,
           col: ['205,220,255', '255,226,204', '192,238,226', '222,204,255', '255,205,200'][Math.floor(R() * 5)], glints: Array.from({ length: 2 + Math.floor(R() * 4) }, () => [R(), (R() - .5) * 6, R() * 6.3]) }); };
-      let at = 36 + R() * 14; while (at < 240) { fall(at); at += R() < .2 ? .5 + R() * 1.6 : 6 + R() * R() * 34; }
+      fall(22.5 + R() * 1.5); fall(26.5 + R() * 2);   // the first falling stars just after the wormhole (2026-11-17)
+      let at = 34 + R() * 10; while (at < 240) { fall(at); at += R() < .2 ? .5 + R() * 1.6 : 6 + R() * R() * 34; }
       for (let i = 0; i < 7; i++) fall(SC.chorus + 1 + R() * 12); }
     d.grain = ctx.createPattern(WC.grain(R), 'repeat'); }
   radio.on = 'oddity'; radio.since = radio.clock;
