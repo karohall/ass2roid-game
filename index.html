@@ -1718,7 +1718,7 @@ const WC = {
     x.globalCompositeOperation = 'destination-out';   // granulation: pigment settling in the paper's tooth
     for (let i = 0; i < r * r * .5; i++) { x.globalAlpha = R() * .35; x.fillRect(R() * c.width, R() * c.height, 1, 1); }
     x.globalCompositeOperation = 'source-over';
-    const g = x.createRadialGradient(m, m, 0, m, m, r * .55); g.addColorStop(0, 'rgba(255,255,255,.22)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    const g = x.createRadialGradient(m, m, 0, m, m, r * .55); g.addColorStop(0, 'rgba(255,255,255,.1)'); g.addColorStop(1, 'rgba(255,255,255,0)');
     x.globalAlpha = 1; x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);   // a soft glow at its heart
     for (let i = 0; i < 160; i++) { const a = R() * 6.3, d = Math.pow(R(), .55) * r * 1.25, sz = R() < .88 ? 1 : 2;   // spatter
       x.globalAlpha = .2 + R() * .5; x.fillStyle = R() < .3 ? '#fff' : cols[i % cols.length]; x.fillRect(m + Math.cos(a) * d, m + Math.sin(a) * d * .8, sz, sz); }
@@ -1743,7 +1743,14 @@ const WC = {
         x.beginPath(); x.ellipse(0, 0, rr, rr * .28, 0, half ? 0 : Math.PI, half ? Math.PI : Math.PI * 2); x.stroke(); }
       x.restore(); };
     if (o.rings) ring(false);
-    x.save(); x.beginPath(); x.arc(mx, my, r, 0, Math.PI * 2); x.clip();
+    { const hg = x.createRadialGradient(mx, my, r * .9, mx, my, r * 1.35); hg.addColorStop(0, light); hg.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = .18; x.fillStyle = hg; x.fillRect(0, 0, c.width, c.height); x.globalAlpha = 1; }   // a soft halo: no hard edge against the night
+    const main = x, body = document.createElement('canvas'); body.width = c.width; body.height = c.height;   // the body painted apart, then feathered at its edge
+    { const x = body.getContext('2d');
+    x.save(); x.beginPath();
+    if (o.lumpy) { const n = 16, pts = []; for (let i = 0; i < n; i++) { const a = i / n * 6.3, k = .78 + R() * .3; pts.push([mx + Math.cos(a) * r * k, my + Math.sin(a) * r * k * .82]); }
+      const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; x.moveTo(...mid(pts[n - 1], pts[0])); for (let i = 0; i < n; i++) x.quadraticCurveTo(...pts[i], ...mid(pts[i], pts[(i + 1) % n])); }
+    else x.arc(mx, my, r, 0, Math.PI * 2);
+    x.clip();
     const g = x.createRadialGradient(mx - r * .35, my - r * .4, r * .1, mx, my, r); g.addColorStop(0, light); g.addColorStop(1, base); x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
     x.translate(mx, my); x.rotate(tilt); x.translate(-mx, -my); x.filter = 'blur(1.6px)';
     for (let i = 0; i < (o.craters ? 7 : 20); i++) { const y0 = my - r + R() * r * 2, th = r * (.04 + R() * .14), f = .02 + R() * .05, ph = R() * 6.3, amp = r * (.02 + R() * .06);
@@ -1751,7 +1758,12 @@ const WC = {
       for (let px = mx + r * 1.2; px >= mx - r * 1.2; px -= 4) x.lineTo(px, y0 + th + Math.sin(px * f + ph + .8) * amp);
       x.globalAlpha = (o.craters ? .08 : .18) + R() * .25; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
     x.filter = 'none';
-    if (o.craters) for (let i = 0; i < o.craters; i++) {     // craters: deep bowls, foreshortened toward the edge, lit on one rim
+    if (o.blooms) for (let i = 0; i < 12; i++) {             // wet-in-wet blooms: colour flooding into the wash, a dark fringe where it stopped
+      const a = R() * 6.3, d = Math.sqrt(R()) * r * .8, bx = mx + Math.cos(a) * d, by = my + Math.sin(a) * d, br = r * (.12 + R() * .3), n = 22;
+      x.beginPath(); for (let j = 0; j <= n; j++) { const b = j / n * 6.3, k = 1 + (R() - .5) * .45; x.lineTo(bx + Math.cos(b) * br * k, by + Math.sin(b) * br * k); }
+      x.filter = 'blur(2px)'; x.globalAlpha = .35 + R() * .25; x.fillStyle = o.blooms[i % o.blooms.length]; x.fill();
+      x.filter = 'blur(1px)'; x.globalAlpha = .4; x.strokeStyle = o.fringe || '#1b1a4a'; x.lineWidth = 1.4; x.stroke(); x.filter = 'none'; }
+    if (o.craters) for (let i = 0; i < o.craters; i++) {     // craters: deep bowls, foreshortened toward the edge, lit on one rim     // craters: deep bowls, foreshortened toward the edge, lit on one rim
       const a = R() * 6.3, d = Math.sqrt(R()) * r * .85, cxp = mx + Math.cos(a) * d, cyp = my + Math.sin(a) * d, cr = r * (.05 + R() * R() * .22), sq = Math.sqrt(1 - Math.min(.9, (d / r) ** 2)), rot = a;
       x.save(); x.translate(cxp, cyp); x.rotate(rot); x.scale(sq, 1);
       x.globalAlpha = .55; x.fillStyle = 'rgba(28,24,52,.7)'; x.beginPath(); x.arc(0, 0, cr, 0, Math.PI * 2); x.fill();
@@ -1762,6 +1774,9 @@ const WC = {
     x.globalAlpha = 1; const sh = x.createRadialGradient(mx - r * .45, my - r * .5, r * .3, mx, my, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.75, 'rgba(6,5,22,.35)'); sh.addColorStop(1, 'rgba(6,5,22,.82)');
     x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height); x.restore();
     x.filter = 'blur(3px)'; x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = 3; x.beginPath(); x.arc(mx, my, r - 1, Math.PI * .95, Math.PI * 1.75); x.stroke(); x.filter = 'none'; x.globalAlpha = 1;   // the lit rim
+    x.globalCompositeOperation = 'destination-in';           // a feathered edge: the paint thins out at the rim
+    const fe = x.createRadialGradient(mx, my, r * .9, mx, my, r * 1.04); fe.addColorStop(0, 'rgba(0,0,0,1)'); fe.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = fe; x.fillRect(0, 0, c.width, c.height); }
+    main.drawImage(body, 0, 0); const x2 = main;
     if (o.rings) ring(true);
     return c;
   },
@@ -1771,6 +1786,55 @@ const WC = {
       const g = x.createLinearGradient(0, base, 0, top); g.addColorStop(0, 'rgba(127,224,200,.55)'); g.addColorStop(.5, 'rgba(160,190,255,.25)'); g.addColorStop(1, 'rgba(200,160,255,0)');
       x.globalAlpha = .25 + R() * .35; x.fillStyle = g; x.fillRect(i, top, 2 + R() * 2, base - top); }
     return c;
+  },
+  sky(w, h, R) {                                            // the night as one painted wash: navy and teal, mottled wet-in-wet, granulating, salted, spattered with stars
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+    x.fillStyle = '#0d2239'; x.fillRect(0, 0, w, h);
+    x.filter = 'blur(34px)';
+    for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#06142a', '#0a1c34', '#153957', '#1f4a66', '#10294a', '#0b2240'][Math.floor(R() * 6)];
+      x.beginPath(); x.ellipse(R() * w, R() * h, 60 + R() * 220, 40 + R() * 160, R() * 3, 0, Math.PI * 2); x.fill(); }
+    x.filter = 'blur(48px)';
+    for (let i = 0; i < 12; i++) { x.globalAlpha = .07 + R() * .08; x.fillStyle = ['#8a6fc4', '#c56f9e', '#3f8f94', '#c9a35b'][i % 4];   // faint colour bleeding in, wet-in-wet
+      x.beginPath(); x.ellipse(R() * w, R() * h, 80 + R() * 200, 60 + R() * 140, R() * 3, 0, Math.PI * 2); x.fill(); }
+    x.filter = 'blur(5px)';
+    for (let i = 0; i < 14; i++) { x.globalAlpha = .12 + R() * .12; x.strokeStyle = '#050f20'; x.lineWidth = 3 + R() * 6;   // backruns: darker fringes where the wash dried
+      x.beginPath(); x.ellipse(R() * w, R() * h, 50 + R() * 160, 30 + R() * 110, R() * 3, R() * 3, R() * 3 + 2 + R() * 3); x.stroke(); }
+    x.filter = 'none';
+    x.filter = 'blur(.7px)';
+    for (let i = 0; i < 55; i++) { const cx = R() * w, cy = R() * h, n = 5 + Math.floor(R() * 7), rr = 2 + R() * 6;   // salt blooms: little crystals of light
+      x.globalAlpha = .18 + R() * .25; x.strokeStyle = '#cfe2ee'; x.lineWidth = .8;
+      for (let j = 0; j < n; j++) { const a = R() * 6.3, l = rr * (.4 + R() * .6); x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * l, cy + Math.sin(a) * l); x.stroke(); } }
+    x.filter = 'none';
+    for (let i = 0; i < 2400; i++) { const r = Math.pow(R(), 5) * 2 + .2, a = .2 + R() * .65;   // spatter: stars of every size, soft
+      x.globalAlpha = a; x.fillStyle = R() < .85 ? '#eef4fa' : R() < .5 ? '#d7e6ff' : '#fff2dc'; x.beginPath(); x.arc(R() * w, R() * h, r, 0, Math.PI * 2); x.fill();
+      if (r > 1.4) { x.globalAlpha = a * .25; x.beginPath(); x.arc(R() * w, R() * h, r * 2.6, 0, Math.PI * 2); x.fill(); } }
+    return c;
+  },
+  sprite(size, flare) {                                     // a soft dot of light, or a soft four-point star flare
+    const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d'), m = size / 2;
+    const g = x.createRadialGradient(m, m, 0, m, m, m * (flare ? .35 : 1)); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(235,242,255,.45)'); g.addColorStop(1, 'rgba(220,230,255,0)');
+    x.fillStyle = g; x.fillRect(0, 0, size, size);
+    if (flare) for (const [a, l] of [[0, 1], [Math.PI / 2, 1], [Math.PI / 4, .45], [-Math.PI / 4, .45]]) { x.save(); x.translate(m, m); x.rotate(a);
+      const lg = x.createLinearGradient(-m * l, 0, m * l, 0); lg.addColorStop(0, 'rgba(230,240,255,0)'); lg.addColorStop(.5, 'rgba(245,250,255,.9)'); lg.addColorStop(1, 'rgba(230,240,255,0)');
+      x.fillStyle = lg; x.fillRect(-m * l, -.6, m * l * 2, 1.2); x.restore(); }
+    return c;
+  },
+  galaxy(r, tilt, cols, R) {                                 // a galaxy, painted: two soft arms of light and a glowing heart
+    const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.4); const x = c.getContext('2d'), m = c.width / 2;
+    x.translate(m, m); x.scale(1, tilt); x.filter = 'blur(5px)';
+    for (let i = 0; i < 700; i++) { const arm = R() < .5 ? 0 : Math.PI, d = Math.pow(R(), .7), th = arm + d * 3.6 + (R() - .5) * 1.4;   // wide, soft arms
+      x.globalAlpha = (1 - d) * .16; x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 3 + R() * 6, 0, Math.PI * 2); x.fill(); }
+    x.filter = 'none'; const g = x.createRadialGradient(0, 0, 0, 0, 0, r * .35); g.addColorStop(0, 'rgba(255,250,240,.55)'); g.addColorStop(1, 'rgba(255,240,220,0)');
+    x.globalAlpha = 1; x.fillStyle = g; x.fillRect(-r, -r, r * 2, r * 2); return c;
+  },
+  dawn(w, h, R) {                                           // the dawn: long soft strata of peach, rose, lilac and blue, blending, no edges
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+    const rows = [['#ffe6b0', .95], ['#ffc39f', .9], ['#ff9fb6', .78], ['#e9a0c9', .62], ['#b9a2e6', .48], ['#8fb0ea', .32], ['#6f9fe0', .18]];
+    x.filter = 'blur(22px)';
+    rows.forEach(([col, y], i) => { for (let k = 0; k < 9; k++) { x.globalAlpha = .18 + R() * .22; x.fillStyle = col;
+      x.beginPath(); x.ellipse(R() * w, h * y + (R() - .5) * h * .08, 120 + R() * 320, 14 + R() * 30, (R() - .5) * .08, 0, Math.PI * 2); x.fill(); } });
+    x.filter = 'none'; const fadeTop = x.createLinearGradient(0, 0, 0, h * .45); fadeTop.addColorStop(0, 'rgba(0,0,0,1)'); fadeTop.addColorStop(1, 'rgba(0,0,0,0)');
+    x.globalCompositeOperation = 'destination-out'; x.globalAlpha = 1; x.fillStyle = fadeTop; x.fillRect(0, 0, w, h * .45); return c;
   },
   grain(R) {                                                 // paper grain, for touch
     const c = document.createElement('canvas'); c.width = c.height = 220; const x = c.getContext('2d'), im = x.createImageData(220, 220);
@@ -1819,6 +1883,15 @@ function startDrift() {
     d.comet = { at: SC.verse1 + 8, len: 26 };
     d.ribbon = { img: WC.ribbon(900, 180, R), from: SC.pre - 6, to: SC.chorus + 6 };
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
+    setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
+    d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
+    d.flares = Array.from({ length: 16 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
+    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#cfe0ff', '#e6d4ff', '#ffffff', '#bfe9f0'], R); });
+    d.veils = [[W0 * .1, H0 * .25, 260], [W0 * .95, H0 * .7, 300], [-W0 * .3, H0 * .95, 240]].map(([x, y, r]) => ({ x, y, img: WC.blob(r, ['#1d4a6a', '#2b5f80', '#3a4f86'], R) }));
+    d.dawn = WC.dawn(1000, 520, R);
+    d.planets.push({ x: W0 * .55, y: H0 * .48, at: SC.verse2 + 30, img: P(16, '#5d5a66', '#d8d3c8', ['#8b8579', '#a99c86'], { craters: 9, lumpy: true }), par: .1, spin: .05 });   // an asteroid, tumbling slowly
+    d.planets[6].img = P(78, '#2a3f9c', '#cfe6ff', ['#ffffff', '#6fa5e8', '#0f3a86'], { tilt: .12, blooms: ['#b39ce0', '#7fd0c4', '#c8e7ff', '#9be0b0', '#e8b9e0'], fringe: '#141c5a' });   // the big near one wet-in-wet, as in the reference
+    d.planets[4].img = P(22, '#8b8a96', '#eceaf3', ['#c8c6d0'], { craters: 10, blooms: ['#c9d1cf', '#9fb2ad'], fringe: '#2e3a40' });
     d.worm = WC.blob(130, ['#c9a7ff', '#ff9fd6', '#8fd3ff', '#ffe2b8'], R);
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#c9a7ff', '#ff9fd6', '#8fd3ff', '#7fe0e6', '#ffe2b8', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = [45, 62, 88, 118, 133, 134.4, 135.9, 137.5, 139.2, 146, 172, 206, 236].map(at => ({ at, x: -120 + R() * W0 * 1.6, y: -40 + R() * H0 * .35, len: 220 + R() * 160 }));   // falling stars
@@ -1861,8 +1934,8 @@ function drawDrift() {
   const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
   const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
   const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
-  { const nt = ctx.createLinearGradient(0, -H0 * .5, 0, H0 * 1.5); nt.addColorStop(0, '#0e0b28'); nt.addColorStop(.55, '#08071b'); nt.addColorStop(1, '#130a22');
-    ctx.fillStyle = nt; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); }   // the night: deep indigo, a violet warmth at the bottom
+  ctx.fillStyle = '#0b1d31'; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0);   // the night: one painted wash, barely moving as you steer
+  if (d.wash) { ctx.globalAlpha = Math.min(1, (performance.now() - d.washAt) / 2500); ctx.drawImage(d.wash, -280 - d.ox * .03, -60 - d.oy * .03); ctx.globalAlpha = 1; }
   const fade = Math.min(1, e / 4000);
   if (fade < 1) {                                            // the shaft falls away beneath you
     ctx.save(); ctx.globalAlpha = 1 - fade; ctx.translate(0, fade * fade * H0); draw(); ctx.restore();
@@ -1876,21 +1949,16 @@ function drawDrift() {
   const lim = [W0 * 1.1, H0 * .35];
   if (Math.abs(d.ox) > lim[0]) { d.ox = Math.sign(d.ox) * lim[0]; d.vx *= -.3; }
   if (Math.abs(d.oy) > lim[1]) { d.oy = Math.sign(d.oy) * lim[1]; d.vy *= -.3; }
-  // Stars, turning slowly around you: the somersault is the whole sky's too.
-  ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * .012); ctx.translate(-cx, -cy);
-  for (const [x, y, z, ph] of d.stars) {
-    const tw = .55 + .45 * Math.sin(t * (1 + z * 2) + ph);
-    ctx.globalAlpha = fade * (.35 + .65 * space) * tw * (1 - sun * .5);
-    ctx.fillStyle = z > .85 ? '#fff' : z > .5 ? '#bbb' : '#666';
-    ctx.fillRect(x, y, z > .85 ? 2 : 1, z > .85 ? 2 : 1);
-  }
+  // A few bright stars, flaring softly, slowly (the rest are spatter in the wash).
+  ctx.save(); ctx.globalCompositeOperation = 'screen';
+  for (const [x, y, sz, ph] of d.flares) { ctx.globalAlpha = fade * (.45 + .55 * space) * (.55 + .45 * Math.sin(t * .4 + ph)) * (1 - sun * .5); const w = d.flare.width * sz; ctx.drawImage(d.flare, x - w / 2 - d.ox * .04, y - w / 2 - d.oy * .04, w, w); }
   ctx.restore();
 
   // Nebulae and galaxies: more of them as the song goes on, all still and vast.
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
   ctx.globalCompositeOperation = 'screen';                  // watercolour glowing on the night
   for (const n of d.nebulae) {
-    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.85 + sun * .15);
+    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.5 + sun * .15);   // sheer on the painted night: colour, not white
     if (a <= 0) continue;
     const sz = n.img.width * (1 + Math.sin(t * .03 + n.r) * .02);   // breathing, barely
     ctx.globalAlpha = a; ctx.drawImage(n.img, n.x - sz / 2 - d.ox * .06, n.y - sz / 2 - d.oy * .06, sz, sz);
@@ -1898,16 +1966,10 @@ function drawDrift() {
   { const B = CONFIG.drift.sections.bridge, k = smooth(ramp(B - 2, B + 22, t));   // the bridge: a nebula explodes, slowly
     if (k > 0) { const sz = d.burst.img.width * (.35 + .65 * k); ctx.globalAlpha = k * (1 - sun * .4); ctx.drawImage(d.burst.img, d.burst.x - sz / 2, d.burst.y - sz / 2, sz, sz); } }
   ctx.globalCompositeOperation = 'lighter';
-  for (const gx of d.galaxies) {
-    const a = space * smooth(ramp(gx.at, gx.at + 10, t));
-    if (a <= 0) continue;
-    for (const [r, th] of gx.dots) {
-      const ang = th + gx.rot + t * .02, x = gx.x + Math.cos(ang) * r * gx.r, y = gx.y + Math.sin(ang) * r * gx.r * gx.tilt;
-      ctx.globalAlpha = a * (1 - r) * (.6 + sun * .4); ctx.fillStyle = sun > .3 ? '#ffd9b0' : '#cfd8ff';
-      ctx.fillRect(x, y, 1, 1);
-    }
-    ctx.globalAlpha = a * .6; const core = ctx.createRadialGradient(gx.x, gx.y, 0, gx.x, gx.y, gx.r * .3);
-    core.addColorStop(0, '#fff'); core.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = core; ctx.fillRect(gx.x - gx.r, gx.y - gx.r, gx.r * 2, gx.r * 2);
+  ctx.globalCompositeOperation = 'screen';
+  for (const gx of d.galaxies) {                              // galaxies, painted, turning so slowly you can't quite see it
+    const a = space * smooth(ramp(gx.at, gx.at + 10, t)) * .8; if (a <= 0) continue;
+    ctx.save(); ctx.translate(gx.x - d.ox * .02, gx.y); ctx.rotate(gx.rot + t * .01); ctx.globalAlpha = a; ctx.drawImage(gx.img, -gx.img.width / 2, -gx.img.height / 2); ctx.restore();
   }
   // Falling stars, now and then: a soft streak, gone in a few seconds (slow enough to be no flash).
   for (const fs_ of d.falls) {
@@ -1921,9 +1983,12 @@ function drawDrift() {
   // Planets in watercolour, arriving with the song; they sit far off, so they move only a little when you steer.
   for (const pl of d.planets) {
     const a = space * smooth(ramp(pl.at, pl.at + 10, t)); if (a <= 0) continue;
-    ctx.globalAlpha = a * (1 - sun * .3) * (pl.far || 1); ctx.drawImage(pl.img, pl.x - pl.img.width / 2 - d.ox * pl.par, pl.y - pl.img.height / 2 - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5);
+    ctx.globalAlpha = a * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par, Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
+    if (pl.spin) { ctx.save(); ctx.translate(X, Y); ctx.rotate(t * pl.spin); ctx.drawImage(pl.img, -pl.img.width / 2, -pl.img.height / 2); ctx.restore(); } else ctx.drawImage(pl.img, X - pl.img.width / 2, Y - pl.img.height / 2);
   }
   ctx.globalAlpha = 1;
+  // Veils: near washes of night drifting over everything, moving most as you steer: depth.
+  { ctx.save(); ctx.globalCompositeOperation = 'screen'; for (const v of d.veils) { ctx.globalAlpha = .22 * space; ctx.drawImage(v.img, v.x - v.img.width / 2 - d.ox * .4, v.y - v.img.height / 2 - d.oy * .4 + Math.sin(t * .02 + v.x) * 10); } ctx.restore(); }
   // The comet, verse 1: a long painted tail, two washes and a head of light.
   { const k = ramp(d.comet.at, d.comet.at + d.comet.len, t); if (k > 0 && k < 1) {
     const hx = -60 + k * (W0 + 160), hy = 50 + k * 90, a = Math.sin(k * Math.PI) * space; ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(2px)';
@@ -1985,21 +2050,22 @@ function drawDrift() {
   d.dust = d.dust.filter(q => (q.age += dt) < q.life);
   for (const q of d.dust) {
     q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 1 - dt * .05;
-    ctx.globalAlpha = (1 - q.age / q.life) * .9; ctx.fillStyle = q.c; ctx.fillRect(q.x, q.y, 1.5, 1.5);
+    ctx.globalAlpha = (1 - q.age / q.life) * .9; ctx.drawImage(d.dot, q.x - 3, q.y - 3, 6, 6);   // dust: soft, round
   }
   // The bridge: nothing of you left. Space sparkles.
   const spark = smooth(ramp(S.bridge - 4, S.bridge + 6, t)) * (1 - sun * .6);
-  if (spark > 0) for (const [x, y, ph, sp] of d.sparkles) {
-    const a = Math.pow(Math.max(0, Math.sin(t * sp + ph)), 10) * spark;
+  if (spark > 0) for (const [x, y, ph, sp] of d.sparkles) {   // soft glints, slow
+    const a = Math.pow(Math.max(0, Math.sin(t * sp * .5 + ph)), 6) * spark;
     if (a < .02) continue;
-    ctx.globalAlpha = a; ctx.fillStyle = '#fff';
-    ctx.fillRect(x - 3, y, 7, 1); ctx.fillRect(x, y - 3, 1, 7);
+    ctx.globalAlpha = a * .8; ctx.drawImage(d.flare, x - 9, y - 9, 18, 18);
   }
   // The outro: a sunrise from within, pure glow (2026-11-17, the user's reference): a soft bloom of white light with a pale haze, and a fine
   // lens flare, a long thin streak and two spikes. No rays; it lights the watercolour without blowing it out.
   if (sun > 0) {
     const sunY = H0 + 90 - (H0 * .42 + 90) * sun;
-    ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = 1;
+    ctx.save(); ctx.globalCompositeOperation = 'screen';
+    if (d.dawn) { ctx.globalAlpha = sun * .9; ctx.drawImage(d.dawn, -280, H0 - d.dawn.height + 40 + (1 - sun) * 300); }   // the dawn: the sky washes peach, rose, lilac and blue from below, blending
+    ctx.globalAlpha = 1;
     const R1 = 80 + 520 * sun, hz = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, R1);
     hz.addColorStop(0, `rgba(255,253,248,${.9 * sun})`); hz.addColorStop(.07, `rgba(255,247,236,${.55 * sun})`); hz.addColorStop(.28, `rgba(232,228,246,${.2 * sun})`);
     hz.addColorStop(.6, `rgba(186,212,214,${.09 * sun})`); hz.addColorStop(1, 'rgba(0,0,0,0)');
@@ -2015,7 +2081,7 @@ function drawDrift() {
   // A quiet way out, once the hint bar has gone: always clear what to do to go where.
   const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
   if (q > 0) {
-    ctx.globalAlpha = q * .5; ctx.fillStyle = sun > .5 ? '#333' : '#aaa'; ctx.font = '11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.globalAlpha = q * .5; ctx.fillStyle = sun > .5 ? '#333' : '#aaa'; ctx.font = '500 11px "IBM Plex Sans", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
     ctx.fillText(t > 18 ? 'Arrows: drift · Esc: end the drift' : 'Esc: end the drift', cx, H0 - 14);
     ctx.globalAlpha = 1;
   }
