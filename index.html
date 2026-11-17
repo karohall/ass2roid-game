@@ -1778,7 +1778,10 @@ const WC = {
     x.globalAlpha = 1; x.setTransform(1, 0, 0, 1, 0, 0);
     x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < r * r * .4; i++) { x.globalAlpha = R() * .1; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
     x.globalAlpha = 1; const sh = x.createRadialGradient(mx - r * .45, my - r * .5, r * .3, mx, my, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.7, 'rgba(4,6,16,.45)'); sh.addColorStop(1, 'rgba(4,6,16,.92)');
-    x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height); x.restore();
+    x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height);
+    if (o.phase) { x.save(); x.filter = `blur(${Math.max(2, r * .12)}px)`; x.globalAlpha = .9; x.fillStyle = '#02040c';   // the night side: a phase, so it reads round, not flat
+      x.beginPath(); x.arc(mx + Math.cos(o.phaseAng || .7) * r * o.phase * 1.1, my + Math.sin(o.phaseAng || .7) * r * o.phase * 1.1, r * 1.05, 0, Math.PI * 2); x.fill(); x.restore(); }
+    x.restore();
     x.filter = 'blur(3px)'; x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = 3; x.beginPath(); x.arc(mx, my, r - 1, Math.PI * .95, Math.PI * 1.75); x.stroke(); x.filter = 'none'; x.globalAlpha = 1;   // the lit rim
     x.globalCompositeOperation = 'destination-in';           // a firm edge, just softened: the paint thins out at the rim
     const fe = x.createRadialGradient(mx, my, r * .97, mx, my, r * 1.01); fe.addColorStop(0, 'rgba(0,0,0,1)'); fe.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = fe; x.fillRect(0, 0, c.width, c.height); }
@@ -1883,7 +1886,7 @@ function saucer(x, y, s, a, t, tilt, beam) {               // the saucer (round 
 }
 // Things adrift (2026-11-17): small, painted, tumbling slowly past at their own depths. Nods for those who know.
 function driftThing(kind) {
-  const sz = { bag: [52, 50], disc: [42, 42], petunias: [52, 48], bit: [18, 66], teapot: [58, 44], slab: [22, 52] }[kind], c = document.createElement('canvas');
+  const sz = { bag: [52, 50], disc: [42, 42], petunias: [52, 48], pick: [60, 60], teapot: [58, 44], slab: [22, 52] }[kind], c = document.createElement('canvas');
   c.width = sz[0]; c.height = sz[1]; const x = c.getContext('2d'), lin = (y0, y1, a, b) => { const g = x.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
   x.filter = 'blur(.35px)';
   if (kind === 'bag') {                                     // the tool bag that slipped away on a spacewalk: white cloth, a strap, a tool handle poking out
@@ -1907,12 +1910,13 @@ function driftThing(kind) {
       x.fillStyle = '#f4e3a4'; x.beginPath(); x.arc(fx, fy, 1.2, 0, Math.PI * 2); x.fill(); }
     x.fillStyle = lin(-2, 18, '#c47a58', '#6e3424'); x.beginPath(); x.moveTo(-17, -2); x.lineTo(17, -2); x.quadraticCurveTo(15, 18, 0, 18); x.quadraticCurveTo(-15, 18, -17, -2); x.fill();
     x.fillStyle = '#d99a78'; x.beginPath(); x.ellipse(0, -2, 17, 3, 0, 0, Math.PI * 2); x.fill();
-  } else if (kind === 'bit') {                              // a loose drill bit, from the rock below
-    x.translate(9, 0); x.fillStyle = lin(0, 1, '#d6dce0', '#d6dce0'); const sg = x.createLinearGradient(-5, 0, 5, 0); sg.addColorStop(0, '#eef2f4'); sg.addColorStop(.5, '#9aa3aa'); sg.addColorStop(1, '#4e565d');
-    x.fillStyle = sg; x.fillRect(-3, 3, 6, 20); x.fillRect(-4.5, 23, 9, 34);
-    x.strokeStyle = 'rgba(28,34,40,.65)'; x.lineWidth = 2; for (let y = 23; y < 56; y += 6) { x.beginPath(); x.moveTo(-4.5, y); x.lineTo(4.5, y + 5); x.stroke(); }
-    x.fillStyle = sg; x.beginPath(); x.moveTo(-4.5, 57); x.lineTo(4.5, 57); x.lineTo(0, 63); x.closePath(); x.fill();
-  } else if (kind === 'teapot') {                           // a china teapot in orbit, too small to see, impossible to disprove
+  } else if (kind === 'pick') {                            // a pickaxe, let go of: a worn wooden handle, a steel head
+    x.translate(30, 30); x.rotate(-.75);
+    const wg = x.createLinearGradient(-3, 0, 3, 0); wg.addColorStop(0, '#b07a4c'); wg.addColorStop(1, '#5e3a22'); x.fillStyle = wg; x.beginPath(); x.roundRect(-2.4, -14, 4.8, 40, 2); x.fill();
+    const sg = x.createLinearGradient(0, -22, 0, -10); sg.addColorStop(0, '#eef2f4'); sg.addColorStop(.5, '#9aa3aa'); sg.addColorStop(1, '#4e565d'); x.fillStyle = sg;
+    x.beginPath(); x.moveTo(-24, -9); x.quadraticCurveTo(-10, -21, 0, -20); x.quadraticCurveTo(10, -21, 24, -9); x.quadraticCurveTo(10, -14, 0, -13); x.quadraticCurveTo(-10, -14, -24, -9); x.closePath(); x.fill();
+    x.fillStyle = '#5f676e'; x.fillRect(-4, -19, 8, 8);
+    } else if (kind === 'teapot') {                           // a china teapot in orbit, too small to see, impossible to disprove
     x.translate(28, 24); const bg = x.createRadialGradient(-5, -5, 2, 0, 0, 17); bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#a9b4c0');
     x.strokeStyle = '#c3ccd5'; x.lineWidth = 3.2; x.beginPath(); x.arc(-15, 0, 7, Math.PI * .5, Math.PI * 1.5); x.stroke();
     x.fillStyle = bg; x.beginPath(); x.moveTo(12, 2); x.quadraticCurveTo(20, -2, 25, -10); x.lineTo(26.5, -8); x.quadraticCurveTo(22, 2, 13, 7); x.closePath(); x.fill();
@@ -1958,7 +1962,7 @@ function startDrift() {
       { x: W0 * 1.45, y: H0 * .55, at: SC.verse1 + 22, img: P(22, '#8b86a6', '#e9e4f7', ['#c8c2dc', '#a7a1c0'], { craters: 14 }), par: .06 },
       { x: W0 * .27, y: 120, at: SC.pre + 18, img: P(30, '#c98c78', '#ffe4d2', ['#ffd0bd', '#e6a9c4', '#ffffff'], { tilt: .25, rings: ['#ffe2c4', '#9f86c8', '#ffffff', '#c98a7c'], ringTilt: -.42 }), par: .07 },
       { x: -W0 * .25, y: H0 * .6, at: SC.verse2 + 4, img: P(78, '#1f4f9c', '#bfe0ff', ['#ffffff', '#6fa5e8', '#0f3a86', '#d6ebff'], { tilt: .12 }), par: .22 },
-      { x: W0 * .88, y: H0 * .84, at: SC.chorus + 14, img: P(34, '#2d7f86', '#c7f2ef', ['#ffffff', '#5fb7b4', '#1d5f69', '#e2fbf8'], { tilt: -.15 }), par: .08 },
+      { x: W0 * .88, y: H0 * .84, at: SC.chorus + 14, img: P(40, '#2a7a80', '#dcfcf6', ['#e8fbf8', '#5fb7b4', '#2a8a8c', '#c8f2ec'], { tilt: -.15, nb: 8, calm: .3, bandA: .12, bandBlur: 5, glow: 'rgba(170,240,230,' }), par: .08 },
       { x: W0 * .62, y: H0 + 40, at: SC.bridge - 24, img: P(120, '#7a7590', '#efeaff', ['#bdb6d6', '#9a93b8'], { craters: 34, tilt: .3 }), par: .32 },   // a great moon close by, rising at the bottom edge
     ];
     d.ribbons = [{ img: WC.ribbon(1400, 180, R), from: 22, to: 60, y: 10 }, { img: WC.ribbon(1400, 180, R), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
@@ -1978,15 +1982,15 @@ function startDrift() {
     d.drop = [2, 4, 8];   // round 8: the ocean-green one back, now that bodies pass by   // round 7: the great moon gone too   // fewer bodies (round 4): two far dots, the pink giant, a ringed planet, the big blue one, the great moon, an asteroid
     d.planets[4].img = P(22, '#8b8a96', '#eceaf3', ['#c8c6d0'], { craters: 10, blooms: ['#c9d1cf', '#9fb2ad'], fringe: '#2e3a40' });
     d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];
-    d.planets.push({ x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: P(26, '#5e1422', '#f0b8a8', ['#9a2a36', '#c8645a', '#3e0a16', '#e8a090'], { tilt: -.2 }), par: .1 },   // a dark red one
+    d.planets.push({ x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: P(16, '#6a2220', '#eaa48a', ['#8a2e28', '#b0503e', '#4a1414'], { craters: 8, phase: .5 }), par: .1 },   // a dark red one
       { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one
     d.planets.push({ x: W0 * 1.2, y: H0 * .3, at: SC.verse1 + 28, img: P(24, '#f0d462', '#fffef0', ['#fff6c4', '#f6e28a', '#fffef6', '#ecd06a'], { tilt: .18 }), par: .09 },   // round 12: pale bright yellow
-      { x: W0 * 1.2, y: H0 * .6, at: SC.chorus + 36, img: P(36, '#0c2462', '#7fa6e6', ['#1c3f8a', '#06143a', '#3a64b4', '#0f2c70'], { tilt: -.22 }), par: .11 });   // and a deep blue
+      { x: W0 * 1.2, y: H0 * .6, at: SC.chorus + 36, img: P(54, '#0c2462', '#8fb2ee', ['#1c3f8a', '#06143a', '#3a64b4', '#0f2c70'], { tilt: -.22, phase: .75, rings: ['#8fb2ee', '#c8d8f4', '#5a7ab8'], ringTilt: -.5 }), par: .11 });   // and a deep blue
     d.planets.push(   // round 13: things adrift, tumbling slowly, one per stretch of the song
       { x: W0 * 1.1, y: H0 * .4, at: SC.verse1 + 12, img: driftThing('bag'), v: 15 + Math.random() * 4, par: .08, spin: .14 },
       { x: W0 * 1.1, y: H0 * .5, at: SC.pre + 12, img: driftThing('disc'), v: 15 + Math.random() * 4, par: .06, spin: .22 },
       { x: W0 * 1.1, y: H0 * .35, at: SC.verse2 + 16, img: driftThing('petunias'), v: 15 + Math.random() * 4, par: .07, spin: .1 },
-      { x: W0 * 1.1, y: H0 * .55, at: SC.chorus + 24, img: driftThing('bit'), v: 15 + Math.random() * 4, par: .09, spin: .3 },
+      { x: W0 * 1.1, y: H0 * .55, at: SC.chorus + 24, img: driftThing('pick'), v: 15 + Math.random() * 4, par: .09, spin: .3 },
       { x: W0 * 1.1, y: H0 * .3, at: SC.bridge + 6, img: driftThing('teapot'), v: 15 + Math.random() * 4, par: .06, spin: .08 },
       { x: W0 * .8, y: H0 * .3, at: SC.outro - 2, img: driftThing('slab'), par: .04, spin: .035, fixed: true });   // the slab above the sunrise, so it catches the light
     d.planets.push({ x: W0 * 1.5 + 330, y: H0 + 100, at: SC.verse2 + 46, lead: 0, fixed: true, par: .3,   // round 11: a giant passing close, never seen whole
