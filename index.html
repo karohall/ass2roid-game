@@ -1886,43 +1886,67 @@ function saucer(x, y, s, a, t, tilt, beam) {               // the saucer (round 
 }
 // Things adrift (2026-11-17): small, painted, tumbling slowly past at their own depths. Nods for those who know.
 function driftThing(kind) {
-  const sz = { bag: [52, 50], disc: [42, 42], petunias: [52, 48], pick: [60, 60], teapot: [58, 44], slab: [22, 52] }[kind], c = document.createElement('canvas');
-  c.width = sz[0]; c.height = sz[1]; const x = c.getContext('2d'), lin = (y0, y1, a, b) => { const g = x.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
-  x.filter = 'blur(.35px)';
-  if (kind === 'bag') {                                     // the tool bag that slipped away on a spacewalk: white cloth, a strap, a tool handle poking out
-    x.translate(26, 28);
-    x.save(); x.rotate(.35); x.fillStyle = '#a84a3c'; x.fillRect(-3, -25, 6, 14); x.fillStyle = '#c9cfd3'; x.fillRect(-4, -28, 8, 4); x.restore();
-    x.strokeStyle = '#8f9aa3'; x.lineWidth = 2.5; x.beginPath(); x.arc(-2, -13, 10, Math.PI, 0); x.stroke();
-    x.fillStyle = lin(-14, 16, '#f4f2ec', '#9c9e9b'); x.beginPath(); x.roundRect(-18, -14, 36, 30, 7); x.fill();
-    x.fillStyle = 'rgba(120,124,128,.35)'; x.fillRect(-18, -14, 36, 7);
-    x.strokeStyle = 'rgba(70,74,78,.35)'; x.lineWidth = 1; x.setLineDash([2, 2]); x.beginPath(); x.moveTo(-14, -6); x.lineTo(14, -6); x.stroke(); x.setLineDash([]);
+  const sz = { toolbox: [78, 62], disc: [42, 42], petunias: [64, 74], pick: [72, 72], teapot: [78, 60], slab: [22, 52] }[kind], c = document.createElement('canvas');
+  c.width = sz[0]; c.height = sz[1]; const x = c.getContext('2d'), R = Math.random;
+  // a watercolour wash in a shape: the base, a lit side and a shadow side, wet streaks, granulation, pigment pooled at the rim (round 16)
+  const wash = (path, box, base, dark, light, o = {}) => { const [bx, by, bw, bh] = box;
+    x.save(); x.beginPath(); path(); x.fillStyle = base; x.fill(); x.clip();
+    const sh = x.createLinearGradient(bx, 0, bx + bw, 0); sh.addColorStop(0, light); sh.addColorStop(.4, 'rgba(0,0,0,0)'); sh.addColorStop(1, dark); x.fillStyle = sh; x.fillRect(bx, by, bw, bh);
+    x.filter = 'blur(1px)'; for (let i = 0; i < bw / 2.2; i++) { x.globalAlpha = .07 + R() * .13; x.fillStyle = R() < .5 ? dark : light; x.fillRect(bx + R() * bw, by - 2, 1 + R() * 3, bh + 4); }
+    x.filter = 'none'; for (let i = 0; i < bw * bh / 30; i++) { x.globalAlpha = R() * .18; x.fillStyle = dark; x.fillRect(bx + R() * bw, by + R() * bh, 1, 1); }
+    if (o.shine) { x.globalAlpha = .55; x.fillStyle = 'rgba(255,255,255,.9)'; x.filter = 'blur(1.2px)'; x.beginPath(); x.ellipse(...o.shine, 0, 0, Math.PI * 2); x.fill(); x.filter = 'none'; }
+    x.restore();
+    x.save(); x.beginPath(); path(); x.filter = 'blur(.7px)'; x.globalAlpha = .65; x.strokeStyle = dark; x.lineWidth = 1.3; x.stroke(); x.restore(); };
+  if (kind === 'toolbox') {                                 // a red metal toolbox, lid open, tools in it: the one let go of on a spacewalk
+    x.fillStyle = '#5a1410'; x.beginPath(); x.roundRect(10, 8, 58, 22, 3); x.fill();                                   // the lid, open behind, its inside dark
+    wash(() => x.roundRect(10, 6, 58, 6, 2), [10, 6, 58, 6], '#c44a36', 'rgba(90,15,10,.6)', 'rgba(255,200,180,.4)');
+    x.strokeStyle = '#2a2a2c'; x.lineWidth = 3; x.lineCap = 'round'; x.beginPath(); x.moveTo(28, 6); x.quadraticCurveTo(39, -2, 50, 6); x.stroke();   // its handle
+    // the tools, standing up out of it
+    x.save(); x.translate(22, 30); x.rotate(-.35); x.fillStyle = '#e2c49a'; x.fillRect(-1.6, -16, 3.2, 16); x.fillStyle = '#9aa0a6'; x.beginPath(); x.roundRect(-6, -21, 12, 6, 1.5); x.fill(); x.restore();   // a hammer
+    x.save(); x.translate(34, 30); x.rotate(-.1); x.fillStyle = '#a8aeb3'; x.fillRect(-1.8, -16, 3.6, 16); x.beginPath(); x.arc(0, -18, 4.4, 0, Math.PI * 2); x.fill(); x.fillStyle = '#5a1410'; x.fillRect(-1.4, -23, 2.8, 5); x.restore();   // a spanner
+    x.save(); x.translate(46, 30); x.rotate(.25); x.fillStyle = '#b8bec3'; x.fillRect(-.8, -20, 1.6, 10); x.fillStyle = '#232427'; x.beginPath(); x.roundRect(-2.6, -11, 5.2, 11, 2); x.fill(); x.restore();   // a screwdriver
+    x.save(); x.translate(56, 30); x.rotate(.4); x.fillStyle = '#b8bec3'; x.fillRect(-.8, -18, 1.6, 9); x.fillStyle = '#efe0bc'; x.beginPath(); x.roundRect(-2.6, -10, 5.2, 10, 2); x.fill(); x.restore();   // another
+    wash(() => x.roundRect(6, 28, 66, 30, 3), [6, 28, 66, 30], '#c8402e', 'rgba(90,15,10,.6)', 'rgba(255,196,176,.45)');   // the box
+    x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(6, 31, 66, 1.5);
+    x.fillStyle = '#c9c4ba'; x.beginPath(); x.roundRect(35, 30, 8, 10, 1.5); x.fill(); x.fillStyle = '#8f8a80'; x.beginPath(); x.arc(39, 36, 1.3, 0, Math.PI * 2); x.fill();   // the latch
+    x.strokeStyle = 'rgba(255,220,210,.55)'; x.lineWidth = .8; x.beginPath(); x.moveTo(62, 44); x.lineTo(60, 49); x.stroke();   // a scratch
+  } else if (kind === 'petunias') {                         // a pot of petunias, thinking only: oh no, not again
+    for (const [lx, ly, rx, ry, rot] of [[18, 30, 10, 5, -.5], [46, 30, 10, 5, .5], [26, 26, 9, 4.5, -.2], [40, 25, 9, 4.5, .3], [32, 31, 10, 4, 0]])   // leaves, deep green
+      wash(() => x.ellipse(lx, ly, rx, ry, rot, 0, Math.PI * 2), [lx - rx, ly - rx, rx * 2, rx * 2], '#3d6a4c', 'rgba(16,40,26,.55)', 'rgba(180,230,190,.4)');
+    const blooms = [[20, 20, '#8e4ab0'], [32, 13, '#b65aa8'], [44, 19, '#7a3f9e'], [26, 26, '#c46ab8'], [39, 26, '#9c4cb2']];
+    for (const [bx, by, col] of blooms) {                    // petunias: five-lobed trumpets, layered like washes, dark veins, a pale throat
+      x.save(); x.globalAlpha = .88; for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2 + bx; x.fillStyle = col; x.beginPath(); x.arc(bx + Math.cos(a) * 3.4, by + Math.sin(a) * 3.4, 3.6, 0, Math.PI * 2); x.fill(); }
+      x.globalAlpha = .45; x.strokeStyle = '#3a1450'; x.lineWidth = .6; for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2 + bx; x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + Math.cos(a) * 5, by + Math.sin(a) * 5); x.stroke(); }
+      x.globalAlpha = .9; x.fillStyle = '#f6ecc8'; x.beginPath(); x.arc(bx, by, 1.3, 0, Math.PI * 2); x.fill(); x.restore(); }
+    x.fillStyle = '#3a2418'; x.beginPath(); x.ellipse(32, 35, 21, 3, 0, 0, Math.PI * 2); x.fill();   // soil
+    wash(() => { x.moveTo(14, 38); x.lineTo(50, 38); x.lineTo(45, 70); x.quadraticCurveTo(32, 73, 19, 70); x.closePath(); }, [14, 38, 36, 34], '#c8784e', 'rgba(110,50,25,.55)', 'rgba(255,222,196,.5)');   // a terracotta pot
+    wash(() => x.roundRect(10, 32, 44, 8, 2), [10, 32, 44, 8], '#d2865c', 'rgba(110,50,25,.55)', 'rgba(255,226,200,.5)');   // its rim
+  } else if (kind === 'teapot') {                           // a china teapot in orbit: cream, blue lid, spout and handle, a blue flower or two
+    x.strokeStyle = '#2f62b8'; x.lineWidth = 4; x.lineCap = 'round'; x.beginPath(); x.arc(58, 33, 10, -Math.PI * .45, Math.PI * .5); x.stroke();   // the handle
+    wash(() => { x.moveTo(20, 34); x.quadraticCurveTo(10, 32, 5, 19); x.lineTo(9, 18); x.quadraticCurveTo(13, 28, 22, 29); x.closePath(); }, [5, 18, 18, 17], '#2f62b8', 'rgba(14,30,80,.55)', 'rgba(170,205,250,.5)');   // the spout
+    wash(() => x.ellipse(37, 35, 20, 17, 0, 0, Math.PI * 2), [17, 18, 40, 34], '#f3ead9', 'rgba(110,120,150,.5)', 'rgba(255,255,255,.7)', { shine: [29, 27, 5, 3] });   // the body
+    for (const [fx, fy, fr] of [[33, 39, 5.5], [45, 30, 4], [27, 30, 3]]) { x.save(); x.globalAlpha = .75; x.strokeStyle = '#2f62b8'; x.lineWidth = 1;   // blue flowers, painted loose
+      for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; x.beginPath(); x.arc(fx + Math.cos(a) * fr * .55, fy + Math.sin(a) * fr * .55, fr * .45, 0, Math.PI * 2); x.stroke(); }
+      x.fillStyle = '#8fb8ea'; x.beginPath(); x.arc(fx, fy, fr * .35, 0, Math.PI * 2); x.fill(); x.restore(); }
+    x.strokeStyle = '#2f62b8'; x.lineWidth = 1.6; x.beginPath(); x.ellipse(37, 51, 11, 2.2, 0, 0, Math.PI); x.stroke();   // the foot
+    wash(() => x.ellipse(37, 19, 12, 5, 0, Math.PI, 0), [25, 14, 24, 6], '#2f62b8', 'rgba(14,30,80,.55)', 'rgba(170,205,250,.5)');   // the lid
+    x.strokeStyle = '#e0a050'; x.lineWidth = 1; x.beginPath(); x.ellipse(37, 19.5, 12, 1.6, 0, 0, Math.PI * 2); x.stroke();
+    x.fillStyle = '#e0a050'; x.beginPath(); x.arc(37, 12, 2.4, 0, Math.PI * 2); x.fill();   // the knob
+  } else if (kind === 'pick') {                             // a pickaxe, let go of: pure chrome, a curved pick, a short adze
+    x.translate(36, 36); x.rotate(-.72);
+    const hg = x.createLinearGradient(-3, 0, 3, 0); hg.addColorStop(0, '#ffffff'); hg.addColorStop(.3, '#d3d9dd'); hg.addColorStop(.62, '#6a737a'); hg.addColorStop(1, '#2c3338');
+    x.fillStyle = hg; x.beginPath(); x.roundRect(-2.8, -18, 5.6, 46, 2.6); x.fill();
+    x.strokeStyle = 'rgba(30,36,40,.35)'; x.lineWidth = .6; for (let y = 8; y < 26; y += 2) { x.beginPath(); x.moveTo(-2.8, y); x.lineTo(2.8, y + 1); x.stroke(); }   // a knurled grip, chrome too
+    const cg = x.createLinearGradient(0, -26, 0, -12); cg.addColorStop(0, '#ffffff'); cg.addColorStop(.28, '#e2e8ec'); cg.addColorStop(.5, '#7b858c'); cg.addColorStop(.72, '#c9d0d5'); cg.addColorStop(1, '#353d43');
+    x.fillStyle = cg; x.beginPath(); x.moveTo(-2, -25); x.quadraticCurveTo(-20, -25, -30, 6); x.lineTo(-28.5, 6.5); x.quadraticCurveTo(-18, -14, -2, -15); x.lineTo(12, -15); x.lineTo(18, -13); x.lineTo(18, -22); x.lineTo(12, -24); x.closePath(); x.fill();
+    x.strokeStyle = 'rgba(255,255,255,.85)'; x.lineWidth = 1; x.beginPath(); x.moveTo(-3, -24); x.quadraticCurveTo(-18, -24, -27, 0); x.stroke();   // the light along its curve
+    const kg = x.createLinearGradient(-4, 0, 4, 0); kg.addColorStop(0, '#f2f5f7'); kg.addColorStop(1, '#4a5258'); x.fillStyle = kg; x.beginPath(); x.roundRect(-4, -26, 8, 13, 2); x.fill();   // the eye
   } else if (kind === 'disc') {                             // a golden disc, sounds and greetings for whoever finds it
     x.translate(21, 21); const g = x.createRadialGradient(-5, -6, 1, 0, 0, 19); g.addColorStop(0, '#fff2c0'); g.addColorStop(.5, '#d8a646'); g.addColorStop(1, '#7e5418');
     x.fillStyle = g; x.beginPath(); x.arc(0, 0, 19, 0, Math.PI * 2); x.fill();
     x.strokeStyle = 'rgba(110,70,16,.28)'; x.lineWidth = .6; for (let r = 7; r < 18.5; r += 1.6) { x.beginPath(); x.arc(0, 0, r, 0, Math.PI * 2); x.stroke(); }
     x.fillStyle = '#c4902c'; x.beginPath(); x.arc(0, 0, 5.5, 0, Math.PI * 2); x.fill(); x.fillStyle = '#2a1c08'; x.beginPath(); x.arc(0, 0, 1.3, 0, Math.PI * 2); x.fill();
     x.globalCompositeOperation = 'screen'; x.fillStyle = 'rgba(255,248,220,.45)'; x.beginPath(); x.moveTo(0, 0); x.arc(0, 0, 19, -2.4, -1.9); x.closePath(); x.fill();
-  } else if (kind === 'petunias') {                         // a bowl of petunias, thinking only: oh no, not again
-    x.translate(26, 26);
-    x.fillStyle = '#4f7a5a'; for (const [a, b] of [[-11, -6], [9, -7], [-2, -9]]) { x.beginPath(); x.ellipse(a, b, 6, 2.6, a * .05, 0, Math.PI * 2); x.fill(); }
-    for (const [fx, fy, col] of [[-10, -10, '#9a4fb8'], [0, -15, '#c06aa8'], [10, -10, '#7a3fa0'], [-4, -6, '#b25aa6'], [6, -5, '#8e48b0']]) {
-      x.fillStyle = col; for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2; x.beginPath(); x.arc(fx + Math.cos(a) * 3.2, fy + Math.sin(a) * 3.2, 3, 0, Math.PI * 2); x.fill(); }
-      x.fillStyle = '#f4e3a4'; x.beginPath(); x.arc(fx, fy, 1.2, 0, Math.PI * 2); x.fill(); }
-    x.fillStyle = lin(-2, 18, '#c47a58', '#6e3424'); x.beginPath(); x.moveTo(-17, -2); x.lineTo(17, -2); x.quadraticCurveTo(15, 18, 0, 18); x.quadraticCurveTo(-15, 18, -17, -2); x.fill();
-    x.fillStyle = '#d99a78'; x.beginPath(); x.ellipse(0, -2, 17, 3, 0, 0, Math.PI * 2); x.fill();
-  } else if (kind === 'pick') {                            // a pickaxe, let go of: a worn wooden handle, a steel head
-    x.translate(30, 30); x.rotate(-.75);
-    const wg = x.createLinearGradient(-3, 0, 3, 0); wg.addColorStop(0, '#ffffff'); wg.addColorStop(.35, '#c9d0d5'); wg.addColorStop(.7, '#6c757c'); wg.addColorStop(1, '#2e353b');   // pure chrome (round 15b) x.fillStyle = wg; x.beginPath(); x.roundRect(-2.4, -14, 4.8, 40, 2); x.fill();
-    const sg = x.createLinearGradient(0, -22, 0, -10); sg.addColorStop(0, '#ffffff'); sg.addColorStop(.3, '#dfe5e9'); sg.addColorStop(.55, '#7b858c'); sg.addColorStop(.8, '#c4ccd1'); sg.addColorStop(1, '#3a4248'); x.fillStyle = sg;
-    x.beginPath(); x.moveTo(-24, -9); x.quadraticCurveTo(-10, -21, 0, -20); x.quadraticCurveTo(10, -21, 24, -9); x.quadraticCurveTo(10, -14, 0, -13); x.quadraticCurveTo(-10, -14, -24, -9); x.closePath(); x.fill();
-    x.fillStyle = '#8d969d'; x.fillRect(-4, -19, 8, 8); x.fillStyle = 'rgba(255,255,255,.7)'; x.fillRect(-3.5, -18.5, 1.2, 7); x.fillRect(-1.6, -12, 1, 24);   // glints
-    } else if (kind === 'teapot') {                           // a china teapot in orbit, too small to see, impossible to disprove
-    x.translate(28, 24); const bg = x.createRadialGradient(-5, -5, 2, 0, 0, 17); bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#a9b4c0');
-    x.strokeStyle = '#c3ccd5'; x.lineWidth = 3.2; x.beginPath(); x.arc(-15, 0, 7, Math.PI * .5, Math.PI * 1.5); x.stroke();
-    x.fillStyle = bg; x.beginPath(); x.moveTo(12, 2); x.quadraticCurveTo(20, -2, 25, -10); x.lineTo(26.5, -8); x.quadraticCurveTo(22, 2, 13, 7); x.closePath(); x.fill();
-    x.beginPath(); x.ellipse(0, 1, 16, 12, 0, 0, Math.PI * 2); x.fill();
-    x.strokeStyle = 'rgba(58,88,168,.65)'; x.lineWidth = 1.6; x.beginPath(); x.ellipse(0, 1, 16, 4, 0, .15, Math.PI - .15); x.stroke();
-    x.fillStyle = '#dfe5ea'; x.beginPath(); x.ellipse(0, -10, 8, 2.6, 0, 0, Math.PI * 2); x.fill(); x.beginPath(); x.arc(0, -13.5, 2.2, 0, Math.PI * 2); x.fill();
   } else if (kind === 'slab') {                             // a black slab, perfectly made, saying nothing; the sunrise catches its edge
     x.fillStyle = '#05060a'; x.fillRect(3, 3, 16, 46);
     const eg = x.createLinearGradient(16, 0, 19, 0); eg.addColorStop(0, 'rgba(255,222,190,0)'); eg.addColorStop(1, 'rgba(255,226,196,.55)'); x.fillStyle = eg; x.fillRect(16, 3, 3, 46);
@@ -1987,7 +2011,7 @@ function startDrift() {
     d.planets.push({ x: W0 * 1.2, y: H0 * .3, at: SC.verse1 + 28, img: P(24, '#f0d462', '#fffef0', ['#fff6c4', '#f6e28a', '#fffef6', '#ecd06a'], { tilt: .18 }), par: .09 },   // round 12: pale bright yellow
       { x: W0 * 1.2, y: H0 * .6, at: SC.chorus + 36, img: P(54, '#0c2462', '#8fb2ee', ['#1c3f8a', '#06143a', '#3a64b4', '#0f2c70'], { tilt: -.22, phase: .75, rings: ['#8fb2ee', '#c8d8f4', '#5a7ab8'], ringTilt: -.5 }), par: .11 });   // and a deep blue
     d.planets.push(   // round 13: things adrift, tumbling slowly, one per stretch of the song
-      { x: W0 * 1.1, y: H0 * .4, at: SC.verse1 + 12, thing: true, img: driftThing('bag'), v: 15 + Math.random() * 4, par: .08, spin: .14 },
+      { x: W0 * 1.1, y: H0 * .4, at: SC.verse1 + 12, thing: true, img: driftThing('toolbox'), v: 15 + Math.random() * 4, par: .08, spin: .14 },
       { x: W0 * 1.1, y: H0 * .5, at: SC.pre + 12, thing: true, img: driftThing('disc'), v: 15 + Math.random() * 4, par: .06, spin: .22 },
       { x: W0 * 1.1, y: H0 * .35, at: SC.verse2 + 16, thing: true, img: driftThing('petunias'), v: 15 + Math.random() * 4, par: .07, spin: .1 },
       { x: W0 * 1.1, y: H0 * .55, at: SC.chorus + 24, thing: true, img: driftThing('pick'), v: 15 + Math.random() * 4, par: .09, spin: .3 },
