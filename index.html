@@ -1797,7 +1797,7 @@ const WC = {
     for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#040d1b', '#071628', '#0f2a40', '#15354b', '#0a1d33', '#081a2e'][Math.floor(R() * 6)];
       x.beginPath(); x.ellipse(R() * w, R() * h, 60 + R() * 220, 40 + R() * 160, R() * 3, 0, Math.PI * 2); x.fill(); }
     x.filter = 'blur(48px)';
-    for (let i = 0; i < 8; i++) { x.globalAlpha = .035 + R() * .04; x.fillStyle = ['#1f4f86', '#1b6e68', '#2a6f8a', '#b9845c'][i % 4];   // dark blue, ocean green, a breath of peach   // faint colour bleeding in, wet-in-wet
+    for (let i = 0; i < 12; i++) { x.globalAlpha = .04 + R() * .045; x.fillStyle = ['#1f4f86', '#1b6e68', '#3e2470', '#6a1020', '#2a6f8a', '#b9845c'][i % 6];   // dark blue, ocean green, a breath of peach   // faint colour bleeding in, wet-in-wet
       x.beginPath(); x.ellipse(R() * w, R() * h, 80 + R() * 200, 60 + R() * 140, R() * 3, 0, Math.PI * 2); x.fill(); }
     x.filter = 'blur(5px)';
     for (let i = 0; i < 14; i++) { x.globalAlpha = .12 + R() * .12; x.strokeStyle = '#050f20'; x.lineWidth = 3 + R() * 6;   // backruns: darker fringes where the wash dried
@@ -1868,14 +1868,15 @@ function startDrift() {
   s.drift = { t0: performance.now(), radioWas: radio.on, done: false, last: 0, lastAt: performance.now(), frame: performance.now(),
     stars: Array.from({ length: 520 }, () => [R() * W0 * 4 - W0 * 1.5, R() * H0 * 2 - H0 * .5, R(), R() * 6.3]),   // wide: the sky grows past the mining window
     // Deep space: nebulae and galaxies come out one by one once you are through the wormhole.
-    nebulae: Array.from({ length: 3 }, (_, i) => ({ x: R() * W0 * 2.2 - W0 * .6, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
+    nebulae: Array.from({ length: 4 }, (_, i) => ({ x: R() * W0 * 2.2 - W0 * .6, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
     galaxies: Array.from({ length: 3 }, (_, i) => ({ x: [70, W0 - 80, W0 * .6][i], y: [90, H0 * .7, 40][i], r: [55, 70, 30][i], tilt: .35 + R() * .4, rot: R() * 6.3,
       at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
-  { const d = s.drift, NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#1c6f7d', '#2f55a0', '#d09a72'], ['#2a649e', '#1a8476', '#b98763'], ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
+  { const d = s.drift, NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#4a2a86', '#8e1424', '#2a3f8e'], ['#1c6f7d', '#2f55a0', '#5a2f8e'], ['#9a1626', '#4f2a80', '#7a1020'],   // deep purple and dark red beside the blues, greens and peach (round 7)
+       ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
     d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = WC.blob(n.r, NEB[i], R); });
-    d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#f0b48c', '#ffd8b8', '#5fb3ad', '#8fb3e8'], R) };
+    d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#c2453f', '#f0b48c', '#7b4fb8', '#8f2a3c'], R) };   // the exploding nebula: crimson, peach and violet
     const SC = CONFIG.drift.sections, P = (r, base, light, bands, o) => WC.planet(r, base, light, bands, R, o);
     // Bodies at every depth (2026-11-17): far ones small, hazy and nearly still; near ones big, clear, moving more as you steer. par: parallax; far: haze.
     d.planets = [
@@ -1884,7 +1885,7 @@ function startDrift() {
       { x: -W0 * .15, y: 210, at: 52, img: P(9, '#5aa7a8', '#d8fffb', ['#ffffff']), par: .015, far: .6 },
       { x: W0 * 1.12, y: 150, at: SC.verse1 + 6, img: P(46, '#a8633d', '#ffd9bc', ['#f2b58a', '#fff0e2', '#7a3f22', '#e09a6c'], { tilt: -.35 }), par: .12 },
       { x: W0 * 1.45, y: H0 * .55, at: SC.verse1 + 22, img: P(22, '#8b86a6', '#e9e4f7', ['#c8c2dc', '#a7a1c0'], { craters: 14 }), par: .06 },
-      { x: W0 * .27, y: 120, at: SC.pre + 18, img: P(30, '#c98c78', '#ffe4d2', ['#ffd0bd', '#e6a9c4', '#ffffff'], { tilt: .25, rings: ['#ffe2c4', '#d9b3ff', '#ffffff', '#ffc2e0'], ringTilt: -.42 }), par: .07 },
+      { x: W0 * .27, y: 120, at: SC.pre + 18, img: P(30, '#c98c78', '#ffe4d2', ['#ffd0bd', '#e6a9c4', '#ffffff'], { tilt: .25, rings: ['#ffe2c4', '#9f86c8', '#ffffff', '#c98a7c'], ringTilt: -.42 }), par: .07 },
       { x: -W0 * .25, y: H0 * .6, at: SC.verse2 + 4, img: P(78, '#1f4f9c', '#bfe0ff', ['#ffffff', '#6fa5e8', '#0f3a86', '#d6ebff'], { tilt: .12 }), par: .22 },
       { x: W0 * .88, y: H0 * .84, at: SC.chorus + 14, img: P(34, '#2d7f86', '#c7f2ef', ['#ffffff', '#5fb7b4', '#1d5f69', '#e2fbf8'], { tilt: -.15 }), par: .08 },
       { x: W0 * .62, y: H0 + 40, at: SC.bridge - 24, img: P(120, '#7a7590', '#efeaff', ['#bdb6d6', '#9a93b8'], { craters: 34, tilt: .3 }), par: .32 },   // a great moon close by, rising at the bottom edge
@@ -1895,11 +1896,11 @@ function startDrift() {
     setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
     d.flares = Array.from({ length: 5 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
-    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#7fcfc2', '#ffffff', '#f2c4a0'], R); });
+    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R); });
     d.veils = [[W0 * .1, H0 * .25, 260], [W0 * .95, H0 * .7, 300], [-W0 * .3, H0 * .95, 240]].map(([x, y, r]) => ({ x, y, img: WC.blob(r, ['#1d4a6a', '#2b5f80', '#3a4f86'], R) }));
     d.dawn = WC.dawn(1000, 520, R);
     d.planets[6].img = P(78, '#1f3f8c', '#cfe6ff', ['#ffffff', '#5f95d8', '#0f3478'], { tilt: .12, blooms: ['#3f8f86', '#5fb3a8', '#a8d4ea', '#2f7a72', '#d9a985'], fringe: '#0c1a4a' });   // the big near one wet-in-wet, as in the reference
-    d.drop = [2, 4, 7];   // fewer bodies (round 4): two far dots, the pink giant, a ringed planet, the big blue one, the great moon, an asteroid
+    d.drop = [2, 4, 7, 8];   // round 7: the great moon gone too   // fewer bodies (round 4): two far dots, the pink giant, a ringed planet, the big blue one, the great moon, an asteroid
     d.planets[4].img = P(22, '#8b8a96', '#eceaf3', ['#c8c6d0'], { craters: 10, blooms: ['#c9d1cf', '#9fb2ad'], fringe: '#2e3a40' });
     d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];   // no veils: fewer layers
     d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
