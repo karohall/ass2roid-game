@@ -300,7 +300,7 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
   #radioBox .ticker { text-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 18px rgba(var(--fluo-rgb),.45); }
   #radioFx { text-shadow:0 0 8px rgba(var(--fluo-rgb),.3); }
-  #radioBox { transition:filter 6s ease 2s; } body.drifting #radioBox { filter:hue-rotate(72deg) saturate(.5) brightness(.95); }   /* the Drift: greige-violet (2026-11-17) */
+  #radioBox { transition:filter 6s ease 2s; } body.drifting.wide #radioBox { filter:hue-rotate(72deg) saturate(.5) brightness(.95); }   /* the Drift: greige-violet (2026-11-17) */
   /* Control panel (2026-11-16, round 5). One housing for the whole deck: brushed gunmetal with screws, the columns set in it with seams;
      the panels are bays cut into it. A pseudo-element, so the Drift can fade it and leave the sky. */
   #wrap::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; clip-path:polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);   /* screws set into the plate, clear of the cut corners and the bezels */
@@ -1789,23 +1789,23 @@ const WC = {
   },
   sky(w, h, R) {                                            // the night as one painted wash: navy and teal, mottled wet-in-wet, granulating, salted, spattered with stars
     const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
-    x.fillStyle = '#0d2239'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#071423'; x.fillRect(0, 0, w, h);   // darker, muted (round 4): vastness, and the avatar easy to follow
     x.filter = 'blur(34px)';
-    for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#06142a', '#0a1c34', '#153957', '#1f4a66', '#10294a', '#0b2240'][Math.floor(R() * 6)];
+    for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#040d1b', '#071628', '#0f2a40', '#15354b', '#0a1d33', '#081a2e'][Math.floor(R() * 6)];
       x.beginPath(); x.ellipse(R() * w, R() * h, 60 + R() * 220, 40 + R() * 160, R() * 3, 0, Math.PI * 2); x.fill(); }
     x.filter = 'blur(48px)';
-    for (let i = 0; i < 12; i++) { x.globalAlpha = .07 + R() * .08; x.fillStyle = ['#8a6fc4', '#c56f9e', '#3f8f94', '#c9a35b'][i % 4];   // faint colour bleeding in, wet-in-wet
+    for (let i = 0; i < 8; i++) { x.globalAlpha = .035 + R() * .04; x.fillStyle = ['#8a6fc4', '#c56f9e', '#3f8f94', '#c9a35b'][i % 4];   // faint colour bleeding in, wet-in-wet
       x.beginPath(); x.ellipse(R() * w, R() * h, 80 + R() * 200, 60 + R() * 140, R() * 3, 0, Math.PI * 2); x.fill(); }
     x.filter = 'blur(5px)';
     for (let i = 0; i < 14; i++) { x.globalAlpha = .12 + R() * .12; x.strokeStyle = '#050f20'; x.lineWidth = 3 + R() * 6;   // backruns: darker fringes where the wash dried
       x.beginPath(); x.ellipse(R() * w, R() * h, 50 + R() * 160, 30 + R() * 110, R() * 3, R() * 3, R() * 3 + 2 + R() * 3); x.stroke(); }
     x.filter = 'none';
     x.filter = 'blur(.7px)';
-    for (let i = 0; i < 55; i++) { const cx = R() * w, cy = R() * h, n = 5 + Math.floor(R() * 7), rr = 2 + R() * 6;   // salt blooms: little crystals of light
-      x.globalAlpha = .18 + R() * .25; x.strokeStyle = '#cfe2ee'; x.lineWidth = .8;
+    for (let i = 0; i < 22; i++) { const cx = R() * w, cy = R() * h, n = 5 + Math.floor(R() * 7), rr = 2 + R() * 6;   // salt blooms: little crystals of light
+      x.globalAlpha = .1 + R() * .15; x.strokeStyle = '#cfe2ee'; x.lineWidth = .8;
       for (let j = 0; j < n; j++) { const a = R() * 6.3, l = rr * (.4 + R() * .6); x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * l, cy + Math.sin(a) * l); x.stroke(); } }
     x.filter = 'none';
-    for (let i = 0; i < 2400; i++) { const r = Math.pow(R(), 5) * 2 + .2, a = .2 + R() * .65;   // spatter: stars of every size, soft
+    for (let i = 0; i < 1500; i++) { const r = Math.pow(R(), 5) * 1.8 + .2, a = .12 + R() * .55;   // spatter: stars of every size, soft
       x.globalAlpha = a; x.fillStyle = R() < .85 ? '#eef4fa' : R() < .5 ? '#d7e6ff' : '#fff2dc'; x.beginPath(); x.arc(R() * w, R() * h, r, 0, Math.PI * 2); x.fill();
       if (r > 1.4) { x.globalAlpha = a * .25; x.beginPath(); x.arc(R() * w, R() * h, r * 2.6, 0, Math.PI * 2); x.fill(); } }
     return c;
@@ -1859,7 +1859,7 @@ function startDrift() {
   s.drift = { t0: performance.now(), radioWas: radio.on, done: false, last: 0, lastAt: performance.now(), frame: performance.now(),
     stars: Array.from({ length: 520 }, () => [R() * W0 * 4 - W0 * 1.5, R() * H0 * 2 - H0 * .5, R(), R() * 6.3]),   // wide: the sky grows past the mining window
     // Deep space: nebulae and galaxies come out one by one once you are through the wormhole.
-    nebulae: Array.from({ length: 5 }, (_, i) => ({ x: R() * W0 * 2.2 - W0 * .6, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
+    nebulae: Array.from({ length: 3 }, (_, i) => ({ x: R() * W0 * 2.2 - W0 * .6, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
     galaxies: Array.from({ length: 3 }, (_, i) => ({ x: [70, W0 - 80, W0 * .6][i], y: [90, H0 * .7, 40][i], r: [55, 70, 30][i], tilt: .35 + R() * .4, rot: R() * 6.3,
       at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
@@ -1885,13 +1885,15 @@ function startDrift() {
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
     setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
-    d.flares = Array.from({ length: 16 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
+    d.flares = Array.from({ length: 7 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
     d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#cfe0ff', '#e6d4ff', '#ffffff', '#bfe9f0'], R); });
     d.veils = [[W0 * .1, H0 * .25, 260], [W0 * .95, H0 * .7, 300], [-W0 * .3, H0 * .95, 240]].map(([x, y, r]) => ({ x, y, img: WC.blob(r, ['#1d4a6a', '#2b5f80', '#3a4f86'], R) }));
     d.dawn = WC.dawn(1000, 520, R);
     d.planets.push({ x: W0 * .55, y: H0 * .48, at: SC.verse2 + 30, img: P(16, '#5d5a66', '#d8d3c8', ['#8b8579', '#a99c86'], { craters: 9, lumpy: true }), par: .1, spin: .05 });   // an asteroid, tumbling slowly
     d.planets[6].img = P(78, '#2a3f9c', '#cfe6ff', ['#ffffff', '#6fa5e8', '#0f3a86'], { tilt: .12, blooms: ['#b39ce0', '#7fd0c4', '#c8e7ff', '#9be0b0', '#e8b9e0'], fringe: '#141c5a' });   // the big near one wet-in-wet, as in the reference
+    d.drop = [2, 4, 7];   // fewer bodies (round 4): two far dots, the pink giant, a ringed planet, the big blue one, the great moon, an asteroid
     d.planets[4].img = P(22, '#8b8a96', '#eceaf3', ['#c8c6d0'], { craters: 10, blooms: ['#c9d1cf', '#9fb2ad'], fringe: '#2e3a40' });
+    d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];   // no veils: fewer layers
     d.worm = WC.blob(130, ['#c9a7ff', '#ff9fd6', '#8fd3ff', '#ffe2b8'], R);
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#c9a7ff', '#ff9fd6', '#8fd3ff', '#7fe0e6', '#ffe2b8', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = [45, 62, 88, 118, 133, 134.4, 135.9, 137.5, 139.2, 146, 172, 206, 236].map(at => ({ at, x: -120 + R() * W0 * 1.6, y: -40 + R() * H0 * .35, len: 220 + R() * 160 }));   // falling stars
@@ -1958,17 +1960,17 @@ function drawDrift() {
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
   ctx.globalCompositeOperation = 'screen';                  // watercolour glowing on the night
   for (const n of d.nebulae) {
-    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.5 + sun * .15);   // sheer on the painted night: colour, not white
+    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.3 + sun * .12);   // sheer on the painted night: colour, not white
     if (a <= 0) continue;
     const sz = n.img.width * (1 + Math.sin(t * .03 + n.r) * .02);   // breathing, barely
     ctx.globalAlpha = a; ctx.drawImage(n.img, n.x - sz / 2 - d.ox * .06, n.y - sz / 2 - d.oy * .06, sz, sz);
   }
   { const B = CONFIG.drift.sections.bridge, k = smooth(ramp(B - 2, B + 22, t));   // the bridge: a nebula explodes, slowly
-    if (k > 0) { const sz = d.burst.img.width * (.35 + .65 * k); ctx.globalAlpha = k * (1 - sun * .4); ctx.drawImage(d.burst.img, d.burst.x - sz / 2, d.burst.y - sz / 2, sz, sz); } }
+    if (k > 0) { const sz = d.burst.img.width * (.35 + .65 * k); ctx.globalAlpha = k * .55 * (1 - sun * .4); ctx.drawImage(d.burst.img, d.burst.x - sz / 2, d.burst.y - sz / 2, sz, sz); } }
   ctx.globalCompositeOperation = 'lighter';
   ctx.globalCompositeOperation = 'screen';
   for (const gx of d.galaxies) {                              // galaxies, painted, turning so slowly you can't quite see it
-    const a = space * smooth(ramp(gx.at, gx.at + 10, t)) * .8; if (a <= 0) continue;
+    const a = space * smooth(ramp(gx.at, gx.at + 10, t)) * .45; if (a <= 0) continue;
     ctx.save(); ctx.translate(gx.x - d.ox * .02, gx.y); ctx.rotate(gx.rot + t * .01); ctx.globalAlpha = a; ctx.drawImage(gx.img, -gx.img.width / 2, -gx.img.height / 2); ctx.restore();
   }
   // Falling stars, now and then: a soft streak, gone in a few seconds (slow enough to be no flash).
@@ -1983,7 +1985,7 @@ function drawDrift() {
   // Planets in watercolour, arriving with the song; they sit far off, so they move only a little when you steer.
   for (const pl of d.planets) {
     const a = space * smooth(ramp(pl.at, pl.at + 10, t)); if (a <= 0) continue;
-    ctx.globalAlpha = a * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par, Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
+    ctx.globalAlpha = a * .82 * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par, Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
     if (pl.spin) { ctx.save(); ctx.translate(X, Y); ctx.rotate(t * pl.spin); ctx.drawImage(pl.img, -pl.img.width / 2, -pl.img.height / 2); ctx.restore(); } else ctx.drawImage(pl.img, X - pl.img.width / 2, Y - pl.img.height / 2);
   }
   ctx.globalAlpha = 1;
@@ -1997,7 +1999,7 @@ function drawDrift() {
     ctx.filter = 'none'; const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 10); hg.addColorStop(0, 'rgba(255,255,255,1)'); hg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = hg; ctx.fillRect(hx - 10, hy - 10, 20, 20); ctx.restore(); } }
   // An aurora, from the pre-chorus into the chorus: a curtain of light, drifting.
   { const k = smooth(ramp(d.ribbon.from, d.ribbon.from + 10, t)) * (1 - smooth(ramp(d.ribbon.to, d.ribbon.to + 12, t)));
-    if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = k * .8 * space; ctx.drawImage(d.ribbon.img, -W0 * .6 + Math.sin(t * .03) * 40 - d.ox * .04, 10); ctx.restore(); } }
+    if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = k * .4 * space; ctx.drawImage(d.ribbon.img, -W0 * .6 + Math.sin(t * .03) * 40 - d.ox * .04, 10); ctx.restore(); } }
   // A star cluster in verse 2: a knot of light that twinkles slowly.
   { const k = smooth(ramp(S.verse2 + 18, S.verse2 + 30, t)); if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen';
     for (const [x, y, ph, sp] of d.cluster) { ctx.globalAlpha = k * (.35 + .65 * Math.pow(Math.max(0, Math.sin(t * sp * .6 + ph)), 4)); ctx.fillStyle = '#eef3ff'; ctx.fillRect(x - d.ox * .02, y, 1.6, 1.6); }
@@ -2009,7 +2011,7 @@ function drawDrift() {
   const open = smooth(ramp(2, 9, t)), shut = smooth(ramp(15, 21, t)), WR = 150 * open * (1 - shut);
   if (WR > 1) {   // painted (2026-11-17): a watercolour wash turning in its throat, and dabs of pastel on rings that recede into it, like an impressionist sky
     ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.translate(cx, cy);
-    const ww = d.worm.width * (WR / 150) * 1.1; ctx.globalAlpha = .85 * open * (1 - shut);
+    const ww = d.worm.width * (WR / 150) * 1.1; ctx.globalAlpha = .6 * open * (1 - shut);
     ctx.rotate(t * .15); ctx.drawImage(d.worm, -ww / 2, -ww / 2, ww, ww); ctx.rotate(-t * .15 - t * .23); ctx.drawImage(d.worm, -ww * .35, -ww * .35, ww * .7, ww * .7); ctx.rotate(t * .23);
     d.dabs.forEach((ring, i) => {
       const k = 1 - ((i / 18 + t * .07) % 1), r = WR * 1.3 * k * k; if (r < 3) return;
@@ -2064,7 +2066,7 @@ function drawDrift() {
   if (sun > 0) {
     const sunY = H0 + 90 - (H0 * .42 + 90) * sun;
     ctx.save(); ctx.globalCompositeOperation = 'screen';
-    if (d.dawn) { ctx.globalAlpha = sun * .9; ctx.drawImage(d.dawn, -280, H0 - d.dawn.height + 40 + (1 - sun) * 300); }   // the dawn: the sky washes peach, rose, lilac and blue from below, blending
+    if (d.dawn) { ctx.globalAlpha = sun * .5; ctx.drawImage(d.dawn, -280, H0 - d.dawn.height + 40 + (1 - sun) * 300); }   // the dawn: the sky washes peach, rose, lilac and blue from below, blending
     ctx.globalAlpha = 1;
     const R1 = 80 + 520 * sun, hz = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, R1);
     hz.addColorStop(0, `rgba(255,253,248,${.9 * sun})`); hz.addColorStop(.07, `rgba(255,247,236,${.55 * sun})`); hz.addColorStop(.28, `rgba(232,228,246,${.2 * sun})`);
@@ -2077,6 +2079,8 @@ function drawDrift() {
     ctx.fillStyle = core; ctx.fillRect(cx - 22, sunY - 22, 44, 44); ctx.restore();
   }
   ctx.restore(); ctx.globalAlpha = 1;
+  { const vg = ctx.createRadialGradient(cx, cy, H0 * .25, cx, cy, H0 * .95); vg.addColorStop(0, 'rgba(2,6,14,0)'); vg.addColorStop(1, `rgba(2,6,14,${.6 * fade * (1 - sun * .6)})`);   // the edges fall away into the dark
+    ctx.save(); ctx.globalAlpha = 1; ctx.fillStyle = vg; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.restore(); }
   if (d.grain) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .07 * fade; ctx.fillStyle = d.grain; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.restore(); }   // grain: tactile
   // A quiet way out, once the hint bar has gone: always clear what to do to go where.
   const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
@@ -2564,7 +2568,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w * .617), cy: 262, R: 172 });   // the dial right of centre, Next drink under the word
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w * .617), cy: 276, R: 172 });   // the dial right of centre, Next drink under the word
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
@@ -2582,7 +2586,7 @@ function buildGauge() {
   ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 28); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
-  h += '<text class="gword" x="16" y="58" text-anchor="start" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-left corner, like a readout: the dial gets the room under it
+  h += '<text class="gword" x="' + (w - 16) + '" y="40" text-anchor="end" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-right corner (2026-11-17): the plate left, the reading right, the dial under both
   // the two small gauges
   for (const [k, d, title] of [['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
@@ -2600,14 +2604,14 @@ function drawGaugeMeter(t) {
   const G = $('gauge'), M = GZ.main, u = gU(s.meter), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
-  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 96, M.R + 12); attr(ln, 'stroke', col); }
+  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 64, M.R + 10); attr(ln, 'stroke', col); }
   q('needle').classList.toggle('hot', !!st);
   attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
   G.querySelectorAll('.gl').forEach((el, i) => { const on = !st && i === lvl; attr(el, 'fill', on ? '#e1e4e6' : '#5f656b'); attr(el, 'font-weight', on ? 600 : 500); });
   // The word, in capitals; Stillness's long line on two.
   const word = (st === 'frenzy' ? 'Frenzy' : st === 'still' ? 'Get out into the vast|nothingness|of space' : DOSAGE[lvl]).toUpperCase(), wEl = q('gword');
   if (wEl.dataset.w !== word) { wEl.dataset.w = word; const two = word.split('|');
-    wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="16" dy="${i ? 15 : -14}">${l}</tspan>`).join('') : word;
+    wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="${GZ.w - 16}" dy="${i ? 15 : -12}">${l}</tspan>`).join('') : word;
     attr(wEl, 'font-size', two.length > 1 ? 13 : word.length > 12 ? 17 : 24); }   // Stillness's three short lines stay clear of the scale's Coward
   attr(wEl, 'fill', st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#e1e4e6');
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
