@@ -564,7 +564,7 @@ const CONFIG = {
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
              // duckDownMs/duckUpMs: the music dips under a DJ in 0.4 s and comes back over 1.5 s; djLead: the dip starts 0.4 s before the voice
-             pumpDigSpeed: 0.9, discoCalm: 1.5, discoShake: 0.65, songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
+             voices: false, pumpDigSpeed: 0.9, discoCalm: 1.5, discoShake: 0.65,   /* voices: the DJs, off since 2026-11-17 (the user: they are cringe; the sound effects stay) */ songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
              states: { normal: { rate: 1, lowpass: 20000, highpass: 10, drive: 0 }, still: { rate: 0.88, lowpass: 650, highpass: 10, drive: 0 }, frenzy: { rate: 1.08, lowpass: 20000, highpass: 220, drive: 0.35 } } },   // Frenzy and Stillness change the sound, not the station   // the voices sit lower and the music ducks less (to 60%)   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -726,6 +726,7 @@ const djOnAir = key => sound.on && !(s && s.drift) && (key === '*' ? radioNow().
 const musicPlaying = () => !!player.src && !player.paused && player.currentTime > 1 && sound.vol > 0.05;
 let djWait = null;                                          // a line waiting for the music to start (up to 6 s), then it speaks over it
 function djSay(key, file, any) {
+  if (!CONFIG.radio.voices) return;                         // the DJs are off air (2026-11-17); Frenzy and Stillness still change the sound
   if (any) key = '*';
   if (!djOnAir(key) || djTalking()) return;
   if (!musicPlaying()) { djWait = { key, file, until: performance.now() + 6000 }; return; }
@@ -1615,7 +1616,7 @@ function breakthrough() {
     const i = Math.floor(Math.random() * next.craters.length);
     showMenu(`<span class="lbl live">Layer ${s.layer + 1} cleared</span><h2 class="ttl">${next.name}</h2>
       ${journey(s.layer + 1)}
-      <p class="body">Rover en route to <b>${next.craters[i].label}</b>. ${next.craters[i].note}</p>
+      <p class="body"><span id="roverWhere">Rover en route to</span> <b>${next.craters[i].label}</b>. ${next.craters[i].note}</p>
       <p class="note">${LAYER_INTRO[s.layer + 1]}</p>
       <div class="loadbar"><i id="loadBar" style="transition:width ${CONFIG.loadingMs}ms linear"></i></div>
       <div id="loadGo" style="height:40px"></div>`);   // the way on appears here when the rover arrives (the engine light is the start screen's joke only)
@@ -1623,6 +1624,7 @@ function breakthrough() {
     requestAnimationFrame(() => requestAnimationFrame(() => $('loadBar').style.width = '100%'));
     setTimeout(() => {
       if (!$('loadGo')) return;                               // the loading screen is already gone
+      if ($('roverWhere')) $('roverWhere').textContent = 'Rover parked at';   // it has arrived: no longer en route (2026-11-17)
       $('loadGo').outerHTML = '<button id="loadGo" class="go">Start digging <kbd class="ar">↓</kbd></button>'; $('loadGo').onclick = () => pickCrater(i);
       menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
     }, CONFIG.loadingMs);

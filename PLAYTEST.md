@@ -64,7 +64,7 @@ Ask these, in this order, and write down the answers:
 
 1. What was the game about?
 2. What did the drinks do? Did any of them surprise you?
-3. What did the radio do? Did you have a favourite station, or a DJ you remember?
+3. What did the radio do? Did you have a favourite station? Did you notice the sound change in Frenzy and Stillness?
 4. What happened when the screen tilted, or went quiet and violet? What did you make of it?
 5. Was there anything you didn't understand, or didn't notice until late?
 6. Did you find anything that wasn't on the menu? How?
@@ -87,7 +87,7 @@ MOMENTS (time from start)
   Opening shake + drink ........... ____   (understood the keys / confused)
   Used Next drink on purpose ...... ____   (yes / no)
   Switched station ................ ____   (which: ________ / noticed its effect? yes / no)
-  Reacted to a DJ ................. ____   (said: "_______")
+  Noticed the sound change ......... ____   (said: "_______")
   First Frenzy .................... ____   (on purpose / by accident / noticed the sound? yes / no)
   First Stillness ................. ____   (on purpose / by accident)
   First artefact .................. ____   (which: ________ / seam or sealed?)

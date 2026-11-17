@@ -215,7 +215,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 
 Details, music prompts and licence log: [RADIO.md](RADIO.md).
 
-Music: original, or AI-generated or royalty-free under licences that allow it. No real tracks. DJ voices made with ElevenLabs.
+Music: original, or AI-generated or royalty-free under licences that allow it. No real tracks. DJ voices were made with ElevenLabs; **off since 2026-11-17** (they read as cringe). The clips and code stay (CONFIG.radio.voices), and the audio effects (Stillness muffled and slow, Frenzy fast and driven) carry the mood on their own.
 
 ## Visual direction
 **As built in Prototype 4 (2026-11-15 to 11-17; mockups in [mockups/](mockups/index.html)).** The plan before it (comic ink, Y2K chrome for Näsa, bioluminescence, a drawn rover panel, the year-one identity) led here; Näsa's chrome and the rover's control panel survived as planned.
