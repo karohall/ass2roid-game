@@ -159,7 +159,7 @@
   #log div::before { content:''; position:absolute; left:1px; top:8px; width:5px; height:5px; background:var(--faint); transform:rotate(45deg); }
   #log div:first-child { color:var(--text); } #log div:first-child::before { background:var(--fluo); }
   /* The Field Guide: cards as tiles; found ones raised, the rest an outline with a ?. */
-  #guide { display:grid; grid-template-columns:repeat(3, 1fr); gap:5px; }
+  #guide { display:grid; grid-template-columns:repeat(4, 1fr); gap:5px; }   /* four to a row: the four layers and the four ingredients each in one row (2026-11-17) */
   #guide .cat { grid-column:1 / -1; font:600 11px/1 var(--f-small); color:var(--faint); text-transform:uppercase; letter-spacing:.14em; margin-top:4px; }
   .slot { box-shadow:inset 0 0 0 1px var(--line); padding:5px 4px; text-align:center; font:500 11px/1.25 var(--f-small); height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--faint); }
   .slot.found { background:var(--raised); box-shadow:none; color:var(--text); clip-path:var(--chamfer-s); }
@@ -311,6 +311,7 @@
   #panel, #panel2 { position:relative; }
   #panel::before, #panel2::before { content:''; position:absolute; left:-9px; top:0; bottom:0; width:2px; background:linear-gradient(90deg, rgba(0,0,0,.75) 0 1px, rgba(255,255,255,.06) 1px); }   /* the seams between the columns */
   body.wide #panel2::before { opacity:0; }
+  #panel2 { transition:margin-bottom 2s ease 3s; } body.wide #panel2 { margin-bottom:46px; }   /* the Drift: the right column lifts before the radio slides under it */
   .box { --bay:#121417; }
   .box > svg.outline path:first-of-type { fill:var(--bay); }
   canvas#c { box-shadow:0 0 0 3px #07080a, 0 0 0 4px rgba(255,255,255,.07); }   /* the mining window, set in a bezel */
@@ -969,6 +970,9 @@ const FIND = {
   graffiti: (c, x, y) => { plate(c, x, y, COL.steel); spray(c, x, y, COL.concrete, c => {   // a tag: a loopy scrawl, an underline with a flick, a drip and a dot
       c.moveTo(8.5, 24); c.lineTo(10.5, 14); c.lineTo(13, 23.5); c.lineTo(15.5, 13); c.lineTo(17.5, 22.5); c.quadraticCurveTo(19, 16.5, 22.5, 17); c.quadraticCurveTo(26.5, 17.5, 24.5, 21.5); c.quadraticCurveTo(22, 24.5, 20.5, 21.5);
       c.lineTo(27, 11.5); c.quadraticCurveTo(32.5, 10, 29.5, 16); c.moveTo(8, 29.5); c.quadraticCurveTo(20, 26.5, 32, 27.5); c.lineTo(29.5, 30.5); c.moveTo(13, 23.5); c.lineTo(13, 31); }, [[13, 32, 1.3], [31.5, 22.5, 1.4]]); },
+  graffiti4: (c, x, y) => { plate(c, x, y, COL.steel); spray(c, x, y, COL.concrete, c => {   // a second tag: a crown over a wavy underline, a drip: Doppio+'s "DUO DI WHEY…"
+      c.moveTo(10, 21); c.lineTo(12.5, 12); c.lineTo(16.5, 18); c.lineTo(20, 9.5); c.lineTo(23.5, 18); c.lineTo(27.5, 12); c.lineTo(30, 21); c.lineTo(10, 21);
+      c.moveTo(9, 26.5); c.quadraticCurveTo(14.5, 23, 20, 26.5); c.quadraticCurveTo(25.5, 30, 31, 26); c.moveTo(16.5, 21); c.lineTo(16.5, 24); }, [[16.5, 25, 1.2], [31.5, 24, 1.3]]); },
   graffiti3: (c, x, y) => { plate(c, x, y, COL.steel); spray(c, x, y, COL.concrete, c => {   // a heart, sprayed, one drip: Doppio+'s "…UNA DI POWDER."
       c.moveTo(20, 29); c.bezierCurveTo(10, 22.5, 9, 13, 15, 12); c.bezierCurveTo(18, 11.5, 20, 14, 20, 16.5); c.bezierCurveTo(20, 14, 22, 11.5, 25, 12); c.bezierCurveTo(31, 13, 30, 22.5, 20, 29);
       c.moveTo(20, 29); c.lineTo(20, 32.5); }, [[20, 33.5, 1.2]]); },
@@ -1234,6 +1238,7 @@ function slabHit(x, y, c) {
     g[y][x] = { t: AIR, hp: 0, max: 0 };
     bump(x, y, 24);
     say('The chrome gives way. A new way down.');
+    gain('chrome', 1 + (Math.random() < .5 ? 1 : 0));          // 2026-11-17: melted chrome is chrome. Every melt pays, so the risk is a choice
     nasa('Näsa™ property damaged. An invoice has been issued.', true);
     unlock('chrome1');
     return;
@@ -2065,7 +2070,7 @@ function draw() {
       case SEAM: case ART: (seamAnswers(c.kind) ? FIND.seamOpen : FIND.seam)(ctx, x, y); break;
       case SEALED: (seamAnswers(c.kind) ? FIND.sealedOpen : FIND.sealed)(ctx, x, y); break;
       case SHAKER: FIND.shaker(ctx, x, y); break;
-      case GRAFFITI: (c.clue === 'doppioPowder' ? FIND.graffiti3 : c.clue === 'crack' ? FIND.graffiti2 : FIND.graffiti)(ctx, x, y); break;
+      case GRAFFITI: ({ doppioPowder: FIND.graffiti3, doppioWhey: FIND.graffiti4, crack: FIND.graffiti2 }[c.clue] || FIND.graffiti)(ctx, x, y); break;   // chrome: the first tag
       case SLAB: {
         FIND.slab(ctx, x, y);
         const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * Math.max(0, now() - c.hotAt - CONFIG.chrome.heatEveryMs * 2) / 1000) / CONFIG.chrome.meltHeat : 0;

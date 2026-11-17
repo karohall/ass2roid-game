@@ -233,6 +233,15 @@ Music: original, or AI-generated or royalty-free under licences that allow it. N
 
 You reach the core: *"THE CORE. You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority."* The end screen shows the challenge coin, drawn in the game's ink: *EX PROFUNDO, NOVA* around the top, *1 A$* in the middle with the depth reached, *KOROVA ROCK* along the bottom. "Save the coin" downloads it as an image to share. (Built in Prototype 3.)
 
+## Lore
+**Never explained, only overheard (decided 2026-11-17).** There is no briefing, no codex, no narrator. The story of Korova Rock comes in pieces from four voices, each with its own channel and its own bias, and the player puts it together, or doesn't. Chaotic, and on brand.
+- **The Kroeber Foundation** (the Field Guide and the archive cards): dry, museum-like, confused, never endorsing anything.
+- **The Belt Authority** (its Public Service log): official, curt, redacted. It benefits from being CIA; the black bars stay for good.
+- **The radio** (Coach Rocky, the Broadcaster, Näsa's ads): loud, commercial, sincere about the wrong things. The radio teaches you things.
+- **Whoever was here before** (graffiti and rumours): the secret menu, in pieces, in the rock and at the bar.
+
+**Rule for new copy:** say it in one of the four voices, never in the game's own. If a fact needs a fifth voice, it probably doesn't belong in the game.
+
 ## Microcopy
 - Easter egg, once per run at 69 m: *"69 m. Nice. The Foundation does not endorse this observation."*
 - Loading screen: *"1. Check engine light. 2. Ignore that it is on. 3. See Step 1."*
