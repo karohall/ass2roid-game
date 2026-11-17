@@ -667,6 +667,8 @@ function radioKey(k) {
   radio.since = radio.clock;
   if (running) say(`Radio: ${RADIO[radio.on].name}.`);
   if (was === 'void' && radio.on === 'pump') rocky(DJS.pump.fromVoid);   // he knows
+  if (s && was === 'void') s.fromVoid = true;
+  if (s && radio.on === 'disco' && s.fromVoid) { s.fromVoid = false; djSay('disco', DJS.disco.fromVoid); }   // Rocky Giovanni, the next time you come back to him
 }
 // What the radio plays right now: the station you chose. The Drift plays The You Show, and a broken drill
 // leaves only the tape. Frenzy and Stillness don't switch the station: they change how it sounds (stateSound).
@@ -686,8 +688,9 @@ const nowPlaying = () => songOf(radioNow()).title;
 // and then, over the opening of a song a line belongs to, and at a few moments, as if they are watching. Only on their own
 // station, never in the Drift or on the tape. Always over music, never on their own (2026-11-16): the music ducks under them.
 // Coach Rocky, the Pump Zone: loud, German, counting reps. The Broadcaster, Void FM: calm, facts about the dark.
+// Rocky Giovanni, Disco Gravitas (2026-11-17): Italian, warm, amore.
 const clip = (folder, name) => `audio/Radio/${folder}/${name}.mp3`;
-const ROCKY = name => `audio/Radio/The Pump Zone/coach rocky compressed/${name}.wav`, VOICE = name => clip('Void FM/The Broadcaster', name);   // Rocky: the user's compressed takes
+const ROCKY = name => `audio/Radio/The Pump Zone/coach rocky compressed/${name}.wav`, VOICE = name => clip('Void FM/The Broadcaster', name), GIO = name => clip('Disco Gravitas/Rocky Giovanni', name);   // Rocky: the user's compressed takes
 const DJS = {
   pump: {
     breaks: ['hydrate dominate excavate', 'no pain no gain', 'näsa jab', 'side effects'].map(ROCKY),
@@ -696,6 +699,16 @@ const DJS = {
     frenzy: ROCKY('frenzy not a problem'),                        // a Frenzy starts: he breaks in on any station
     fromVoid: ROCKY('void fm jab'),                               // back from Void FM: if you switch to Void FM, he will know
     secret: ROCKY('secret song'),                                 // rare: the radio teaches you things (Candygirl)
+  },
+  disco: {
+    breaks: [GIO('Remember, amore. Somewhere, someone is digging toward you.'), GIO('Stasera, the stars are ours. You are listening to Disco Gravitas.')],
+    hello: GIO('buonasera disco gravitas'),                       // Begin shift on Disco Gravitas, or the first time you tune in to it in a shift
+    secret: GIO('hint doppio+'),                                  // rare: the radio teaches you Doppio+
+    still: GIO('stillness'),                                      // Stillness starts while Disco Gravitas plays: he says it, not the Broadcaster
+    fromVoid: GIO('switching back from Void FM'),                 // back on Disco Gravitas after Void FM
+    strength: GIO('double strength'),                             // a second Strength, stacked
+    nasaAd: GIO('right after näsa ad'),                           // just after a Näsa pop-up
+    chrome: GIO('after näsa or chrome'),                          // after melting Näsa chrome
   },
   void: {
     breaks: ['Dante fact', 'Galaxy fact', 'Sappho fact', 'Static fact', 'Some of the stars you see may already be gone. And yet they shine.',
@@ -769,8 +782,8 @@ function djBreak(key) {
   if (key === 'void' && s && !s.djDeep && Math.abs(depthNow() - 400) <= 75) { s.djDeep = true; return djSay(key, d.deep); }   // here is a song about that
   if (Math.random() >= CONFIG.radio.djChance) return;
   if (d.secret && Math.random() < CONFIG.radio.djSecret) return djSay(key, d.secret);
-  const pool = d.breaks.filter(x => x !== djLast);
-  djSay(key, pool[Math.floor(Math.random() * pool.length)]);
+  const pool = d.breaks.filter(x => x !== djLast), from = pool.length ? pool : d.breaks;
+  djSay(key, from[Math.floor(Math.random() * from.length)]);
 }
 
 // The sound itself: two decks, cross-fading between songs: the live one (player) and the one fading out. Browsers only
@@ -829,7 +842,7 @@ function soundTick(dt) {
   if (s && running && sound.on) {
     const k = radioNow().key;
     if (!s.djHello) { s.djHello = { [k]: true }; if (DJS[k]) djSay(k, DJS[k].hello); }                     // the shift's first sound: the DJ's hello
-    else if (radio.on === 'void' && k === 'void' && !s.djHello.void && !djTalking()) { s.djHello.void = true; djSay('void', DJS.void.hello); }   // tuning in to Void FM: welcome
+    else if ((k === 'void' || k === 'disco') && radio.on === k && !s.djHello[k] && !djTalking()) { s.djHello[k] = true; djSay(k, DJS[k].hello); }   // tuning in to Void FM or Disco Gravitas: welcome
   }
   if (djTalking() && !djOnAir(djOn)) djHush();                                                          // off their station, the DJ goes quiet
   if (djWait && !djTalking()) { if (performance.now() > djWait.until || !djOnAir(djWait.key)) djWait = null; else if (musicPlaying()) { const w = djWait; djWait = null; djSay(w.key, w.file); } }
@@ -1242,6 +1255,7 @@ function slabHit(x, y, c) {
     g[y][x] = { t: AIR, hp: 0, max: 0 };
     bump(x, y, 24);
     say('The chrome gives way. A new way down.');
+    if (djOnAir('disco') && !(now() - (s.gioChromeAt || -1e9) < 90000)) { s.gioChromeAt = now(); djSay('disco', DJS.disco.chrome); }   // Rocky Giovanni has a word about it
     gain('chrome', 1 + (Math.random() < .5 ? 1 : 0));          // 2026-11-17: melted chrome is chrome. Every melt pays, so the risk is a choice
     nasa('Näsa™ property damaged. An invoice has been issued.', true);
     unlock('chrome1');
@@ -1271,6 +1285,7 @@ function nasa(msg = 'This chrome is the property of Näsa™. Big Space™.', fo
   clearTimeout(nasa.t1); clearTimeout(nasa.t2);
   nasa.t1 = setTimeout(() => el.classList.add('fading'), CONFIG.nasa.showMs);                 // long enough to read
   nasa.t2 = setTimeout(() => el.classList.add('hidden'), CONFIG.nasa.showMs + 1000);          // then a one-second fade
+  if (s && djOnAir('disco') && !(now() - (s.gioNasaAt || -1e9) < 60000)) { s.gioNasaAt = now(); setTimeout(() => djSay('disco', DJS.disco.nasaAd), 1500); }   // Rocky Giovanni, right after the ad (at most once a minute)
 }
 
 // A lost drill sample: the hint bar (where the eye is) and the counter flash as it drops.
@@ -1420,7 +1435,7 @@ function drink(v, fromShaker = false) {
     if (mult > 1) say(`Dose window ×${mult}. The Foundation measures how fast, not just how much.`);
   }
   if (v === 'strength') {
-    if (active('strength')) { s.strStacks = Math.min(CONFIG.strength.maxStacks, s.strStacks + 1); say('Stacking Strength. Bold.'); }
+    if (active('strength')) { const was = s.strStacks; s.strStacks = Math.min(CONFIG.strength.maxStacks, s.strStacks + 1); say('Stacking Strength. Bold.'); if (was === 1 && s.strStacks === 2) djSay('disco', DJS.disco.strength); }   // the step to double: Rocky Giovanni
     else s.strStacks = 1;
   }
   if (v === 'calm') say('Calm consumed. Noted in your file.');
@@ -2345,7 +2360,7 @@ function update(dt) {
     openSeam('frenzy');
   } else if (s.meter <= -tipAt()) {
     s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;
-    djSay('void', DJS.void.still, true);   // the Broadcaster comes through: space is not scary
+    if (djOnAir('disco')) djSay('disco', DJS.disco.still); else djSay('void', DJS.void.still, true);   // on Disco Gravitas, Rocky Giovanni; elsewhere the Broadcaster comes through: space is not scary
     say('STILLNESS. Everything has slowed down. You do not mind.');
     openSeam('still');
   } else if (!active('focus')) {                     // Hyperfocus: the meter holds still

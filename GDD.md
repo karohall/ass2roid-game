@@ -206,7 +206,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 
 ## The radio
 - **The Pump Zone** (body: 80s metal and gym, DJ Coach Rocky, with a German accent, on air since 2026-11-14: he talks between songs, greets the shift, cheers the Frenzy, knows when you've been on Void FM, and once in a while lets slip that a song isn't on the menu): digging goes slightly faster
-- **Disco Gravitas** (heart: Italo and space disco): you shake to the beat, so mixing a Milk+ takes a third less time (its perk since 2026-11-17); it also calms the balance meter a little
+- **Disco Gravitas** (heart: Italo and space disco): you shake to the beat, so mixing a Milk+ takes a third less time (its perk since 2026-11-17); it also calms the balance meter a little. DJ **Rocky Giovanni** (Italian, warm, *amore*), on air since 2026-11-17: he says buonasera when you tune in, talks over the ends of songs, now and then hints at Doppio+, speaks for Stillness on his own station (instead of the Broadcaster), notices a second Strength, a Näsa ad and melted chrome, and knows when you have been on Void FM
 - **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision. The Broadcaster, on air since 2026-11-14, welcomes you to the never-ending show, tells you facts about the dark between songs, and calms Stillness: space is not scary, it is restful
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
 - **Space oddities:** not a station; a folder of songs for special occasions, such as The You Show on Stillness overload
@@ -238,7 +238,7 @@ You reach the core: *"THE CORE. You are now further down than anyone asked you t
 **Never explained, only overheard (decided 2026-11-17).** There is no briefing, no codex, no narrator. The story of Korova Rock comes in pieces from four voices, each with its own channel and its own bias, and the player puts it together, or doesn't. Chaotic, and on brand.
 - **The Kroeber Foundation** (the Field Guide and the archive cards): dry, museum-like, confused, never endorsing anything.
 - **The Belt Authority** (its Public Service log): official, curt, redacted. It benefits from being CIA; the black bars stay for good.
-- **The radio** (Coach Rocky, the Broadcaster, Näsa's ads): loud, commercial, sincere about the wrong things. The radio teaches you things.
+- **The radio** (Coach Rocky, Rocky Giovanni, the Broadcaster, Näsa's ads): loud, commercial, sincere about the wrong things. The radio teaches you things.
 - **Whoever was here before** (graffiti and rumours): the secret menu, in pieces, in the rock and at the bar.
 
 **Rule for new copy:** say it in one of the four voices, never in the game's own. If a fact needs a fifth voice, it probably doesn't belong in the game.
