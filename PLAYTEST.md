@@ -1,24 +1,36 @@
 # ASS2ROID: Ex Profundo — Playtest guide
 
-*For testing Prototype 3 (tag `prototype-3`) with 3–5 people who have not played it. Run every test the same way, so the results can be compared. A run to the Core takes roughly 15–25 minutes; let them stop whenever they like.*
+*For testing Prototype 4 (tag `prototype-4`) with 3–5 people who have not played it. Run every test the same way, so the results can be compared. A run to the Core takes roughly 10–15 minutes (14 in the last internal run); let them stop whenever they like.*
 
-*(The Prototype 2.2 guide is in git history, at tag `prototype-2.2`.)*
+*(The Prototype 3 and 2.2 guides are in git history, at tags `prototype-3` and `prototype-2.2`.)*
 
 ---
 
 ## What we want to learn
 
-Prototype 3 added a lot. These are the questions that matter most, in roughly the order a player meets them:
+Prototype 4 is a new interface on the same game: the rover's control panel. The first questions are about it; the rest carry over from Prototype 3, in roughly the order a player meets them.
+
+**The interface (new in Prototype 4)**
+
+- **The guide:** an amber pulse walks the eye through the first steps (the hint bar, the radio, the first Strength, the first dig). Do they follow it? Do they notice the amber Begin shift button?
+- **The deck:** does it read as one machine, a place they are inside? Where do they look first? Do the faint ghost frames read as 'more to come', or as empty?
+- **The shake keys:** SHAKE above DRINK, the lit half is what pressing does. Do they get the cycle without the old line of text?
+- **The cluster:** do they read the dial and its word mid-Frenzy? Do they notice **Next drink** and use it (drinking again while it shows ×1.5)?
+- **The rover panel:** the lamps, the pips (digging power against the crust's need), the drill's bar. Read, or ignored?
+- **Size:** is any text too small at itch.io's size? Where do they lean in?
+
+**The game (carried over from Prototype 3)**
+
 
 1. **The radio first:** the drill won't start without music. Do they find R? Do they try other stations, and do they notice a station's effect (the Pump Zone digs faster, Disco Gravitas calms the meter, Void FM gives night vision in The Crack)? What do they make of the DJs, Coach Rocky and the Broadcaster?
-2. **The interface arriving bit by bit:** do they notice new parts appearing? Does the screen feel like a place ("a room"), or like too much? Where do they look first?
+2. **The interface arriving bit by bit:** do they notice new parts filling their ghost frames? Too much at once?
 3. **Shake, drink, and the dose window:** do they shake ahead and keep bottles? Do they ever drink quickly on purpose?
 4. **Frenzy and Stillness:** do they reach them, and do they want to go back? Do they notice the music changing (faster and rougher in a Frenzy, muffled in Stillness)?
 5. **Seams and sealed finds:** do they understand that a sealed find (◈) only gives way in the right state? Do they plan for one (save bottles, tip over beside it)? Does the hint help, or do they ignore it?
-6. **The drill, the pick axe and the tape:** when the drill breaks, the radio dies and the tape plays. Do they get it? Do they find Recovery (now Legacy Powder + Chrome Filings)?
+6. **The drill, the pickaxe and the tape:** when the drill breaks, the radio dies and the tape plays. Do they get it? Do they find Recovery (now Legacy Powder + Chrome Filings)?
 7. **Näsa chrome:** do they find the gap? Does anyone try to melt it in a Frenzy (and what happens when it blows)?
 8. **Blasting charges:** after the rumour, do they use B? Does it change how they play the slow deep layers?
-9. **The secret menu:** does anyone notice the graffiti, the redacted card, the rumours? Does anyone find Candygirl (0) or Jizz+ (9)? How long does it take, and what do they say?
+9. **The secret menu:** does anyone notice the graffiti, the redacted card, the rumours? Does anyone find Candygirl (0) or Doppio+ (9, from the graffiti "DUO DI WHEY…" and "…UNA DI POWDER." in the Shaker Strata)? How long does it take, and what do they say?
 10. **The Crack:** how does the darkness feel? Do they find night vision on Void FM? If they have Candygirl, what do they make of the rave?
 11. **The two endings:** does anyone drift off (Calm on top of Stillness)? Do they steer? Do they stay to the end of the song, or press Esc? Does anyone reach the Core?
 12. **The archive:** do they open the archive cabinet and read cards? Do they click the photos? Does the end screen's list of finds still in the rock make them want to play again?
@@ -69,9 +81,11 @@ Copy this block once per tester.
 TESTER: ______________   DATE: __________   PLAYED FOR: ____ min
 
 MOMENTS (time from start)
+  Followed the guide pulse ........ ____   (yes / no / ignored it)
   Found R / radio on .............. ____
   First dig ....................... ____
-  Opening shake + drink ........... ____   (understood / confused)
+  Opening shake + drink ........... ____   (understood the keys / confused)
+  Used Next drink on purpose ...... ____   (yes / no)
   Switched station ................ ____   (which: ________ / noticed its effect? yes / no)
   Reacted to a DJ ................. ____   (said: "_______")
   First Frenzy .................... ____   (on purpose / by accident / noticed the sound? yes / no)
@@ -86,7 +100,7 @@ MOMENTS (time from start)
   Layer 3 cleared ................. ____
   Noticed graffiti / secret card .. ____
   Found Candygirl (0) ............. ____   (how: ________)
-  Found Jizz+ (9) ................. ____   (how: ________)
+  Found Doppio+ (9) ............... ____   (how: ________)
   Night vision on Void FM ......... ____   (yes / no)
   Drift ........................... ____   (steered? stayed to the end? yes / no)
   Reached the Core ................ ____
@@ -120,7 +134,7 @@ MY OBSERVATIONS
 ## After all tests
 
 - **Look for patterns,** not single opinions. Something two or more testers struggle with is a finding; one tester's taste is a data point.
-- **Write a playtest entry in [DEVLOG.md](DEVLOG.md):** what you tested, what you saw, what surprised you, and what changes for Prototype 4 (the interface: the rover's control panel). It becomes the "test" chapter of the case study: idea → prototype → **test** → finished.
+- **Write a playtest entry in [DEVLOG.md](DEVLOG.md):** what you tested, what you saw, what surprised you, and what changes after Prototype 4. It becomes the "test" chapter of the case study: idea → prototype → **test** → finished.
 
 ---
 
@@ -128,9 +142,9 @@ MY OBSERVATIONS
 
 The game is `index.html` plus its songs (`audio/Radio/`) and archive photos (`archive/`), so it uploads as an HTML game in one zip.
 
-1. **Build the zip** with `.claude/build-itch.ps1`. It writes `itch/ass2roid-prototype-3.zip` (about 65 MB) with `index.html` at the top level, the audio and the photos, using forward slashes and UTF-8 file names so names like *Kármán Lines* survive.
+1. **Build the zip** with `.claude/build-itch.ps1`. It writes `itch/ass2roid-prototype-4.zip` (about 65 MB) with `index.html` at the top level, the audio and the photos, using forward slashes and UTF-8 file names so names like *Kármán Lines* survive.
 2. On itch.io, **upload the zip** to the existing project (or create one with the kind of project set to **HTML**) and mark it to be played in the browser.
-3. **Embed size:** the game is about 1,100 × 1,030 pixels at full size and scales itself down to fit any smaller window, so it never scrolls. Set the embed close to that size, or turn on the option to launch the game in fullscreen or a new window.
+3. **Embed size: 1280 × 960** (changed from 1100 × 850 for Prototype 4, so the smallest text stays readable). The game scales itself to fit the frame and never scrolls; the option to launch it in fullscreen helps too.
 4. **Add a photosensitivity note** to the page, for example: *"Contains moving colours and patterns, and a brief bright moment in the Drift. No strobing. Respects your system's reduce-motion setting."*
 5. **Visibility:** keep the page **restricted** (or a draft) while testing, and share the link only with your testers.
 6. **Before sending the link,** open it yourself on a laptop with sound, and play the first minutes: the radio should come on with R.

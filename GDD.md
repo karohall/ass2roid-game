@@ -218,11 +218,15 @@ Details, music prompts and licence log: [RADIO.md](RADIO.md).
 Music: original, or AI-generated or royalty-free under licences that allow it. No real tracks. DJ voices made with ElevenLabs.
 
 ## Visual direction
-- **Comic ink** (black, white, blue-grey wash) for the Rock, the prospectors and the world: the base.
-- **Y2K chrome** for **Näsa** only: it intrudes like pop-up ads.
-- **Bioluminescence** (#00FF9F, #9B5DE5, amber #FFB347) for the compound and the Crack, taking over as you go deeper.
-- **Interface:** a drawn version of the real rover's control panel (diegetic UI).
-- **Fonts and colours** from the year-one identity, shifting toward year two.
+**As built in Prototype 4 (2026-11-15 to 11-17; mockups in [mockups/](mockups/index.html)).** The plan before it (comic ink, Y2K chrome for Näsa, bioluminescence, a drawn rover panel, the year-one identity) led here; Näsa's chrome and the rover's control panel survived as planned.
+- **Gunmetal:** neutral cold steel, one concrete surface (the hint bar), one glow colour for *act now* (bioluminescent blue #34e6ff), amber for warnings and for the guide, cool pastels for the secret menu (Candygirl pink, Doppio+ blue; Candygirl's rock in pink, mint, blue and lilac). The user likes cool tones.
+- **Type:** Chakra Petch for titles and numbers, Inter for text, IBM Plex Sans for small print. No text under 11 px; the itch.io frame is 1280 × 960.
+- **The world:** the user's tile-lab rock, one material per layer, every find on a plate in its role's colour, the prospector as a block with a headlamp in The Crack.
+- **The deck:** one polished gunmetal housing with screws and seams, wider than tall like the frame. The mining window has a column of its own for the full height and grows to fill it; the Milk+ menu and the instrument cluster in the middle; the rover panel, Field Guide and Belt Authority log on the right; the radio a long glass strip under both. Panels are bays with steel edges and engraved name plates with a lamp; panels still to come are faint ghost frames.
+- **Instruments:** the rover panel as counters behind glass, digging power as pips, the drill as a segmented bar, indicator lamps (Radio, Drill, Focus, Charge); the shake keys as cockpit push-buttons (SHAKE above DRINK); the dosage meter as a cluster: the word top-left, a dial with the five milestones, and one small gauge, Next drink, in the corner under the step. Less is more here: denser clusters read as crowded.
+- **The guide:** an amber pulse walks a new player's eye through the first steps, one at a time (hint bar, radio, the first Strength, the first dig); Begin shift glows amber.
+- **Näsa:** Y2K chrome, the one rounded thing, barging in at the top edge.
+- **Wordmark:** ASS2ROID with the 2 as ink on a concrete block, Ex Profundo underneath; logo files in .
 
 ## Ending
 **Two ways out.** Drift (Stillness overload) is itself an ending, and can end the game early; in the prototype it is a grey-box placeholder of the space sequence (see *Ideas for later*). Otherwise:
