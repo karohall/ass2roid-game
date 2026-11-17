@@ -38,6 +38,9 @@
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
   #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
   #gauge { display:block; }
+  #dosage .dzplate { position:absolute; left:10px; top:8px; z-index:1; display:flex; align-items:center; gap:8px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase;
+    color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
+  #dosage .dzplate::before { content:''; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
   #gauge .needle.hot { animation:throb .4s ease-in-out infinite alternate; }   /* reaches under the Milk+ column, which ends above it */
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font:700 20px/1 var(--f-title); letter-spacing:.04em; color:var(--hot); }
@@ -297,6 +300,7 @@
     background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
   #radioBox .ticker { text-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 18px rgba(var(--fluo-rgb),.45); }
   #radioFx { text-shadow:0 0 8px rgba(var(--fluo-rgb),.3); }
+  #radioBox { transition:filter 6s ease 2s; } body.drifting #radioBox { filter:hue-rotate(72deg) saturate(.5) brightness(.95); }   /* the Drift: greige-violet (2026-11-17) */
   /* Control panel (2026-11-16, round 5). One housing for the whole deck: brushed gunmetal with screws, the columns set in it with seams;
      the panels are bays cut into it. A pseudo-element, so the Drift can fade it and leave the sky. */
   #wrap::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; clip-path:polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);   /* screws set into the plate, clear of the cut corners and the bezels */
@@ -311,7 +315,7 @@
   #panel, #panel2 { position:relative; }
   #panel::before, #panel2::before { content:''; position:absolute; left:-9px; top:0; bottom:0; width:2px; background:linear-gradient(90deg, rgba(0,0,0,.75) 0 1px, rgba(255,255,255,.06) 1px); }   /* the seams between the columns */
   body.wide #panel2::before { opacity:0; }
-  #panel2 { transition:margin-bottom 2s ease 3s; } body.wide #panel2 { margin-bottom:46px; }   /* the Drift: the right column lifts before the radio slides under it */
+  #panel2 { transition:margin-bottom 2s ease 3s; } body.drifted #panel2 { margin-bottom:46px; }   /* the Drift: the right column lifts before the radio slides under it, and stays (until a new game) */
   .box { --bay:#121417; }
   .box > svg.outline path:first-of-type { fill:var(--bay); }
   canvas#c { box-shadow:0 0 0 3px #07080a, 0 0 0 4px rgba(255,255,255,.07); }   /* the mining window, set in a bezel */
@@ -435,6 +439,7 @@
   </div>
 
     <div id="dosage" class="later" data-reveal="drink">
+      <div class="dzplate">Dosage</div>                     <!-- its name plate, like every other panel's -->
       <svg id="gauge" width="480" height="230" viewBox="0 0 480 230" role="img" aria-label="Dosage scale and next drink"></svg>
     </div>
     <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
@@ -1707,7 +1712,7 @@ function startDrift() {
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
   radio.on = 'oddity'; radio.since = radio.clock;
-  document.body.classList.add('drifting', 'wide');
+  document.body.classList.add('drifting', 'wide', 'drifted');
   // The radio slides under the drift window as it grows, so the two line up as one square (2026-11-17).
   { const rb = $('baseRow'), st = $('stage'), cvb = st.offsetTop + cv.offsetTop + cv.offsetHeight, pn = $('panel');
     rb.style.width = rb.offsetWidth + 'px'; void rb.offsetWidth;
@@ -1923,7 +1928,7 @@ function resume() {
 }
 
 function newGame() {
-  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting', 'wide'); $('baseRow').style.cssText = ''; }   // back to what was playing before space
+  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting', 'wide', 'drifted'); $('baseRow').style.cssText = ''; }   // back to what was playing before space
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
@@ -2370,7 +2375,7 @@ function buildGauge() {
   ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 28); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
-  h += '<text class="gword" x="16" y="34" text-anchor="start" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-left corner, like a readout: the dial gets the room under it
+  h += '<text class="gword" x="16" y="60" text-anchor="start" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-left corner, like a readout: the dial gets the room under it
   // the two small gauges
   for (const [k, d, title] of [['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
@@ -2395,7 +2400,7 @@ function drawGaugeMeter(t) {
   // The word, in capitals; Stillness's long line on two.
   const word = (st === 'frenzy' ? 'Frenzy' : st === 'still' ? 'Get out into the vast|nothingness of space' : DOSAGE[lvl]).toUpperCase(), wEl = q('gword');
   if (wEl.dataset.w !== word) { wEl.dataset.w = word; const two = word.split('|');
-    wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="16" dy="${i ? 19 : -6}">${l}</tspan>`).join('') : word;
+    wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="16" dy="${i ? 18 : -7}">${l}</tspan>`).join('') : word;
     attr(wEl, 'font-size', two.length > 1 ? 15 : word.length > 12 ? 19 : 24); }
   attr(wEl, 'fill', st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#e1e4e6');
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
