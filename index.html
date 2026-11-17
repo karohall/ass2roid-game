@@ -1756,10 +1756,13 @@ const WC = {
     x.clip();
     const g = x.createRadialGradient(mx - r * .35, my - r * .4, r * .1, mx, my, r); g.addColorStop(0, light); g.addColorStop(1, base); x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
     x.translate(mx, my); x.rotate(tilt); x.translate(-mx, -my); x.filter = 'blur(1.6px)';
-    for (let i = 0; i < (o.craters ? 7 : 20); i++) { const y0 = my - r + R() * r * 2, th = r * (.04 + R() * .14), f = .02 + R() * .05, ph = R() * 6.3, amp = r * (.02 + R() * .06);
+    for (let i = 0; i < (o.craters ? 7 : o.nb || 20); i++) { const y0 = my - r + R() * r * 2, th = r * (.04 + R() * .14), f = (.02 + R() * .05) * (o.calm || 1), ph = R() * 6.3, amp = r * (.02 + R() * .06);
       x.beginPath(); for (let px = mx - r * 1.2; px <= mx + r * 1.2; px += 4) x.lineTo(px, y0 + Math.sin(px * f + ph) * amp);
       for (let px = mx + r * 1.2; px >= mx - r * 1.2; px -= 4) x.lineTo(px, y0 + th + Math.sin(px * f + ph + .8) * amp);
-      x.globalAlpha = (o.craters ? .1 : .26) + R() * .3; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
+      x.globalAlpha = (o.craters ? .1 : o.bandA || .26) + R() * .3; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
+    if (o.storm) { const sx = mx + r * .28, sy = my + r * .3; x.filter = 'blur(3px)';   // a great storm: an oval eddy in the bands
+      x.globalAlpha = .55; x.fillStyle = o.storm; x.beginPath(); x.ellipse(sx, sy, r * .17, r * .08, 0, 0, Math.PI * 2); x.fill();
+      x.globalAlpha = .35; x.strokeStyle = light; x.lineWidth = r * .02; x.beginPath(); x.ellipse(sx, sy, r * .2, r * .1, 0, 0, Math.PI * 2); x.stroke(); x.globalAlpha = 1; }
     x.filter = 'none';
     if (o.blooms) for (let i = 0; i < 12; i++) {             // wet-in-wet blooms: colour flooding into the wash, a dark fringe where it stopped
       const a = R() * 6.3, d = Math.sqrt(R()) * r * .8, bx = mx + Math.cos(a) * d, by = my + Math.sin(a) * d, br = r * (.12 + R() * .3), n = 22;
@@ -1931,6 +1934,8 @@ function startDrift() {
     d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];
     d.planets.push({ x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: P(26, '#5e1422', '#f0b8a8', ['#9a2a36', '#c8645a', '#3e0a16', '#e8a090'], { tilt: -.2 }), par: .1 },   // a dark red one
       { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one
+    d.planets.push({ x: W0 * 1.5 + 330, y: H0 + 100, at: SC.verse2 + 46, lead: 0, fixed: true, par: .3,   // round 11: a giant passing close, never seen whole
+      img: P(300, '#7a4c32', '#f2dcbc', ['#ecd0ac', '#6e3e28', '#c9966c', '#f8ead6', '#4e2e20', '#a8704e', '#e2bc94', '#8a5236'], { tilt: -.07, nb: 22, calm: .25, bandA: .45, storm: '#8e3424' }) });
     { const v = pl => 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 10: spread evenly
       const vis = x => x > -W0 * .6 - 60 && x < W0 * 1.5 + 60;
       const cost = (pl, y) => { let c = Math.abs(y - pl.y0) * .02;
@@ -1945,6 +1950,7 @@ function startDrift() {
             if (Math.abs(p[0] * q[1] - q[0] * p[1]) / L < 40) c += 4; } }
         return c; };
       for (const pl of [...d.planets].sort((a, b) => b.par - a.par)) {   // the near ones first; the rest find their places around them
+        if (pl.fixed) { placed.push(pl); continue; }
         pl.y0 = pl.y; const at0 = pl.at; let best = null;
         for (let w = 0; w < 6; w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 16) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }
         pl.at = best.at; pl.y = best.y; placed.push(pl); } }   // no veils: fewer layers
