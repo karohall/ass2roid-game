@@ -1698,6 +1698,74 @@ function finishGame(drifted = false) {
 // DRIFT: Stillness overload. Calm on top of Stillness, and the shaft lets go.
 // An ending of its own: no controls, nothing to do, just watch.
 // ─────────────────────────────────────────────────────────────────────────────
+// Watercolour, painted once when the Drift begins (the moodboard, 2026-11-17): sheer layers of pigment with soft edges, darker rims where
+// the wash dried, spatter; drawn on the night with "screen", so they glow. Pastels from the moodboard and the colour system.
+const WC = {
+  blob(r, cols, R) {                                         // a nebula: some thirty sheer, wobbling washes, layer on layer
+    const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.8); const x = c.getContext('2d'), m = c.width / 2;
+    for (let L = 0; L < 30; L++) {
+      const col = cols[L % cols.length], rr = r * (.3 + R() * .75), ox = (R() - .5) * r * .9, oy = (R() - .5) * r * .6, ph = R() * 6.3, n = 18;
+      const pts = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = 1 + .24 * Math.sin(a * 3 + ph) + .12 * Math.sin(a * 7 + ph * 2) + (R() - .5) * .06;
+        pts.push([m + ox + Math.cos(a) * rr * k, m + oy + Math.sin(a) * rr * k * .78]); }
+      x.beginPath(); const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; x.moveTo(...mid(pts[n - 1], pts[0]));   // a smooth wobbling outline: curves through the midpoints
+      for (let i = 0; i < n; i++) x.quadraticCurveTo(...pts[i], ...mid(pts[i], pts[(i + 1) % n]));
+      x.closePath(); x.filter = L < 8 ? 'blur(8px)' : 'blur(1.5px)'; x.globalAlpha = L < 8 ? .07 : .05 + R() * .07; x.fillStyle = col; x.fill();   // a wet underpainting, then sheer washes with soft but visible shapes
+      x.filter = 'blur(.8px)'; x.globalAlpha = L < 8 ? .03 : .07 + R() * .08; x.strokeStyle = col; x.lineWidth = 1 + R() * 1.4; x.stroke(); x.filter = 'none';   // the rim where the wash dried: darker, crisper
+    }
+    for (let i = 0; i < 26; i++) { const a = R() * 6.3, d = R() * r * .8, br = r * (.06 + R() * .12);   // blooms: small cauliflower edges where water ran back into the wash
+      x.beginPath(); for (let j = 0; j <= 14; j++) { const b = j / 14 * 6.3, k = 1 + (R() - .5) * .5; x.lineTo(m + Math.cos(a) * d + Math.cos(b) * br * k, m + Math.sin(a) * d * .8 + Math.sin(b) * br * k); }
+      x.globalAlpha = .05; x.fillStyle = cols[i % cols.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = cols[(i + 1) % cols.length]; x.lineWidth = .8; x.stroke(); }
+    x.globalCompositeOperation = 'destination-out';   // granulation: pigment settling in the paper's tooth
+    for (let i = 0; i < r * r * .5; i++) { x.globalAlpha = R() * .35; x.fillRect(R() * c.width, R() * c.height, 1, 1); }
+    x.globalCompositeOperation = 'source-over';
+    const g = x.createRadialGradient(m, m, 0, m, m, r * .55); g.addColorStop(0, 'rgba(255,255,255,.22)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    x.globalAlpha = 1; x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);   // a soft glow at its heart
+    for (let i = 0; i < 160; i++) { const a = R() * 6.3, d = Math.pow(R(), .55) * r * 1.25, sz = R() < .88 ? 1 : 2;   // spatter
+      x.globalAlpha = .2 + R() * .5; x.fillStyle = R() < .3 ? '#fff' : cols[i % cols.length]; x.fillRect(m + Math.cos(a) * d, m + Math.sin(a) * d * .8, sz, sz); }
+    return c;
+  },
+  burst(r, cols, R) {                                        // an exploding nebula: a bloom, and rays of pigment flung out of it
+    const c = WC.blob(r * .55, cols, R), x = c.getContext('2d'), m = c.width / 2, out = document.createElement('canvas');
+    out.width = out.height = Math.ceil(r * 2.4); const o = out.getContext('2d'), M = out.width / 2;
+    o.filter = 'blur(1.5px)';
+    for (let i = 0; i < 80; i++) { const a = R() * 6.3, len = r * (.35 + R() * .7), w = 1 + R() * 4, col = cols[i % cols.length];
+      const g = o.createLinearGradient(M, M, M + Math.cos(a) * len, M + Math.sin(a) * len); g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)');
+      o.globalAlpha = .18 + R() * .3; o.strokeStyle = g; o.lineWidth = w; o.lineCap = 'round'; o.beginPath(); o.moveTo(M, M);
+      o.quadraticCurveTo(M + Math.cos(a + .2) * len * .5, M + Math.sin(a + .2) * len * .5, M + Math.cos(a) * len, M + Math.sin(a) * len); o.stroke(); }
+    o.filter = 'none'; o.globalAlpha = 1; o.drawImage(c, M - m, M - m); return out;
+  },
+  planet(r, base, light, bands, R) {                         // a planet in watercolour: a wash, wavy bands, the night on one side, a rim of light
+    const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2 + 16); const x = c.getContext('2d'), m = c.width / 2;
+    x.save(); x.beginPath(); x.arc(m, m, r, 0, Math.PI * 2); x.clip();
+    const g = x.createRadialGradient(m - r * .35, m - r * .4, r * .1, m, m, r); g.addColorStop(0, light); g.addColorStop(1, base); x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
+    x.filter = 'blur(1.6px)';
+    for (let i = 0; i < 20; i++) { const y0 = m - r + R() * r * 2, th = r * (.04 + R() * .14), f = .02 + R() * .05, ph = R() * 6.3, amp = r * (.02 + R() * .06), tilt = -.18;
+      x.beginPath(); for (let px = m - r; px <= m + r; px += 4) x.lineTo(px, y0 + Math.sin(px * f + ph) * amp + (px - m) * tilt);
+      for (let px = m + r; px >= m - r; px -= 4) x.lineTo(px, y0 + th + Math.sin(px * f + ph + .8) * amp + (px - m) * tilt);
+      x.globalAlpha = .18 + R() * .3; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .25; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
+    x.filter = 'none'; x.globalAlpha = 1;
+    x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < r * r * .6; i++) { x.globalAlpha = R() * .25; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
+    const sh = x.createRadialGradient(m - r * .45, m - r * .5, r * .3, m, m, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.75, 'rgba(6,5,22,.35)'); sh.addColorStop(1, 'rgba(6,5,22,.8)');
+    x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height); x.restore();
+    x.filter = 'blur(3px)'; x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = 3; x.beginPath(); x.arc(m, m, r - 1, Math.PI * .95, Math.PI * 1.75); x.stroke(); x.filter = 'none';   // the lit rim
+    return c;
+  },
+  grain(R) {                                                 // paper grain, for touch
+    const c = document.createElement('canvas'); c.width = c.height = 220; const x = c.getContext('2d'), im = x.createImageData(220, 220);
+    for (let i = 0; i < im.data.length; i += 4) { const v = R() * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+    x.putImageData(im, 0, 0); return c;
+  },
+};
+function saucer(x, y, s, a, t) {                            // the little flying saucer: mint, a dome, soft lights, a faint beam
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'source-over';
+  const bm = ctx.createLinearGradient(0, 5, 0, 70); bm.addColorStop(0, 'rgba(150,225,255,.32)'); bm.addColorStop(1, 'rgba(150,225,255,0)');
+  ctx.fillStyle = bm; ctx.beginPath(); ctx.moveTo(-9, 5); ctx.lineTo(9, 5); ctx.lineTo(26, 70); ctx.lineTo(-26, 70); ctx.fill();
+  ctx.fillStyle = '#93cdbd'; ctx.beginPath(); ctx.ellipse(0, 0, 32, 7.5, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#cfeee5'; ctx.beginPath(); ctx.ellipse(0, -4, 13, 10, 0, Math.PI, 0); ctx.fill();
+  ctx.strokeStyle = 'rgba(40,90,100,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(0, 0, 32, 7.5, 0, 0, Math.PI * 2); ctx.stroke();
+  for (let i = -2; i <= 2; i++) { const glow = .55 + .45 * Math.sin(t * 1.2 + i); ctx.fillStyle = `rgba(190,245,255,${glow})`; ctx.beginPath(); ctx.arc(i * 11, 1.5, 1.8, 0, Math.PI * 2); ctx.fill(); }
+  ctx.restore();
+}
 function startDrift() {
   running = false; held = null; pendingTap = null;
   const R = Math.random, W0 = cv.width, H0 = cv.height;
@@ -1710,6 +1778,15 @@ function startDrift() {
       at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
+  { const d = s.drift, NEB = [['#c9a7ff', '#ff9fd6', '#8fd3ff'], ['#9fc5ff', '#c7a8ff', '#7fe0e6'], ['#ffb3d9', '#b9a2ff', '#ffe9b8'], ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
+    d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = WC.blob(n.r, NEB[i], R); });
+    d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#ff9fc8', '#ffc4de', '#c9a7ff', '#ffe2c4'], R) };
+    d.planets = [   // where and when (song seconds): pink in verse 1, watercolour blue in verse 2, teal in the chorus
+      { x: W0 * 1.12, y: 150, at: CONFIG.drift.sections.verse1 + 6, img: WC.planet(46, '#c4589a', '#ffd3ec', ['#ff9fd0', '#ffffff', '#b06ac9', '#ffc3e3'], R), par: .12 },
+      { x: -W0 * .22, y: H0 * .62, at: CONFIG.drift.sections.verse2 + 4, img: WC.planet(66, '#1f4f9c', '#bfe0ff', ['#ffffff', '#6fa5e8', '#0f3a86', '#d6ebff'], R), par: .2 },
+      { x: W0 * .88, y: H0 * .84, at: CONFIG.drift.sections.chorus + 14, img: WC.planet(38, '#2d7f86', '#c7f2ef', ['#ffffff', '#5fb7b4', '#1d5f69', '#e2fbf8'], R), par: .08 }];
+    d.falls = [45, 62, 88, 118, 146, 172, 206, 236].map(at => ({ at, x: -120 + R() * W0 * 1.6, y: -40 + R() * H0 * .35, len: 220 + R() * 160 }));   // falling stars
+    d.grain = ctx.createPattern(WC.grain(R), 'repeat'); }
   radio.on = 'oddity'; radio.since = radio.clock;
   document.body.classList.add('drifting', 'wide', 'drifted');
   // The radio slides under the drift window as it grows, so the two line up as one square (2026-11-17).
@@ -1748,7 +1825,8 @@ function drawDrift() {
   const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
   const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
   const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
-  ctx.fillStyle = '#000'; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0);
+  { const nt = ctx.createLinearGradient(0, -H0 * .5, 0, H0 * 1.5); nt.addColorStop(0, '#0e0b28'); nt.addColorStop(.55, '#08071b'); nt.addColorStop(1, '#130a22');
+    ctx.fillStyle = nt; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); }   // the night: deep indigo, a violet warmth at the bottom
   const fade = Math.min(1, e / 4000);
   if (fade < 1) {                                            // the shaft falls away beneath you
     ctx.save(); ctx.globalAlpha = 1 - fade; ctx.translate(0, fade * fade * H0); draw(); ctx.restore();
@@ -1774,13 +1852,16 @@ function drawDrift() {
 
   // Nebulae and galaxies: more of them as the song goes on, all still and vast.
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  ctx.globalCompositeOperation = 'screen';                  // watercolour glowing on the night
   for (const n of d.nebulae) {
-    const a = space * smooth(ramp(n.at, n.at + 12, t)) * (.32 + sun * .12);
+    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.85 + sun * .15);
     if (a <= 0) continue;
-    const gr = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
-    gr.addColorStop(0, `hsla(${n.hue + sun * 40}, 80%, 60%, ${a})`); gr.addColorStop(1, 'hsla(0,0%,0%,0)');
-    ctx.fillStyle = gr; ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+    const sz = n.img.width * (1 + Math.sin(t * .03 + n.r) * .02);   // breathing, barely
+    ctx.globalAlpha = a; ctx.drawImage(n.img, n.x - sz / 2 - d.ox * .06, n.y - sz / 2 - d.oy * .06, sz, sz);
   }
+  { const B = CONFIG.drift.sections.bridge, k = smooth(ramp(B - 2, B + 22, t));   // the bridge: a nebula explodes, slowly
+    if (k > 0) { const sz = d.burst.img.width * (.35 + .65 * k); ctx.globalAlpha = k * (1 - sun * .4); ctx.drawImage(d.burst.img, d.burst.x - sz / 2, d.burst.y - sz / 2, sz, sz); } }
+  ctx.globalCompositeOperation = 'lighter';
   for (const gx of d.galaxies) {
     const a = space * smooth(ramp(gx.at, gx.at + 10, t));
     if (a <= 0) continue;
@@ -1792,15 +1873,23 @@ function drawDrift() {
     ctx.globalAlpha = a * .6; const core = ctx.createRadialGradient(gx.x, gx.y, 0, gx.x, gx.y, gx.r * .3);
     core.addColorStop(0, '#fff'); core.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = core; ctx.fillRect(gx.x - gx.r, gx.y - gx.r, gx.r * 2, gx.r * 2);
   }
-  // Verse 1: a comet crosses, slowly.
-  const cm = ramp(S.verse1 + 8, S.verse1 + 34, t);
-  if (cm > 0 && cm < 1) {
-    const x = -40 + cm * (W0 + 80), y = 60 + cm * 70;
-    const tail = ctx.createLinearGradient(x, y, x - 70, y - 18); tail.addColorStop(0, 'rgba(220,240,255,.8)'); tail.addColorStop(1, 'rgba(220,240,255,0)');
-    ctx.globalAlpha = Math.sin(cm * Math.PI); ctx.strokeStyle = tail; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 70, y - 18); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.fillRect(x - 1, y - 1, 3, 3);
+  // Falling stars, now and then: a soft streak, gone in a few seconds (slow enough to be no flash).
+  for (const fs_ of d.falls) {
+    const k = ramp(fs_.at, fs_.at + 2.6, t); if (k <= 0 || k >= 1) continue;
+    const hx = fs_.x + k * fs_.len, hy = fs_.y + k * fs_.len * .55, a = Math.sin(k * Math.PI) * space;
+    const tail = ctx.createLinearGradient(hx, hy, hx - 90, hy - 50); tail.addColorStop(0, 'rgba(255,255,255,.85)'); tail.addColorStop(.4, 'rgba(210,190,255,.35)'); tail.addColorStop(1, 'rgba(180,220,255,0)');
+    ctx.globalAlpha = a; ctx.strokeStyle = tail; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx - 90, hy - 50); ctx.stroke();
+    const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 6); hg.addColorStop(0, 'rgba(255,255,255,.95)'); hg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = hg; ctx.fillRect(hx - 6, hy - 6, 12, 12);
   }
   ctx.restore();
+  // Planets in watercolour, arriving with the song; they sit far off, so they move only a little when you steer.
+  for (const pl of d.planets) {
+    const a = space * smooth(ramp(pl.at, pl.at + 10, t)); if (a <= 0) continue;
+    ctx.globalAlpha = a * (1 - sun * .3); ctx.drawImage(pl.img, pl.x - pl.img.width / 2 - d.ox * pl.par, pl.y - pl.img.height / 2 - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4);
+  }
+  ctx.globalAlpha = 1;
+  // The pre-chorus: a little flying saucer crosses, in no hurry.
+  { const k = ramp(S.pre + 2, S.pre + 44, t); if (k > 0 && k < 1) saucer(-W0 * .55 + k * W0 * 2.1, 110 + k * 60 + Math.sin(t * .9) * 6, .8, Math.min(1, Math.sin(k * Math.PI) * 3) * space, t); }
 
   // The intro: an actual wormhole opens, the prospector goes through, and it closes behind them.
   const open = smooth(ramp(2, 9, t)), shut = smooth(ramp(15, 21, t)), WR = 150 * open * (1 - shut);
@@ -1872,6 +1961,7 @@ function drawDrift() {
     ctx.fillStyle = core; ctx.fillRect(-60, -60, 120, 120);
   }
   ctx.restore(); ctx.globalAlpha = 1;
+  if (d.grain) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .07 * fade; ctx.fillStyle = d.grain; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.restore(); }   // grain: tactile
   // A quiet way out, once the hint bar has gone: always clear what to do to go where.
   const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
   if (q > 0) {
