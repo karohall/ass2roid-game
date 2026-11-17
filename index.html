@@ -1703,18 +1703,18 @@ function finishGame(drifted = false) {
 const WC = {
   blob(r, cols, R) {                                         // a nebula: some thirty sheer, wobbling washes, layer on layer
     const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.8); const x = c.getContext('2d'), m = c.width / 2;
-    for (let L = 0; L < 30; L++) {
+    for (let L = 0; L < 18; L++) {   // fewer, wetter layers (round 6b): texture, not blotches
       const col = cols[L % cols.length], rr = r * (.3 + R() * .75), ox = (R() - .5) * r * .9, oy = (R() - .5) * r * .6, ph = R() * 6.3, n = 18;
       const pts = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = 1 + .24 * Math.sin(a * 3 + ph) + .12 * Math.sin(a * 7 + ph * 2) + (R() - .5) * .06;
         pts.push([m + ox + Math.cos(a) * rr * k, m + oy + Math.sin(a) * rr * k * .78]); }
       x.beginPath(); const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; x.moveTo(...mid(pts[n - 1], pts[0]));   // a smooth wobbling outline: curves through the midpoints
       for (let i = 0; i < n; i++) x.quadraticCurveTo(...pts[i], ...mid(pts[i], pts[(i + 1) % n]));
-      x.closePath(); x.filter = L < 8 ? 'blur(8px)' : 'blur(1.5px)'; x.globalAlpha = L < 8 ? .07 : .05 + R() * .07; x.fillStyle = col; x.fill();   // a wet underpainting, then sheer washes with soft but visible shapes
-      x.filter = 'blur(.8px)'; x.globalAlpha = L < 8 ? .03 : .07 + R() * .08; x.strokeStyle = col; x.lineWidth = 1 + R() * 1.4; x.stroke(); x.filter = 'none';   // the rim where the wash dried: darker, crisper
+      x.closePath(); x.filter = L < 8 ? 'blur(10px)' : 'blur(4px)'; x.globalAlpha = L < 8 ? .08 : .06 + R() * .07; x.fillStyle = col; x.fill();   // a wet underpainting, then sheer washes with soft but visible shapes
+      x.filter = 'blur(2.5px)'; x.globalAlpha = L < 8 ? .015 : .03 + R() * .03; x.strokeStyle = col; x.lineWidth = 1 + R() * 1.4; x.stroke(); x.filter = 'none';   // the rim where the wash dried: darker, crisper
     }
     for (let i = 0; i < 26; i++) { const a = R() * 6.3, d = R() * r * .8, br = r * (.06 + R() * .12);   // blooms: small cauliflower edges where water ran back into the wash
       x.beginPath(); for (let j = 0; j <= 14; j++) { const b = j / 14 * 6.3, k = 1 + (R() - .5) * .5; x.lineTo(m + Math.cos(a) * d + Math.cos(b) * br * k, m + Math.sin(a) * d * .8 + Math.sin(b) * br * k); }
-      x.globalAlpha = .05; x.fillStyle = cols[i % cols.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = cols[(i + 1) % cols.length]; x.lineWidth = .8; x.stroke(); }
+      x.globalAlpha = .05; x.fillStyle = cols[i % cols.length]; x.fill(); x.globalAlpha = .07; x.strokeStyle = cols[(i + 1) % cols.length]; x.lineWidth = .8; x.stroke(); }
     x.globalCompositeOperation = 'destination-out';   // granulation: pigment settling in the paper's tooth
     for (let i = 0; i < r * r * .5; i++) { x.globalAlpha = R() * .35; x.fillRect(R() * c.width, R() * c.height, 1, 1); }
     x.globalCompositeOperation = 'source-over';
@@ -1722,6 +1722,9 @@ const WC = {
     x.globalAlpha = 1; x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);   // a soft glow at its heart
     for (let i = 0; i < 160; i++) { const a = R() * 6.3, d = Math.pow(R(), .55) * r * 1.25, sz = R() < .88 ? 1 : 2;   // spatter
       x.globalAlpha = .2 + R() * .5; x.fillStyle = R() < .3 ? '#fff' : cols[i % cols.length]; x.fillRect(m + Math.cos(a) * d, m + Math.sin(a) * d * .8, sz, sz); }
+    x.globalAlpha = 1; x.globalCompositeOperation = 'destination-in';   // a round falloff: the wash never meets the canvas's square edge
+    { const fm = x.createRadialGradient(m, m, r * .55, m, m, m * .98); fm.addColorStop(0, 'rgba(0,0,0,1)'); fm.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = fm; x.fillRect(0, 0, c.width, c.height); }
+    x.globalCompositeOperation = 'source-over';
     return c;
   },
   burst(r, cols, R) {                                        // an exploding nebula: a bloom, and rays of pigment flung out of it
@@ -1743,7 +1746,7 @@ const WC = {
         x.beginPath(); x.ellipse(0, 0, rr, rr * .28, 0, half ? 0 : Math.PI, half ? Math.PI : Math.PI * 2); x.stroke(); }
       x.restore(); };
     if (o.rings) ring(false);
-    { const hg = x.createRadialGradient(mx, my, r * .9, mx, my, r * 1.35); hg.addColorStop(0, light); hg.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = .18; x.fillStyle = hg; x.fillRect(0, 0, c.width, c.height); x.globalAlpha = 1; }   // a soft halo: no hard edge against the night
+    { const hg = x.createRadialGradient(mx, my, r * .9, mx, my, r * 1.35); hg.addColorStop(0, light); hg.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = .08; x.fillStyle = hg; x.fillRect(0, 0, c.width, c.height); x.globalAlpha = 1; }   // a soft halo: no hard edge against the night
     const main = x, body = document.createElement('canvas'); body.width = c.width; body.height = c.height;   // the body painted apart, then feathered at its edge
     { const x = body.getContext('2d');
     x.save(); x.beginPath();
@@ -1756,7 +1759,7 @@ const WC = {
     for (let i = 0; i < (o.craters ? 7 : 20); i++) { const y0 = my - r + R() * r * 2, th = r * (.04 + R() * .14), f = .02 + R() * .05, ph = R() * 6.3, amp = r * (.02 + R() * .06);
       x.beginPath(); for (let px = mx - r * 1.2; px <= mx + r * 1.2; px += 4) x.lineTo(px, y0 + Math.sin(px * f + ph) * amp);
       for (let px = mx + r * 1.2; px >= mx - r * 1.2; px -= 4) x.lineTo(px, y0 + th + Math.sin(px * f + ph + .8) * amp);
-      x.globalAlpha = (o.craters ? .08 : .18) + R() * .25; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
+      x.globalAlpha = (o.craters ? .1 : .26) + R() * .3; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
     x.filter = 'none';
     if (o.blooms) for (let i = 0; i < 12; i++) {             // wet-in-wet blooms: colour flooding into the wash, a dark fringe where it stopped
       const a = R() * 6.3, d = Math.sqrt(R()) * r * .8, bx = mx + Math.cos(a) * d, by = my + Math.sin(a) * d, br = r * (.12 + R() * .3), n = 22;
@@ -1766,16 +1769,16 @@ const WC = {
     if (o.craters) for (let i = 0; i < o.craters; i++) {     // craters: deep bowls, foreshortened toward the edge, lit on one rim     // craters: deep bowls, foreshortened toward the edge, lit on one rim
       const a = R() * 6.3, d = Math.sqrt(R()) * r * .85, cxp = mx + Math.cos(a) * d, cyp = my + Math.sin(a) * d, cr = r * (.05 + R() * R() * .22), sq = Math.sqrt(1 - Math.min(.9, (d / r) ** 2)), rot = a;
       x.save(); x.translate(cxp, cyp); x.rotate(rot); x.scale(sq, 1);
-      x.globalAlpha = .55; x.fillStyle = 'rgba(28,24,52,.7)'; x.beginPath(); x.arc(0, 0, cr, 0, Math.PI * 2); x.fill();
+      x.globalAlpha = .6; x.fillStyle = 'rgba(24,22,40,.75)'; x.beginPath(); for (let j = 0; j < 14; j++) { const b = j / 14 * Math.PI * 2, k = 1 + (R() - .5) * .28; x.lineTo(Math.cos(b) * cr * k, Math.sin(b) * cr * k); } x.closePath(); x.fill();   // a jagged rim
       x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = Math.max(1, cr * .18); x.beginPath(); x.arc(0, 0, cr, Math.PI * .9, Math.PI * 1.7); x.stroke();
       x.globalAlpha = .25; x.fillStyle = 'rgba(10,8,30,.8)'; x.beginPath(); x.arc(cr * .25, cr * .1, cr * .7, 0, Math.PI * 2); x.fill(); x.restore(); }
     x.globalAlpha = 1; x.setTransform(1, 0, 0, 1, 0, 0);
     x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < r * r * .4; i++) { x.globalAlpha = R() * .1; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
-    x.globalAlpha = 1; const sh = x.createRadialGradient(mx - r * .45, my - r * .5, r * .3, mx, my, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.75, 'rgba(6,5,22,.35)'); sh.addColorStop(1, 'rgba(6,5,22,.82)');
+    x.globalAlpha = 1; const sh = x.createRadialGradient(mx - r * .45, my - r * .5, r * .3, mx, my, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.7, 'rgba(4,6,16,.45)'); sh.addColorStop(1, 'rgba(4,6,16,.92)');
     x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height); x.restore();
     x.filter = 'blur(3px)'; x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = 3; x.beginPath(); x.arc(mx, my, r - 1, Math.PI * .95, Math.PI * 1.75); x.stroke(); x.filter = 'none'; x.globalAlpha = 1;   // the lit rim
-    x.globalCompositeOperation = 'destination-in';           // a feathered edge: the paint thins out at the rim
-    const fe = x.createRadialGradient(mx, my, r * .9, mx, my, r * 1.04); fe.addColorStop(0, 'rgba(0,0,0,1)'); fe.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = fe; x.fillRect(0, 0, c.width, c.height); }
+    x.globalCompositeOperation = 'destination-in';           // a firm edge, just softened: the paint thins out at the rim
+    const fe = x.createRadialGradient(mx, my, r * .97, mx, my, r * 1.01); fe.addColorStop(0, 'rgba(0,0,0,1)'); fe.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = fe; x.fillRect(0, 0, c.width, c.height); }
     main.drawImage(body, 0, 0); const x2 = main;
     if (o.rings) ring(true);
     return c;
@@ -1783,29 +1786,35 @@ const WC = {
   ribbon(w, h, R) {                                         // an aurora: a sheer curtain, streaked, mint below and lilac above
     const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.filter = 'blur(2.5px)';
     for (let i = 0; i < w; i += 3) { const base = h * .62 + Math.sin(i * .011) * h * .16 + Math.sin(i * .031) * h * .05, top = base - h * (.25 + R() * .3);
-      const g = x.createLinearGradient(0, base, 0, top); g.addColorStop(0, 'rgba(127,224,200,.55)'); g.addColorStop(.5, 'rgba(160,190,255,.25)'); g.addColorStop(1, 'rgba(200,160,255,0)');
+      const g = x.createLinearGradient(0, base, 0, top); g.addColorStop(0, 'rgba(127,224,200,.55)'); g.addColorStop(.5, 'rgba(110,170,220,.22)'); g.addColorStop(1, 'rgba(80,130,210,0)');
       x.globalAlpha = .25 + R() * .35; x.fillStyle = g; x.fillRect(i, top, 2 + R() * 2, base - top); }
     return c;
   },
   sky(w, h, R) {                                            // the night as one painted wash: navy and teal, mottled wet-in-wet, granulating, salted, spattered with stars
     const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
-    x.fillStyle = '#071423'; x.fillRect(0, 0, w, h);   // darker, muted (round 4): vastness, and the avatar easy to follow
+    x.fillStyle = '#040b16'; x.fillRect(0, 0, w, h);   // darker still (round 6)   // darker, muted (round 4): vastness, and the avatar easy to follow
     x.filter = 'blur(34px)';
     for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#040d1b', '#071628', '#0f2a40', '#15354b', '#0a1d33', '#081a2e'][Math.floor(R() * 6)];
       x.beginPath(); x.ellipse(R() * w, R() * h, 60 + R() * 220, 40 + R() * 160, R() * 3, 0, Math.PI * 2); x.fill(); }
     x.filter = 'blur(48px)';
-    for (let i = 0; i < 8; i++) { x.globalAlpha = .035 + R() * .04; x.fillStyle = ['#8a6fc4', '#c56f9e', '#3f8f94', '#c9a35b'][i % 4];   // faint colour bleeding in, wet-in-wet
+    for (let i = 0; i < 8; i++) { x.globalAlpha = .035 + R() * .04; x.fillStyle = ['#1f4f86', '#1b6e68', '#2a6f8a', '#b9845c'][i % 4];   // dark blue, ocean green, a breath of peach   // faint colour bleeding in, wet-in-wet
       x.beginPath(); x.ellipse(R() * w, R() * h, 80 + R() * 200, 60 + R() * 140, R() * 3, 0, Math.PI * 2); x.fill(); }
     x.filter = 'blur(5px)';
     for (let i = 0; i < 14; i++) { x.globalAlpha = .12 + R() * .12; x.strokeStyle = '#050f20'; x.lineWidth = 3 + R() * 6;   // backruns: darker fringes where the wash dried
       x.beginPath(); x.ellipse(R() * w, R() * h, 50 + R() * 160, 30 + R() * 110, R() * 3, R() * 3, R() * 3 + 2 + R() * 3); x.stroke(); }
     x.filter = 'none';
+    { const n = document.createElement('canvas'); n.width = Math.ceil(w / 6); n.height = Math.ceil(h / 6); const nx = n.getContext('2d'), id = nx.createImageData(n.width, n.height);   // texture: a mottled wash, soft at large scale
+      for (let i = 0; i < id.data.length; i += 4) { const v = 128 + (R() - .5) * 120; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; } nx.putImageData(id, 0, 0);
+      x.save(); x.globalCompositeOperation = 'overlay'; x.globalAlpha = .55; x.filter = 'blur(3px)'; x.imageSmoothingEnabled = true; x.drawImage(n, 0, 0, w, h); x.restore();
+      const p = document.createElement('canvas'); p.width = p.height = 160; const px = p.getContext('2d'), pd = px.createImageData(160, 160);   // and the paper's tooth, fine
+      for (let i = 0; i < pd.data.length; i += 4) { const v = 128 + (R() - .5) * 90; pd.data[i] = pd.data[i + 1] = pd.data[i + 2] = v; pd.data[i + 3] = 255; } px.putImageData(pd, 0, 0);
+      x.save(); x.globalCompositeOperation = 'overlay'; x.globalAlpha = .35; x.fillStyle = x.createPattern(p, 'repeat'); x.fillRect(0, 0, w, h); x.restore(); }
     x.filter = 'blur(.7px)';
     for (let i = 0; i < 22; i++) { const cx = R() * w, cy = R() * h, n = 5 + Math.floor(R() * 7), rr = 2 + R() * 6;   // salt blooms: little crystals of light
       x.globalAlpha = .1 + R() * .15; x.strokeStyle = '#cfe2ee'; x.lineWidth = .8;
       for (let j = 0; j < n; j++) { const a = R() * 6.3, l = rr * (.4 + R() * .6); x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * l, cy + Math.sin(a) * l); x.stroke(); } }
     x.filter = 'none';
-    for (let i = 0; i < 1500; i++) { const r = Math.pow(R(), 5) * 1.8 + .2, a = .12 + R() * .55;   // spatter: stars of every size, soft
+    for (let i = 0; i < 550; i++) { const r = Math.pow(R(), 5) * 1.8 + .25, a = .15 + R() * .55;   // far fewer stars (round 6)   // spatter: stars of every size, soft
       x.globalAlpha = a; x.fillStyle = R() < .85 ? '#eef4fa' : R() < .5 ? '#d7e6ff' : '#fff2dc'; x.beginPath(); x.arc(R() * w, R() * h, r, 0, Math.PI * 2); x.fill();
       if (r > 1.4) { x.globalAlpha = a * .25; x.beginPath(); x.arc(R() * w, R() * h, r * 2.6, 0, Math.PI * 2); x.fill(); } }
     return c;
@@ -1829,7 +1838,7 @@ const WC = {
   },
   dawn(w, h, R) {                                           // the dawn: long soft strata of peach, rose, lilac and blue, blending, no edges
     const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
-    const rows = [['#ffe6b0', .95], ['#ffc39f', .9], ['#ff9fb6', .78], ['#e9a0c9', .62], ['#b9a2e6', .48], ['#8fb0ea', .32], ['#6f9fe0', .18]];
+    const rows = [['#ffe2b8', .95], ['#ffc49c', .88], ['#f0a982', .76], ['#8fc3c0', .6], ['#5f9fc0', .44], ['#3f72b0', .28], ['#2a4f8e', .14]];   // peach and amber low, into ocean green and dark blue
     x.filter = 'blur(22px)';
     rows.forEach(([col, y], i) => { for (let k = 0; k < 9; k++) { x.globalAlpha = .18 + R() * .22; x.fillStyle = col;
       x.beginPath(); x.ellipse(R() * w, h * y + (R() - .5) * h * .08, 120 + R() * 320, 14 + R() * 30, (R() - .5) * .08, 0, Math.PI * 2); x.fill(); } });
@@ -1864,16 +1873,16 @@ function startDrift() {
       at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
-  { const d = s.drift, NEB = [['#6b55c9', '#b04a88', '#3593b4'], ['#3c6fc4', '#7356c4', '#2a9fa0'], ['#b25588', '#5560c8', '#c8955a'], ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
+  { const d = s.drift, NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#1c6f7d', '#2f55a0', '#d09a72'], ['#2a649e', '#1a8476', '#b98763'], ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
     d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = WC.blob(n.r, NEB[i], R); });
-    d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#ff9fc8', '#ffc4de', '#c9a7ff', '#ffe2c4'], R) };
+    d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#f0b48c', '#ffd8b8', '#5fb3ad', '#8fb3e8'], R) };
     const SC = CONFIG.drift.sections, P = (r, base, light, bands, o) => WC.planet(r, base, light, bands, R, o);
     // Bodies at every depth (2026-11-17): far ones small, hazy and nearly still; near ones big, clear, moving more as you steer. par: parallax; far: haze.
     d.planets = [
       { x: W0 * .45, y: 70, at: 30, img: P(6, '#7d8fd6', '#e6ecff', ['#ffffff']), par: .01, far: .5 },
       { x: W0 * 1.05, y: 300, at: 34, img: P(5, '#b07ac9', '#f3dcff', ['#ffffff']), par: .01, far: .5 },
       { x: -W0 * .15, y: 210, at: 52, img: P(9, '#5aa7a8', '#d8fffb', ['#ffffff']), par: .015, far: .6 },
-      { x: W0 * 1.12, y: 150, at: SC.verse1 + 6, img: P(46, '#c4589a', '#ffd3ec', ['#ff9fd0', '#ffffff', '#b06ac9', '#ffc3e3'], { tilt: -.35 }), par: .12 },
+      { x: W0 * 1.12, y: 150, at: SC.verse1 + 6, img: P(46, '#a8633d', '#ffd9bc', ['#f2b58a', '#fff0e2', '#7a3f22', '#e09a6c'], { tilt: -.35 }), par: .12 },
       { x: W0 * 1.45, y: H0 * .55, at: SC.verse1 + 22, img: P(22, '#8b86a6', '#e9e4f7', ['#c8c2dc', '#a7a1c0'], { craters: 14 }), par: .06 },
       { x: W0 * .27, y: 120, at: SC.pre + 18, img: P(30, '#c98c78', '#ffe4d2', ['#ffd0bd', '#e6a9c4', '#ffffff'], { tilt: .25, rings: ['#ffe2c4', '#d9b3ff', '#ffffff', '#ffc2e0'], ringTilt: -.42 }), par: .07 },
       { x: -W0 * .25, y: H0 * .6, at: SC.verse2 + 4, img: P(78, '#1f4f9c', '#bfe0ff', ['#ffffff', '#6fa5e8', '#0f3a86', '#d6ebff'], { tilt: .12 }), par: .22 },
@@ -1885,17 +1894,16 @@ function startDrift() {
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
     setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
-    d.flares = Array.from({ length: 7 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
-    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#cfe0ff', '#e6d4ff', '#ffffff', '#bfe9f0'], R); });
+    d.flares = Array.from({ length: 5 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
+    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#7fcfc2', '#ffffff', '#f2c4a0'], R); });
     d.veils = [[W0 * .1, H0 * .25, 260], [W0 * .95, H0 * .7, 300], [-W0 * .3, H0 * .95, 240]].map(([x, y, r]) => ({ x, y, img: WC.blob(r, ['#1d4a6a', '#2b5f80', '#3a4f86'], R) }));
     d.dawn = WC.dawn(1000, 520, R);
-    d.planets.push({ x: W0 * .55, y: H0 * .48, at: SC.verse2 + 30, img: P(16, '#5d5a66', '#d8d3c8', ['#8b8579', '#a99c86'], { craters: 9, lumpy: true }), par: .1, spin: .05 });   // an asteroid, tumbling slowly
-    d.planets[6].img = P(78, '#2a3f9c', '#cfe6ff', ['#ffffff', '#6fa5e8', '#0f3a86'], { tilt: .12, blooms: ['#b39ce0', '#7fd0c4', '#c8e7ff', '#9be0b0', '#e8b9e0'], fringe: '#141c5a' });   // the big near one wet-in-wet, as in the reference
+    d.planets[6].img = P(78, '#1f3f8c', '#cfe6ff', ['#ffffff', '#5f95d8', '#0f3478'], { tilt: .12, blooms: ['#3f8f86', '#5fb3a8', '#a8d4ea', '#2f7a72', '#d9a985'], fringe: '#0c1a4a' });   // the big near one wet-in-wet, as in the reference
     d.drop = [2, 4, 7];   // fewer bodies (round 4): two far dots, the pink giant, a ringed planet, the big blue one, the great moon, an asteroid
     d.planets[4].img = P(22, '#8b8a96', '#eceaf3', ['#c8c6d0'], { craters: 10, blooms: ['#c9d1cf', '#9fb2ad'], fringe: '#2e3a40' });
     d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];   // no veils: fewer layers
-    d.worm = WC.blob(130, ['#c9a7ff', '#ff9fd6', '#8fd3ff', '#ffe2b8'], R);
-    d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#c9a7ff', '#ff9fd6', '#8fd3ff', '#7fe0e6', '#ffe2b8', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
+    d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
+    d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = [45, 62, 88, 118, 133, 134.4, 135.9, 137.5, 139.2, 146, 172, 206, 236].map(at => ({ at, x: -120 + R() * W0 * 1.6, y: -40 + R() * H0 * .35, len: 220 + R() * 160 }));   // falling stars
     d.grain = ctx.createPattern(WC.grain(R), 'repeat'); }
   radio.on = 'oddity'; radio.since = radio.clock;
@@ -2039,7 +2047,7 @@ function drawDrift() {
       const lx = (Math.random() - .5) * 24 * scale, ly = (Math.random() - .5) * 30 * scale;
       d.dust.push({ x: px + lx * Math.cos(ang) - ly * Math.sin(ang), y: py + lx * Math.sin(ang) + ly * Math.cos(ang),
         vx: -6 - Math.random() * 14, vy: 3 + (Math.random() - .3) * 10, age: 0, life: 7 + Math.random() * 9,
-        c: ['#fff', '#e8dcff', '#bfe8ff', '#ffd6f0'][Math.floor(Math.random() * 4)] });
+        c: ['#fff', '#d6e8ff', '#bfe8e0', '#ffd9bf'][Math.floor(Math.random() * 4)] });
     }
   }
   if (gone < 1) {
@@ -2560,7 +2568,7 @@ function setHTML(id, v) { if (lastHTML[id] !== v) { $(id).innerHTML = v; lastHTM
 // redlines past the tips (they differ per layer), a blue sweep from the centre to the needle, the word under it. While a dose window
 // is open, dashed ticks show where your next Strength (and Calm, once known) would take the needle. Beside it, two small gauges:
 // Next drink, the dose window (×1.5, ×2, ×3 and its seconds), small in the corner under the step. The shake is shown on its key, where you press (mockups/cluster2.html, 2).
-const GZ = { w: 480, h: 230, main: { half: 48 }, win: { half: 125, R: 30, cx: 62, cy: 160, in: true } };   // composition A (mockups/cluster3.html, 2026-11-17): Next drink in the lower-left corner, the dial larger on the right
+const GZ = { w: 480, h: 230, main: { half: 50 }, win: { half: 125, R: 24, cy: 52, in: true, side: true } };   // the dial as big as the panel allows; Next drink small in the top-right corner, its words beside it (2026-11-17)   // composition A (mockups/cluster3.html, 2026-11-17): Next drink in the lower-left corner, the dial larger on the right
 const gPt = (d, u, r) => { const a = (-90 + u * d.half) * Math.PI / 180; return [d.cx + r * Math.cos(a), d.cy + r * Math.sin(a)]; };
 const gArc = (d, u0, u1, r) => { if (u1 < u0) [u0, u1] = [u1, u0]; const [x0, y0] = gPt(d, u0, r), [x1, y1] = gPt(d, u1, r);
   return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${(u1 - u0) * d.half > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
@@ -2568,7 +2576,7 @@ const gSeg = (el, d, u, r0, r1) => { const [x0, y0] = gPt(d, u, r0), [x1, y1] = 
 const gU = m => (m - CONFIG.balance.min) / (CONFIG.balance.max - CONFIG.balance.min) * 2 - 1;   // the meter, as -1 (Stillness) … 1 (Frenzy)
 let gaugeFor = null;
 function buildGauge() {
-  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w * .617), cy: 276, R: 172 });   // the dial right of centre, Next drink under the word
+  const w = Math.round($('dosage').clientWidth) || GZ.w; GZ.w = w; Object.assign(GZ.main, { cx: Math.round(w / 2), cy: 300, R: 190 }); GZ.win.cx = w - 42;   // the dial right of centre, Next drink under the word
   $('gauge').setAttribute('width', w); $('gauge').setAttribute('viewBox', `0 0 ${w} ${GZ.h}`);
   const M = GZ.main, tu = gU(tipAt()), bw = 16, rb = M.R - bw / 2 - 2;
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
@@ -2583,7 +2591,9 @@ function buildGauge() {
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
   h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 10, 5, 16);   // few ticks: calm
   // the milestones, above the arc: every state named, the one you are in lit
-  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="14" letter-spacing=".5">${w}</text>`; });   // the scale's words, clear: the one under the needle lights up (2026-11-17: they replace the big readout)
+  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="15" letter-spacing=".5">${w}</text>`; });
+  // Stillness: Get out grows into the whole line, written along the arc (the other words fade back)
+  h += `<path id="gline" d="${gArc(M, -1, 1, M.R + 30)}" fill="none"/><text class="gstill" font-family="Chakra Petch" font-weight="600" font-size="15" letter-spacing=".5" fill="#a9c0dc" opacity="0" style="filter:drop-shadow(0 0 5px rgba(169,192,220,.9))"><textPath href="#gline" startOffset="3%"></textPath></text>`;   // the scale's words, clear: the one under the needle lights up (2026-11-17: they replace the big readout)
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
   // (the big word readout is gone, 2026-11-17: the scale's own words light up instead)
@@ -2594,7 +2604,8 @@ function buildGauge() {
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
     const lab = t => `<text x="${d.cx}" y="${t}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>`;
-    if (d.in) h += txt(k + 'read', d.cx, d.cy + 5, 15, '#5f656b', 700, 'Chakra Petch') + txt(k + 'sub', d.cx, d.cy + 19, 11, '#34e6ff', 600, 'IBM Plex Sans') + lab(d.cy + d.R + 18);
+    if (d.side) h += txt(k + 'read', d.cx, d.cy + 5, 14, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx - d.R - 14}" y="${d.cy - 2}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + `<text class="${k}sub" x="${d.cx - d.R - 14}" y="${d.cy + 14}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#34e6ff"></text>`;   // its name and seconds to its left
+    else if (d.in) h += txt(k + 'read', d.cx, d.cy + 5, 15, '#5f656b', 700, 'Chakra Petch') + txt(k + 'sub', d.cx, d.cy + 19, 11, '#34e6ff', 600, 'IBM Plex Sans') + lab(d.cy + d.R + 18);
     else h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>` + txt(k + 'read', d.cx, ry, d.R > 36 ? 16 : 14, '#5f656b', 700, 'Chakra Petch') + lab(ry + 20) + txt(k + 'sub', d.cx, ry + 37, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
@@ -2608,8 +2619,12 @@ function drawGaugeMeter(t) {
   q('needle').classList.toggle('hot', !!st);
   attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
   // The word under the needle lights up; past a tip, the end word becomes the state, in its colour.
+  const still = st === 'still', gs = q('gstill'), LINE = 'Get out into the vast nothingness of space';
+  if (still && !G.dataset.stillAt) G.dataset.stillAt = performance.now(); if (!still) delete G.dataset.stillAt;
+  if (gs) { const n = still ? Math.min(LINE.length, 7 + Math.floor((performance.now() - G.dataset.stillAt) / 70)) : 0; attr(gs, 'opacity', still ? 1 : 0); put(gs.firstChild, LINE.slice(0, n)); }   // grows letter by letter from "Get out"
   G.querySelectorAll('.gl').forEach((el, i) => {
-    const edge = st === 'frenzy' ? 4 : st === 'still' ? 0 : -1, on = st ? i === edge : i === lvl, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#a9c0dc' : '#ffffff';
+    attr(el, 'opacity', still ? 0 : 1);   // in Stillness the line takes the arc: Get out becomes it, the other words step aside
+    const edge = st === 'frenzy' ? 4 : -1, on = st ? i === edge : i === lvl, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#a9c0dc' : '#ffffff';
     const txt = i === edge ? (st === 'frenzy' ? 'FRENZY' : 'STILLNESS') : ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'][i]; if (el.textContent !== txt) el.textContent = txt;
     attr(el, 'fill', on ? col : '#7d858d'); attr(el, 'style', on ? `filter:drop-shadow(0 0 5px ${st === 'frenzy' ? 'rgba(255,180,60,.9)' : st === 'still' ? 'rgba(169,192,220,.9)' : 'rgba(var(--fluo-rgb),.85)'})` : ''); });
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
