@@ -1784,10 +1784,13 @@ const WC = {
     return c;
   },
   ribbon(w, h, R) {                                         // an aurora: a sheer curtain, streaked, mint below and lilac above
-    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.filter = 'blur(2.5px)';
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.filter = 'blur(7px)';   // round 9: a curtain, not streaks
     for (let i = 0; i < w; i += 3) { const base = h * .62 + Math.sin(i * .011) * h * .16 + Math.sin(i * .031) * h * .05, top = base - h * (.25 + R() * .3);
       const g = x.createLinearGradient(0, base + h * .12, 0, top); g.addColorStop(0, 'rgba(127,224,200,0)'); g.addColorStop(.18, 'rgba(127,224,200,.5)');   // a soft foot, no edge g.addColorStop(.5, 'rgba(110,170,220,.22)'); g.addColorStop(1, 'rgba(80,130,210,0)');
-      x.globalAlpha = .25 + R() * .35; x.fillStyle = g; x.fillRect(i, top, 2 + R() * 2, base + h * .12 - top); }
+      x.globalAlpha = .3 + R() * .4; x.fillStyle = g; x.fillRect(i, top, 3 + R() * 3, base + h * .12 - top); }
+    x.filter = 'none'; x.globalAlpha = 1; x.globalCompositeOperation = 'destination-in';   // round 9: it fades out on every side, no edge anywhere
+    const gh = x.createLinearGradient(0, 0, w, 0); gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(.25, 'rgba(0,0,0,1)'); gh.addColorStop(.75, 'rgba(0,0,0,1)'); gh.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gh; x.fillRect(0, 0, w, h);
+    const gv = x.createLinearGradient(0, 0, 0, h); gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(.3, 'rgba(0,0,0,1)'); gv.addColorStop(1, 'rgba(0,0,0,1)'); x.fillStyle = gv; x.fillRect(0, 0, w, h);
     return c;
   },
   sky(w, h, R) {                                            // the night as one painted wash: navy and teal, mottled wet-in-wet, granulating, salted, spattered with stars
@@ -1828,12 +1831,22 @@ const WC = {
       x.fillStyle = lg; x.fillRect(-m * l, -.6, m * l * 2, 1.2); x.restore(); }
     return c;
   },
-  galaxy(r, tilt, cols, R) {                                 // a galaxy, painted: two soft arms of light and a glowing heart
+  galaxy(r, tilt, cols, R, o = {}) {                       // a galaxy, painted: soft arms of light and a glowing heart; diffuse or detailed, two arms or three (round 9)
     const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.4); const x = c.getContext('2d'), m = c.width / 2;
-    x.translate(m, m); x.scale(1, tilt); x.filter = 'blur(5px)';
-    for (let i = 0; i < 700; i++) { const arm = R() < .5 ? 0 : Math.PI, d = Math.pow(R(), .7), th = arm + d * 3.6 + (R() - .5) * 1.4;   // wide, soft arms
-      x.globalAlpha = (1 - d) * .16; x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 3 + R() * 6, 0, Math.PI * 2); x.fill(); }
-    x.filter = 'none'; const g = x.createRadialGradient(0, 0, 0, 0, 0, r * .35); g.addColorStop(0, 'rgba(255,250,240,.55)'); g.addColorStop(1, 'rgba(255,240,220,0)');
+    const arms = o.arms || 2, n = o.n || 700, bl = o.blur ?? 5, fine = bl < 3.5, arm = () => Math.floor(R() * arms) * Math.PI * 2 / arms;
+    x.translate(m, m); x.scale(1, tilt);
+    if (bl < 6) { x.filter = 'blur(7px)'; for (let i = 0; i < n / 4; i++) { const d = Math.pow(R(), .7), th = arm() + d * 3.6 + (R() - .5) * 1.6;   // a soft body under the detail
+      x.globalAlpha = (1 - d) * .1; x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 4 + R() * 6, 0, Math.PI * 2); x.fill(); } }
+    x.filter = `blur(${bl}px)`;
+    for (let i = 0; i < n; i++) { const d = Math.pow(R(), .7), th = arm() + d * 3.6 + (R() - .5) * (bl > 8 ? 2.2 : fine ? 1.1 : 1.3);
+      x.globalAlpha = (1 - d) * (fine ? .2 : .16); x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, fine ? 1 + R() * 2.5 : 3 + R() * 6, 0, Math.PI * 2); x.fill(); }
+    if (o.lanes) { x.filter = 'blur(1.5px)'; x.globalCompositeOperation = 'destination-out';   // dark lanes of dust between the arms
+      for (let i = 0; i < 300; i++) { const d = .15 + R() * .7, th = arm() + d * 3.6 + .55 + (R() - .5) * .25; x.globalAlpha = .14; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 1.5 + R() * 2, 0, Math.PI * 2); x.fill(); }
+      x.globalCompositeOperation = 'source-over'; }
+    x.filter = 'none';
+    for (let i = 0; i < (o.stars || 0); i++) { const d = Math.pow(R(), .6), th = arm() + d * 3.6 + (R() - .5) * .9;   // its own stars, fine
+      x.globalAlpha = .3 + R() * .6; x.fillStyle = R() < .5 ? '#ffffff' : cols[i % cols.length]; x.fillRect(Math.cos(th) * d * r, Math.sin(th) * d * r, 1, 1 / tilt); }
+    const g = x.createRadialGradient(0, 0, 0, 0, 0, r * (fine ? .28 : .4)); g.addColorStop(0, `rgba(255,250,240,${o.core ?? .55})`); g.addColorStop(1, 'rgba(255,240,220,0)');
     x.globalAlpha = 1; x.fillStyle = g; x.fillRect(-r, -r, r * 2, r * 2); return c;
   },
   dawn(w, h, R) {                                           // the dawn: long soft strata of peach, rose, lilac and blue, blending, no edges
@@ -1851,18 +1864,15 @@ const WC = {
     x.putImageData(im, 0, 0); return c;
   },
 };
-function saucer(x, y, s, a, t, tilt, beam) {               // the little flying saucer: banks as it moves, stops to look (beam on), an antenna blinking peach
-  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(tilt + Math.sin(t * 2.3) * .05); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'source-over';
-  if (beam > .02) { const bm = ctx.createLinearGradient(0, 5, 0, 70); bm.addColorStop(0, `rgba(150,225,255,${.34 * beam})`); bm.addColorStop(1, 'rgba(150,225,255,0)');
-    ctx.fillStyle = bm; ctx.beginPath(); ctx.moveTo(-9, 5); ctx.lineTo(9, 5); ctx.lineTo(26 + Math.sin(t * 3) * 3, 70); ctx.lineTo(-26 + Math.sin(t * 3) * 3, 70); ctx.fill(); }
-  ctx.strokeStyle = '#9fb8c0'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(2, -13); ctx.lineTo(6, -22); ctx.stroke();
-  const blink = Math.pow(Math.max(0, Math.sin(t * 2.6)), 8); ctx.fillStyle = `rgba(255,190,150,${.35 + .65 * blink})`; ctx.beginPath(); ctx.arc(6, -22, 1.8 + blink, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#93cdbd'; ctx.beginPath(); ctx.ellipse(0, 0, 32, 7.5, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#6fa89a'; ctx.beginPath(); ctx.ellipse(0, 2.5, 26, 4, 0, 0, Math.PI); ctx.fill();
-  ctx.fillStyle = '#cfeee5'; ctx.beginPath(); ctx.ellipse(0, -4, 13, 10, 0, Math.PI, 0); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.ellipse(-4, -9, 4, 2.2, -.4, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(40,90,100,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(0, 0, 32, 7.5, 0, 0, Math.PI * 2); ctx.stroke();
-  for (let i = -2; i <= 2; i++) { const glow = .3 + .7 * Math.pow(Math.max(0, Math.sin(t * 4 - i * 1.1)), 2); ctx.fillStyle = `rgba(190,245,255,${glow})`; ctx.beginPath(); ctx.arc(i * 11, 1.5, 1.8, 0, Math.PI * 2); ctx.fill(); }
+function saucer(x, y, s, a, t, tilt, beam) {               // the saucer (round 9): a slim gunmetal lens, a dark canopy, one slow light; a faint glow beneath when it stops to look
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(tilt + Math.sin(t * 2.3) * .03); ctx.globalAlpha = a; ctx.globalCompositeOperation = 'source-over';
+  const ug = ctx.createRadialGradient(0, 10, 0, 0, 10, 44); ug.addColorStop(0, `rgba(150,215,230,${.08 + .22 * beam})`); ug.addColorStop(1, 'rgba(150,215,230,0)'); ctx.fillStyle = ug; ctx.fillRect(-44, -34, 88, 88);
+  const hg = ctx.createLinearGradient(0, -6, 0, 6); hg.addColorStop(0, '#c9d3d8'); hg.addColorStop(.45, '#7d8a92'); hg.addColorStop(.55, '#3c464e'); hg.addColorStop(1, '#1b2127');
+  ctx.fillStyle = hg; ctx.beginPath(); ctx.ellipse(0, 0, 30, 5, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(22,34,44,.96)'; ctx.beginPath(); ctx.ellipse(0, -3, 10, 5, 0, Math.PI, 0); ctx.fill();
+  ctx.strokeStyle = 'rgba(210,235,245,.45)'; ctx.lineWidth = .8; ctx.beginPath(); ctx.ellipse(0, -3, 8, 3.6, 0, Math.PI * 1.15, Math.PI * 1.5); ctx.stroke();
+  ctx.strokeStyle = 'rgba(210,235,245,.3)'; ctx.lineWidth = .7; ctx.beginPath(); ctx.ellipse(0, 0, 30, 5, 0, Math.PI, Math.PI * 2); ctx.stroke();
+  const blink = Math.pow(Math.max(0, Math.sin(t * 1.9)), 10); ctx.fillStyle = `rgba(255,196,160,${.2 + .8 * blink})`; ctx.beginPath(); ctx.arc(22, 1, 1.2, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
 function startDrift() {
@@ -1873,8 +1883,14 @@ function startDrift() {
     stars: Array.from({ length: 520 }, () => [R() * W0 * 4 - W0 * 1.5, R() * H0 * 2 - H0 * .5, R(), R() * 6.3]),   // wide: the sky grows past the mining window
     // Deep space: nebulae and galaxies come out one by one once you are through the wormhole.
     nebulae: Array.from({ length: 4 }, (_, i) => ({ x: R() * W0 * 2.2 - W0 * .6, y: R() * H0, r: 90 + R() * 120, hue: hues[i], at: i < 2 ? 18 : 34 + i * 10 })),
-    galaxies: Array.from({ length: 3 }, (_, i) => ({ x: [70, W0 - 80, W0 * .6][i], y: [90, H0 * .7, 40][i], r: [55, 70, 30][i], tilt: .35 + R() * .4, rot: R() * 6.3,
-      at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
+    galaxies: [   // round 9: no two alike
+      { x: 70, y: 90, r: 60, tilt: .5, at: 22, o: { blur: 2.2, n: 1700, core: .6, stars: 140, lanes: true } },   // close, detailed: dark lanes, its own stars
+      { x: W0 * .8, y: H0 * .28, r: 125, tilt: .45, at: 30, o: { blur: 13, n: 520, core: .22 } },                  // vast and diffuse, hardly there
+      { x: W0 - 60, y: H0 * .72, r: 70, tilt: .62, at: 42, o: { blur: 5, n: 1000, arms: 3, core: .4, stars: 50 } }, // three-armed
+      { x: W0 * .55, y: 40, r: 22, tilt: .14, at: 55, o: { blur: 1.2, n: 320, core: .75 } },                       // tiny, edge-on
+      { x: W0 * 1.3, y: H0 * .5, r: 46, tilt: .35, at: 112, o: { blur: 3, n: 1100, core: .5, stars: 80, lanes: true } },
+      { x: W0 * 1.4, y: H0 * .15, r: 95, tilt: .7, at: 175, o: { blur: 9, n: 700, arms: 3, core: .3 } },
+    ].map(g => Object.assign(g, { rot: R() * 6.3 })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
   { const d = s.drift, NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#4a2a86', '#8e1424', '#2a3f8e'], ['#1c6f7d', '#2f55a0', '#5a2f8e'], ['#9a1626', '#4f2a80', '#7a1020'],   // deep purple and dark red beside the blues, greens and peach (round 7)
@@ -1894,21 +1910,31 @@ function startDrift() {
       { x: W0 * .88, y: H0 * .84, at: SC.chorus + 14, img: P(34, '#2d7f86', '#c7f2ef', ['#ffffff', '#5fb7b4', '#1d5f69', '#e2fbf8'], { tilt: -.15 }), par: .08 },
       { x: W0 * .62, y: H0 + 40, at: SC.bridge - 24, img: P(120, '#7a7590', '#efeaff', ['#bdb6d6', '#9a93b8'], { craters: 34, tilt: .3 }), par: .32 },   // a great moon close by, rising at the bottom edge
     ];
-    d.comet = { at: SC.verse1 + 8, len: 26 };
-    d.ribbon = { img: WC.ribbon(900, 180, R), from: SC.pre - 6, to: SC.chorus + 6 };
+    d.ribbons = [{ img: WC.ribbon(900, 180, R), from: 22, to: 60, y: 10 }, { img: WC.ribbon(900, 180, R), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
     setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
     d.flares = Array.from({ length: 5 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
-    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R); });
+    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R, gx.o); });
     d.veils = [[W0 * .1, H0 * .25, 260], [W0 * .95, H0 * .7, 300], [-W0 * .3, H0 * .95, 240]].map(([x, y, r]) => ({ x, y, img: WC.blob(r, ['#1d4a6a', '#2b5f80', '#3a4f86'], R) }));
     d.dawn = WC.dawn(1000, 520, R);
+    d.rays = (() => { const c = document.createElement('canvas'); c.width = c.height = 900; const x = c.getContext('2d'), m = 450; x.filter = 'blur(16px)';   // round 9: broad, soft rays
+      for (let i = 0; i < 11; i++) { const a = i / 11 * Math.PI * 2 + (R() - .5) * .4, w = .05 + R() * .1, len = 300 + R() * 140, g = x.createRadialGradient(m, m, 0, m, m, len);
+        g.addColorStop(0, `rgba(255,240,222,${.25 + R() * .2})`); g.addColorStop(1, 'rgba(255,240,222,0)'); x.fillStyle = g;
+        x.beginPath(); x.moveTo(m, m); x.lineTo(m + Math.cos(a - w) * len, m + Math.sin(a - w) * len); x.lineTo(m + Math.cos(a + w) * len, m + Math.sin(a + w) * len); x.closePath(); x.fill(); }
+      return c; })();
     d.planets[6].img = P(78, '#1f3f8c', '#e8f2ff', ['#ffffff', '#5f95d8', '#0f3478', '#dbe9ff', '#2f5fb0'], { tilt: .12 }); d.planets[6].lead = 42;   // the big near one, striped blue and white (round 8: no blooms); it stays longer in view
     d.drop = [2, 4, 8];   // round 8: the ocean-green one back, now that bodies pass by   // round 7: the great moon gone too   // fewer bodies (round 4): two far dots, the pink giant, a ringed planet, the big blue one, the great moon, an asteroid
     d.planets[4].img = P(22, '#8b8a96', '#eceaf3', ['#c8c6d0'], { craters: 10, blooms: ['#c9d1cf', '#9fb2ad'], fringe: '#2e3a40' });
     d.planets = d.planets.filter((_, i) => !d.drop.includes(i)); d.veils = [];
     d.planets.push({ x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: P(26, '#5e1422', '#f0b8a8', ['#9a2a36', '#c8645a', '#3e0a16', '#e8a090'], { tilt: -.2 }), par: .1 },   // a dark red one
-      { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one   // no veils: fewer layers
+      { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one
+    { const v = pl => 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 9: no two ever overlap
+      for (const pl of [...d.planets].sort((a, b) => b.par - a.par)) {   // the near ones keep their places; the far ones move aside
+        const clear = y => placed.every(o => { for (let t = Math.max(pl.at, o.at); t < 280; t += 1) { const a = X(pl, t), b = X(o, t);
+          if ((a < -W0 * .9 || a > W0 * 1.9) && (b < -W0 * .9 || b > W0 * 1.9)) continue; if (Math.hypot(a - b, y - o.y) < rad(pl) + rad(o) + 40) return false; } return true; });
+        for (let k = 0; k < 50; k++) { const y = pl.y + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 16; if (y < 10 || y > H0 - 10) continue; if (clear(y)) { pl.y = y; break; } }
+        placed.push(pl); } }   // no veils: fewer layers
     d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
@@ -1990,7 +2016,7 @@ function drawDrift() {
   ctx.globalCompositeOperation = 'screen';
   for (const gx of d.galaxies) {                              // galaxies, painted, turning so slowly you can't quite see it
     const a = space * smooth(ramp(gx.at, gx.at + 10, t)) * .45; if (a <= 0) continue;
-    ctx.save(); ctx.translate(gx.x - d.ox * .02 - (t - gx.at) * 1.2, gx.y); ctx.rotate(gx.rot + t * .01); ctx.globalAlpha = a; ctx.drawImage(gx.img, -gx.img.width / 2, -gx.img.height / 2); ctx.restore();
+    ctx.save(); ctx.translate(gx.x - d.ox * .02 - (t - gx.at) * 3, gx.y); ctx.rotate(gx.rot + t * .01); ctx.globalAlpha = a; ctx.drawImage(gx.img, -gx.img.width / 2, -gx.img.height / 2); ctx.restore();
   }
   // Falling stars, now and then: a soft streak, gone in a few seconds (slow enough to be no flash).
   for (const fs_ of d.falls) {   // painted: a tapering soft stroke, slowing as it burns out, a few glints shed behind it
@@ -2015,25 +2041,19 @@ function drawDrift() {
   ctx.globalAlpha = 1;
   // Veils: near washes of night drifting over everything, moving most as you steer: depth.
   { ctx.save(); ctx.globalCompositeOperation = 'screen'; for (const v of d.veils) { ctx.globalAlpha = .22 * space; ctx.drawImage(v.img, v.x - v.img.width / 2 - d.ox * .4, v.y - v.img.height / 2 - d.oy * .4 + Math.sin(t * .02 + v.x) * 10); } ctx.restore(); }
-  // The comet, verse 1: a long painted tail, two washes and a head of light.
-  { const k = ramp(d.comet.at, d.comet.at + d.comet.len, t); if (k > 0 && k < 1) {
-    const hx = -60 + k * (W0 + 160), hy = 50 + k * 90, a = Math.sin(k * Math.PI) * space; ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.filter = 'blur(2px)';
-    for (const [len, w, c0] of [[190, 16, 'rgba(160,200,255,.32)'], [120, 7, 'rgba(255,240,255,.55)']]) { const g = ctx.createLinearGradient(hx, hy, hx - len, hy - len * .3); g.addColorStop(0, c0); g.addColorStop(1, 'rgba(200,170,255,0)');
-      ctx.globalAlpha = a; ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(hx, hy - w * .2); ctx.lineTo(hx - len, hy - len * .3 - w); ctx.lineTo(hx - len, hy - len * .3 + w); ctx.closePath(); ctx.fill(); }
-    ctx.filter = 'none'; const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 10); hg.addColorStop(0, 'rgba(255,255,255,1)'); hg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = hg; ctx.fillRect(hx - 10, hy - 10, 20, 20); ctx.restore(); } }
-  // An aurora, from the pre-chorus into the chorus: a curtain of light, drifting.
-  { const k = smooth(ramp(d.ribbon.from, d.ribbon.from + 10, t)) * (1 - smooth(ramp(d.ribbon.to, d.ribbon.to + 12, t)));
-    if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = k * .4 * space; ctx.drawImage(d.ribbon.img, -W0 * .6 + Math.sin(t * .03) * 40 - d.ox * .04, 10); ctx.restore(); } }
+  // Auroras: one soon after the wormhole, one from the pre-chorus into the chorus: curtains of light, drifting.
+  for (const rb of d.ribbons) { const k = smooth(ramp(rb.from, rb.from + 10, t)) * (1 - smooth(ramp(rb.to, rb.to + 12, t)));
+    if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = Math.min(1, k * .65 * space); ctx.drawImage(rb.img, -W0 * .6 + Math.sin(t * .03 + rb.y) * 40 - d.ox * .04 - (t - rb.from) * 1.5, rb.y); ctx.restore(); } }
   // A star cluster in verse 2: a knot of light that twinkles slowly.
   { const k = smooth(ramp(S.verse2 + 18, S.verse2 + 30, t)); if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen';
     for (const [x, y, ph, sp] of d.cluster) { ctx.globalAlpha = k * (.35 + .65 * Math.pow(Math.max(0, Math.sin(t * sp * .6 + ph)), 4)); ctx.fillStyle = '#eef3ff'; ctx.fillRect(x - d.ox * .02, y, 1.6, 1.6); }
     const cg = ctx.createRadialGradient(W0 * .08, H0 * .3, 0, W0 * .08, H0 * .3, 60); cg.addColorStop(0, 'rgba(210,225,255,.35)'); cg.addColorStop(1, 'rgba(210,225,255,0)'); ctx.globalAlpha = k; ctx.fillStyle = cg; ctx.fillRect(W0 * .08 - 60, H0 * .3 - 60, 120, 120); ctx.restore(); } }
   // The pre-chorus: a little flying saucer crosses, in no hurry.
-  { const k = ramp(S.pre + 2, S.pre + 44, t); if (k > 0 && k < 1) {   // glides down diagonally, stops to look, hops up, stops, dives, stops, then zips off
+  { const k = ramp(S.pre + 2, S.pre + 20, t); if (k > 0 && k < 1) {   // 18 s (round 9: it stayed too long); glides down diagonally, stops to look, hops up, stops, dives, stops, then zips off
     const WP = [[0, -.55, .12], [.25, .22, .48], [.36, .24, .47], [.42, .55, .2], [.56, .57, .22], [.66, .8, .62], [.74, .81, .6], [1, 1.65, .05]];
     const at = q => { let i = 0; while (i < WP.length - 2 && q > WP[i + 1][0]) i++; const [k0, x0, y0] = WP[i], [k1, x1, y1] = WP[i + 1], u = smooth(Math.min(1, Math.max(0, (q - k0) / (k1 - k0)))); return [W0 * (x0 + (x1 - x0) * u), H0 * (y0 + (y1 - y0) * u)]; };
-    const [x, y] = at(k), [x2, y2] = at(Math.min(1, k + .004)), still = Math.max(0, 1 - Math.hypot(x2 - x, y2 - y) / 2);
-    saucer(x + Math.sin(t * 1.7) * 4, y + Math.sin(t * 1.1) * 5, .8, Math.min(1, Math.sin(k * Math.PI) * 3) * space, t, Math.max(-.35, Math.min(.35, (x2 - x) * .05)), still); } }
+    const [x, y] = at(k), [x2, y2] = at(Math.min(1, k + .004)), still = Math.max(0, 1 - Math.hypot(x2 - x, y2 - y) / 5);
+    saucer(x + Math.sin(t * 1.7) * 4, y + Math.sin(t * 1.1) * 5, .8, Math.min(1, Math.sin(k * Math.PI) * 3) * space, t, Math.max(-.35, Math.min(.35, (x2 - x) * .02)), still); } }
 
   // The intro: an actual wormhole opens, the prospector goes through, and it closes behind them.
   const open = smooth(ramp(2, 9, t)), shut = smooth(ramp(15, 21, t)), WR = 150 * open * (1 - shut);
@@ -2072,8 +2092,7 @@ function drawDrift() {
   }
   if (gone < 1) {
     ctx.save(); ctx.translate(px, py); ctx.rotate(ang); ctx.scale(scale, scale); ctx.globalAlpha = 1 - gone;
-    ctx.fillStyle = '#ddd'; ctx.fillRect(-12, -14, 24, 30);
-    ctx.fillStyle = '#111'; ctx.fillRect(-7, -8, 14, 6);    // visor
+    drawProspector(ctx, -T / 2, -21, {});   // the prospector as in the rock (round 9): the chamfered block, outlined in ink, the visor's glint
     ctx.restore(); ctx.globalAlpha = 1;
   }
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
@@ -2097,15 +2116,13 @@ function drawDrift() {
     ctx.save(); ctx.globalCompositeOperation = 'screen';
     if (d.dawn) { ctx.globalAlpha = sun * .5; ctx.drawImage(d.dawn, -280, H0 - d.dawn.height + 40 + (1 - sun) * 300); }   // the dawn: the sky washes peach, rose, lilac and blue from below, blending
     ctx.globalAlpha = 1;
-    const R1 = 80 + 520 * sun, hz = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, R1);
-    hz.addColorStop(0, `rgba(255,253,248,${.9 * sun})`); hz.addColorStop(.07, `rgba(255,247,236,${.55 * sun})`); hz.addColorStop(.28, `rgba(232,228,246,${.2 * sun})`);
-    hz.addColorStop(.6, `rgba(186,212,214,${.09 * sun})`); hz.addColorStop(1, 'rgba(0,0,0,0)');
+    const R1 = 220 + 760 * sun, hz = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, R1);   // round 9: one big glow, no point of light
+    hz.addColorStop(0, `rgba(255,246,232,${.72 * sun})`); hz.addColorStop(.12, `rgba(255,236,214,${.5 * sun})`); hz.addColorStop(.35, `rgba(240,216,226,${.22 * sun})`);
+    hz.addColorStop(.65, `rgba(170,196,220,${.08 * sun})`); hz.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = hz; ctx.fillRect(cx - R1, sunY - R1, R1 * 2, R1 * 2);
-    const flare = (a, len, w, al) => { ctx.save(); ctx.translate(cx, sunY); ctx.rotate(a); const g = ctx.createLinearGradient(-len, 0, len, 0);
-      g.addColorStop(0, 'rgba(200,215,255,0)'); g.addColorStop(.5, `rgba(240,244,255,${al})`); g.addColorStop(1, 'rgba(200,215,255,0)'); ctx.fillStyle = g; ctx.fillRect(-len, -w / 2, len * 2, w); ctx.restore(); };
-    flare(-.06, 560 * sun, 2.2, .55 * sun); flare(Math.PI / 3 + t * .004, 240 * sun, 1.3, .4 * sun); flare(-Math.PI / 3.4 - t * .004, 200 * sun, 1.1, .35 * sun);
-    const core = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, 22); core.addColorStop(0, `rgba(255,255,255,${sun})`); core.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = core; ctx.fillRect(cx - 22, sunY - 22, 44, 44); ctx.restore();
+    { const sc = R1 / 380; ctx.save(); ctx.translate(cx, sunY); ctx.rotate(t * .004); ctx.scale(sc, sc); ctx.globalAlpha = sun * .7; ctx.drawImage(d.rays, -450, -450); ctx.restore(); }   // rays: broad, blurred, turning so slowly
+    const R2 = 70 + 170 * sun, core = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, R2); core.addColorStop(0, `rgba(255,252,246,${.55 * sun})`); core.addColorStop(1, 'rgba(255,248,236,0)');
+    ctx.globalAlpha = 1; ctx.fillStyle = core; ctx.fillRect(cx - R2, sunY - R2, R2 * 2, R2 * 2); ctx.restore();
   }
   ctx.restore(); ctx.globalAlpha = 1;
   { const vg = ctx.createRadialGradient(cx, cy, H0 * .25, cx, cy, H0 * .95); vg.addColorStop(0, 'rgba(2,6,14,0)'); vg.addColorStop(1, `rgba(2,6,14,${.6 * fade * (1 - sun * .6)})`);   // the edges fall away into the dark
