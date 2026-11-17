@@ -2615,9 +2615,9 @@ setTimeout(() => { fittedFor = Math.round(innerWidth / 4) + 'x' + Math.round(inn
 window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
-// The start button says what works right now: Enter only when the game has the keyboard.
-const startLabel = () => { $('go').innerHTML = document.hasFocus() ? 'Begin shift <kbd>Enter</kbd>' : 'Click to begin shift'; };
-addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
+// The start button always shows its key (2026-11-17, was 'Click to begin shift' without the keyboard). The game takes the keyboard as it opens
+// (itch.io's frame included), and a click anywhere on it gives it back; the button itself starts the shift on a click too.
+$('go').innerHTML = 'Begin shift <kbd>Enter</kbd>';
 </script>
 </body>
 </html>
