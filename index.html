@@ -564,7 +564,7 @@ const CONFIG = {
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
              // duckDownMs/duckUpMs: the music dips under a DJ in 0.4 s and comes back over 1.5 s; djLead: the dip starts 0.4 s before the voice
-             pumpDigSpeed: 0.9, discoCalm: 1.5, songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
+             pumpDigSpeed: 0.9, discoCalm: 1.5, discoShake: 0.65, songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
              states: { normal: { rate: 1, lowpass: 20000, highpass: 10, drive: 0 }, still: { rate: 0.88, lowpass: 650, highpass: 10, drive: 0 }, frenzy: { rate: 1.08, lowpass: 20000, highpass: 220, drive: 0.35 } } },   // Frenzy and Stillness change the sound, not the station   // the voices sit lower and the music ducks less (to 60%)   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -634,7 +634,7 @@ const RADIO = {
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
     SONG('The Pump Zone', 'Drill Instructor', 'The Pump Zone Drill Instructor')],
   },
-  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Calms the meter a little.', songs: [
+  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Shake to the beat: mixing a Milk+ takes a third less time. Calms the meter a little, too.', songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
     SONG('Disco Gravitas', 'Dolce de Leche+', 'Disco Gravitas Dolce de Leche Plus')] },
@@ -1328,11 +1328,13 @@ function canMix(v) { return Object.entries(CONFIG.recipes[v]).every(([k, n]) => 
 // Mixing takes time: you shake the bottle and cannot dig meanwhile. Drinking is instant.
 const shaking = () => s.shake && s.shake.until > now();
 
+// Disco Gravitas: you shake to the beat, a third quicker (2026-11-17, its perk; it still calms the meter too).
+function shakeLen() { return CONFIG.mix.shakeMs * (radio.on === 'disco' ? CONFIG.radio.discoShake : 1); }
 function mix(v) {
   if (!running || shaking() || !canMix(v)) return;
   const two = jizz() && Object.entries(CONFIG.recipes[v]).every(([k, n]) => s.inv[k] >= n * 2);   // Doppio+: two bottles in one shake, if you can pay for both
   for (const [k, n] of Object.entries(CONFIG.recipes[v])) s.inv[k] -= n * (two ? 2 : 1);
-  s.shake = { v, two, until: now() + CONFIG.mix.shakeMs };
+  s.shake = { v, two, ms: shakeLen(), until: now() + shakeLen() };
   held = null; pendingTap = null;
   say(`Shaking ${VNAME[v]}…`);
 }
@@ -1368,7 +1370,7 @@ function secretJizz() {
   const r = CONFIG.jizz.recipe;
   if (!Object.entries(r).every(([k, n]) => s.inv[k] >= n)) return;   // nothing happens: it's a secret
   for (const [k, n] of Object.entries(r)) s.inv[k] -= n;
-  s.shake = { v: 'jizz', until: now() + CONFIG.mix.shakeMs };
+  s.shake = { v: 'jizz', ms: shakeLen(), until: now() + shakeLen() };
   held = null; pendingTap = null;
   say('Shaking something the bartender recommends…');
 }
@@ -1384,7 +1386,7 @@ function secretCandy() {
   const r = CONFIG.candy.recipe;
   if (!Object.entries(r).every(([k, n]) => s.inv[k] >= n)) return;   // nothing happens: it's a secret
   for (const [k, n] of Object.entries(r)) s.inv[k] -= n;
-  s.shake = { v: 'candy', until: now() + CONFIG.mix.shakeMs };
+  s.shake = { v: 'candy', ms: shakeLen(), until: now() + shakeLen() };
   held = null; pendingTap = null;
   say('Shaking something that is not on the menu…');
 }
@@ -2425,7 +2427,7 @@ function draw() {
   const jx = shaking() ? Math.round(Math.sin(now() / 25) * 3) : 0;
   if (!L.dark) drawProspector(ctx, p.x * T + jx, p.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick() });
   if (shaking()) {
-    const k = 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs;
+    const k = 1 - (s.shake.until - now()) / (s.shake.ms || CONFIG.mix.shakeMs);
     ctx.fillStyle = COL.ink; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
     ctx.fillStyle = COL.concrete; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
   }
@@ -2653,7 +2655,7 @@ function radioHud() {
 // A shake key's state: can (SHAKE lit), shaking (SHAKE fills amber over the shake), ready (DRINK lit), off (dark: can't mix, or another is shaking).
 function keyState(b, st) {
   for (const k of ['can', 'shaking', 'ready', 'off']) b.classList.toggle(k, k === st);
-  if (st === 'shaking') b.style.setProperty('--p', (Math.min(1, 1 - (s.shake.until - now()) / CONFIG.mix.shakeMs) * 100).toFixed(1) + '%');
+  if (st === 'shaking') b.style.setProperty('--p', (Math.min(1, 1 - (s.shake.until - now()) / (s.shake.ms || CONFIG.mix.shakeMs)) * 100).toFixed(1) + '%');
   const label = st === 'shaking' ? 'Shaking' : st === 'ready' ? 'Drink' : 'Shake'; if (b.getAttribute('aria-label') !== label) b.setAttribute('aria-label', label);
 }
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }

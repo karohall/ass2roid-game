@@ -22,7 +22,7 @@ Prototype 4 is a new interface on the same game: the rover's control panel. The 
 **The game (carried over from Prototype 3)**
 
 
-1. **The radio first:** the drill won't start without music. Do they find R? Do they try other stations, and do they notice a station's effect (the Pump Zone digs faster, Disco Gravitas calms the meter, Void FM gives night vision in The Crack)? What do they make of the DJs, Coach Rocky and the Broadcaster?
+1. **The radio first:** the drill won't start without music. Do they find R? Do they try other stations, and do they notice a station's effect (the Pump Zone digs faster, Disco Gravitas shakes faster and calms the meter, Void FM gives night vision in The Crack)? What do they make of the DJs, Coach Rocky and the Broadcaster?
 2. **The interface arriving bit by bit:** do they notice new parts filling their ghost frames? Too much at once?
 3. **Shake, drink, and the dose window:** do they shake ahead and keep bottles? Do they ever drink quickly on purpose?
 4. **Frenzy and Stillness:** do they reach them, and do they want to go back? Do they notice the music changing (faster and rougher in a Frenzy, muffled in Stillness)?
