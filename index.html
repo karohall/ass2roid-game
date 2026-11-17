@@ -33,8 +33,8 @@
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
   #hint { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1.5px rgba(80,84,82,.45), inset 0 -2px 0 rgba(0,0,0,.18); margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:600 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
-  #dosage { --step:40px; position:relative;   /* the cluster, recessed behind glass; its right end a step lower, like the frames' tabs */
-    clip-path:polygon(8px 0, calc(100% - 118px) 0, calc(100% - 102px) var(--step), 100% var(--step), 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  #dosage { --tab:169px; position:relative;   /* the cluster, recessed behind glass, in every panel's frame: a tab around its name plate, then the top steps down (2026-11-17) */
+    clip-path:polygon(8px 0, var(--tab) 0, calc(var(--tab) + 6px) 6px, 100% 6px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
   #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
   #gauge { display:block; }
@@ -2364,7 +2364,8 @@ function buildGauge() {
   const ticks = (d, n, every, tl) => { let h = ''; for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, major = i % every === 0, [x0, y0] = gPt(d, u, d.R + 2), [x1, y1] = gPt(d, u, d.R + (major ? tl : tl / 2));
     h += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${major ? '#e1e4e6' : 'rgba(150,157,164,.55)'}" stroke-width="${major ? 2 : 1}"/>`; } return h; };
   const txt = (cls, x, y, size, fill, weight, fam, extra = '') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="middle" font-family="${fam}" font-weight="${weight}" font-size="${size}" fill="${fill}" ${extra}></text>`;
-  const bez = `M8.5 .75 H${w - 118} L${w - 102} 40.75 H${w - .75} V${GZ.h - 8.5} L${w - 8.5} ${GZ.h - .75} H.75 V8.5 Z`;   // the box's outline, as its clip-path
+  const pl = document.querySelector('#dosage .dzplate'), tab = pl && pl.offsetWidth ? pl.offsetLeft + pl.offsetWidth + 22 : 169; $('dosage').style.setProperty('--tab', tab + 'px');   // the tab fits the plate, as drawFrame() does
+  const bez = `M8.5 .75 H${tab} L${tab + 6} 6.75 H${w - .75} V${GZ.h - 8.5} L${w - 8.5} ${GZ.h - .75} H.75 V8.5 Z`;   // the box's outline, as its clip-path
   let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
   h += `<path class="bez" d="${bez}" fill="none" stroke="url(#gbez)" stroke-width="1.5"/>`;   // a steel bezel around the glass, like the radio's lit edge
   // the main dial
