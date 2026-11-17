@@ -1703,15 +1703,17 @@ function finishGame(drifted = false) {
 const WC = {
   blob(r, cols, R) {                                         // a nebula: some thirty sheer, wobbling washes, layer on layer
     const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.8); const x = c.getContext('2d'), m = c.width / 2;
-    for (let L = 0; L < 18; L++) {   // fewer, wetter layers (round 6b): texture, not blotches
+    const layers = [];   // fewer, wetter layers (round 6b): texture, not blotches
+    for (let L = 0; L < 18; L++) {
       const col = cols[L % cols.length], rr = r * (.3 + R() * .75), ox = (R() - .5) * r * .9, oy = (R() - .5) * r * .6, ph = R() * 6.3, n = 18;
       const pts = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = 1 + .24 * Math.sin(a * 3 + ph) + .12 * Math.sin(a * 7 + ph * 2) + (R() - .5) * .06;
         pts.push([m + ox + Math.cos(a) * rr * k, m + oy + Math.sin(a) * rr * k * .78]); }
-      x.beginPath(); const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; x.moveTo(...mid(pts[n - 1], pts[0]));   // a smooth wobbling outline: curves through the midpoints
-      for (let i = 0; i < n; i++) x.quadraticCurveTo(...pts[i], ...mid(pts[i], pts[(i + 1) % n]));
-      x.closePath(); x.filter = L < 8 ? 'blur(10px)' : 'blur(4px)'; x.globalAlpha = L < 8 ? .08 : .06 + R() * .07; x.fillStyle = col; x.fill();   // a wet underpainting, then sheer washes with soft but visible shapes
-      x.filter = 'blur(2.5px)'; x.globalAlpha = L < 8 ? .015 : .03 + R() * .03; x.strokeStyle = col; x.lineWidth = 1 + R() * 1.4; x.stroke(); x.filter = 'none';   // the rim where the wash dried: darker, crisper
-    }
+      const p = new Path2D(), mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; p.moveTo(...mid(pts[n - 1], pts[0]));   // a smooth wobbling outline: curves through the midpoints
+      for (let i = 0; i < n; i++) p.quadraticCurveTo(...pts[i], ...mid(pts[i], pts[(i + 1) % n])); p.closePath();
+      layers.push({ p, col, fa: L < 8 ? .08 : .06 + R() * .07, sa: L < 8 ? .015 : .03 + R() * .03, lw: 1 + R() * 1.4, under: L < 8 }); }
+    softLayer(x, 10, x => layers.filter(l => l.under).forEach(l => { x.globalAlpha = l.fa; x.fillStyle = l.col; x.fill(l.p); }));    // a wet underpainting
+    softLayer(x, 4, x => layers.filter(l => !l.under).forEach(l => { x.globalAlpha = l.fa; x.fillStyle = l.col; x.fill(l.p); }));    // sheer washes, soft but visible shapes
+    softLayer(x, 2.5, x => layers.forEach(l => { x.globalAlpha = l.sa; x.strokeStyle = l.col; x.lineWidth = l.lw; x.stroke(l.p); }));   // the rims where the washes dried
     for (let i = 0; i < 26; i++) { const a = R() * 6.3, d = R() * r * .8, br = r * (.06 + R() * .12);   // blooms: small cauliflower edges where water ran back into the wash
       x.beginPath(); for (let j = 0; j <= 14; j++) { const b = j / 14 * 6.3, k = 1 + (R() - .5) * .5; x.lineTo(m + Math.cos(a) * d + Math.cos(b) * br * k, m + Math.sin(a) * d * .8 + Math.sin(b) * br * k); }
       x.globalAlpha = .05; x.fillStyle = cols[i % cols.length]; x.fill(); x.globalAlpha = .07; x.strokeStyle = cols[(i + 1) % cols.length]; x.lineWidth = .8; x.stroke(); }
@@ -1755,11 +1757,13 @@ const WC = {
     else x.arc(mx, my, r, 0, Math.PI * 2);
     x.clip();
     const g = x.createRadialGradient(mx - r * .35, my - r * .4, r * .1, mx, my, r); g.addColorStop(0, light); g.addColorStop(1, base); x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
-    x.translate(mx, my); x.rotate(tilt); x.translate(-mx, -my); x.filter = `blur(${o.bandBlur || 1.6}px)`;
+    x.translate(mx, my); x.rotate(tilt); x.translate(-mx, -my);
+    softLayer(x, o.bandBlur || 1.6, x => {   // the bands, blurred once
     for (let i = 0; i < (o.craters ? 7 : o.nb || 20); i++) { const y0 = my - r + R() * r * 2, th = r * (.04 + R() * .14), f = (.02 + R() * .05) * (o.calm || 1), ph = R() * 6.3, amp = r * (.02 + R() * .06);
       x.beginPath(); for (let px = mx - r * 1.2; px <= mx + r * 1.2; px += 4) x.lineTo(px, y0 + Math.sin(px * f + ph) * amp);
       for (let px = mx + r * 1.2; px >= mx - r * 1.2; px -= 4) x.lineTo(px, y0 + th + Math.sin(px * f + ph + .8) * amp);
       x.globalAlpha = (o.craters ? .1 : o.bandA || .26) + R() * .3; x.fillStyle = bands[i % bands.length]; x.fill(); x.globalAlpha = .2; x.strokeStyle = bands[(i + 2) % bands.length]; x.lineWidth = .8; x.stroke(); }
+    });
     if (o.storm) { const sx = mx + r * .28, sy = my + r * .3; x.filter = 'blur(3px)';   // a great storm: an oval eddy in the bands
       x.filter = `blur(${Math.max(3, (o.bandBlur || 3) * .6)}px)`; x.globalAlpha = .4; x.fillStyle = o.storm; x.beginPath(); x.ellipse(sx, sy, r * .17, r * .08, 0, 0, Math.PI * 2); x.fill();
       x.globalAlpha = .35; x.strokeStyle = light; x.lineWidth = r * .02; x.beginPath(); x.ellipse(sx, sy, r * .2, r * .1, 0, 0, Math.PI * 2); x.stroke(); x.globalAlpha = 1; }
@@ -1776,7 +1780,7 @@ const WC = {
       x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = Math.max(1, cr * .18); x.beginPath(); x.arc(0, 0, cr, Math.PI * .9, Math.PI * 1.7); x.stroke();
       x.globalAlpha = .25; x.fillStyle = 'rgba(10,8,30,.8)'; x.beginPath(); x.arc(cr * .25, cr * .1, cr * .7, 0, Math.PI * 2); x.fill(); x.restore(); }
     x.globalAlpha = 1; x.setTransform(1, 0, 0, 1, 0, 0);
-    x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < r * r * .4; i++) { x.globalAlpha = R() * .1; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
+    x.globalCompositeOperation = 'destination-out'; for (let i = 0, n = Math.min(r * r * .4, 5000); i < n; i++) { x.globalAlpha = R() * .1; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
     x.globalAlpha = 1; const sh = x.createRadialGradient(mx - r * .45, my - r * .5, r * .3, mx, my, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.7, 'rgba(4,6,16,.45)'); sh.addColorStop(1, 'rgba(4,6,16,.92)');
     x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height);
     if (o.phase) { x.save(); x.filter = `blur(${Math.max(2, r * .12)}px)`; x.globalAlpha = .9; x.fillStyle = '#02040c';   // the night side: a phase, so it reads round, not flat
@@ -1791,11 +1795,11 @@ const WC = {
     return c;
   },
   ribbon(w, h, R) {                                         // an aurora: a sheer curtain, streaked, mint below and lilac above
-    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.filter = 'blur(7px)';   // round 9: a curtain, not streaks
-    for (let i = 0; i < w; i += 3) { const base = h * .62 + Math.sin(i * .011) * h * .16 + Math.sin(i * .031) * h * .05, top = base - h * (.25 + R() * .3);
-      const g = x.createLinearGradient(0, base + h * .12, 0, top); g.addColorStop(0, 'rgba(127,224,200,0)'); g.addColorStop(.18, 'rgba(127,224,200,.5)');   // a soft foot, no edge g.addColorStop(.5, 'rgba(110,170,220,.22)'); g.addColorStop(1, 'rgba(80,130,210,0)');
-      x.globalAlpha = .3 + R() * .4; x.fillStyle = g; x.fillRect(i, top, 3 + R() * 3, base + h * .12 - top); }
-    x.filter = 'none'; x.globalAlpha = 1; x.globalCompositeOperation = 'destination-in';   // round 9: it fades out on every side, no edge anywhere
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+    softLayer(x, 7, x => { for (let i = 0; i < w; i += 3) { const base = h * .62 + Math.sin(i * .011) * h * .16 + Math.sin(i * .031) * h * .05, top = base - h * (.25 + R() * .3);   // a curtain, not streaks; blurred once (round 17)
+      const g = x.createLinearGradient(0, base + h * .12, 0, top); g.addColorStop(0, 'rgba(127,224,200,0)'); g.addColorStop(.18, 'rgba(127,224,200,.5)'); g.addColorStop(.5, 'rgba(110,170,220,.22)'); g.addColorStop(1, 'rgba(80,130,210,0)');   // a soft foot, no edge
+      x.globalAlpha = .3 + R() * .4; x.fillStyle = g; x.fillRect(i, top, 3 + R() * 3, base + h * .12 - top); } });
+    x.globalAlpha = 1; x.globalCompositeOperation = 'destination-in';   // round 9: it fades out on every side, no edge anywhere
     const gh = x.createLinearGradient(0, 0, w, 0); gh.addColorStop(0, 'rgba(0,0,0,0)'); gh.addColorStop(.32, 'rgba(0,0,0,1)'); gh.addColorStop(.68, 'rgba(0,0,0,1)'); gh.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gh; x.fillRect(0, 0, w, h);
     const gv = x.createLinearGradient(0, 0, 0, h); gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(.3, 'rgba(0,0,0,1)'); gv.addColorStop(1, 'rgba(0,0,0,1)'); x.fillStyle = gv; x.fillRect(0, 0, w, h);
     return c;
@@ -1803,15 +1807,12 @@ const WC = {
   sky(w, h, R) {                                            // the night as one painted wash: navy and teal, mottled wet-in-wet, granulating, salted, spattered with stars
     const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
     x.fillStyle = '#040b16'; x.fillRect(0, 0, w, h);   // darker still (round 6)   // darker, muted (round 4): vastness, and the avatar easy to follow
-    x.filter = 'blur(34px)';
-    for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#040d1b', '#071628', '#0f2a40', '#15354b', '#0a1d33', '#081a2e'][Math.floor(R() * 6)];
-      x.beginPath(); x.ellipse(R() * w, R() * h, 60 + R() * 220, 40 + R() * 160, R() * 3, 0, Math.PI * 2); x.fill(); }
-    x.filter = 'blur(48px)';
-    for (let i = 0; i < 12; i++) { x.globalAlpha = .04 + R() * .045; x.fillStyle = ['#1f4f86', '#1b6e68', '#3e2470', '#6a1020', '#2a6f8a', '#b9845c'][i % 6];   // dark blue, ocean green, a breath of peach   // faint colour bleeding in, wet-in-wet
-      x.beginPath(); x.ellipse(R() * w, R() * h, 80 + R() * 200, 60 + R() * 140, R() * 3, 0, Math.PI * 2); x.fill(); }
-    x.filter = 'blur(5px)';
-    for (let i = 0; i < 14; i++) { x.globalAlpha = .12 + R() * .12; x.strokeStyle = '#050f20'; x.lineWidth = 3 + R() * 6;   // backruns: darker fringes where the wash dried
-      x.beginPath(); x.ellipse(R() * w, R() * h, 50 + R() * 160, 30 + R() * 110, R() * 3, R() * 3, R() * 3 + 2 + R() * 3); x.stroke(); }
+    softLayer(x, 34, x => { for (let i = 0; i < 90; i++) { x.globalAlpha = .22 + R() * .4; x.fillStyle = ['#040d1b', '#071628', '#0f2a40', '#15354b', '#0a1d33', '#081a2e'][Math.floor(R() * 6)];
+      x.beginPath(); x.ellipse(R() * w, R() * h, 60 + R() * 220, 40 + R() * 160, R() * 3, 0, Math.PI * 2); x.fill(); } });
+    softLayer(x, 48, x => { for (let i = 0; i < 12; i++) { x.globalAlpha = .04 + R() * .045; x.fillStyle = ['#1f4f86', '#1b6e68', '#3e2470', '#6a1020', '#2a6f8a', '#b9845c'][i % 6];   // dark blue, ocean green, a breath of peach   // faint colour bleeding in, wet-in-wet
+      x.beginPath(); x.ellipse(R() * w, R() * h, 80 + R() * 200, 60 + R() * 140, R() * 3, 0, Math.PI * 2); x.fill(); } });
+    softLayer(x, 5, x => { for (let i = 0; i < 14; i++) { x.globalAlpha = .12 + R() * .12; x.strokeStyle = '#050f20'; x.lineWidth = 3 + R() * 6;   // backruns: darker fringes where the wash dried
+      x.beginPath(); x.ellipse(R() * w, R() * h, 50 + R() * 160, 30 + R() * 110, R() * 3, R() * 3, R() * 3 + 2 + R() * 3); x.stroke(); } });
     x.filter = 'none';
     { const n = document.createElement('canvas'); n.width = Math.ceil(w / 6); n.height = Math.ceil(h / 6); const nx = n.getContext('2d'), id = nx.createImageData(n.width, n.height);   // texture: a mottled wash, soft at large scale
       for (let i = 0; i < id.data.length; i += 4) { const v = 128 + (R() - .5) * 120; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; } nx.putImageData(id, 0, 0);
@@ -1842,14 +1843,12 @@ const WC = {
     const c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.4); const x = c.getContext('2d'), m = c.width / 2;
     const arms = o.arms || 2, n = o.n || 700, bl = o.blur ?? 5, fine = bl < 3.5, arm = () => Math.floor(R() * arms) * Math.PI * 2 / arms;
     x.translate(m, m); x.scale(1, tilt);
-    if (bl < 6) { x.filter = 'blur(7px)'; for (let i = 0; i < n / 4; i++) { const d = Math.pow(R(), .7), th = arm() + d * 3.6 + (R() - .5) * 1.6;   // a soft body under the detail
-      x.globalAlpha = (1 - d) * .1; x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 4 + R() * 6, 0, Math.PI * 2); x.fill(); } }
-    x.filter = `blur(${bl}px)`;
-    for (let i = 0; i < n; i++) { const d = Math.pow(R(), .7), th = arm() + d * 3.6 + (R() - .5) * (bl > 8 ? 2.2 : fine ? 1.1 : 1.3);
-      x.globalAlpha = (1 - d) * (fine ? .2 : .16); x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, fine ? 1 + R() * 2.5 : 3 + R() * 6, 0, Math.PI * 2); x.fill(); }
-    if (o.lanes) { x.filter = 'blur(1.5px)'; x.globalCompositeOperation = 'destination-out';   // dark lanes of dust between the arms
-      for (let i = 0; i < 300; i++) { const d = .15 + R() * .7, th = arm() + d * 3.6 + .55 + (R() - .5) * .25; x.globalAlpha = .14; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 1.5 + R() * 2, 0, Math.PI * 2); x.fill(); }
-      x.globalCompositeOperation = 'source-over'; }
+    if (bl < 6) softLayer(x, 7, x => { for (let i = 0; i < n / 4; i++) { const d = Math.pow(R(), .7), th = arm() + d * 3.6 + (R() - .5) * 1.6;   // a soft body under the detail
+      x.globalAlpha = (1 - d) * .1; x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 4 + R() * 6, 0, Math.PI * 2); x.fill(); } });
+    softLayer(x, bl, x => { for (let i = 0; i < n; i++) { const d = Math.pow(R(), .7), th = arm() + d * 3.6 + (R() - .5) * (bl > 8 ? 2.2 : fine ? 1.1 : 1.3);
+      x.globalAlpha = (1 - d) * (fine ? .2 : .16); x.fillStyle = cols[i % cols.length]; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, fine ? 1 + R() * 2.5 : 3 + R() * 6, 0, Math.PI * 2); x.fill(); } });
+    if (o.lanes) softLayer(x, 1.5, x => { for (let i = 0; i < 300; i++) { const d = .15 + R() * .7, th = arm() + d * 3.6 + .55 + (R() - .5) * .25;   // dark lanes of dust between the arms
+      x.globalAlpha = .14; x.beginPath(); x.arc(Math.cos(th) * d * r, Math.sin(th) * d * r, 1.5 + R() * 2, 0, Math.PI * 2); x.fill(); } }, 'destination-out');
     x.filter = 'none';
     for (let i = 0; i < (o.stars || 0); i++) { const d = Math.pow(R(), .6), th = arm() + d * 3.6 + (R() - .5) * .9;   // its own stars, fine
       x.globalAlpha = .3 + R() * .6; x.fillStyle = R() < .5 ? '#ffffff' : cols[i % cols.length]; x.fillRect(Math.cos(th) * d * r, Math.sin(th) * d * r, 1, 1 / tilt); }
@@ -1885,8 +1884,14 @@ function saucer(x, y, s, a, t, tilt, beam) {               // the saucer (round 
   ctx.restore();
 }
 // Things adrift (2026-11-17): small, painted, tumbling slowly past at their own depths. Nods for those who know.
+// Draw sharp on a layer, then blur the layer once: a soft wash for the price of one blur (2026-11-17: blurring every dab froze the Drift's start).
+function softLayer(x, px, draw, op) {
+  const t = document.createElement('canvas'); t.width = x.canvas.width; t.height = x.canvas.height; const y = t.getContext('2d');
+  y.setTransform(x.getTransform()); draw(y);
+  x.save(); x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.filter = px ? `blur(${px}px)` : 'none'; if (op) x.globalCompositeOperation = op; x.drawImage(t, 0, 0); x.restore();
+}
 function driftThing(kind) {
-  const sz = { toolbox: [78, 62], disc: [42, 42], petunias: [64, 74], pick: [72, 72], teapot: [78, 60], slab: [22, 52] }[kind], c = document.createElement('canvas');
+  const sz = { teapot: [78, 60] }[kind], c = document.createElement('canvas');
   c.width = sz[0]; c.height = sz[1]; const x = c.getContext('2d'), R = Math.random;
   // a watercolour wash in a shape: the base, a lit side and a shadow side, wet streaks, granulation, pigment pooled at the rim (round 16)
   const wash = (path, box, base, dark, light, o = {}) => { const [bx, by, bw, bh] = box;
@@ -1897,31 +1902,7 @@ function driftThing(kind) {
     if (o.shine) { x.globalAlpha = .55; x.fillStyle = 'rgba(255,255,255,.9)'; x.filter = 'blur(1.2px)'; x.beginPath(); x.ellipse(...o.shine, 0, 0, Math.PI * 2); x.fill(); x.filter = 'none'; }
     x.restore();
     x.save(); x.beginPath(); path(); x.filter = 'blur(.7px)'; x.globalAlpha = .65; x.strokeStyle = dark; x.lineWidth = 1.3; x.stroke(); x.restore(); };
-  if (kind === 'toolbox') {                                 // a red metal toolbox, lid open, tools in it: the one let go of on a spacewalk
-    x.fillStyle = '#5a1410'; x.beginPath(); x.roundRect(10, 8, 58, 22, 3); x.fill();                                   // the lid, open behind, its inside dark
-    wash(() => x.roundRect(10, 6, 58, 6, 2), [10, 6, 58, 6], '#c44a36', 'rgba(90,15,10,.6)', 'rgba(255,200,180,.4)');
-    x.strokeStyle = '#2a2a2c'; x.lineWidth = 3; x.lineCap = 'round'; x.beginPath(); x.moveTo(28, 6); x.quadraticCurveTo(39, -2, 50, 6); x.stroke();   // its handle
-    // the tools, standing up out of it
-    x.save(); x.translate(22, 30); x.rotate(-.35); x.fillStyle = '#e2c49a'; x.fillRect(-1.6, -16, 3.2, 16); x.fillStyle = '#9aa0a6'; x.beginPath(); x.roundRect(-6, -21, 12, 6, 1.5); x.fill(); x.restore();   // a hammer
-    x.save(); x.translate(34, 30); x.rotate(-.1); x.fillStyle = '#a8aeb3'; x.fillRect(-1.8, -16, 3.6, 16); x.beginPath(); x.arc(0, -18, 4.4, 0, Math.PI * 2); x.fill(); x.fillStyle = '#5a1410'; x.fillRect(-1.4, -23, 2.8, 5); x.restore();   // a spanner
-    x.save(); x.translate(46, 30); x.rotate(.25); x.fillStyle = '#b8bec3'; x.fillRect(-.8, -20, 1.6, 10); x.fillStyle = '#232427'; x.beginPath(); x.roundRect(-2.6, -11, 5.2, 11, 2); x.fill(); x.restore();   // a screwdriver
-    x.save(); x.translate(56, 30); x.rotate(.4); x.fillStyle = '#b8bec3'; x.fillRect(-.8, -18, 1.6, 9); x.fillStyle = '#efe0bc'; x.beginPath(); x.roundRect(-2.6, -10, 5.2, 10, 2); x.fill(); x.restore();   // another
-    wash(() => x.roundRect(6, 28, 66, 30, 3), [6, 28, 66, 30], '#c8402e', 'rgba(90,15,10,.6)', 'rgba(255,196,176,.45)');   // the box
-    x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(6, 31, 66, 1.5);
-    x.fillStyle = '#c9c4ba'; x.beginPath(); x.roundRect(35, 30, 8, 10, 1.5); x.fill(); x.fillStyle = '#8f8a80'; x.beginPath(); x.arc(39, 36, 1.3, 0, Math.PI * 2); x.fill();   // the latch
-    x.strokeStyle = 'rgba(255,220,210,.55)'; x.lineWidth = .8; x.beginPath(); x.moveTo(62, 44); x.lineTo(60, 49); x.stroke();   // a scratch
-  } else if (kind === 'petunias') {                         // a pot of petunias, thinking only: oh no, not again
-    for (const [lx, ly, rx, ry, rot] of [[18, 30, 10, 5, -.5], [46, 30, 10, 5, .5], [26, 26, 9, 4.5, -.2], [40, 25, 9, 4.5, .3], [32, 31, 10, 4, 0]])   // leaves, deep green
-      wash(() => x.ellipse(lx, ly, rx, ry, rot, 0, Math.PI * 2), [lx - rx, ly - rx, rx * 2, rx * 2], '#3d6a4c', 'rgba(16,40,26,.55)', 'rgba(180,230,190,.4)');
-    const blooms = [[20, 20, '#8e4ab0'], [32, 13, '#b65aa8'], [44, 19, '#7a3f9e'], [26, 26, '#c46ab8'], [39, 26, '#9c4cb2']];
-    for (const [bx, by, col] of blooms) {                    // petunias: five-lobed trumpets, layered like washes, dark veins, a pale throat
-      x.save(); x.globalAlpha = .88; for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2 + bx; x.fillStyle = col; x.beginPath(); x.arc(bx + Math.cos(a) * 3.4, by + Math.sin(a) * 3.4, 3.6, 0, Math.PI * 2); x.fill(); }
-      x.globalAlpha = .45; x.strokeStyle = '#3a1450'; x.lineWidth = .6; for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2 + bx; x.beginPath(); x.moveTo(bx, by); x.lineTo(bx + Math.cos(a) * 5, by + Math.sin(a) * 5); x.stroke(); }
-      x.globalAlpha = .9; x.fillStyle = '#f6ecc8'; x.beginPath(); x.arc(bx, by, 1.3, 0, Math.PI * 2); x.fill(); x.restore(); }
-    x.fillStyle = '#3a2418'; x.beginPath(); x.ellipse(32, 35, 21, 3, 0, 0, Math.PI * 2); x.fill();   // soil
-    wash(() => { x.moveTo(14, 38); x.lineTo(50, 38); x.lineTo(45, 70); x.quadraticCurveTo(32, 73, 19, 70); x.closePath(); }, [14, 38, 36, 34], '#c8784e', 'rgba(110,50,25,.55)', 'rgba(255,222,196,.5)');   // a terracotta pot
-    wash(() => x.roundRect(10, 32, 44, 8, 2), [10, 32, 44, 8], '#d2865c', 'rgba(110,50,25,.55)', 'rgba(255,226,200,.5)');   // its rim
-  } else if (kind === 'teapot') {                           // a china teapot in orbit: cream, blue lid, spout and handle, a blue flower or two
+  if (kind === 'teapot') {                           // a china teapot in orbit: cream, blue lid, spout and handle, a blue flower or two
     x.strokeStyle = '#2f62b8'; x.lineWidth = 4; x.lineCap = 'round'; x.beginPath(); x.arc(58, 33, 10, -Math.PI * .45, Math.PI * .5); x.stroke();   // the handle
     wash(() => { x.moveTo(20, 34); x.quadraticCurveTo(10, 32, 5, 19); x.lineTo(9, 18); x.quadraticCurveTo(13, 28, 22, 29); x.closePath(); }, [5, 18, 18, 17], '#2f62b8', 'rgba(14,30,80,.55)', 'rgba(170,205,250,.5)');   // the spout
     wash(() => x.ellipse(37, 35, 20, 17, 0, 0, Math.PI * 2), [17, 18, 40, 34], '#f3ead9', 'rgba(110,120,150,.5)', 'rgba(255,255,255,.7)', { shine: [29, 27, 5, 3] });   // the body
@@ -1932,25 +1913,6 @@ function driftThing(kind) {
     wash(() => x.ellipse(37, 19, 12, 5, 0, Math.PI, 0), [25, 14, 24, 6], '#2f62b8', 'rgba(14,30,80,.55)', 'rgba(170,205,250,.5)');   // the lid
     x.strokeStyle = '#e0a050'; x.lineWidth = 1; x.beginPath(); x.ellipse(37, 19.5, 12, 1.6, 0, 0, Math.PI * 2); x.stroke();
     x.fillStyle = '#e0a050'; x.beginPath(); x.arc(37, 12, 2.4, 0, Math.PI * 2); x.fill();   // the knob
-  } else if (kind === 'pick') {                             // a pickaxe, let go of: pure chrome, a curved pick, a short adze
-    x.translate(36, 36); x.rotate(-.72);
-    const hg = x.createLinearGradient(-3, 0, 3, 0); hg.addColorStop(0, '#ffffff'); hg.addColorStop(.3, '#d3d9dd'); hg.addColorStop(.62, '#6a737a'); hg.addColorStop(1, '#2c3338');
-    x.fillStyle = hg; x.beginPath(); x.roundRect(-2.8, -18, 5.6, 46, 2.6); x.fill();
-    x.strokeStyle = 'rgba(30,36,40,.35)'; x.lineWidth = .6; for (let y = 8; y < 26; y += 2) { x.beginPath(); x.moveTo(-2.8, y); x.lineTo(2.8, y + 1); x.stroke(); }   // a knurled grip, chrome too
-    const cg = x.createLinearGradient(0, -26, 0, -12); cg.addColorStop(0, '#ffffff'); cg.addColorStop(.28, '#e2e8ec'); cg.addColorStop(.5, '#7b858c'); cg.addColorStop(.72, '#c9d0d5'); cg.addColorStop(1, '#353d43');
-    x.fillStyle = cg; x.beginPath(); x.moveTo(-2, -25); x.quadraticCurveTo(-20, -25, -30, 6); x.lineTo(-28.5, 6.5); x.quadraticCurveTo(-18, -14, -2, -15); x.lineTo(12, -15); x.lineTo(18, -13); x.lineTo(18, -22); x.lineTo(12, -24); x.closePath(); x.fill();
-    x.strokeStyle = 'rgba(255,255,255,.85)'; x.lineWidth = 1; x.beginPath(); x.moveTo(-3, -24); x.quadraticCurveTo(-18, -24, -27, 0); x.stroke();   // the light along its curve
-    const kg = x.createLinearGradient(-4, 0, 4, 0); kg.addColorStop(0, '#f2f5f7'); kg.addColorStop(1, '#4a5258'); x.fillStyle = kg; x.beginPath(); x.roundRect(-4, -26, 8, 13, 2); x.fill();   // the eye
-  } else if (kind === 'disc') {                             // a golden disc, sounds and greetings for whoever finds it
-    x.translate(21, 21); const g = x.createRadialGradient(-5, -6, 1, 0, 0, 19); g.addColorStop(0, '#fff2c0'); g.addColorStop(.5, '#d8a646'); g.addColorStop(1, '#7e5418');
-    x.fillStyle = g; x.beginPath(); x.arc(0, 0, 19, 0, Math.PI * 2); x.fill();
-    x.strokeStyle = 'rgba(110,70,16,.28)'; x.lineWidth = .6; for (let r = 7; r < 18.5; r += 1.6) { x.beginPath(); x.arc(0, 0, r, 0, Math.PI * 2); x.stroke(); }
-    x.fillStyle = '#c4902c'; x.beginPath(); x.arc(0, 0, 5.5, 0, Math.PI * 2); x.fill(); x.fillStyle = '#2a1c08'; x.beginPath(); x.arc(0, 0, 1.3, 0, Math.PI * 2); x.fill();
-    x.globalCompositeOperation = 'screen'; x.fillStyle = 'rgba(255,248,220,.45)'; x.beginPath(); x.moveTo(0, 0); x.arc(0, 0, 19, -2.4, -1.9); x.closePath(); x.fill();
-  } else if (kind === 'slab') {                             // a black slab, perfectly made, saying nothing; the sunrise catches its edge
-    x.fillStyle = '#05060a'; x.fillRect(3, 3, 16, 46);
-    const eg = x.createLinearGradient(16, 0, 19, 0); eg.addColorStop(0, 'rgba(255,222,190,0)'); eg.addColorStop(1, 'rgba(255,226,196,.55)'); x.fillStyle = eg; x.fillRect(16, 3, 3, 46);
-    x.fillStyle = 'rgba(200,214,236,.18)'; x.fillRect(3, 3, 16, 1); x.fillStyle = 'rgba(150,175,220,.22)'; x.fillRect(3, 3, 1, 46);   // a faint cool edge on the dark side
   }
   return c;
 }
@@ -1974,9 +1936,12 @@ function startDrift() {
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
   { const d = s.drift, NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#4a2a86', '#8e1424', '#2a3f8e'], ['#1c6f7d', '#2f55a0', '#5a2f8e'], ['#9a1626', '#4f2a80', '#7a1020'],   // deep purple and dark red beside the blues, greens and peach (round 7)
        ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
-    d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = WC.blob(n.r, NEB[i], R); });
-    d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#c2453f', '#f0b48c', '#7b4fb8', '#8f2a3c'], R) };   // the exploding nebula: crimson, peach and violet
-    const SC = CONFIG.drift.sections, P = (r, base, light, bands, o) => WC.planet(r, base, light, bands, R, o);
+    d.paintQ = []; const lazy = (w, h, paint) => { const c = document.createElement('canvas'); c.width = w; c.height = h; d.paintQ.push(() => c.getContext('2d').drawImage(paint(), 0, 0)); return c; };   // round 17: painted a little each frame, during the wormhole
+    d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = lazy(Math.ceil(n.r * 2.8), Math.ceil(n.r * 2.8), () => WC.blob(n.r, NEB[i], R)); });
+    d.burst = { x: W0 * .72, y: H0 * .28, img: document.createElement('canvas') }; d.paintQ.push(() => d.burst.img = WC.burst(170, ['#c2453f', '#f0b48c', '#7b4fb8', '#8f2a3c'], R));   // the exploding nebula: crimson, peach and violet
+    const SC = CONFIG.drift.sections, P = (r, base, light, bands, o = {}) => {   // a planet: its canvas sized now, painted in the queue
+      const pad = o.rings ? r * 1.25 : o.glow ? r * .15 : 8;
+      return lazy(Math.ceil(r * 2 + pad * 2), Math.ceil(r * 2 + (o.rings ? r * .9 : 0) + (o.glow ? r * .3 : 16)), () => WC.planet(r, base, light, bands, R, o)); };
     // Bodies at every depth (2026-11-17): far ones small, hazy and nearly still; near ones big, clear, moving more as you steer. par: parallax; far: haze.
     d.planets = [
       { x: W0 * .45, y: 70, at: 30, img: P(6, '#7d8fd6', '#e6ecff', ['#ffffff']), par: .01, far: .5 },
@@ -1989,14 +1954,14 @@ function startDrift() {
       { x: W0 * .88, y: H0 * .84, at: SC.chorus + 14, img: P(40, '#2a7a80', '#dcfcf6', ['#e8fbf8', '#5fb7b4', '#2a8a8c', '#c8f2ec'], { tilt: -.15, nb: 8, calm: .3, bandA: .12, bandBlur: 5, glow: 'rgba(170,240,230,' }), par: .08 },
       { x: W0 * .62, y: H0 + 40, at: SC.bridge - 24, img: P(120, '#7a7590', '#efeaff', ['#bdb6d6', '#9a93b8'], { craters: 34, tilt: .3 }), par: .32 },   // a great moon close by, rising at the bottom edge
     ];
-    d.ribbons = [{ img: WC.ribbon(1400, 180, R), from: 22, to: 60, y: 10 }, { img: WC.ribbon(1400, 180, R), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
+    d.ribbons = [{ img: lazy(1400, 180, () => WC.ribbon(1400, 180, R)), from: 22, to: 60, y: 10 }, { img: lazy(1400, 180, () => WC.ribbon(1400, 180, R)), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
     setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
     d.flares = Array.from({ length: 5 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
-    d.galaxies.forEach(gx => { gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R, gx.o); });
-    d.veils = [[W0 * .1, H0 * .25, 260], [W0 * .95, H0 * .7, 300], [-W0 * .3, H0 * .95, 240]].map(([x, y, r]) => ({ x, y, img: WC.blob(r, ['#1d4a6a', '#2b5f80', '#3a4f86'], R) }));
-    d.dawn = WC.dawn(1000, 520, R);
+    d.galaxies.forEach(gx => { gx.img = document.createElement('canvas'); d.paintQ.push(() => gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R, gx.o)); });   // in the queue too
+    d.veils = [];   // (the veils are gone since round 4; no longer painted for nothing)
+    d.dawn = lazy(1000, 520, () => WC.dawn(1000, 520, R));
     d.rays = (() => { const c = document.createElement('canvas'); c.width = c.height = 900; const x = c.getContext('2d'), m = 450; x.filter = 'blur(16px)';   // round 9: broad, soft rays
       for (let i = 0; i < 11; i++) { const a = i / 11 * Math.PI * 2 + (R() - .5) * .4, w = .05 + R() * .1, len = 300 + R() * 140, g = x.createRadialGradient(m, m, 0, m, m, len);
         g.addColorStop(0, `rgba(255,240,222,${.25 + R() * .2})`); g.addColorStop(1, 'rgba(255,240,222,0)'); x.fillStyle = g;
@@ -2010,22 +1975,15 @@ function startDrift() {
       { x: W0 * .95, y: H0 * .72, at: SC.bridge + 4, img: P(18, '#3a2672', '#d8c8ff', ['#6a52b0', '#24164e', '#b8a0e8'], { tilt: .3, rings: ['#b8a0e8', '#ffffff', '#7a62c0'], ringTilt: .35 }), par: .07 });   // a small violet ringed one
     d.planets.push({ x: W0 * 1.2, y: H0 * .3, at: SC.verse1 + 28, img: P(24, '#f0d462', '#fffef0', ['#fff6c4', '#f6e28a', '#fffef6', '#ecd06a'], { tilt: .18 }), par: .09 },   // round 12: pale bright yellow
       { x: W0 * 1.2, y: H0 * .6, at: SC.chorus + 36, img: P(54, '#0c2462', '#8fb2ee', ['#1c3f8a', '#06143a', '#3a64b4', '#0f2c70'], { tilt: -.22, phase: .75, rings: ['#8fb2ee', '#c8d8f4', '#5a7ab8'], ringTilt: -.5 }), par: .11 });   // and a deep blue
-    d.planets.push(   // round 13: things adrift, tumbling slowly, one per stretch of the song
-      { x: W0 * 1.1, y: H0 * .4, at: SC.verse1 + 12, thing: true, img: driftThing('toolbox'), v: 15 + Math.random() * 4, par: .08, spin: .14 },
-      { x: W0 * 1.1, y: H0 * .5, at: SC.pre + 12, thing: true, img: driftThing('disc'), v: 15 + Math.random() * 4, par: .06, spin: .22 },
-      { x: W0 * 1.1, y: H0 * .35, at: SC.verse2 + 16, thing: true, img: driftThing('petunias'), v: 15 + Math.random() * 4, par: .07, spin: .1 },
-      { x: W0 * 1.1, y: H0 * .55, at: SC.chorus + 24, thing: true, img: driftThing('pick'), v: 15 + Math.random() * 4, par: .09, spin: .3 },
-      { x: W0 * 1.1, y: H0 * .3, at: SC.bridge + 6, thing: true, img: driftThing('teapot'), v: 15 + Math.random() * 4, par: .06, spin: .08 },
-      { x: W0 * .8, y: H0 * .3, at: SC.outro - 2, img: driftThing('slab'), par: .04, spin: .035, fixed: true });   // the slab above the sunrise, so it catches the light
+    d.planets.push({ x: W0 * 1.1, y: H0 * .3, at: SC.bridge + 6, thing: true, img: driftThing('teapot'), v: 15 + Math.random() * 4, par: .06, spin: .08 });   // round 18: only the teapot adrift, every Drift, its moment chosen below
     d.planets.push({ x: W0 * 1.5 + 330, y: H0 + 100, at: SC.verse2 + 46, lead: 0, fixed: true, par: .3,   // round 11: a giant passing close, never seen whole
       img: P(300, '#7a4c32', '#f2dcbc', ['#ecd0ac', '#6e3e28', '#c9966c', '#f8ead6', '#4e2e20', '#a8704e', '#e2bc94', '#8a5236'], { tilt: -.07, nb: 22, calm: .25, bandA: .16, bandBlur: 14, storm: '#8e3424', glow: 'rgba(255,226,190,' }) });
     { const pick = a => a[Math.floor(R() * a.length)], shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };   // round 15: every Drift its own journey
-      const giant = d.planets.find(p => p.fixed && !p.thing && p.par >= .3), slab = d.planets.find(p => p.fixed && p !== giant);
+      const giant = d.planets.find(p => p.fixed && p.par >= .3);
       const bodies = d.planets.filter(p => !p.thing && !p.fixed && !p.far), keep = bodies.find(p => p.lead === 42);   // the striped blue one always comes
       const drop = shuffle(bodies.filter(p => p !== keep)).slice(0, 1 + Math.floor(R() * 2));   // one or two bodies stay away this time
-      const things = d.planets.filter(p => p.thing), pool = shuffle([...things, slab].filter(Boolean)), chosen = pool.slice(0, 3);   // at most three items, a random three each Drift
-      d.planets = d.planets.filter(p => !drop.includes(p) && (!pool.includes(p) || chosen.includes(p)));
-      { const ats = shuffle(things.map(p => p.at)); chosen.filter(p => p.thing).forEach((p, i) => p.at = ats[i]); }   // each at one of the items' moments
+      d.planets = d.planets.filter(p => !drop.includes(p));
+      d.planets.filter(p => p.thing).forEach(p => p.at = pick([SC.verse1 + 12, SC.pre + 12, SC.verse2 + 16, SC.chorus + 24, SC.bridge + 6]));   // the teapot, at a moment of its own each Drift
       const swapAt = list => { const ats = shuffle(list.map(p => p.at)); list.forEach((p, i) => p.at = ats[i]); };   // the same moments, in a new order
       swapAt(bodies.filter(p => !drop.includes(p))); swapAt(d.galaxies);
       if (giant) { if (R() < .25) d.planets = d.planets.filter(p => p !== giant); else giant.at = pick([SC.verse1 + 20, SC.verse2 + 46, SC.chorus + 10]); }
@@ -2034,7 +1992,7 @@ function startDrift() {
     { const v = pl => pl.v || 2 + pl.par * 45, X = (pl, t) => pl.x - (t - pl.at - (pl.lead || 15)) * v(pl), rad = pl => Math.max(pl.img.width, pl.img.height) * .42, placed = [];   // round 10: spread evenly
       const vis = x => x > -W0 * .6 - 60 && x < W0 * 1.5 + 60;
       const cost = (pl, y) => { let c = Math.abs(y - pl.y0) * .02;
-        for (let t = pl.at; t < 280; t += 2) { const ax = X(pl, t); if (!vis(ax)) continue; const on = placed.filter(o => t >= o.at && vis(X(o, t)));
+        for (let t = pl.at; t < 280; t += 3) { const ax = X(pl, t); if (!vis(ax)) continue; const on = placed.filter(o => t >= o.at && vis(X(o, t)));
           for (const o of on) { const dx = ax - X(o, t), dy = y - o.y, dist = Math.hypot(dx, dy), need = rad(pl) + rad(o) + 70;
             if (dist < need) return Infinity;                          // never overlapping, never close
             if (dist < need * 2) c += (need * 2 - dist) * .05;         // and the further the better
@@ -2047,11 +2005,11 @@ function startDrift() {
       for (const pl of [...d.planets].sort((a, b) => (b.fixed ? 1 : 0) - (a.fixed ? 1 : 0) || b.par - a.par)) {   // the fixed ones, then the near ones first; the rest find their places around them
         if (pl.fixed) { placed.push(pl); continue; }
         pl.y0 = pl.y; const at0 = pl.at; let best = null;
-        for (let w = 0; w < 6; w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 16) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }
+        for (let w = 0; w < 6; w++) { pl.at = at0 + w * 8; for (let y = 40; y <= H0 - 80; y += 20) { const c = cost(pl, y) + w * 4; if (!best || c < best.c) best = { c, y, at: pl.at }; } }
         if (!isFinite(best.c)) { pl.gone = true; pl.at = at0; continue; }   // no clear lane anywhere: it stays out of this Drift
         pl.at = best.at; pl.y = best.y; placed.push(pl); }
       d.planets = d.planets.filter(p => !p.gone); }   // no veils: fewer layers
-    d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R);
+    d.worm = document.createElement('canvas'); d.paintQ.unshift(() => d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R));   // first in the queue: the wormhole opens at 2 s
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
         d.falls.push({ at, x: -160 + R() * W0 * 1.7, y: -40 + R() * H0 * .5, len: 120 + R() * 280, dur: 1.2 + R() * 2.4, ang: dir, w: .7 + R() * 1.3, tail: 40 + R() * 100,
@@ -2094,6 +2052,7 @@ function skyBegin() {
   skyCtx.setTransform(k, 0, 0, k, box.x + box.w / 2 - W0 * k / 2, box.y + box.h / 2 - H0 * k / 2);
 }
 function drawDrift() {
+  { const q = s.drift.paintQ; if (q && q.length) { const t0 = performance.now(); do q.shift()(); while (q.length && performance.now() - t0 < 8); } }   // the paint queue: a few milliseconds a frame
   const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
   const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
   const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
