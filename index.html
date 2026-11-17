@@ -72,7 +72,8 @@
                          50% { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 3px rgba(255,180,60,1), inset 0 -2px 0 rgba(0,0,0,.18); } }
   .recipe.guide { outline:1.5px solid rgba(255,180,60,.3); outline-offset:4px; animation:rowguide 1.8s ease-in-out infinite; }
   @keyframes rowguide { 50% { outline-color:rgba(255,180,60,1); } }
-  @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
+  .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* named in the hint: look here */
+  @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type, .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
   #radioBox .ticker { flex:1; min-width:0; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
                       mask-image:linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
@@ -146,6 +147,7 @@
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
   .recipe .name br { display:none; } .recipe .name > * { display:block; }   /* name, what it does and the recipe: each its own paragraph, so text-wrap:pretty keeps every last line from being an orphan */
   .recipe .does { font-size:12px; color:var(--dim); }
+  .recipe .name > *, .overlay .body, .overlay .note, #log div, #radioFx, .small, .journeyCap { text-wrap:balance; }   /* no short last lines in short blocks (2026-11-17) */
   .ph { display:none; color:var(--faint); margin-bottom:6px; font:500 12px var(--f-small); }   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
   .ph.on { display:block; }
   body.fitting .ph { display:none !important; }
@@ -199,7 +201,7 @@
   .artimg { flex:none; width:96px; height:72px; object-fit:cover; margin-top:2px; cursor:zoom-in; clip-path:var(--chamfer-s); }   /* the find's photo, beside its card */
   #sky { position:fixed; left:0; top:0; width:100vw; height:100vh; border:0; background:none; transition:none; z-index:0; pointer-events:none; display:none; }   /* not the mining window's canvas size */
   #wrap { position:relative; z-index:1; }
-  body.wide #sky { display:block; }
+  body.wide #sky { display:block; z-index:2; }   /* above the deck's plate: it only paints inside its own window */
   body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
@@ -682,8 +684,8 @@ const clip = (folder, name) => `audio/Radio/${folder}/${name}.mp3`;
 const ROCKY = name => `audio/Radio/The Pump Zone/coach rocky compressed/${name}.wav`, VOICE = name => clip('Void FM/The Broadcaster', name);   // Rocky: the user's compressed takes
 const DJS = {
   pump: {
-    breaks: ['hydrate dominate excavate', 'no pain no gain', 'heartrate', 'näsa jab', 'side effects'].map(ROCKY),
-    songs: { 'Hard Hat, Hard Body': ROCKY('never leave a bro') },   // a line that belongs to a song: over its opening, every time it comes on
+    breaks: ['hydrate dominate excavate', 'no pain no gain', 'näsa jab', 'side effects'].map(ROCKY),
+    songs: { 'Hard Hat, Hard Body': ROCKY('never leave a bro'), 'Presslufthammerherz': ROCKY('heartrate') },   // heart rate over the Jackhammer Heart (2026-11-17)   // a line that belongs to a song: over its opening, every time it comes on
     hello: ROCKY('good morning'),                                 // Begin shift, if the shift starts on the Pump Zone
     frenzy: ROCKY('frenzy not a problem'),                        // a Frenzy starts: he breaks in on any station
     fromVoid: ROCKY('void fm jab'),                               // back from Void FM: if you switch to Void FM, he will know
@@ -967,6 +969,9 @@ const FIND = {
   graffiti: (c, x, y) => { plate(c, x, y, COL.steel); spray(c, x, y, COL.concrete, c => {   // a tag: a loopy scrawl, an underline with a flick, a drip and a dot
       c.moveTo(8.5, 24); c.lineTo(10.5, 14); c.lineTo(13, 23.5); c.lineTo(15.5, 13); c.lineTo(17.5, 22.5); c.quadraticCurveTo(19, 16.5, 22.5, 17); c.quadraticCurveTo(26.5, 17.5, 24.5, 21.5); c.quadraticCurveTo(22, 24.5, 20.5, 21.5);
       c.lineTo(27, 11.5); c.quadraticCurveTo(32.5, 10, 29.5, 16); c.moveTo(8, 29.5); c.quadraticCurveTo(20, 26.5, 32, 27.5); c.lineTo(29.5, 30.5); c.moveTo(13, 23.5); c.lineTo(13, 31); }, [[13, 32, 1.3], [31.5, 22.5, 1.4]]); },
+  graffiti3: (c, x, y) => { plate(c, x, y, COL.steel); spray(c, x, y, COL.concrete, c => {   // a heart, sprayed, one drip: Doppio+'s "…UNA DI POWDER."
+      c.moveTo(20, 29); c.bezierCurveTo(10, 22.5, 9, 13, 15, 12); c.bezierCurveTo(18, 11.5, 20, 14, 20, 16.5); c.bezierCurveTo(20, 14, 22, 11.5, 25, 12); c.bezierCurveTo(31, 13, 30, 22.5, 20, 29);
+      c.moveTo(20, 29); c.lineTo(20, 32.5); }, [[20, 33.5, 1.2]]); },
   graffiti2: (c, x, y) => { plate(c, x, y, COL.steel); const pts = [0, 1, 2, 3, 4, 5].map(k => { const a = (-90 + 144 * k) * Math.PI / 180; return [20 + 10.5 * Math.cos(a), 20 + 10.5 * Math.sin(a)]; });   // a star, scrawled, dripping
     spray(c, x, y, COL.concrete, c => { c.moveTo(pts[0][0], pts[0][1]); for (let k = 1; k < 6; k++) c.lineTo(pts[k][0], pts[k][1]); c.lineTo(pts[1][0] + 2, pts[1][1] + 1.5);
       c.moveTo(pts[2][0], pts[2][1]); c.lineTo(pts[2][0], pts[2][1] + 4); c.moveTo(pts[3][0], pts[3][1]); c.lineTo(pts[3][0], pts[3][1] + 2.5); }, [[pts[2][0], pts[2][1] + 5, 1.2], [pts[3][0], pts[3][1] + 3.5, 1.1]]); },
@@ -1450,7 +1455,7 @@ function secretCard(key) {
   const done = Object.keys(S.clues).every(k => s.clues[k]), name = key === 'candy' ? 'Candygirl' : 'Doppio+';
   const after = key === 'candy' ? ` For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.` : ` For ${CONFIG.jizz.durationMs / 1000} seconds, every shake makes two bottles. Doubles, darling.`;
   return { id: S.id, cat: 'Secret menu', label: found ? name : '█'.repeat(name.length), title: found ? name : 'Secret menu',
-    body: S.text(known) + (found ? after : done ? ' Not endorsed.' : '<br><i>Redacted. Some of it is written in the rock.</i>') };
+    body: S.text(known) + (found ? after : done ? ' Not endorsed by the Foundation.' : '<br><i>Redacted. Some of it is written in the rock.</i>') };
 }
 function clue(k, line) {
   if (s.clues[k]) return;
@@ -1698,6 +1703,12 @@ function startDrift() {
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
   radio.on = 'oddity'; radio.since = radio.clock;
   document.body.classList.add('drifting', 'wide');
+  // The radio slides under the drift window as it grows, so the two line up as one square (2026-11-17).
+  { const rb = $('baseRow'), st = $('stage'), cvb = st.offsetTop + cv.offsetTop + cv.offsetHeight, pn = $('panel');
+    rb.style.width = rb.offsetWidth + 'px'; void rb.offsetWidth;
+    rb.style.transition = 'transform 6s ease 5s, width 6s ease 5s';
+    rb.style.transform = `translate(${st.offsetLeft - rb.offsetLeft}px, ${cvb + 10 - rb.offsetTop}px)`;
+    rb.style.width = (pn.offsetLeft + pn.offsetWidth - st.offsetLeft) + 'px'; }
   say('Calm, on top of Stillness. The shaft lets go.');
 }
 
@@ -1864,7 +1875,7 @@ function drawDrift() {
 
 function endDrift() {
   if (s.drift.done) return;
-  s.drift.done = true; document.body.classList.remove('wide'); finishGame(true);
+  s.drift.done = true; document.body.classList.remove('wide'); $('baseRow').style.cssText = ''; finishGame(true);
 }
 
 function showMenu(html) { $('menu').innerHTML = html; $('menu').classList.remove('hidden'); }
@@ -1907,7 +1918,7 @@ function resume() {
 }
 
 function newGame() {
-  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting', 'wide'); }   // back to what was playing before space
+  if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting', 'wide'); $('baseRow').style.cssText = ''; }   // back to what was playing before space
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
@@ -2054,7 +2065,7 @@ function draw() {
       case SEAM: case ART: (seamAnswers(c.kind) ? FIND.seamOpen : FIND.seam)(ctx, x, y); break;
       case SEALED: (seamAnswers(c.kind) ? FIND.sealedOpen : FIND.sealed)(ctx, x, y); break;
       case SHAKER: FIND.shaker(ctx, x, y); break;
-      case GRAFFITI: (c.clue === 'crack' || c.clue === 'doppioPowder' ? FIND.graffiti2 : FIND.graffiti)(ctx, x, y); break;
+      case GRAFFITI: (c.clue === 'doppioPowder' ? FIND.graffiti3 : c.clue === 'crack' ? FIND.graffiti2 : FIND.graffiti)(ctx, x, y); break;
       case SLAB: {
         FIND.slab(ctx, x, y);
         const heat = c.heat ? Math.max(0, c.heat - CONFIG.chrome.coolPerSec * Math.max(0, now() - c.hotAt - CONFIG.chrome.heatEveryMs * 2) / 1000) / CONFIG.chrome.meltHeat : 0;
@@ -2345,7 +2356,7 @@ function buildGauge() {
   const txt = (cls, x, y, size, fill, weight, fam, extra = '') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="middle" font-family="${fam}" font-weight="${weight}" font-size="${size}" fill="${fill}" ${extra}></text>`;
   const bez = `M8.5 .75 H${w - 118} L${w - 102} 40.75 H${w - .75} V${GZ.h - 8.5} L${w - 8.5} ${GZ.h - .75} H.75 V8.5 Z`;   // the box's outline, as its clip-path
   let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
-  h += `<path d="${bez}" fill="none" stroke="url(#gbez)" stroke-width="1.5"/>`;   // a steel bezel around the glass, like the radio's lit edge
+  h += `<path class="bez" d="${bez}" fill="none" stroke="url(#gbez)" stroke-width="1.5"/>`;   // a steel bezel around the glass, like the radio's lit edge
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
@@ -2435,6 +2446,9 @@ function hud() {
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
   setText('effects', 'Active: ' + (fx.join(' · ') || 'none'));
+  // A panel the hint names pulses for the hint's first six seconds (2026-11-17: they look alike, and the hint is far from the right column).
+  const fresh = performance.now() - typing.from < 6000;
+  for (const [re, el] of [[/rover panel/i, $('rover')], [/Field Guide/, $('guide').closest('.box')], [/Milk\+ menu/i, $('milk')], [/Next drink|\bthe meter\b/i, $('dosage')]]) el.classList.toggle('hinted', fresh && re.test(typing.text));
   const gd = guideNow(); $('hint').classList.toggle('guide', gd === 'hint'); $('act_strength').closest('.recipe').classList.toggle('guide', gd === 'strength');
   drawGaugeMeter(t);
   cv.className = s.drift ? '' : frenzy() ? 'frenzy' : stillness() ? 'still' : '';   // the Drift drops Stillness's tint: space has its own colours
