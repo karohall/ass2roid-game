@@ -1761,8 +1761,8 @@ const WC = {
     if (o.blooms) for (let i = 0; i < 12; i++) {             // wet-in-wet blooms: colour flooding into the wash, a dark fringe where it stopped
       const a = R() * 6.3, d = Math.sqrt(R()) * r * .8, bx = mx + Math.cos(a) * d, by = my + Math.sin(a) * d, br = r * (.12 + R() * .3), n = 22;
       x.beginPath(); for (let j = 0; j <= n; j++) { const b = j / n * 6.3, k = 1 + (R() - .5) * .45; x.lineTo(bx + Math.cos(b) * br * k, by + Math.sin(b) * br * k); }
-      x.filter = 'blur(2px)'; x.globalAlpha = .35 + R() * .25; x.fillStyle = o.blooms[i % o.blooms.length]; x.fill();
-      x.filter = 'blur(1px)'; x.globalAlpha = .4; x.strokeStyle = o.fringe || '#1b1a4a'; x.lineWidth = 1.4; x.stroke(); x.filter = 'none'; }
+      x.filter = 'blur(3px)'; x.globalAlpha = .3 + R() * .2; x.fillStyle = o.blooms[i % o.blooms.length]; x.fill();
+      x.filter = 'blur(2.5px)'; x.globalAlpha = .22; x.strokeStyle = o.fringe || '#1b1a4a'; x.lineWidth = 2.2; x.stroke(); x.filter = 'none'; }   // the fringe soft, not a drawn line
     if (o.craters) for (let i = 0; i < o.craters; i++) {     // craters: deep bowls, foreshortened toward the edge, lit on one rim     // craters: deep bowls, foreshortened toward the edge, lit on one rim
       const a = R() * 6.3, d = Math.sqrt(R()) * r * .85, cxp = mx + Math.cos(a) * d, cyp = my + Math.sin(a) * d, cr = r * (.05 + R() * R() * .22), sq = Math.sqrt(1 - Math.min(.9, (d / r) ** 2)), rot = a;
       x.save(); x.translate(cxp, cyp); x.rotate(rot); x.scale(sq, 1);
@@ -1770,7 +1770,7 @@ const WC = {
       x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = Math.max(1, cr * .18); x.beginPath(); x.arc(0, 0, cr, Math.PI * .9, Math.PI * 1.7); x.stroke();
       x.globalAlpha = .25; x.fillStyle = 'rgba(10,8,30,.8)'; x.beginPath(); x.arc(cr * .25, cr * .1, cr * .7, 0, Math.PI * 2); x.fill(); x.restore(); }
     x.globalAlpha = 1; x.setTransform(1, 0, 0, 1, 0, 0);
-    x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < r * r * .6; i++) { x.globalAlpha = R() * .25; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
+    x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < r * r * .4; i++) { x.globalAlpha = R() * .1; x.fillRect(R() * c.width, R() * c.height, 1, 1); } x.globalCompositeOperation = 'source-over';   // granulation
     x.globalAlpha = 1; const sh = x.createRadialGradient(mx - r * .45, my - r * .5, r * .3, mx, my, r * 1.2); sh.addColorStop(0, 'rgba(6,5,22,0)'); sh.addColorStop(.75, 'rgba(6,5,22,.35)'); sh.addColorStop(1, 'rgba(6,5,22,.82)');
     x.fillStyle = sh; x.fillRect(0, 0, c.width, c.height); x.restore();
     x.filter = 'blur(3px)'; x.globalAlpha = .45; x.strokeStyle = light; x.lineWidth = 3; x.beginPath(); x.arc(mx, my, r - 1, Math.PI * .95, Math.PI * 1.75); x.stroke(); x.filter = 'none'; x.globalAlpha = 1;   // the lit rim
@@ -1864,7 +1864,7 @@ function startDrift() {
       at: [22, 40, 55][i], dots: Array.from({ length: 160 }, () => { const arm = R() < .5 ? 0 : Math.PI, d = R(); return [d, arm + d * 4.5 + (R() - .5) * .6]; }) })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
-  { const d = s.drift, NEB = [['#c9a7ff', '#ff9fd6', '#8fd3ff'], ['#9fc5ff', '#c7a8ff', '#7fe0e6'], ['#ffb3d9', '#b9a2ff', '#ffe9b8'], ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
+  { const d = s.drift, NEB = [['#6b55c9', '#b04a88', '#3593b4'], ['#3c6fc4', '#7356c4', '#2a9fa0'], ['#b25588', '#5560c8', '#c8955a'], ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
     d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = WC.blob(n.r, NEB[i], R); });
     d.burst = { x: W0 * .72, y: H0 * .28, img: WC.burst(170, ['#ff9fc8', '#ffc4de', '#c9a7ff', '#ffe2c4'], R) };
     const SC = CONFIG.drift.sections, P = (r, base, light, bands, o) => WC.planet(r, base, light, bands, R, o);
@@ -1960,7 +1960,7 @@ function drawDrift() {
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
   ctx.globalCompositeOperation = 'screen';                  // watercolour glowing on the night
   for (const n of d.nebulae) {
-    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.3 + sun * .12);   // sheer on the painted night: colour, not white
+    const a = space * smooth(ramp(n.at, n.at + 14, t)) * (.55 + sun * .1);   // deeper tones, so they can glow more without turning milky   // sheer on the painted night: colour, not white
     if (a <= 0) continue;
     const sz = n.img.width * (1 + Math.sin(t * .03 + n.r) * .02);   // breathing, barely
     ctx.globalAlpha = a; ctx.drawImage(n.img, n.x - sz / 2 - d.ox * .06, n.y - sz / 2 - d.oy * .06, sz, sz);
@@ -1985,7 +1985,7 @@ function drawDrift() {
   // Planets in watercolour, arriving with the song; they sit far off, so they move only a little when you steer.
   for (const pl of d.planets) {
     const a = space * smooth(ramp(pl.at, pl.at + 10, t)); if (a <= 0) continue;
-    ctx.globalAlpha = a * .82 * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par, Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
+    ctx.globalAlpha = a * .96 * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par, Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
     if (pl.spin) { ctx.save(); ctx.translate(X, Y); ctx.rotate(t * pl.spin); ctx.drawImage(pl.img, -pl.img.width / 2, -pl.img.height / 2); ctx.restore(); } else ctx.drawImage(pl.img, X - pl.img.width / 2, Y - pl.img.height / 2);
   }
   ctx.globalAlpha = 1;
@@ -2081,7 +2081,7 @@ function drawDrift() {
   ctx.restore(); ctx.globalAlpha = 1;
   { const vg = ctx.createRadialGradient(cx, cy, H0 * .25, cx, cy, H0 * .95); vg.addColorStop(0, 'rgba(2,6,14,0)'); vg.addColorStop(1, `rgba(2,6,14,${.6 * fade * (1 - sun * .6)})`);   // the edges fall away into the dark
     ctx.save(); ctx.globalAlpha = 1; ctx.fillStyle = vg; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.restore(); }
-  if (d.grain) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .07 * fade; ctx.fillStyle = d.grain; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.restore(); }   // grain: tactile
+  if (d.grain) { ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .04 * fade; ctx.fillStyle = d.grain; ctx.fillRect(-3 * W0, -2 * H0, 7 * W0, 5 * H0); ctx.restore(); }   // grain: tactile
   // A quiet way out, once the hint bar has gone: always clear what to do to go where.
   const q = Math.min(1, Math.max(0, (e - 6000) / 3000));
   if (q > 0) {
@@ -2583,10 +2583,10 @@ function buildGauge() {
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
   h += `<path class="gfill" stroke="#34e6ff" stroke-width="${bw}" fill="none" opacity=".35"/>` + ticks(M, 10, 5, 16);   // few ticks: calm
   // the milestones, above the arc: every state named, the one you are in lit
-  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 28); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="middle" font-family="IBM Plex Sans" font-size="12">${w}</text>`; });
+  ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'].forEach((w, i) => { const [x, y] = gPt(M, -.8 + i * .4, M.R + 30); h += `<text class="gl" x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-family="Chakra Petch" font-weight="600" font-size="14" letter-spacing=".5">${w}</text>`; });   // the scale's words, clear: the one under the needle lights up (2026-11-17: they replace the big readout)
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
-  h += '<text class="gword" x="' + (w - 16) + '" y="40" text-anchor="end" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#e1e4e6" letter-spacing="1.2"></text>';   // the word in the panel's top-right corner (2026-11-17): the plate left, the reading right, the dial under both
+  // (the big word readout is gone, 2026-11-17: the scale's own words light up instead)
   // the two small gauges
   for (const [k, d, title] of [['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
@@ -2607,13 +2607,11 @@ function drawGaugeMeter(t) {
   for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 64, M.R + 10); attr(ln, 'stroke', col); }
   q('needle').classList.toggle('hot', !!st);
   attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
-  G.querySelectorAll('.gl').forEach((el, i) => { const on = !st && i === lvl; attr(el, 'fill', on ? '#e1e4e6' : '#5f656b'); attr(el, 'font-weight', on ? 600 : 500); });
-  // The word, in capitals; Stillness's long line on two.
-  const word = (st === 'frenzy' ? 'Frenzy' : st === 'still' ? 'Get out into the vast|nothingness|of space' : DOSAGE[lvl]).toUpperCase(), wEl = q('gword');
-  if (wEl.dataset.w !== word) { wEl.dataset.w = word; const two = word.split('|');
-    wEl.innerHTML = two.length > 1 ? two.map((l, i) => `<tspan x="${GZ.w - 16}" dy="${i ? 15 : -12}">${l}</tspan>`).join('') : word;
-    attr(wEl, 'font-size', two.length > 1 ? 13 : word.length > 12 ? 17 : 24); }   // Stillness's three short lines stay clear of the scale's Coward
-  attr(wEl, 'fill', st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#e1e4e6');
+  // The word under the needle lights up; past a tip, the end word becomes the state, in its colour.
+  G.querySelectorAll('.gl').forEach((el, i) => {
+    const edge = st === 'frenzy' ? 4 : st === 'still' ? 0 : -1, on = st ? i === edge : i === lvl, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#a9c0dc' : '#ffffff';
+    const txt = i === edge ? (st === 'frenzy' ? 'FRENZY' : 'STILLNESS') : ['Get out', 'Coward', 'Meh', 'We see you', 'Hell yeah'][i]; if (el.textContent !== txt) el.textContent = txt;
+    attr(el, 'fill', on ? col : '#7d858d'); attr(el, 'style', on ? `filter:drop-shadow(0 0 5px ${st === 'frenzy' ? 'rgba(255,180,60,.9)' : st === 'still' ? 'rgba(169,192,220,.9)' : 'rgba(var(--fluo-rgb),.85)'})` : ''); });
   // The Next drink gauge (the dose window): what the next drink is multiplied by, and how long that lasts; Hyperfocus holds it at ×1.
   const W = GZ.win, win = windowDrinks(), open = win.length && !st && !active('focus'), m = nextMult(), left = open ? Math.max(0, Math.max(...win) + CONFIG.balance.windowMs - t) : 0;
   const wU = open ? left / CONFIG.balance.windowMs * 2 - 1 : -1, wCol = open ? '#34e6ff' : '#5f656b';
