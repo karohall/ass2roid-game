@@ -559,7 +559,7 @@ const CONFIG = {
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
   // Stillness overload: Calm on top of Stillness. The Drift lasts as long as Stella's Show (3:13; was The You Show, 4:16), shot by shot
   // against the song (storyboard in RADIO.md). Sections in seconds into the song; durationMs only if the song can't play.
-  drift:   { nudge: 6, lead: 17, durationMs: 211000, sections: { verse1: 41, pre: 67, verse2: 89, glitter: 102, chorus: 115, bridge: 141, outro: 177 } },   // 2026-11-18: Stella's Show starts after a quiet lead of 17 s (the window full width); sections in drift time = song time + 17 (song: verse1 0:24, pre 0:50, verse2 1:12, chorus 1:38, bridge 2:04, outro 2:40)
+  drift:   { nudge: 6, lead: 17, durationMs: 211000, sections: { verse1: 41, pre: 67, verse2: 89, glitter: 102, chorus: 115, bridge: 141, outro: 167 } },   // outro (the sunrise) from 2:30 in the song (2026-11-18)   // 2026-11-18: Stella's Show starts after a quiet lead of 17 s (the window full width); sections in drift time = song time + 17 (song: verse1 0:24, pre 0:50, verse2 1:12, chorus 1:38, bridge 2:04, outro 2:40)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
@@ -1428,7 +1428,7 @@ function drinkCandy() {
   if (!candy()) s.candyFrom = now();                        // the colours fade in from here
   s.fx.candy = now() + CONFIG.candy.durationMs;
   if (!s.candyFound) {
-    s.candyFound = true; radio.unlocked.candy = true;   // its song joins the Pump Zone, now and then
+    s.candyFound = true; radio.unlocked.candy = true; if (!s.guide.includes('state_candy')) { s.guide.push('state_candy'); rememberState('state_candy'); }   // its song joins the Pump Zone, now and then
     for (const k in SECRET.candy.clues) s.clues[k] = true; unlock('secret_candy'); renderGuide();   // the card, complete
     celebrate(); announce(`Secret menu: ${em('Candygirl')}. C&C: Crack and chrome. For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
   } else say('Candygirl. Up you go.');
@@ -1510,10 +1510,20 @@ function clue(k, line) {
   if (s.guide.includes(id)) renderGuide();
   else if (line) unlock(id);                              // the card appears with the first thing you find
 }
+// The altered states (2026-11-18): a row in the Field Guide, so players know there is more to reach. Reached ones are remembered across shifts.
+const STATES = [
+  { id: 'state_frenzy', label: 'Frenzy', body: 'Too much, too fast. The Rock speaks, every hit lands double, and seams open that were closed. It passes.', hint: () => 'Push the meter past Hell yeah.' },
+  { id: 'state_still', label: 'Stillness', body: 'Everything slows. Sound comes through rock. Some seams only open now.', hint: () => 'Pull the meter past Get out.' },
+  { id: 'state_drift', label: 'The Drift', body: 'Calm, on top of Stillness: the shaft lets go. A song’s length out in the open, and an ending of its own.', hint: () => s && s.stills ? 'One more Calm, while everything is still.' : 'Past Stillness, there is somewhere else.' },
+  { id: 'state_candy', label: 'Candygirl', body: 'Not on the menu. Pastel and sweet; for a while, ↑ runs you up the tunnel.', hint: () => 'Not on the menu. Read the walls.' },
+];
+const statesKnown = () => { try { return JSON.parse(localStorage.getItem('ass2roid.states') || '[]'); } catch (e) { return []; } };
+function rememberState(id) { try { const k = statesKnown(); if (!k.includes(id)) localStorage.setItem('ass2roid.states', JSON.stringify([...k, id])); } catch (e) {} }
 function guideEntries() {
   return [
     ...CONFIG.layers.map((L, i) => ({ id: 'layer' + i, cat: 'Layers', label: shortName(L.name), title: L.name, body: LAYER_CARD[i] })),
     ...Object.keys(ING).map(k => ({ id: 'ing_' + k, cat: 'Ingredients', label: ING[k].name, title: ING[k].name, body: ING[k].card })),
+    ...STATES.map(st => ({ id: st.id, cat: 'States', label: st.label, title: st.label, body: st.body, hint: st.hint })),
     ...CONFIG.artefacts.filter(a => !a.withdrawn).map(a => ({ id: a.id, cat: 'Archive', art: a, label: String(a.no),
       title: `${catNo(a)} · ${a.name}`,
       body: ARTEFACT_CARD[a.id]((s && s.artCrater[a.id]) || 5) + (a.no === 'E' ? '' : '<br><i>' + ENDORSE + '</i>'), state: a.kind })),
@@ -1554,6 +1564,7 @@ function burst() {
 function unlock(id) {
   if (s.guide.includes(id)) return;
   s.guide.push(id);
+  if (id.startsWith('state_')) rememberState(id);         // the states shelf remembers, shift to shift
   const ing = id.startsWith('ing_') && id.slice(4), v = ing && UNLOCKS[ing];
   // Discoveries: the hint box announces them, bursting into confetti, ahead of everything else.
   if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}. ${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
@@ -1607,6 +1618,7 @@ function renderGuide() {
   else $('cardDetail').innerHTML = e.state
     ? `<b style="color:var(--text)">No. ${e.art.no} · ? ? ?</b><br><i>${ENDORSE}</i><br>Requires ${e.state === 'still' ? 'reduced' : 'elevated'} compound state.`
     : e.art ? `<b style="color:var(--text)">KR-1 E · ? ? ?</b><br>For those who reach the Core.`
+    : e.hint ? `<b style="color:var(--text)">? ? ?</b><br>${e.hint()}`   // a state not yet reached: a hint
     : `<b style="color:var(--text)">? ? ?</b><br>Not yet documented.`;
 }
 
@@ -2076,7 +2088,7 @@ function startDrift() {
   document.body.classList.add('drifting', 'wide', 'drifted');
   // The radio slides under the drift window as it grows, so the two line up as one square (2026-11-17).
   driftRadio(true); setTimeout(() => { if (s.drift && !s.drift.done) driftRadio(false); }, 11500);   // slides in; then set again, in case the layout moved meanwhile
-  say('Calm, on top of Stillness. The shaft lets go.');
+  say('Calm, on top of Stillness. The shaft lets go.'); unlock('state_drift');
 }
 
 // Seconds into Stella's Show: the song's own clock while it plays, so every shot lands on its section.
@@ -2313,7 +2325,7 @@ function newGame() {
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
-  s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey');
+  s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey', ...statesKnown());   // states reached in earlier shifts stay lit
   begin();
   s.hintIntroUntil = now() + 4000;                         // the guide's first stop: the hint bar
   say('Welcome to Korova Rock. Dig responsibly.');
@@ -2385,16 +2397,17 @@ function update(dt) {
   else if (stillness()) s.meter = B.min;
   else if (s.inState === 'frenzy') { holdSeam('frenzy'); s.inState = null; s.meter = CONFIG.frenzy.settleAt; say('Frenzy subsiding. Count your samples.');
     if (s.stills === 0 && s.frenzies <= CONFIG.calmRumourFrenzies) announce('Rumour: Calm, taken quickly, goes somewhere too.'); }   // only as a Frenzy ends
-  else if (s.inState === 'still') { holdSeam('still'); s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.'); }
+  else if (s.inState === 'still') { holdSeam('still'); s.inState = null; s.meter = -CONFIG.stillness.settleAt; say('Stillness lifting. Sound returns, one thing at a time.');
+    if (!s.driftRumour && !s.guide.includes('state_drift')) { s.driftRumour = true; announce('Rumour: past Stillness there is somewhere else. A Calm, drunk while everything is still, and the shaft lets go.'); } }
   else if (s.meter >= tipAt()) {
     s.frenzyUntil = t + CONFIG.frenzy.durationMs; s.inState = 'frenzy'; s.frenzies++;
-    say('FRENZY. The Rock is speaking. Do not answer.');
+    say('FRENZY. The Rock is speaking. Do not answer.'); unlock('state_frenzy');
     djSay('pump', DJS.pump.frenzy, true);   // Coach Rocky breaks in, whatever you're listening to
     openSeam('frenzy');
   } else if (s.meter <= -tipAt()) {
     s.stillUntil = t + CONFIG.stillness.durationMs; s.inState = 'still'; s.stills++;
     if (djOnAir('disco')) djSay('disco', DJS.disco.still); else djSay('void', DJS.void.still, true);   // on Disco Gravitas, Rocky Giovanni; elsewhere the Broadcaster comes through: space is not scary
-    say('STILLNESS. Everything has slowed down. You do not mind.');
+    say('STILLNESS. Everything has slowed down. You do not mind.'); unlock('state_still');
     openSeam('still');
   } else if (!active('focus')) {                     // Hyperfocus: the meter holds still
     const k = B.decayPerSec * dt / 1000 * (radio.on === 'disco' ? CONFIG.radio.discoCalm : 1);   // Disco Gravitas calms
