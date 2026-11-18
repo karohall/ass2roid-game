@@ -1514,8 +1514,8 @@ function clue(k, line) {
 const STATES = [
   { id: 'state_frenzy', label: 'Frenzy', body: 'Too much, too fast. The Rock speaks, every hit lands double, and seams open that were closed. It passes.', hint: () => 'Push the meter past Hell yeah.' },
   { id: 'state_still', label: 'Stillness', body: 'Everything slows. Sound comes through rock. Some seams only open now.', hint: () => 'Pull the meter past Get out.' },
-  { id: 'state_drift', label: 'The Drift', body: 'Calm, on top of Stillness: the shaft lets go. A song’s length out in the open, and an ending of its own.', hint: () => s && s.stills ? 'One more Calm, while everything is still.' : 'Past Stillness, there is somewhere else.' },
-  { id: 'state_candy', label: 'Candygirl', body: 'Not on the menu. Pastel and sweet; for a while, ↑ runs you up the tunnel.', hint: () => 'Not on the menu. Read the walls.' },
+  { id: 'state_drift', label: 'The Drift', body: 'Calm, on top of Stillness: the shaft lets go. A song’s length out in the open, and an ending of its own.', hint: () => 'Past Stillness, there is somewhere else.' },
+  { id: 'state_candy', label: 'Candygirl', body: 'Not on the menu. Pastel and sweet; for a while, ↑ runs you up the tunnel. Shaken in The Crack, the dark lifts and the cave turns into a rave.', hint: () => 'Not on the menu. Read the walls. Shaken in The Crack, it lights up the dark.' },
 ];
 const statesKnown = () => { try { return JSON.parse(localStorage.getItem('ass2roid.states') || '[]'); } catch (e) { return []; } };
 function rememberState(id) { try { const k = statesKnown(); if (!k.includes(id)) localStorage.setItem('ass2roid.states', JSON.stringify([...k, id])); } catch (e) {} }
