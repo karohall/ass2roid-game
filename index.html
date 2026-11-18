@@ -2008,6 +2008,9 @@ const DRIFT_NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#4a2a86', '#8e1424', '#2
  ...DRIFT_NEB.map((cols, i) => () => { const r = (90 + Math.random() * 120) * 1.25, c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.8);
    c.getContext('2d').drawImage(WC.blob(r / 2, cols, Math.random), 0, 0, c.width, c.height); (driftPre.nebulae = driftPre.nebulae || [])[i] = { r, img: c }; }),
 ].forEach((job, i) => setTimeout(() => { try { job(); } catch (e) {} }, 2700 + i * 300));
+// Once everything is painted, each image drawn once, tiny, on the hidden sky: the graphics card has them all before the Drift needs them.
+setTimeout(() => { try { const imgs = [skyWash, driftPre.worm, driftPre.burst, driftPre.dawn, driftPre.striped, driftPre.dot, driftPre.flare, driftPre.rays, ...(driftPre.stars || []), ...(driftPre.nebulae || []).map(n => n.img), ...Object.values(driftCache)].filter(Boolean);
+  skyCtx.save(); imgs.forEach(im => skyCtx.drawImage(im, 0, 0, 1, 1)); skyCtx.restore(); skyCtx.clearRect(0, 0, 4, 4); } catch (e) {} }, 6200);
 function startDrift() {
   running = false; held = null; pendingTap = null;
   const R = Math.random, W0 = cv.width, H0 = cv.height;
@@ -2115,7 +2118,7 @@ function startDrift() {
   document.body.classList.add('drifting', 'wide', 'drifted');
   // The radio slides under the drift window as it grows, so the two line up as one square (2026-11-17).
   driftRadio(true); setTimeout(() => { if (s.drift && !s.drift.done) driftRadio(false); }, 11500);   // slides in; then set again, in case the layout moved meanwhile
-  say('Calm, on top of Stillness. The shaft lets go.'); unlock('state_drift');
+  setTimeout(() => { if (s.drift) { say('Calm, on top of Stillness. The shaft lets go.'); unlock('state_drift'); } }, 1500);   // the log and the Field Guide a moment later: the first frame of the Drift only has to begin it
 }
 
 // Seconds into Stella's Show: the song's own clock while it plays, so every shot lands on its section.
