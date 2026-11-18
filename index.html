@@ -559,7 +559,7 @@ const CONFIG = {
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
   // Stillness overload: Calm on top of Stillness. The Drift lasts as long as Stella's Show (3:13; was The You Show, 4:16), shot by shot
   // against the song (storyboard in RADIO.md). Sections in seconds into the song; durationMs only if the song can't play.
-  drift:   { nudge: 6, durationMs: 194000, sections: { verse1: 24, pre: 50, verse2: 72, chorus: 98, bridge: 124, outro: 160 } },   // 2026-11-18: retimed to Stella's Show
+  drift:   { nudge: 6, lead: 17, durationMs: 211000, sections: { verse1: 41, pre: 67, verse2: 89, chorus: 115, bridge: 141, outro: 177 } },   // 2026-11-18: Stella's Show starts after a quiet lead of 17 s (the window full width); sections in drift time = song time + 17 (song: verse1 0:24, pre 0:50, verse2 1:12, chorus 1:38, bridge 2:04, outro 2:40)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
@@ -689,13 +689,13 @@ function radioKey(k) {
 // leaves only the tape. Frenzy and Stillness don't switch the station: they change how it sounds (stateSound).
 function radioNow() {
   if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
-  if (s && s.drift) return { key: 'oddity', song: 0 };
+  if (s && s.drift) return performance.now() - s.drift.t0 < CONFIG.drift.lead * 1000 ? { key: 'oddity', song: 0, hush: true, fadeMs: 3000 } : { key: 'oddity', song: 0, fadeMs: 300 };   // a quiet lead (the mining song fades over 3 s), then Stella's Show from the top
   if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
   if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Doppio+. Doubles, darling.' };   // once the song is unlocked
   if (s && candy()) return { key: 'pump', song: 0, track: CANDY_SONG, cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
 }
-const songOf = n => { const st = RADIO[n.key]; if (n.track) return n.track; if (n.song === undefined && radio.jingle[n.key]) return radio.jingle[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
+const songOf = n => { const st = RADIO[n.key]; if (n.hush) return { title: '', file: '', hush: true }; if (n.track) return n.track; if (n.song === undefined && radio.jingle[n.key]) return radio.jingle[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
 // A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
 function pickRare(key) { const r = (RADIO[key].rare || []).filter(x => !x.unlock || radio.unlocked[x.unlock]); radio.rare[key] = r.length && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
@@ -873,7 +873,7 @@ function soundTick(dt) {
   stateSound();
   const level = CONFIG.radio.volume * menuK * (djTalking() ? CONFIG.radio.djDuck : 1);                    // the music ducks under the DJ
   if (want !== sound.file) {                                                  // a new song: the live deck fades out as the other fades in
-    const R = CONFIG.radio, ms = n.cut ? R.cutMs : R.xfadeMs;                  // a hard cut is a very quick cross-fade
+    const R = CONFIG.radio, ms = n.fadeMs || (n.cut ? R.cutMs : R.xfadeMs);   // a hard cut is a very quick cross-fade; the Drift sets its own
     if (outgoing) outgoing.pause();
     if (sound.file) { outgoing = player; sound.out = sound.vol; sound.outMs = ms; } else outgoing = null;
     player = decks.find(d => d !== outgoing && d !== player) || decks.find(d => d !== player);
@@ -1861,18 +1861,18 @@ const WC = {
       x.globalAlpha = .1 + R() * .15; x.strokeStyle = '#cfe2ee'; x.lineWidth = .8;
       for (let j = 0; j < n; j++) { const a = R() * 6.3, l = rr * (.4 + R() * .6); x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * l, cy + Math.sin(a) * l); x.stroke(); } }
     x.filter = 'none';
-    for (let i = 0; i < 550; i++) { const r = Math.pow(R(), 5) * 1.8 + .25, a = .15 + R() * .55;   // far fewer stars (round 6)   // spatter: stars of every size, soft
-      x.globalAlpha = a; x.fillStyle = R() < .85 ? '#eef4fa' : R() < .5 ? '#d7e6ff' : '#fff2dc'; x.beginPath(); x.arc(R() * w, R() * h, r, 0, Math.PI * 2); x.fill();
-      if (r > 1.4) { x.globalAlpha = a * .25; x.beginPath(); x.arc(R() * w, R() * h, r * 2.6, 0, Math.PI * 2); x.fill(); } }
+    x.filter = 'none';
+    for (let i = 0; i < 520; i++) { const big = R() < .04, r = big ? 1.8 + R() * 1.6 : Math.pow(R(), 3) * 1.5 + .35, a = big ? .55 + R() * .3 : .25 + R() * .6;   // painted stars (2026-11-18): flat, matte, every size, no glow
+      x.globalAlpha = a; x.fillStyle = R() < .8 ? '#ece8dc' : R() < .5 ? '#dfe6f0' : '#f4e8d4'; const sx = R() * w, sy = R() * h;
+      x.beginPath(); for (let j = 0; j < 7; j++) { const t = j / 7 * Math.PI * 2, k = 1 + (R() - .5) * .35; x.lineTo(sx + Math.cos(t) * r * k, sy + Math.sin(t) * r * k); } x.closePath(); x.fill(); }
     return c;
   },
-  sprite(size, flare) {                                     // a soft dot of light, or a soft four-point star flare
+  sprite(size, flare) {                                     // painted, not shiny (2026-11-18): a flat matte dot, or a hand-drawn four-point star
     const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d'), m = size / 2;
-    const g = x.createRadialGradient(m, m, 0, m, m, m * (flare ? .35 : 1)); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(235,242,255,.45)'); g.addColorStop(1, 'rgba(220,230,255,0)');
-    x.fillStyle = g; x.fillRect(0, 0, size, size);
-    if (flare) for (const [a, l] of [[0, 1], [Math.PI / 2, 1], [Math.PI / 4, .45], [-Math.PI / 4, .45]]) { x.save(); x.translate(m, m); x.rotate(a);
-      const lg = x.createLinearGradient(-m * l, 0, m * l, 0); lg.addColorStop(0, 'rgba(230,240,255,0)'); lg.addColorStop(.5, 'rgba(245,250,255,.9)'); lg.addColorStop(1, 'rgba(230,240,255,0)');
-      x.fillStyle = lg; x.fillRect(-m * l, -.6, m * l * 2, 1.2); x.restore(); }
+    if (!flare) { const g = x.createRadialGradient(m, m, m * .5, m, m, m * .9); g.addColorStop(0, 'rgba(240,236,226,1)'); g.addColorStop(1, 'rgba(240,236,226,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(m, m, m * .9, 0, Math.PI * 2); x.fill(); return c; }
+    const L = m * .92, w = m * .17; x.fillStyle = '#f1ede2'; x.filter = 'blur(.3px)';   // tapered arms, a little thicker at the heart
+    x.beginPath(); x.moveTo(m, m - L); x.quadraticCurveTo(m + w, m - w, m + L, m); x.quadraticCurveTo(m + w, m + w, m, m + L); x.quadraticCurveTo(m - w, m + w, m - L, m); x.quadraticCurveTo(m - w, m - w, m, m - L); x.closePath(); x.fill();
     return c;
   },
   galaxy(r, tilt, cols, R, o = {}) {                       // a galaxy, painted: soft arms of light and a glowing heart; diffuse or detailed, two arms or three (round 9)
@@ -2000,9 +2000,9 @@ function startDrift() {
     ];
     d.ribbons = [{ img: lazy(1400, 180, () => WC.ribbon(1400, 180, R)), from: 22, to: 60, y: 10 }, { img: lazy(1400, 180, () => WC.ribbon(1400, 180, R)), from: SC.pre + 16, to: SC.chorus + 6, y: H0 * .5 }];   // round 9: one soon after the wormhole, one later, lower
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
-    setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 60);   // the sky painted off the first frame (it took .3 s)
+    setTimeout(() => { if (s.drift === d) { d.wash = WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 4300);   // painted once the shaft has fallen away (2026-11-18: painting it during the fall made it stutter)   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
-    d.flares = Array.from({ length: 5 }, () => [-240 + R() * 900, -20 + R() * 800, .4 + R() * .9, R() * 6.3]);
+    d.flares = Array.from({ length: 16 }, () => [-240 + R() * 900, -20 + R() * 800, .24 + R() * .36, R() * 6.3]);   // painted four-point stars (2026-11-18): many, small
     d.galaxies.forEach(gx => { gx.img = document.createElement('canvas'); d.paintQ.push(() => gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R, gx.o)); });   // in the queue too
     d.veils = [];   // (the veils are gone since round 4; no longer painted for nothing)
     d.dawn = lazy(1000, 520, () => WC.dawn(1000, 520, R));
@@ -2049,7 +2049,7 @@ function startDrift() {
         if (!isFinite(best.c)) { pl.gone = true; pl.at = at0; continue; }   // no clear lane anywhere: it stays out of this Drift
         pl.at = best.at; pl.y = best.y; placed.push(pl); }
       d.planets = d.planets.filter(p => !p.gone); }   // no veils: fewer layers
-    d.worm = document.createElement('canvas'); d.paintQ.unshift(() => d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R));   // first in the queue: the wormhole opens at 2 s
+    d.worm = document.createElement('canvas'); d.paintQ.unshift(() => d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R)); d.paintQ.first = true;   // first in the queue: the wormhole opens at 2 s
     d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
         d.falls.push({ at, x: -160 + R() * W0 * 1.7, y: -40 + R() * H0 * .5, len: 120 + R() * 280, dur: 1.2 + R() * 2.4, ang: dir, w: .7 + R() * 1.3, tail: 40 + R() * 100,
@@ -2068,7 +2068,7 @@ function startDrift() {
 // Seconds into Stella's Show: the song's own clock while it plays, so every shot lands on its section.
 function driftTime() {
   const d = s.drift, now0 = performance.now();
-  if (sound.file === RADIO.oddity.songs[0].file && !player.paused && player.currentTime > 0) { d.last = player.currentTime; d.lastAt = now0; return d.last; }
+  if (sound.file === RADIO.oddity.songs[0].file && !player.paused && player.currentTime > 0) { d.last = CONFIG.drift.lead + player.currentTime; d.lastAt = now0; return d.last; }   // the song starts after the lead
   return d.last + (now0 - d.lastAt) / 1000;                 // before the song starts, or if it can't play
 }
 const ramp = (a, b, t) => Math.max(0, Math.min(1, (t - a) / (b - a)));
@@ -2089,7 +2089,7 @@ function skyBegin() {
   skyCtx.setTransform(k, 0, 0, k, box.x + box.w / 2 - W0 * k / 2, box.y + box.h / 2 - H0 * k / 2);
 }
 function drawDrift() {
-  { const q = s.drift.paintQ; if (q && q.length) { const t0 = performance.now(); do q.shift()(); while (q.length && performance.now() - t0 < 8); } }   // the paint queue: a few milliseconds a frame
+  { const q = s.drift.paintQ, e0 = performance.now() - s.drift.t0; if (q && q.length && (e0 > 5200 || q.first)) { const t0 = performance.now(); do q.shift()(); while (q.length && performance.now() - t0 < 8); q.first = false; } }   // the paint queue: a few ms a frame, once the shaft has fallen (only the wormhole's wash before)
   const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
   const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
   const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
@@ -2110,7 +2110,7 @@ function drawDrift() {
   if (Math.abs(d.oy) > lim[1]) { d.oy = Math.sign(d.oy) * lim[1]; d.vy *= -.3; }
   // A few bright stars, flaring softly, slowly (the rest are spatter in the wash).
   ctx.save(); ctx.globalCompositeOperation = 'screen';
-  for (const [x, y, sz, ph] of d.flares) { ctx.globalAlpha = fade * (.45 + .55 * space) * (.55 + .45 * Math.sin(t * .4 + ph)) * (1 - sun * .5); const w = d.flare.width * sz; ctx.drawImage(d.flare, x - w / 2 - d.ox * .04, y - w / 2 - d.oy * .04, w, w); }
+  for (const [x, y, sz, ph] of d.flares) { ctx.globalAlpha = fade * (.55 + .45 * space) * (.78 + .22 * Math.sin(t * .4 + ph)) * (1 - sun * .5); const w = d.flare.width * sz; ctx.drawImage(d.flare, x - w / 2 - d.ox * .04, y - w / 2 - d.oy * .04, w, w); }
   ctx.restore();
 
   // Nebulae and galaxies: more of them as the song goes on, all still and vast.
@@ -2679,7 +2679,7 @@ function renderStatic() {
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
-  const banner = !sound.on ? 'Radio off · Press R to tune in' : song.ad ? song.title : song.jingle ? `${st.name} · ${song.title}` : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
+  const banner = !sound.on ? 'Radio off · Press R to tune in' : song.hush ? st.name : song.ad ? song.title : song.jingle ? `${st.name} · ${song.title}` : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + ''); setText('radioLesson', sound.on && s && !s.radioHops ? 'Each station does something: R for the next.' : '');   // the radio lesson lives in the radio, until another station is tried
