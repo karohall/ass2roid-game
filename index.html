@@ -3083,5 +3083,173 @@ document.addEventListener('mousedown', () => window.focus());
 const startLabel = () => { $('go').innerHTML = document.hasFocus() ? 'Begin shift <kbd>Enter</kbd>' : 'Click to begin shift'; };
 addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
+<script>
+// ── TRAILER (2026-11-18) ─────────────────────────────────────────────────────────────────────────────────────────────────
+// index.html?trailer plays a 60 s trailer through the real game, shot by shot from the user's shot list, and can record itself:
+// "Record trailer" asks which tab to capture (pick this one, tick "Also share tab audio"), plays the trailer and saves
+// ass2roid-trailer.webm. Nothing here runs without ?trailer.
+(() => {
+  if (!/[?&]trailer\b/.test(location.search)) return;
+  const CHANT_AT = 64;                                     // Candygirl (Asylum Mix): "One chrome, one spore" from 1:04 (the user, 2026-11-18)
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const st = document.createElement('style');
+  st.textContent = `
+    #trUI { position:fixed; inset:0; z-index:10000; background:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+    #trUI button { font:700 16px "Chakra Petch", sans-serif; letter-spacing:.14em; text-transform:uppercase; padding:12px 28px; background:#0d1a26; color:#34e6ff; border:1px solid #34e6ff; cursor:pointer; width:auto; min-width:260px; height:auto; }
+    #trUI p { max-width:560px; text-align:center; color:#7d858d; font:400 13px/1.55 "IBM Plex Sans", sans-serif; margin:0; }
+    #trBlack { position:fixed; inset:0; z-index:9998; background:#000; pointer-events:none; opacity:1; transition:opacity .45s ease; }
+    #trCap { position:fixed; left:0; right:0; bottom:12%; z-index:9999; text-align:center; pointer-events:none; font:700 68px/1 "Chakra Petch", sans-serif; letter-spacing:.03em; color:#fff;
+             text-shadow:0 0 22px rgba(52,230,255,.55), 0 3px 0 #000, 0 0 2px #000; opacity:0; transition:opacity .3s ease; }
+    #trScrim { position:fixed; inset:0; z-index:9997; pointer-events:none; opacity:0; transition:opacity 1.4s ease; background:radial-gradient(ellipse 62% 44% at 50% 45%, rgba(4,6,10,.88), rgba(4,6,10,.55) 60%, rgba(4,6,10,.25)); }
+    #trLogo { position:fixed; left:50%; top:44%; transform:translate(-50%,-50%); z-index:9999; width:min(56vw, 780px); pointer-events:none; opacity:0; transition:opacity 1.4s ease; filter:drop-shadow(0 0 30px rgba(0,0,0,.9)); }
+    .trOff { opacity:0 !important; }
+    body.trCam { transition:transform 1.1s cubic-bezier(.4,.1,.2,1); }
+    #artBig.trGlow img { animation:trGlow 1.2s ease-in-out infinite alternate; }
+    @keyframes trGlow { from { filter:brightness(1); } to { filter:brightness(1.25) drop-shadow(0 0 26px rgba(255,214,150,.95)); } }`;
+  document.head.appendChild(st);
+  const el = (tag, id, html = '') => { const e = document.createElement(tag); e.id = id; e.innerHTML = html; document.body.appendChild(e); return e; };
+  const black = el('div', 'trBlack'), capEl = el('div', 'trCap'), logo = el('img', 'trLogo'), scrim = el('div', 'trScrim'); logo.src = 'logo/ass2roid-logo-light.svg';
+  const ui = el('div', 'trUI', `<button id="trRec">Record trailer</button><button id="trPlay">Play trailer</button>
+    <p>Record: the browser asks what to share. Pick <b>this tab</b> and tick <b>Also share tab audio</b>. The trailer plays (60 s) and saves as ass2roid-trailer.webm.
+    For the sharpest video, make the window full screen first (F11).</p>`);
+
+  // Sound: the game's radio stays on but muted (the drill needs its music); the trailer plays its own cues.
+  const SONGS = {
+    jingle: "The Pump Zone/radio jingles/hard muscles, hard rock.wav",
+    shaft: 'The Pump Zone/The Pump Zone Down In The Shaft.mp3',
+    disco: 'Disco Gravitas/Disco Gravitas Amore Orbitale.mp3',
+    hard: 'The Pump Zone/The Pump Zone Hard Hat, Hard Body.mp3',
+    candy: 'The Pump Zone/Candygirl (Asylum Mix).mp3',
+    nasa: 'Näsa Big Space/Näsa Big Space - short interlude.mp3',
+    drill: 'The Pump Zone/The Pump Zone Drill Instructor.mp3',
+  };
+  const au = {}; for (const k in SONGS) { const a = new Audio(encodeURI('audio/Radio/' + SONGS[k])); a.preload = 'auto'; au[k] = a; }
+  const play = async (k, from = 0, vol = 1) => { const a = au[k]; if (a.readyState < 1) await new Promise(r => { a.addEventListener('loadedmetadata', r, { once: true }); setTimeout(r, 3000); });
+    a.volume = vol; try { a.currentTime = from; } catch (e) {} return a.play().catch(() => {}); };   // a seek waits for the file to be known
+  const fade = (k, to, ms) => { const a = au[k], v0 = a.volume, t0 = performance.now();
+    const step = () => { const q = Math.min(1, (performance.now() - t0) / ms); a.volume = Math.max(0, Math.min(1, v0 + (to - v0) * q)); if (q < 1) requestAnimationFrame(step); else if (to === 0) a.pause(); }; step(); };
+  let ac; const actx = () => ac || (ac = new AudioContext());
+  function hum() {                                          // the machine waking: a low mains hum, rising
+    const c = actx(), g = c.createGain(), o1 = c.createOscillator(), o2 = c.createOscillator(), lp = c.createBiquadFilter();
+    o1.frequency.value = 55; o2.type = 'sawtooth'; o2.frequency.value = 110.4; lp.type = 'lowpass'; lp.frequency.value = 380;
+    o1.connect(g); o2.connect(lp); lp.connect(g); g.connect(c.destination); g.gain.value = 0; o1.start(); o2.start();
+    g.gain.linearRampToValueAtTime(.11, c.currentTime + 1.4);
+    return { stop: ms => { g.gain.setValueAtTime(g.gain.value, c.currentTime); g.gain.linearRampToValueAtTime(0, c.currentTime + ms / 1000); setTimeout(() => { o1.stop(); o2.stop(); }, ms + 60); } };
+  }
+  function click(level = .5) {                              // a relay clicking in
+    const c = actx(), n = Math.floor(c.sampleRate * .035), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 7);
+    const src = c.createBufferSource(), hp = c.createBiquadFilter(), g = c.createGain(); hp.type = 'highpass'; hp.frequency.value = 1400; g.gain.value = level;
+    src.buffer = b; src.connect(hp); hp.connect(g); g.connect(c.destination); src.start();
+  }
+
+  // The player's hands: real key presses, as a player would make them.
+  const key = (k, type = 'keydown') => dispatchEvent(new KeyboardEvent(type, { key: k, bubbles: true }));
+  const tap = k => { key(k); key(k, 'keyup'); };
+  const letGo = () => ['ArrowDown', 'ArrowLeft', 'ArrowRight'].forEach(k => key(k, 'keyup'));
+  const cap = (text, ms) => { capEl.textContent = text; capEl.style.opacity = 1; setTimeout(() => capEl.style.opacity = 0, ms); };
+  const cam = (scale, ox, oy) => { document.body.classList.add('trCam'); if (scale !== 1) document.body.style.transformOrigin = `${ox}% ${oy}%`; document.body.style.transform = scale === 1 ? '' : `scale(${scale})`; };   /* zooming out keeps the origin: no jump */
+  const camOn = (nodes, scale) => {                        /* centre the frame on these elements (measured unzoomed) */
+    const B = document.body, was = [B.style.transform, B.style.transformOrigin]; B.classList.remove('trCam'); B.style.transform = '';
+    const bs = nodes.filter(Boolean).map(n => n.getBoundingClientRect()); B.style.transform = was[0]; B.style.transformOrigin = was[1]; void B.offsetWidth; if (!bs.length) return;
+    const x = (Math.min(...bs.map(b => b.left)) + Math.max(...bs.map(b => b.right))) / 2, y = (Math.min(...bs.map(b => b.top)) + Math.max(...bs.map(b => b.bottom))) / 2;
+    const W = innerWidth, H = innerHeight, tx = Math.min(0, Math.max(W - W * scale, W / 2 - x * scale)), ty = Math.min(0, Math.max(H - H * scale, H / 2 - y * scale));
+    document.body.classList.add('trCam'); document.body.style.transformOrigin = '0 0'; document.body.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  };
+  const cut = async () => { black.style.transition = 'none'; black.style.opacity = 1; await sleep(70); black.style.transition = 'opacity .12s ease'; black.style.opacity = 0; };
+  const flick = (node, ms = 650) => { node.classList.remove('trOff');
+    node.animate([{ opacity: 0 }, { opacity: 1, offset: .1 }, { opacity: .1, offset: .2 }, { opacity: .9, offset: .34 }, { opacity: .25, offset: .46 }, { opacity: 1 }], { duration: ms }); click(); };
+  function sweep(set, from, to, ms) { const t0 = performance.now(); return new Promise(r => { const step = () => { const q = Math.min(1, (performance.now() - t0) / ms); set(from + (to - from) * (q * q * (3 - 2 * q))); if (q < 1) requestAnimationFrame(step); else r(); }; step(); }); }
+  function toLayer(i) {                                     // a cut to another layer: straight there, the rover already parked
+    letGo(); running = false;
+    s.layer = i; const L = CONFIG.layers[i]; if (L.craters) s.crater = L.craters[0].id; s.depthOffset = i * 59 * CONFIG.grid.metresPerRow;
+    genLayer(); renderStatic(); hideMenu();
+    s.frenzyUntil = 0; s.stillUntil = 0; s.inState = null; s.meter = 0; s.window = []; running = true;
+  }
+
+  function setup() {
+    newGame(); s.hintIntroUntil = 0;
+    pause = () => {};                                       /* the trailer never pauses: a hidden tab (the share dialog, say) would leave the Pause card on the mine */
+    announce = () => {};                                    // no hint-bar news in the trailer: the captions speak
+    for (const k of Object.keys(REVEAL)) if (k !== 'recipe_candy' && k !== 'recipe_jizz') REVEAL[k] = () => true;   // everything shown, the secret menu still secret
+    Object.assign(s.inv, { whey: 24, powder: 6, chrome: 0, spores: 0 }); s.drill = 100;
+    CONFIG.dig.basePower = 10;                              // the trailer digs fast: a tile in two hits, not sixteen
+    renderStatic(); renderGuide(); fit();
+    radio.on = 'pump'; radio.vol = 2; if (!sound.on) tuneIn();   // the radio on but muted: the drill needs its music, the trailer brings its own
+    const panels = { rover: $('rover'), dosage: $('dosage'), milk: $('milk'), ingr: $('panel').children[1], guide: $('panel2').children[1], log: $('panel2').children[2], radio: $('baseRow'), stage: $('stage') };
+    Object.values(panels).forEach(n => n.classList.add('trOff'));
+    return panels;
+  }
+
+  async function run() {
+    const P = setup(); black.style.opacity = 1; await sleep(400);
+
+    // 1. Power-up (0–6 s): the machine wakes, piece by piece.
+    black.style.opacity = 0; const h = hum(); await sleep(700);
+    flick(P.rover); s.drill = 1; sweep(v => s.drill = v, 1, 100, 1100); await sleep(700);
+    flick(P.dosage); sweep(v => s.meter = v, -60, 60, 700).then(() => sweep(v => s.meter = v, 60, 0, 600)); await sleep(700);
+    flick(P.milk, 500); await sleep(220); flick(P.ingr, 500); await sleep(380);
+    flick(P.guide, 500); await sleep(200); flick(P.log, 500); await sleep(480);
+    flick(P.radio); await sleep(380); play('jingle', 0, 1); await sleep(520);
+    flick(P.stage, 800); h.stop(1400); await sleep(1100);
+
+    // 2. The descent (6–18 s): one layer after another, cut on the beat.
+    play('shaft', 38, 0); fade('shaft', 1, 500); fade('jingle', 0, 1400);
+    toLayer(0); key('ArrowDown'); await sleep(400); cap('Dig.', 2500); await sleep(2600);
+    for (const i of [1, 2, 3]) { await cut(); toLayer(i); key('ArrowDown'); await sleep(2930); }
+
+    // 3. Shaking Milk+ (18–26 s): on Disco Gravitas, shaken to the beat.
+    await cut(); toLayer(1); radio.on = 'disco'; fade('shaft', 0, 600); play('disco', 18, 0); fade('disco', 1, 500);
+    cam(1.45, 28, 26); const cap3 = setInterval(() => { if (s.meter > 70) s.meter = 70; }, 100);   // the meter climbs, but the Frenzy waits for its shot
+    await sleep(500); tap('1'); await sleep(500); cap('Mix.', 2600); await sleep(1100); tap('1'); await sleep(900);
+    tap('1'); await sleep(1650); tap('1'); await sleep(900); tap('1'); await sleep(1600); tap('1'); await sleep(700);
+    clearInterval(cap3);
+
+    // 4. Frenzy (26–33 s): Hell yeah, the screen tilts, the drill goes sideways, a seam opens.
+    cam(1, 50, 50); radio.on = 'pump'; fade('disco', 0, 500); play('hard', 64, 1);
+    sweep(v => s.meter = v, s.meter, 100, 700); await sleep(900); key('ArrowRight'); await sleep(1300); cap("Don't double check.", 3000);
+    await sleep(1600); key('ArrowRight', 'keyup'); key('ArrowLeft'); await sleep(2300); letGo(); await sleep(900);
+
+    // 5. The artefacts (33–42 s): archive cards, one per beat; the milk lingers.
+    fade('hard', .75, 600);
+    const shows = [['art1', 1300], ['duck', 1300], ['parmesan', 1300], ['still1', 2900], ['stencils', 1900, true]];
+    for (const [id, ms, glow] of shows) {
+      $('artBig') && $('artBig').remove(); s.artCrater[id] = s.artCrater[id] || 5;
+      const e = guideEntries().find(x => x.id === id); showArt(artImg(e.art), e); if (glow) $('artBig').classList.add('trGlow');
+      if (id === 'art1') cap("What's down there?", 2800);
+      await sleep(ms);
+    }
+    $('artBig') && $('artBig').remove();
+
+    // 6. Special features (42–50 s): the locked Candygirl, its chant; then Näsa interrupts.
+    selCard = 'state_candy'; renderGuide(); fade('hard', 0, 1500);
+    const slot = document.querySelector('.slot[data-id="state_candy"]'); cam(1, 50, 50); camOn([slot, $('cardDetail')], 2);
+    if (slot) slot.animate([{ boxShadow: '0 0 0 rgba(242,184,214,0)' }, { boxShadow: '0 0 18px 4px rgba(242,184,214,.9)' }], { duration: 700, iterations: 12, direction: 'alternate' });
+    await sleep(2300); play('candy', CHANT_AT, 1); await sleep(3600);
+    fade('candy', 0, 350); cam(1, 50, 50); await sleep(250);
+    nasa('This chrome is the property of Näsa™. Big Space™.', true); play('nasa', 0, 1); await sleep(60); camOn([$('nasa')], 1.7); await sleep(2340); fade('nasa', 0, 500); cam(1, 50, 50);
+
+    // 7. The end (50–60 s): gameplay, and the name.
+    await cut(); toLayer(2); play('drill', 0, 0); fade('drill', 1, 600); key('ArrowDown'); await sleep(2600);
+    key('ArrowDown', 'keyup'); key('ArrowLeft'); await sleep(1300); key('ArrowLeft', 'keyup'); key('ArrowDown'); await sleep(1400);
+    scrim.style.opacity = 1; logo.style.opacity = 1; await sleep(2800);
+    black.style.transition = 'opacity .9s ease'; black.style.opacity = 1; fade('drill', 0, 1000); await sleep(1100);
+    letGo(); running = false; logo.style.opacity = 0; scrim.style.opacity = 0;
+  }
+
+  async function record() {
+    let stream;
+    try { stream = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 60 }, audio: true, preferCurrentTab: true, selfBrowserSurface: 'include', systemAudio: 'include' }); }
+    catch (e) { ui.querySelector('p').textContent = 'Recording was cancelled. Press Record trailer to try again.'; return; }
+    const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(m => MediaRecorder.isTypeSupported(m));
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 16e6 }), chunks = [], stopped = new Promise(r => rec.onstop = r);
+    rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+    ui.remove(); await sleep(700); rec.start(250); await run(); await sleep(500); rec.stop(); stream.getTracks().forEach(t => t.stop()); await stopped;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' })); a.download = 'ass2roid-trailer.webm'; document.body.appendChild(a); a.click();
+  }
+  $('trRec').onclick = record;
+  $('trPlay').onclick = async () => { ui.remove(); await run(); };
+})();
+</script>
 </body>
 </html>
