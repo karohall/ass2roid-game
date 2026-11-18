@@ -2200,10 +2200,23 @@ function drawDrift() {
     const hs = 8 + fs_.w * 5; ctx.globalAlpha = a; ctx.drawImage(d.flare, hx - hs / 2, hy - hs / 2, hs, hs); ctx.restore();
   }
   ctx.restore();
+  // A star cluster in verse 2: a knot of light that twinkles slowly.
+  { const k = smooth(ramp(S.verse2 + 18, S.verse2 + 30, t)); if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen';
+    for (const [x, y, ph, sp] of d.cluster) { ctx.globalAlpha = k * (.35 + .65 * Math.pow(Math.max(0, Math.sin(t * sp * .6 + ph)), 4)); ctx.fillStyle = '#eef3ff'; ctx.fillRect(x - d.ox * .02, y, 1.6, 1.6); }
+    const cg = ctx.createRadialGradient(W0 * .08, H0 * .3, 0, W0 * .08, H0 * .3, 60); cg.addColorStop(0, 'rgba(210,225,255,.35)'); cg.addColorStop(1, 'rgba(210,225,255,0)'); ctx.globalAlpha = k; ctx.fillStyle = cg; ctx.fillRect(W0 * .08 - 60, H0 * .3 - 60, 120, 120); ctx.restore(); } }
+  { ctx.save(); ctx.globalCompositeOperation = 'lighter';   // (drawn before the bodies, so a body passes in front of them)
+    // The bridge: nothing of you left. Space sparkles.
+    const spark = smooth(ramp(S.bridge - 4, S.bridge + 6, t)) * (1 - sun * .6);
+    if (spark > 0) for (const [x, y, ph, sp] of d.sparkles) {   // soft glints, slow
+      const a = Math.pow(Math.max(0, Math.sin(t * sp * .5 + ph)), 6) * spark;
+      if (a < .02) continue;
+      ctx.globalAlpha = a * .8; ctx.drawImage(d.flare, x - 9, y - 9, 18, 18);
+    }
+  ctx.restore(); }
   // Planets in watercolour, arriving with the song; they sit far off, so they move only a little when you steer.
   for (const pl of d.planets) {
     const a = space * smooth(ramp(pl.at, pl.at + 10, t)); if (a <= 0) continue;
-    ctx.globalAlpha = a * .96 * (1 - sun * .3) * (pl.far || 1); const X = pl.x - d.ox * pl.par - (t - pl.at - (pl.lead || 15)) * (pl.v || 2 + pl.par * 45), Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
+    ctx.globalAlpha = a * (pl.far || 1);   /* opaque once arrived: stars stay behind (2026-11-18) */ const X = pl.x - d.ox * pl.par - (t - pl.at - (pl.lead || 15)) * (pl.v || 2 + pl.par * 45), Y = pl.y - d.oy * pl.par + Math.sin(t * .04 + pl.x) * 4 * pl.par * 5;
     if (pl.spin) { ctx.save(); ctx.translate(X, Y); ctx.rotate(t * pl.spin); ctx.drawImage(pl.img, -pl.img.width / 2, -pl.img.height / 2); ctx.restore(); } else ctx.drawImage(pl.img, X - pl.img.width / 2, Y - pl.img.height / 2);
   }
   ctx.globalAlpha = 1;
@@ -2212,10 +2225,6 @@ function drawDrift() {
   // Auroras: one soon after the wormhole, one from the pre-chorus into the chorus: curtains of light, drifting.
   for (const rb of d.ribbons) { const k = smooth(ramp(rb.from, rb.from + 10, t)) * (1 - smooth(ramp(rb.to, rb.to + 12, t)));
     if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = Math.min(1, k * .65 * space); ctx.drawImage(rb.img, -W0 * 1.1 + Math.sin(t * .03 + rb.y) * 40 - d.ox * .04 - (t - rb.from) * 1.5, rb.y); ctx.restore(); } }
-  // A star cluster in verse 2: a knot of light that twinkles slowly.
-  { const k = smooth(ramp(S.verse2 + 18, S.verse2 + 30, t)); if (k > 0) { ctx.save(); ctx.globalCompositeOperation = 'screen';
-    for (const [x, y, ph, sp] of d.cluster) { ctx.globalAlpha = k * (.35 + .65 * Math.pow(Math.max(0, Math.sin(t * sp * .6 + ph)), 4)); ctx.fillStyle = '#eef3ff'; ctx.fillRect(x - d.ox * .02, y, 1.6, 1.6); }
-    const cg = ctx.createRadialGradient(W0 * .08, H0 * .3, 0, W0 * .08, H0 * .3, 60); cg.addColorStop(0, 'rgba(210,225,255,.35)'); cg.addColorStop(1, 'rgba(210,225,255,0)'); ctx.globalAlpha = k; ctx.fillStyle = cg; ctx.fillRect(W0 * .08 - 60, H0 * .3 - 60, 120, 120); ctx.restore(); } }
   // The pre-chorus: a little flying saucer crosses, in no hurry.
   { const k = ramp(d.saucerAt, d.saucerAt + 18, t); if (k > 0 && k < 1) {   // 18 s (round 9: it stayed too long); glides down diagonally, stops to look, hops up, stops, dives, stops, then zips off
     const WP = [[0, -.55, .12], [.25, .22, .48], [.36, .24, .47], [.42, .55, .2], [.56, .57, .22], [.66, .8, .62], [.74, .81, .6], [1, 1.65, .05]];
@@ -2269,13 +2278,6 @@ function drawDrift() {
     q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 1 - dt * .05;
     const tw = .15 + .85 * Math.pow(Math.max(0, Math.sin(q.age * q.sp + q.ph)), 3), fa = (1 - q.age / q.life) * tw;   // each grain shimmers on its own
     if (q.big) { ctx.globalAlpha = fa * .9; ctx.drawImage(d.flare, q.x - 7, q.y - 7, 14, 14); } else { ctx.globalAlpha = fa * .85; ctx.drawImage(d.dot, q.x - 2, q.y - 2, 4, 4); }
-  }
-  // The bridge: nothing of you left. Space sparkles.
-  const spark = smooth(ramp(S.bridge - 4, S.bridge + 6, t)) * (1 - sun * .6);
-  if (spark > 0) for (const [x, y, ph, sp] of d.sparkles) {   // soft glints, slow
-    const a = Math.pow(Math.max(0, Math.sin(t * sp * .5 + ph)), 6) * spark;
-    if (a < .02) continue;
-    ctx.globalAlpha = a * .8; ctx.drawImage(d.flare, x - 9, y - 9, 18, 18);
   }
   // The outro: a sunrise from within, pure glow (2026-11-17, the user's reference): a soft bloom of white light with a pale haze, and a fine
   // lens flare, a long thin streak and two spikes. No rays; it lights the watercolour without blowing it out.
