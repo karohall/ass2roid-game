@@ -209,7 +209,7 @@ Used as a **crater picker** between digging sites: a drawn map of Korova Rock, a
 - **Disco Gravitas** (heart: Italo and space disco): you shake to the beat, so mixing a Milk+ takes a third less time (its perk since 2026-11-17); it also calms the balance meter a little. DJ **Rocky Giovanni** (Italian, warm, *amore*), on air since 2026-11-17: he says buonasera when you tune in, talks over the ends of songs, now and then hints at Doppio+, speaks for Stillness on his own station (instead of the Broadcaster), notices a second Strength, a Näsa ad and melted chrome, and knows when you have been on Void FM
 - **Void FM** (consciousness: futurepop at the edge of emptiness): a mood, not a tactic. Except in the dark: in The Crack it gives night vision. The Broadcaster, on air since 2026-11-14, welcomes you to the never-ending show, tells you facts about the dark between songs, and calms Stillness: space is not scary, it is restful
 - **Näsa – Big Space™:** commercial breaks that cut into whatever is playing
-- **Space oddities:** not a station; a folder of songs for special occasions, such as Stella's Show on Stillness overload (since 2026-11-18; The You Show before)
+- **The Drift** (renamed from Space oddities, 2026-11-18): not a station; a folder of songs for special occasions, such as Stella's Show on Stillness overload (since 2026-11-18; The You Show before)
 
 **Rule: the radio teaches you things (2026-11-14).** The radio is not only a soundtrack and a set of station effects: it carries knowledge. Secret-menu recipes are hidden in songs (Candygirl's is chanted in Candygirl (Asylum Mix)), and the DJs' slogans and lines can carry more. Listening is a way to play.
 
