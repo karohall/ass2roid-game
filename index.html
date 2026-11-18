@@ -2122,10 +2122,14 @@ function startDrift() {
 }
 
 // Seconds into Stella's Show: the song's own clock while it plays, so every shot lands on its section.
-function driftTime() {
-  const d = s.drift, now0 = performance.now();
-  if (sound.file === RADIO.oddity.songs[0].file && !player.paused && player.currentTime > 0) { d.last = CONFIG.drift.lead + player.currentTime; d.lastAt = now0; return d.last; }   // the song starts after the lead
-  return d.last + (now0 - d.lastAt) / 1000;                 // before the song starts, or if it can't play
+function driftTime() {   // smooth and never backwards (2026-11-18): it runs on its own and leans toward the song, a little faster or slower, never snapping
+  const d = s.drift, now0 = performance.now(), dt = Math.max(0, (now0 - d.lastAt) / 1000); let rate = 1;
+  if (sound.file === RADIO.oddity.songs[0].file && !player.paused && player.currentTime > 0) {   // the song starts after the lead
+    const err = CONFIG.drift.lead + player.currentTime - (d.last + dt);
+    if (Math.abs(err) > 3) { d.last = CONFIG.drift.lead + player.currentTime; d.lastAt = now0; return d.last; }   // far off (a seek): take the song's time
+    rate = Math.max(.85, Math.min(1.15, 1 + err));                                                                // close: drift toward it, gently
+  }
+  d.last += dt * rate; d.lastAt = now0; return d.last;
 }
 const ramp = (a, b, t) => Math.max(0, Math.min(1, (t - a) / (b - a)));
 const smooth = k => k * k * (3 - 2 * k);
@@ -2255,7 +2259,8 @@ function drawDrift() {
   const rise = smooth(Math.min(1, e / 8000)), sx = p.x * T + T / 2, sy = (p.y - cam) * T + T / 2;
   const into = smooth(ramp(8, 16, t)), out = smooth(ramp(18, 27, t));
   const scale = t < 17 ? 1 - into * .95 : .05 + out * .95;
-  const px = (t < 17 ? sx + (cx - sx) * rise : cx + Math.sin(t * .05) * 30 + d.ox), py = (t < 17 ? sy + (cy - sy) * rise : cy + Math.sin(t * .037) * 18 + d.oy);   // after the wormhole, where you steer
+  const wob = smooth(ramp(17, 24, t));                       // the drifting eases in after the wormhole: no jump at 17 s (2026-11-18)
+  const px = (t < 17 ? sx + (cx - sx) * rise : cx + Math.sin(t * .05) * 30 * wob + d.ox), py = (t < 17 ? sy + (cy - sy) * rise : cy + Math.sin(t * .037) * 18 * wob + d.oy);   // after the wormhole, where you steer
   const gone = smooth(ramp(S.glitter, S.outro + 10, t));   // from 1:25 in the song (2026-11-18)     // the chorus to the outro: dissolving into cosmic dust, slowly (2026-11-14: was verse 2 to the bridge, too quick)
   const ang = e / 1000 * .35 - into * Math.PI * 2;   // falling backwards into the wormhole: one slow backward somersault (2026-11-17)
   if (gone > 0 && gone < 1) {                                // dust leaves the body and trails behind
