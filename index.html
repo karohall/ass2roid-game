@@ -557,14 +557,14 @@ const CONFIG = {
   craterPicker: false,
   hint:    { typeCps: 60, readMsPerChar: 70, lingerMs: 2500, minMs: 9000 },   // announcements: typing + reading time + a pause, never under 9 s
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
-  // Stillness overload: Calm on top of Stillness. The Drift lasts as long as The You Show (4:16), shot by shot
+  // Stillness overload: Calm on top of Stillness. The Drift lasts as long as Stella's Show (3:13; was The You Show, 4:16), shot by shot
   // against the song (storyboard in RADIO.md). Sections in seconds into the song; durationMs only if the song can't play.
-  drift:   { nudge: 6, durationMs: 257000, sections: { verse1: 32, pre: 70, verse2: 100, chorus: 132, bridge: 192, outro: 226 } },
+  drift:   { nudge: 6, durationMs: 194000, sections: { verse1: 24, pre: 50, verse2: 72, chorus: 98, bridge: 124, outro: 160 } },   // 2026-11-18: retimed to Stella's Show
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
              // duckDownMs/duckUpMs: the music dips under a DJ in 0.4 s and comes back over 1.5 s; djLead: the dip starts 0.4 s before the voice
-             voices: false, pumpDigSpeed: 0.9, discoCalm: 1.5, discoShake: 0.65,   /* voices: the DJs, off since 2026-11-17 (the user: they are cringe; the sound effects stay) */ songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
+             voices: false, jingleChance: 0.35, adChance: 0.18, pumpDigSpeed: 0.9, discoCalm: 1.5, discoShake: 0.65,   /* voices: the DJs, off since 2026-11-17 (the user: they are cringe; the sound effects stay) */ songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
              states: { normal: { rate: 1, lowpass: 20000, highpass: 10, drive: 0 }, still: { rate: 0.88, lowpass: 650, highpass: 10, drive: 0 }, frenzy: { rate: 1.08, lowpass: 20000, highpass: 220, drive: 0.35 } } },   // Frenzy and Stillness change the sound, not the station   // the voices sit lower and the music ducks less (to 60%)   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -625,6 +625,7 @@ const catNo = a => a.no === 'E' ? 'KR-1 E' : `KR-1 ${'ABCD'[s.artLayer[a.id] ?? 
 const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${name}.mp3` });
 // Candygirl (Asylum Mix) belongs to the drink alone: it plays when you drink Candygirl, never in the Pump Zone's rotation (2026-11-15).
 const CANDY_SONG = SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)');
+CONFIG.jizz.song = SONG('Disco Gravitas', 'Latte acidico, doppio+', 'Disco Gravitas Latte acidico, doppio+');   // Doppio+ plays its own song while it lasts (2026-11-18)
 const RADIO = {
   tape:  { name: 'Tape', kind: 'Tape', ident: ['Side A'], fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
     SONG('Tape', 'Testarocca', 'Testarocca')] },
@@ -639,19 +640,33 @@ const RADIO = {
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
     SONG('Disco Gravitas', 'Dolce de Leche+', 'Disco Gravitas Dolce de Leche Plus')] },
   oddity: { name: 'Space oddities', kind: 'Folder', fx: 'Not a station. For special occasions.', songs: [
-    SONG('Space oddities', 'The You Show', 'Too much Calm The You Show')] },
+    SONG('Space oddities', "Stella's Show", "Stella's Show")] },   // the Drift's song (2026-11-18)
   void:  { name: 'Void FM', kind: 'Station', fx: 'A mood, not a tactic. Except in the dark.', ident: ['Not endorsed by Näsa. Listened to by wreckers of civilisation.', 'In space no one can hear you cry.'], songs: [
     SONG('Void FM', 'In Profundum Imus (Ex Profundo)', 'Void FM In Profundum Imus (Ex Profundo)'),
     SONG('Void FM', 'Kármán Lines (Extended Mix)', 'Void FM Kármán Lines (Extended Mix)'),
-    { ...SONG('Void FM', 'Stella Solaris', 'Void FM Stella Solaris'), ident: 1 },   // a song about a dead mother: in space no one can hear you cry
     { ...SONG('Void FM', 'Alea Iacta Est', 'Void FM Alea Iacta Est'), ident: 0 }] },   // early industrial: always the wreckers of civilisation
 };
 const STATIONS = ['pump', 'disco', 'void'];
+// Between songs, now and then (2026-11-18): the station's own jingle, or a word from Näsa (never on Void FM: not endorsed by Näsa).
+const JINGLE = (path, title) => ({ title, file: `audio/Radio/${path}`, jingle: true });
+const JINGLES = {
+  pump: [['hard rock heavy ore', 'Hard rock, heavy ore'], ['milk+ ad', 'Milk+. Shake it.'], ['kein schmerz, kein erz', 'Kein Schmerz, kein Erz'], ['hard muscles, hard rock', 'Hard muscles, hard rock']]
+    .map(([n, t]) => JINGLE(`The Pump Zone/radio jingles/${n}.wav`, t)),
+  disco: [JINGLE('Disco Gravitas/Disco Gravitas jingle 1.mp3', 'Disco Gravitas')],
+  void: [['108.1', '108.1'], ['golden record', 'The golden record'], ['in space no one can hear you cry', 'In space no one can hear you cry'], ['dying stars shine brighter', 'Dying stars shine brighter'], ['welcome to the never-ending show', 'Welcome to the never-ending show']]
+    .map(([n, t]) => JINGLE(`Void FM/jingles/${n}.wav`, t)),
+};
+const NASA_ADS = [{ ...JINGLE('Näsa Big Space/Näsa Big Space Commercial.mp3', 'A word from Näsa™. Big Space™.'), ad: true }, { ...JINGLE('Näsa Big Space/Näsa Big Space - short interlude.mp3', 'Näsa™. Big Space™.'), ad: true }];
+function between(key) {   // what plays before the next song: a Näsa ad, a jingle, or nothing
+  if (key !== 'void' && Math.random() < CONFIG.radio.adChance) { const ad = NASA_ADS[Math.random() < .35 ? 0 : 1]; if (s && running) nasa('A word from our sponsor. Näsa™. Big Space™.', true); return ad; }
+  const j = JINGLES[key]; if (j && Math.random() < CONFIG.radio.jingleChance) return j.filter(x => x !== radio.lastJingle)[Math.floor(Math.random() * Math.max(1, j.length - 1))] || j[0];
+  return null;
+}
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
 // It starts on the Pump Zone, so Begin shift has music. The tape belongs to the broken drill (and to T).
-const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, vol: 0, unlocked: {} };   // unlocked: hidden songs you've earned; the radio keeps them between shifts
+const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, jingle: {}, vol: 0, unlocked: {} };   // unlocked: hidden songs you've earned; the radio keeps them between shifts
 function radioKey(k) {
-  if (s && s.drift) return;                                // The You Show plays to the end
+  if (s && s.drift) return;                                // Stella's Show plays to the end
   if (!sound.on) {                                          // the first R turns the radio on, on the station it is set to
     if (k === 't') radio.on = 'tape';
     tuneIn();
@@ -670,7 +685,7 @@ function radioKey(k) {
   if (s && was === 'void') s.fromVoid = true;
   if (s && radio.on === 'disco' && s.fromVoid) { s.fromVoid = false; djSay('disco', DJS.disco.fromVoid); }   // Rocky Giovanni, the next time you come back to him
 }
-// What the radio plays right now: the station you chose. The Drift plays The You Show, and a broken drill
+// What the radio plays right now: the station you chose. The Drift plays Stella's Show, and a broken drill
 // leaves only the tape. Frenzy and Stillness don't switch the station: they change how it sounds (stateSound).
 function radioNow() {
   if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
@@ -680,7 +695,7 @@ function radioNow() {
   if (s && candy()) return { key: 'pump', song: 0, track: CANDY_SONG, cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
 }
-const songOf = n => { const st = RADIO[n.key]; if (n.track) return n.track; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
+const songOf = n => { const st = RADIO[n.key]; if (n.track) return n.track; if (n.song === undefined && radio.jingle[n.key]) return radio.jingle[n.key]; return n.song === undefined && radio.rare[n.key] || st.songs[n.song ?? (radio.idx[n.key] || 0) % st.songs.length]; };
 // A station's rare songs stay out of the rotation: each time the station picks a song, there is a small chance one of them plays instead.
 function pickRare(key) { const r = (RADIO[key].rare || []).filter(x => !x.unlock || radio.unlocked[x.unlock]); radio.rare[key] = r.length && Math.random() < CONFIG.radio.rareChance ? r[Math.floor(Math.random() * r.length)] : null; }
 const nowPlaying = () => songOf(radioNow()).title;
@@ -794,8 +809,10 @@ let player = decks[0], outgoing = null;
 const sound = { on: false, file: '', vol: 0, out: 0, outMs: 1, inMs: 1, rising: false };
 decks.forEach(d => d.addEventListener('ended', () => { if (d === player) songEnded(); }));
 function songEnded() {
-  if (s && s.drift && !s.drift.done) { endDrift(); return; }   // The You Show is over: so is the Drift
+  if (s && s.drift && !s.drift.done) { endDrift(); return; }   // Stella's Show is over: so is the Drift
   const n = radioNow();
+  if (n.song === undefined && radio.jingle[n.key]) { radio.jingle[n.key] = null; return; }   // the jingle or ad is over: the next song
+  if (n.song === undefined && RADIO[n.key].kind === 'Station') { const b = between(n.key); radio.jingle[n.key] = b; if (b && b.jingle && !b.ad) radio.lastJingle = b; }   // now and then, something between songs
   if (n.song === undefined && radio.rare[n.key]) radio.rare[n.key] = null;     // a rare song gives way to the rotation
   else if (n.song === undefined) { radio.idx[n.key] = (radio.idx[n.key] || 0) + 1; pickRare(n.key); }   // the next song on this station
   else { player.currentTime = 0; player.play().catch(() => {}); return; }     // a song that cut in plays again
@@ -823,7 +840,7 @@ function guideNow() {
   return null;
 }
 // Like a real radio, a station you switch to is already playing: a random song, from a random place in it.
-// (A song that ends gives way to the next from its start; a song that is pinned, like The You Show, starts at the top.)
+// (A song that ends gives way to the next from its start; a song that is pinned, like Stella's Show, starts at the top.)
 function loadSong(file) {
   player.src = encodeURI(file);
   if (sound.randomStart) player.addEventListener('loadedmetadata', () => { player.currentTime = Math.random() * CONFIG.radio.joinBy * player.duration; }, { once: true });
@@ -1951,8 +1968,8 @@ function startDrift() {
       { x: W0 * .8, y: H0 * .28, r: 125, tilt: .45, at: 30, o: { blur: 13, n: 520, core: .22 } },                  // vast and diffuse, hardly there
       { x: W0 - 60, y: H0 * .72, r: 70, tilt: .62, at: 42, o: { blur: 5, n: 1000, arms: 3, core: .4, stars: 50 } }, // three-armed
       { x: W0 * .55, y: 40, r: 22, tilt: .14, at: 55, o: { blur: 1.2, n: 320, core: .75 } },                       // tiny, edge-on
-      { x: W0 * 1.3, y: H0 * .5, r: 46, tilt: .35, at: 112, o: { blur: 3, n: 1100, core: .5, stars: 80, lanes: true } },
-      { x: W0 * 1.4, y: H0 * .15, r: 95, tilt: .7, at: 175, o: { blur: 9, n: 700, arms: 3, core: .3 } },
+      { x: W0 * 1.3, y: H0 * .5, r: 46, tilt: .35, at: 90, o: { blur: 3, n: 1100, core: .5, stars: 80, lanes: true } },
+      { x: W0 * 1.4, y: H0 * .15, r: 95, tilt: .7, at: 140, o: { blur: 9, n: 700, arms: 3, core: .3 } },
     ].map(g => Object.assign(g, { rot: R() * 6.3 })),
     sparkles: Array.from({ length: 320 }, () => [R() * W0 * 3 - W0, R() * H0, R() * 6.3, .6 + R() * 1.6]),
     dust: [], ox: 0, oy: 0, vx: 0, vy: 0 };   // ox, oy: where you've steered to; vx, vy: the drift you gave it
@@ -2006,7 +2023,7 @@ function startDrift() {
       { const m = shuffle([pick([SC.verse1 + 12, SC.pre + 12]), pick([SC.chorus + 24, SC.bridge + 6])]); d.planets.filter(p => p.thing).forEach((p, i) => p.at = m[i]); }   // one early, one late, every Drift
       const swapAt = list => { const ats = shuffle(list.map(p => p.at)); list.forEach((p, i) => p.at = ats[i]); };   // the same moments, in a new order
       swapAt(bodies.filter(p => !drop.includes(p))); swapAt(d.galaxies);
-      { const kept = shuffle(bodies.filter(p => !drop.includes(p))), n = kept.length, span = 200 - 21;   // round 21: evenly over the song, a body as the wormhole closes, never a pile at the end
+      { const kept = shuffle(bodies.filter(p => !drop.includes(p))), n = kept.length, span = SC.outro - 21;   // round 21: evenly over the song, a body as the wormhole closes, never a pile at the end
         kept.forEach((p, i) => { p.at = 21 + span * i / Math.max(1, n - 1) + (i ? (R() - .5) * 8 : 0); p.v = Math.max(p.v || 0, 2 + p.par * 45, 12); }); kept[0].early = true; }   // none lingers: each crosses in about a minute and a quarter
       if (giant) { if (R() < .25) d.planets = d.planets.filter(p => p !== giant); else giant.at = pick([SC.verse1 + 20, SC.verse2 + 46, SC.chorus + 10]); }
       d.saucerAt = pick([SC.pre + 2, SC.verse2 + 8, SC.chorus + 18]);
@@ -2038,7 +2055,7 @@ function startDrift() {
         d.falls.push({ at, x: -160 + R() * W0 * 1.7, y: -40 + R() * H0 * .5, len: 120 + R() * 280, dur: 1.2 + R() * 2.4, ang: dir, w: .7 + R() * 1.3, tail: 40 + R() * 100,
           col: ['205,220,255', '255,226,204', '192,238,226', '222,204,255', '255,205,200'][Math.floor(R() * 5)], glints: Array.from({ length: 2 + Math.floor(R() * 4) }, () => [R(), (R() - .5) * 6, R() * 6.3]) }); };
       fall(22.5 + R() * 1.5); fall(26.5 + R() * 2);   // the first falling stars just after the wormhole (2026-11-17)
-      let at = 34 + R() * 10; while (at < 240) { fall(at); at += R() < .2 ? .5 + R() * 1.6 : 6 + R() * R() * 34; }
+      let at = 34 + R() * 10; while (at < 185) { fall(at); at += R() < .2 ? .5 + R() * 1.6 : 6 + R() * R() * 34; }
       for (let i = 0; i < 7; i++) fall(SC.chorus + 1 + R() * 12); }
     d.grain = ctx.createPattern(WC.grain(R), 'repeat'); }
   radio.on = 'oddity'; radio.since = radio.clock;
@@ -2048,7 +2065,7 @@ function startDrift() {
   say('Calm, on top of Stillness. The shaft lets go.');
 }
 
-// Seconds into The You Show: the song's own clock while it plays, so every shot lands on its section.
+// Seconds into Stella's Show: the song's own clock while it plays, so every shot lands on its section.
 function driftTime() {
   const d = s.drift, now0 = performance.now();
   if (sound.file === RADIO.oddity.songs[0].file && !player.paused && player.currentTime > 0) { d.last = player.currentTime; d.lastAt = now0; return d.last; }
@@ -2662,7 +2679,7 @@ function renderStatic() {
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
-  const banner = !sound.on ? 'Radio off · Press R to tune in' : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
+  const banner = !sound.on ? 'Radio off · Press R to tune in' : song.ad ? song.title : song.jingle ? `${st.name} · ${song.title}` : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { $('radioTicker').textContent = banner; $('radioTicker').style.setProperty('--dur', (8 + banner.length * .18) + 's'); }
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + ''); setText('radioLesson', sound.on && s && !s.radioHops ? 'Each station does something: R for the next.' : '');   // the radio lesson lives in the radio, until another station is tried

@@ -39,6 +39,7 @@ The rover has a radio. Each station is a small gameplay modifier and a piece of 
 - **Seamless (2026-11-15).** Two decks: songs cross-fade over 1.5 s instead of dipping out and in. Hard cuts (the broken drill, Candygirl) are a 0.15 s cross-fade, still a cut but without a click. The music starts dipping 0.4 s before a DJ speaks (to 60%), and comes back over 1.5 s after.
 - **The first song starts from the top (2026-11-14).** When the radio first comes on, the song plays from its beginning. Switching stations still joins a song mid-broadcast, like a real radio.
 - **Real sound in the game (2026-11-12).** The finished songs play from audio/Radio/<station>/ (shipped in the itch.io zip, kept out of the repository). The radio comes on with the first key or click, Begin shift. R cross-fades to the next station, T to the tape, which is blank for now. While the tape is blank, the radio starts on the Pump Zone, so Begin shift always has music. The Drift plays The You Show. **Frenzy and Stillness change the sound, not the station (2026-11-14):** Stillness muffles and slows the music (lower, like a slowed tape, as if through rock); a Frenzy speeds it up, thinner and a little distorted. Before, a Frenzy cut to the Pump Zone and Stillness switched to Void FM. **The voices go through a radio (2026-11-14):** the DJ clips were too clean next to the songs, so they're narrowed to a radio band, compressed, warmed a little and given a short room, and sit a little lower; the music only ducks to 60% under them. Both go through one bus, so the states change the voices too. (Web Audio; on file:// only the speed changes.) Behind pause, loading and end screens the radio ducks.
+- **Jingles and Näsa ads (2026-11-18).** Between songs, now and then (about 1 in 3), a station plays one of its own jingles: four on the Pump Zone (one a Milk+ ad), one on Disco Gravitas, five on Void FM. About 1 in 6, Näsa buys the slot instead: the long commercial (47 s) or the short interlude (10 s), with the Näsa pop-up. Never on Void FM: not endorsed by Näsa. The DJ voices are off (2026-11-17).
 - **Bilingual echoes on every station (2026-10-25).** The bilingual echo started with Disco Gravitas (Italian and English). Now each station has its own language flair, echoed in English.
 
 ## Rules (from the GDD)
@@ -174,17 +175,17 @@ The first prompts sounded flat. It worked when the lyrics included **directions 
 | Contrast | **No Ground Beneath, No Ceiling** | Sparse and intimate, almost whispered, slow | _Not yet_ |
 | Wildcard | **Kármán Lines (Extended Mix)** | Long instrumental, ambient, made for drifting | **Finished** |
 | _To decide_ | **Ex Profundo** | Replaces one of the four planned songs (which one: to decide) | **Finished** |
-| (new) | **Stella Solaris** | Rewritten as trip-hop (2026-11-13) | **Finished** |
+| (new) | **Stella Solaris** | Rewritten as trip-hop (2026-11-13); 2026-11-18: became Stella's Show, the Drift's song, and left Void FM | **Finished** |
 | (new) | **Alea Iacta Est** | Early industrial, added 2026-11-14. Its ticker always carries the *wreckers of civilisation* slogan | **Finished** |
 
 ### Space oddities *(special occasions)*
 
 - **Concept:** a folder, not a station. Songs that only play on special occasions, triggered by what happens in the game, never in normal rotation.
-- **Occasions so far:** Stillness overload (The You Show).
+- **Occasions so far:** Stillness overload (Stella's Show since 2026-11-18; The You Show before).
 
 | Occasion | Song | Status |
 |----------|------|--------|
-| Stillness overload | **The You Show** | **Finished** |
+| Stillness overload | **Stella's Show** (since 2026-11-18; The You Show before) | **Finished** |
 
 #### The You Show
 
