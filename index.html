@@ -559,7 +559,7 @@ const CONFIG = {
   ending:  { countMs: 1800 },     // the end screen's stats count up over this long
   // Stillness overload: Calm on top of Stillness. The Drift lasts as long as Stella's Show (3:13; was The You Show, 4:16), shot by shot
   // against the song (storyboard in RADIO.md). Sections in seconds into the song; durationMs only if the song can't play.
-  drift:   { nudge: 6, lead: 17, durationMs: 211000, sections: { verse1: 41, pre: 67, verse2: 89, glitter: 102, chorus: 115, bridge: 141, outro: 167 } },   // outro (the sunrise) from 2:30 in the song (2026-11-18)   // 2026-11-18: Stella's Show starts after a quiet lead of 17 s (the window full width); sections in drift time = song time + 17 (song: verse1 0:24, pre 0:50, verse2 1:12, chorus 1:38, bridge 2:04, outro 2:40)
+  drift:   { nudge: 6, lead: 17, durationMs: 211000, sections: { verse1: 41, pre: 67, verse2: 89, glitter: 117, chorus: 115, bridge: 141, outro: 167 } },   // outro (the sunrise) from 2:30 in the song (2026-11-18)   // 2026-11-18: Stella's Show starts after a quiet lead of 17 s (the window full width); sections in drift time = song time + 17 (song: verse1 0:24, pre 0:50, verse2 1:12, chorus 1:38, bridge 2:04, outro 2:40)
   nasa:    { showMs: 5000, everyMs: 20000 },   // the Näsa pop-up: how long it stays, and at most how often
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
@@ -1875,7 +1875,7 @@ const WC = {
       for (let j = 0; j < n; j++) { const a = R() * 6.3, l = rr * (.4 + R() * .6); x.beginPath(); x.moveTo(cx, cy); x.lineTo(cx + Math.cos(a) * l, cy + Math.sin(a) * l); x.stroke(); } }
     x.filter = 'none';
     x.filter = 'none';
-    const dots = Array.from({ length: 560 }, () => { const big = R() < .05, r = big ? 1.6 + R() * 2.2 : Math.pow(R(), 3) * 1.6 + .3;   // painted stars (2026-11-18): flat, matte, every size, fainter
+    const dots = Array.from({ length: 280 }, () => { const big = R() < .05, r = big ? 1.6 + R() * 2.2 : Math.pow(R(), 3) * 1.6 + .3;   // painted stars (2026-11-18): flat, matte, every size, fainter
       return { r, a: big ? .3 + R() * .25 : .12 + R() * .42, col: R() < .8 ? '#ece8dc' : R() < .5 ? '#dfe6f0' : '#f4e8d4', x: R() * w, y: R() * h, wet: R() < .4, k: Array.from({ length: 7 }, () => 1 + (R() - .5) * .35) }; });
     const dot = (x, d, grow = 1) => { x.globalAlpha = d.a; x.fillStyle = d.col; x.beginPath(); d.k.forEach((k, j) => { const t = j / 7 * Math.PI * 2; x.lineTo(d.x + Math.cos(t) * d.r * k * grow, d.y + Math.sin(t) * d.r * k * grow); }); x.closePath(); x.fill(); };
     softLayer(x, 1.6, x => dots.filter(d => d.wet).forEach(d => dot(x, d, 1.6)));   // some bled into the wash, wet in wet
@@ -2030,7 +2030,7 @@ function startDrift() {
     d.cluster = Array.from({ length: 46 }, () => { const a = R() * 6.3, rr = Math.pow(R(), 1.6) * 46; return [W0 * .08 + Math.cos(a) * rr, H0 * .3 + Math.sin(a) * rr * .8, R() * 6.3, .5 + R()]; });
     setTimeout(() => { if (s.drift === d) { d.wash = skyWash || WC.sky(1000, 880, R); d.washAt = performance.now(); } }, 4300);   // painted once the shaft has fallen away (2026-11-18: painting it during the fall made it stutter)   // the sky painted off the first frame (it took .3 s)
     d.dot = WC.sprite(10, false); d.flare = WC.sprite(46, true);
-    d.flares = Array.from({ length: 18 }, () => [-240 + R() * 900, -20 + R() * 800, 1, R() * 6.3, WC.star(R)]);   // painted four-point stars (2026-11-18): many, each its own
+    d.flares = Array.from({ length: 9 }, () => [-240 + R() * 900, -20 + R() * 800, 1, R() * 6.3, WC.star(R)]);   // painted four-point stars (2026-11-18): many, each its own
     d.galaxies.forEach(gx => { gx.img = document.createElement('canvas'); d.paintQ.push(() => gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R, gx.o)); });   // in the queue too
     d.veils = [];   // (the veils are gone since round 4; no longer painted for nothing)
     d.dawn = lazy(1000, 520, () => WC.dawn(1000, 520, R));
