@@ -1428,7 +1428,7 @@ function drinkCandy() {
   if (!candy()) s.candyFrom = now();                        // the colours fade in from here
   s.fx.candy = now() + CONFIG.candy.durationMs;
   if (!s.candyFound) {
-    s.candyFound = true; radio.unlocked.candy = true; if (!s.guide.includes('state_candy')) { s.guide.push('state_candy'); rememberState('state_candy'); }   // its song joins the Pump Zone, now and then
+    s.candyFound = true; radio.unlocked.candy = true; if (!s.guide.includes('state_candy')) s.guide.push('state_candy');   // its song joins the Pump Zone, now and then
     for (const k in SECRET.candy.clues) s.clues[k] = true; unlock('secret_candy'); renderGuide();   // the card, complete
     celebrate(); announce(`Secret menu: ${em('Candygirl')}. C&C: Crack and chrome. For ${CONFIG.candy.durationMs / 1000} seconds, ↑ runs you up the tunnel.`, 0, true);
   } else say('Candygirl. Up you go.');
@@ -1510,15 +1510,14 @@ function clue(k, line) {
   if (s.guide.includes(id)) renderGuide();
   else if (line) unlock(id);                              // the card appears with the first thing you find
 }
-// The altered states (2026-11-18): a row in the Field Guide, so players know there is more to reach. Reached ones are remembered across shifts.
+// The altered states (2026-11-18): a row in the Field Guide, so players know there is more to reach. It starts empty every game.
 const STATES = [
   { id: 'state_frenzy', label: 'Frenzy', body: 'Too much, too fast. The Rock speaks, every hit lands double, and seams open that were closed. It passes.', hint: () => 'Push the meter past Hell yeah.' },
   { id: 'state_still', label: 'Stillness', body: 'Everything slows. Sound comes through rock. Some seams only open now.', hint: () => 'Pull the meter past Get out.' },
   { id: 'state_drift', label: 'The Drift', body: 'Calm, on top of Stillness: the shaft lets go. A song’s length out in the open, and an ending of its own.', hint: () => 'Past Stillness, there is somewhere else.' },
   { id: 'state_candy', label: 'Candygirl', body: 'Secret menu. Pastel and sweet; for a while, ↑ runs you up the tunnel. The Foundation does not endorse what it does in The Crack.', hint: () => 'Secret menu. Read the walls. The Crack has a dance floor, if you bring the drink.' },   // the user's words (2026-11-18)
 ];
-const statesKnown = () => { try { return JSON.parse(localStorage.getItem('ass2roid.states') || '[]'); } catch (e) { return []; } };
-function rememberState(id) { try { const k = statesKnown(); if (!k.includes(id)) localStorage.setItem('ass2roid.states', JSON.stringify([...k, id])); } catch (e) {} }
+try { localStorage.removeItem('ass2roid.states'); } catch (e) {}   // the old cross-shift memory (it was on for a day): cleared
 function guideEntries() {
   return [
     ...CONFIG.layers.map((L, i) => ({ id: 'layer' + i, cat: 'Layers', label: shortName(L.name), title: L.name, body: LAYER_CARD[i] })),
@@ -1564,7 +1563,6 @@ function burst() {
 function unlock(id) {
   if (s.guide.includes(id)) return;
   s.guide.push(id);
-  if (id.startsWith('state_')) rememberState(id);         // the states shelf remembers, shift to shift
   const ing = id.startsWith('ing_') && id.slice(4), v = ing && UNLOCKS[ing];
   // Discoveries: the hint box announces them, bursting into confetti, ahead of everything else.
   if (v) { celebrate(); announce(`New compound: ${em(ING[ing].name)}. ${em(VNAME[v])} (press ${VARIANTS.indexOf(v) + 1}) can now be mixed: ${VDESC[v].charAt(0).toLowerCase() + VDESC[v].slice(1)}`, 0, true); }
@@ -2342,7 +2340,7 @@ function newGame() {
   s = freshState();
   genLayer();
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
-  s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey', ...statesKnown());   // states reached in earlier shifts stay lit
+  s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey');
   begin();
   s.hintIntroUntil = now() + 4000;                         // the guide's first stop: the hint bar
   say('Welcome to Korova Rock. Dig responsibly.');
