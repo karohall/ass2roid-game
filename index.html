@@ -206,6 +206,7 @@
   #wrap { position:relative; z-index:1; }
   body.wide #sky { visibility:visible; z-index:2; }   /* above the deck's plate: it only paints inside its own window */
   body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
+  #panel, #dosage, #legend { will-change:opacity; }   /* their fade into the Drift runs on the compositor, not a repaint each frame */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
   .overlay { position:absolute; inset:0; height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
@@ -1978,8 +1979,10 @@ function driftRadio(slide) {
   rb.style.transition = 'none'; rb.style.transform = ''; rb.style.width = '';
   const w0 = rb.offsetWidth, l0 = rb.offsetLeft, t0 = rb.offsetTop, cvb = st.offsetTop + cv.offsetTop + cv.offsetHeight;
   rb.style.width = w0 + 'px'; void rb.offsetWidth;
-  if (slide) rb.style.transition = 'transform 6s ease 5s, width 6s ease 5s';
-  rb.style.transform = `translate(${st.offsetLeft - l0}px, ${cvb + 10 - t0}px)`; rb.style.width = (pn.offsetLeft + pn.offsetWidth - st.offsetLeft) + 'px';
+  const w1 = (pn.offsetLeft + pn.offsetWidth - st.offsetLeft) + 'px';
+  if (slide) { rb.style.transition = 'transform 6s ease 5s'; clearTimeout(driftRadio.t); driftRadio.t = setTimeout(() => { rb.style.width = w1; }, 5000); }   // it only slides; its width is set once, as the slide begins
+  else rb.style.width = w1;
+  rb.style.transform = `translate(${st.offsetLeft - l0}px, ${cvb + 10 - t0}px)`;
 }
 // The night's wash takes ~0.16 s to paint: done once, soon after the page loads, while the start screen stands still (2026-11-18).
 let skyWash = null; setTimeout(() => { try { skyWash = WC.sky(1000, 880, Math.random); } catch (e) {} }, 1200);
@@ -1996,6 +1999,15 @@ const driftPre = {};
 setTimeout(() => { try { const R = Math.random; driftPre.stars = Array.from({ length: 24 }, () => WC.star(R)); driftPre.grain = WC.grain(R);
   driftPre.dot = WC.sprite(10, false); driftPre.flare = WC.sprite(46, true); driftPre.rays = paintRays(R); } catch (e) {} }, 1800);
 Promise.all(Object.values(driftArt).map(im => im.decode().catch(() => {}))).then(() => setTimeout(() => Object.keys(DRIFT_ART).forEach(k => driftThing(k)), 2400));
+// The heavy paintings, one per moment (each 20-30 ms), well apart, while the start screen stands still.
+const DRIFT_NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#4a2a86', '#8e1424', '#2a3f8e'], ['#1c6f7d', '#2f55a0', '#5a2f8e'], ['#9a1626', '#4f2a80', '#7a1020']];
+[() => driftPre.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], Math.random),
+ () => driftPre.burst = WC.burst(170, ['#c2453f', '#f0b48c', '#7b4fb8', '#8f2a3c'], Math.random),
+ () => driftPre.dawn = WC.dawn(1000, 520, Math.random),
+ () => driftPre.striped = WC.planet(78, '#1f3f8c', '#e8f2ff', ['#ffffff', '#5f95d8', '#0f3478', '#dbe9ff', '#2f5fb0'], Math.random, { tilt: .12 }),
+ ...DRIFT_NEB.map((cols, i) => () => { const r = (90 + Math.random() * 120) * 1.25, c = document.createElement('canvas'); c.width = c.height = Math.ceil(r * 2.8);
+   c.getContext('2d').drawImage(WC.blob(r / 2, cols, Math.random), 0, 0, c.width, c.height); (driftPre.nebulae = driftPre.nebulae || [])[i] = { r, img: c }; }),
+].forEach((job, i) => setTimeout(() => { try { job(); } catch (e) {} }, 2700 + i * 300));
 function startDrift() {
   running = false; held = null; pendingTap = null;
   const R = Math.random, W0 = cv.width, H0 = cv.height;
@@ -2017,8 +2029,8 @@ function startDrift() {
   { const d = s.drift, NEB = [['#2b5a9c', '#1d7d74', '#c98d63'], ['#4a2a86', '#8e1424', '#2a3f8e'], ['#1c6f7d', '#2f55a0', '#5a2f8e'], ['#9a1626', '#4f2a80', '#7a1020'],   // deep purple and dark red beside the blues, greens and peach (round 7)
        ['#8de0d8', '#a7c4ff', '#d9b3ff'], ['#ffc2e0', '#9ec9ff', '#c9b3ff']];
     d.paintQ = []; const lazy = (w, h, paint) => { const c = document.createElement('canvas'); c.width = w; c.height = h; d.paintQ.push(() => c.getContext('2d').drawImage(paint(), 0, 0, w, h)); return c; };   // round 17: painted a little each frame, during the wormhole
-    d.nebulae.forEach((n, i) => { n.r *= 1.25; n.img = lazy(Math.ceil(n.r * 2.8), Math.ceil(n.r * 2.8), () => WC.blob(n.r / 2, NEB[i], R)); });
-    d.burst = { x: W0 * .72, y: H0 * .28, img: document.createElement('canvas') }; d.paintQ.push(() => d.burst.img = WC.burst(170, ['#c2453f', '#f0b48c', '#7b4fb8', '#8f2a3c'], R));   // the exploding nebula: crimson, peach and violet
+    d.nebulae.forEach((n, i) => { const pn = driftPre.nebulae && driftPre.nebulae[i]; if (pn) { n.r = pn.r; n.img = pn.img; return; } n.r *= 1.25; n.img = lazy(Math.ceil(n.r * 2.8), Math.ceil(n.r * 2.8), () => WC.blob(n.r / 2, NEB[i], R)); });
+    d.burst = { x: W0 * .72, y: H0 * .28, img: driftPre.burst || document.createElement('canvas') }; if (!driftPre.burst) d.paintQ.push(() => d.burst.img = WC.burst(170, ['#c2453f', '#f0b48c', '#7b4fb8', '#8f2a3c'], R));   // the exploding nebula: crimson, peach and violet
     const SC = CONFIG.drift.sections, P = (r, base, light, bands, o = {}) => {   // a planet: its canvas sized now, painted in the queue
       const pad = o.rings ? r * 1.25 : o.glow ? r * .15 : 8;
       return lazy(Math.ceil(r * 2 + pad * 2), Math.ceil(r * 2 + (o.rings ? r * .9 : 0) + (o.glow ? r * .3 : 16)), () => WC.planet(r, base, light, bands, R, o)); };
@@ -2027,7 +2039,7 @@ function startDrift() {
       { x: W0 * .45, y: 70, at: 30, img: P(6, '#7d8fd6', '#e6ecff', ['#ffffff']), par: .01, far: .5 },
       { x: W0 * 1.05, y: 300, at: 34, img: P(5, '#b07ac9', '#f3dcff', ['#ffffff']), par: .01, far: .5 },
       { x: -W0 * .15, y: 210, at: 52, img: P(9, '#5aa7a8', '#d8fffb', ['#ffffff']), par: .015, far: .6 },
-      { x: -W0 * .25, y: H0 * .6, at: SC.verse2 + 4, img: P(78, '#1f3f8c', '#e8f2ff', ['#ffffff', '#5f95d8', '#0f3478', '#dbe9ff', '#2f5fb0'], { tilt: .12 }), par: .22, lead: 42 },   // the striped blue-and-white one, kept
+      { x: -W0 * .25, y: H0 * .6, at: SC.verse2 + 4, img: driftPre.striped || P(78, '#1f3f8c', '#e8f2ff', ['#ffffff', '#5f95d8', '#0f3478', '#dbe9ff', '#2f5fb0'], { tilt: .12 }), par: .22, lead: 42 },   // the striped blue-and-white one, kept
       { x: W0 * 1.12, y: 150, at: 21, img: driftThing('teal'), par: .16 },         // teal bands, large; a body arrives as the wormhole closes (2026-11-17: something soon after it)
       { x: W0 * 1.45, y: H0 * .55, at: SC.verse1 + 22, img: driftThing('moon'), par: .03, v: 8 },   // a grey moon, far (its own pace: far ones lingered and piled up)
       { x: W0 * 1.05, y: H0 * .36, at: SC.verse2 + 40, img: driftThing('coral'), par: .06, v: 9 },  // coral bands, small
@@ -2046,7 +2058,7 @@ function startDrift() {
     d.flares = Array.from({ length: 9 }, () => [-240 + R() * 900, -20 + R() * 800, 1, R() * 6.3, starPick.pop() || WC.star(R)]);   // painted four-point stars (2026-11-18): many, each its own
     d.galaxies.forEach(gx => { gx.img = document.createElement('canvas'); d.paintQ.push(() => gx.img = WC.galaxy(gx.r * 1.3, gx.tilt, ['#8fb6ec', '#a58ad8', '#ffffff', '#e0a090'], R, gx.o)); });   // in the queue too
     d.veils = [];   // (the veils are gone since round 4; no longer painted for nothing)
-    d.dawn = lazy(1000, 520, () => WC.dawn(1000, 520, R));
+    d.dawn = driftPre.dawn || lazy(1000, 520, () => WC.dawn(1000, 520, R));
     d.rays = driftPre.rays || paintRays(R);
     d.planets.push({ x: W0 * 1.1, y: H0 * .3, at: SC.bridge + 6, thing: true, img: driftThing('teapot'), v: 15 + Math.random() * 4, par: .06, spin: .08 },   // the pink teapot and the pot of petunias adrift, every Drift (round 19; pink: the warm one stands out on the cool night)
       { x: W0 * 1.1, y: H0 * .5, at: SC.verse2 + 16, thing: true, img: driftThing('petunias'), v: 14 + Math.random() * 4, par: .07, spin: -.06 });
@@ -2089,8 +2101,8 @@ function startDrift() {
         pl.at = best.at; pl.y = best.y; placed.push(pl); };
       order.forEach(pl => d.paintQ.push(() => placeOne(pl))); d.paintQ.push(() => { d.planets = d.planets.filter(p => !p.gone); }); }   // no veils: fewer layers
     };
-    d.worm = document.createElement('canvas'); d.paintQ.unshift(() => d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R)); d.paintQ.first = true;   // first in the queue: the wormhole opens at 2 s
-    d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 44 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
+    if (driftPre.worm) d.worm = driftPre.worm; else { d.worm = document.createElement('canvas'); d.paintQ.unshift(() => d.worm = WC.blob(130, ['#2f6fb8', '#1f8a80', '#8fc3e8', '#e8b48f'], R)); d.paintQ.first = true; }   // first in the queue: the wormhole opens at 2 s
+    d.dabs = Array.from({ length: 18 }, () => Array.from({ length: 26 }, () => ({ a: R() * 6.3, len: .08 + R() * .22, w: 2 + R() * 5, col: ['#5f8fd8', '#3fa89c', '#8fc3e8', '#7fd3c8', '#f0be96', '#ffffff'][Math.floor(R() * 6)], al: .25 + R() * .5 })));
     d.falls = []; { const fall = at => { const ang = .3 + (R() - .5) * .7, dir = R() < .25 ? Math.PI - ang : ang;   // falling stars, never on a beat (round 8)
         d.falls.push({ at, x: -160 + R() * W0 * 1.7, y: -40 + R() * H0 * .5, len: 120 + R() * 280, dur: 1.2 + R() * 2.4, ang: dir, w: .7 + R() * 1.3, tail: 40 + R() * 100,
           col: ['205,220,255', '255,226,204', '192,238,226', '222,204,255', '255,205,200'][Math.floor(R() * 5)], glints: Array.from({ length: 2 + Math.floor(R() * 4) }, () => [R(), (R() - .5) * 6, R() * 6.3]) }); };
@@ -2130,7 +2142,7 @@ function skyBegin() {
   skyCtx.setTransform(k, 0, 0, k, box.x + box.w / 2 - W0 * k / 2, box.y + box.h / 2 - H0 * k / 2);
 }
 function drawDrift() {
-  { const q = s.drift.paintQ, e0 = performance.now() - s.drift.t0; if (q && q.length && (e0 > 5200 || q.first)) { const t0 = performance.now(); do q.shift()(); while (q.length && performance.now() - t0 < 8); q.first = false; } }   // the paint queue: a few ms a frame, once the shaft has fallen (only the wormhole's wash before)
+  { const q = s.drift.paintQ, e0 = performance.now() - s.drift.t0; if (q && q.length && (e0 > 5200 || q.first)) { q.shift()(); q.first = false; } }   // the paint queue: a few ms a frame, once the shaft has fallen (only the wormhole's wash before)
   const d = s.drift, e = performance.now() - d.t0, t = driftTime(), S = CONFIG.drift.sections;
   const dt = Math.min(.1, (performance.now() - d.frame) / 1000); d.frame = performance.now();
   const W0 = cv.width, H0 = cv.height, cx = W0 / 2, cy = H0 * .45;
