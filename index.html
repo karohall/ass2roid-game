@@ -40,6 +40,11 @@
   #gauge { display:block; }
   #dosage .dzplate { position:absolute; left:10px; top:8px; z-index:1; display:flex; align-items:center; gap:8px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase;
     color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
+  #camTab { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 7px; }
+  #camTab h3 { display:flex; align-items:center; gap:8px; margin:0 0 0 -2px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#aab1b8;
+    background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
+  #camTab h3::before { content:''; width:7px; height:7px; flex:none; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
+  #camMeta { font:500 11px/1 var(--f-small); letter-spacing:.04em; color:#868d93; white-space:nowrap; }
   #dosage .dzplate::before { content:''; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
   #gauge .needle.hot { animation:throb .4s ease-in-out infinite alternate; }   /* reaches under the Milk+ column, which ends above it */
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
@@ -207,6 +212,7 @@
   body.wide #sky { visibility:visible; z-index:2; }   /* above the deck's plate: it only paints inside its own window */
   body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
   #panel, #dosage, #legend { will-change:opacity; }   /* their fade into the Drift runs on the compositor, not a repaint each frame */
+  body.wide #camTab { opacity:0; transition:opacity 6s ease 3s; }   /* no camera out there */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
   .overlay { position:absolute; inset:0; height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
@@ -381,6 +387,7 @@
 <canvas id="sky"></canvas>
 <div id="wrap">
   <div id="stage">
+    <div id="camTab"><h3>Shaft cam 1</h3><span id="camMeta">KR-1</span></div>   <!-- the mining window's name plate, as in the mockups -->
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
     <div id="start" class="overlay">
       <div class="wa"><div class="w">ASS<i>2</i>ROID</div><div class="sub"><span>Ex Profundo</span></div></div>
@@ -2716,6 +2723,7 @@ function hint() {
 function renderStatic() {
   const L = layer(), crater = L.craters ? L.craters.find(c => c.id === s.crater) : null;
   $('layerName').textContent = `${s.layer + 1}. ${L.name}`;
+  $('camMeta').textContent = `KR-1 · ${s.layer + 1} ${L.name}`;   /* the shaft cam's tab: site and layer */
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
   $('recipes').innerHTML = VARIANTS.map((v, i) => `${i ? `
     <div class="ph" id="ph_${v}">[${i + 1}] ? ? ?</div>` : ''}
