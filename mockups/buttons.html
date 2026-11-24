@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vehicle buttons · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* 2026-11-24: four vehicle-button directions for Begin shift (amber, the very first step) and Resume (cyan), on the game's own plate, at real size.
+   Cold and monochrome: light only for state. Press them: each goes down its own way. */
+:root { --bg:#0b0c0e; --text:#e1e4e6; --dim:#969da4; --faint:#5f656b; --fluo:#34e6ff; --fluo-rgb:52,230,255; --amber:#ffb43c; --amber-rgb:255,180,60;
+        --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; }
+* { box-sizing:border-box; }
+body { margin:0; background:#101214; color:var(--text); font:400 14px/1.5 var(--f-text); -webkit-font-smoothing:antialiased; }
+.doc { width:1040px; margin:0 auto; padding:32px 32px 64px; }
+h1 { font:700 28px/1 var(--f-title); margin:0 0 6px; }
+.intro { color:var(--dim); font:400 13px/1.5 var(--f-text); max-width:760px; margin:0 0 26px; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.opt h2 { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin:0 0 4px; }
+.opt h3 { font:700 17px/1.2 var(--f-title); margin:0 0 10px; }
+.opt .notes { margin-top:10px; font:400 12px/1.5 var(--f-small); color:var(--dim); }
+.opt .notes b { color:var(--text); font-weight:600; }
+/* the game's plate */
+.plate { height:210px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:40px; padding:20px;
+  clip-path:polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  background:radial-gradient(130% 55% at 50% 112%, rgba(0,0,0,.5), transparent 62%), radial-gradient(50% 35% at 0% 0%, rgba(0,0,0,.32), transparent 70%), linear-gradient(180deg, #2e3236, #1c1f22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(150,157,164,.28), inset 0 -2px 0 rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.35); }
+.pair { display:flex; flex-direction:column; align-items:center; gap:7px; }
+.key { font:500 12px/1 var(--f-small); letter-spacing:.04em; color:var(--dim); }
+button { all:unset; cursor:pointer; user-select:none; }
+
+/* 1. Engine start (cars): round, a knurled metal ring, the legend lit, a thin ring of light */
+.eng { width:104px; height:104px; border-radius:50%; display:grid; place-items:center; position:relative;
+  background:repeating-conic-gradient(#3b4045 0 3deg, #2a2e32 3deg 6deg); box-shadow:0 0 0 1px #060708, 0 4px 10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.2); }
+.eng::before { content:''; position:absolute; inset:9px; border-radius:50%; background:#0a0b0d; box-shadow:inset 0 2px 5px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.08); }
+.eng i { position:absolute; inset:13px; border-radius:50%; box-shadow:0 0 0 1.5px rgba(var(--c),.85), 0 0 10px rgba(var(--c),.45); }
+.eng span { position:relative; display:flex; flex-direction:column; align-items:center; gap:3px; font:700 10px/1 var(--f-title); letter-spacing:.14em; color:rgb(var(--c)); text-shadow:0 0 6px rgba(var(--c),.8); text-align:center; }
+.eng span small { font:600 8.5px/1 var(--f-small); letter-spacing:.18em; color:rgba(var(--c),.6); text-shadow:none; }
+.eng:active { transform:scale(.97); } .eng:active i { box-shadow:0 0 0 1.5px rgba(var(--c),1), 0 0 16px rgba(var(--c),.7); }
+.eng.cy { width:84px; height:84px; } .eng.cy::before { inset:8px; } .eng.cy i { inset:11px; }
+
+/* 2. Rocker switch (trucks, tractors): a wide rocker in a bezel, tilted, a small lit window */
+.rock { width:150px; height:58px; padding:5px; border-radius:6px; background:#0a0b0d; box-shadow:0 0 0 1px #2c3034, 0 0 0 2px #060708, inset 0 2px 5px rgba(0,0,0,.9); display:block; }
+.rock b { display:grid; grid-template-rows:1fr 1fr; height:100%; border-radius:4px; overflow:hidden; transform-origin:50% 50%;
+  background:linear-gradient(180deg, #2a2e32 0 50%, #3a3f44 50% 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }
+.rock .top { display:flex; align-items:center; justify-content:center; gap:8px; font:700 11px/1 var(--f-title); letter-spacing:.16em; color:#cfd4d8; box-shadow:inset 0 -1px 0 rgba(0,0,0,.6); }
+.rock .top::before { content:''; width:18px; height:5px; border-radius:2px; background:rgb(var(--c)); box-shadow:0 0 7px rgba(var(--c),.9); }
+.rock .bot { font:600 9px/1 var(--f-small); letter-spacing:.2em; color:#6f767c; display:grid; place-items:center; }
+.rock:active b { background:linear-gradient(180deg, #3a3f44 0 50%, #2a2e32 50% 100%); box-shadow:inset 0 2px 3px rgba(0,0,0,.6); }
+
+/* 3. Rubber key (machinery): matte, softly domed, the legend glowing through, an LED dot in the corner */
+.rub { position:relative; min-width:180px; height:52px; padding:0 30px; border-radius:12px; display:grid; place-items:center;
+  background:radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%); box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 5px 10px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.1);
+  font:700 12px/1 var(--f-small); letter-spacing:.18em; text-transform:uppercase; color:rgba(var(--c),.9); text-shadow:0 0 7px rgba(var(--c),.6); }
+.rub::after { content:''; position:absolute; top:9px; right:11px; width:6px; height:6px; border-radius:50%; background:rgb(var(--c)); box-shadow:0 0 6px rgb(var(--c)); }
+.rub:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a, 0 2px 4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06); }
+.rub.cy { min-width:150px; height:46px; }
+
+/* 4. Split legend (aviation): square, the face in two lit halves: what it does, and the state */
+.spl { width:120px; height:84px; padding:6px; border-radius:3px; background:#060708; box-shadow:0 0 0 1px #2c3034, inset 0 2px 4px rgba(0,0,0,.9); display:grid; grid-template-rows:1fr 1fr; gap:4px; }
+.spl b { display:grid; place-items:center; border-radius:2px; font:700 11px/1 var(--f-title); letter-spacing:.14em; }
+.spl .act { color:rgb(var(--c)); background:radial-gradient(100% 120% at 50% 50%, rgba(var(--c),.16), rgba(var(--c),.04) 70%), #0b0d0f; text-shadow:0 0 6px rgba(var(--c),.8); box-shadow:inset 0 0 0 1px rgba(var(--c),.4); }
+.spl .st { color:#4c5257; background:#0b0d0f; box-shadow:inset 0 0 0 1px #1c1f22; font-size:9.5px; }
+.spl .st.on { color:#d9dde0; }
+.spl:active .act { background:radial-gradient(100% 120% at 50% 50%, rgba(var(--c),.3), rgba(var(--c),.08) 70%), #0b0d0f; }
+.spl.cy { width:110px; height:76px; }
+
+.am { --c:var(--amber-rgb); } .cy { --c:var(--fluo-rgb); }
+</style>
+</head>
+<body>
+<div class="doc">
+  <h1>Vehicle buttons: four directions</h1>
+  <p class="intro">Begin shift (amber: the very first step) and Resume (cyan), each on the game’s own plate at real size. Light only for state, cold and monochrome otherwise. Press them: each goes down its own way.</p>
+  <div class="grid">
+    <section class="opt">
+      <h2>1 · Cars</h2><h3>Engine start button</h3>
+      <div class="plate">
+        <div class="pair"><button class="eng am"><i></i><span>START<small>SHIFT</small></span></button><span class="key">or press Enter</span></div>
+        <div class="pair"><button class="eng cy"><i></i><span>RESUME</span></button><span class="key">or press Space</span></div>
+      </div>
+      <p class="notes"><b>Says:</b> you are turning the rover on. A knurled metal ring, the legend lit, a thin ring of light. <b>Costs:</b> round and compact; longer words (New game, Start digging) get tight.</p>
+    </section>
+    <section class="opt">
+      <h2>2 · Trucks and tractors</h2><h3>Rocker switch</h3>
+      <div class="plate">
+        <div class="pair"><button class="rock am"><b><span class="top">BEGIN SHIFT</span><span class="bot">OFF</span></b></button><span class="key">or press Enter</span></div>
+        <div class="pair"><button class="rock cy"><b><span class="top">RESUME</span><span class="bot">PAUSED</span></b></button><span class="key">or press Space</span></div>
+      </div>
+      <p class="notes"><b>Says:</b> a row of cab switches. The top half is pressed, a small lit window shows its state; pressing rocks it. <b>Costs:</b> the lower half needs a word (off, paused) or stays blank.</p>
+    </section>
+    <section class="opt">
+      <h2>3 · Heavy machinery</h2><h3>Rubber key, backlit</h3>
+      <div class="plate">
+        <div class="pair"><button class="rub am">Begin shift</button><span class="key">or press Enter</span></div>
+        <div class="pair"><button class="rub cy">Resume</button><span class="key">or press Space</span></div>
+      </div>
+      <p class="notes"><b>Says:</b> made for gloves. Matte, softly domed, the legend glowing through the rubber, an LED dot for “on”. <b>Costs:</b> the softest of the four; rounder than the panels’ cut corners.</p>
+    </section>
+    <section class="opt">
+      <h2>4 · Aviation</h2><h3>Split-legend push-button</h3>
+      <div class="plate">
+        <div class="pair"><button class="spl am"><b class="act">BEGIN</b><b class="st on">SHIFT</b></button><span class="key">or press Enter</span></div>
+        <div class="pair"><button class="spl cy"><b class="act">RESUME</b><b class="st on">PAUSED</b></button><span class="key">or press Space</span></div>
+      </div>
+      <p class="notes"><b>Says:</b> a cockpit annunciator you press. The action on top, lit; the state below. <b>Costs:</b> the most technical and the coldest; close to the radio’s lamps, so pressable and readable look alike.</p>
+    </section>
+  </div>
+</div>
+</body>
+</html>
