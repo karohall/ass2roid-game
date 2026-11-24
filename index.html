@@ -3180,6 +3180,7 @@ addEventListener('focus', startLabel); addEventListener('blur', startLabel); sta
     for (const k of Object.keys(REVEAL)) if (k !== 'recipe_candy' && k !== 'recipe_jizz') REVEAL[k] = () => true;   // everything shown, the secret menu still secret
     Object.assign(s.inv, { whey: 24, powder: 6, chrome: 0, spores: 0 }); s.drill = 100;
     CONFIG.dig.basePower = 10;                              // the trailer digs fast: a tile in two hits, not sixteen
+    $('camTab').style.display = 'none';                    /* not in the trailer, for now (the user, 2026-11-24) */
     renderStatic(); renderGuide(); fit();
     radio.on = 'pump'; radio.vol = 2; if (!sound.on) tuneIn();   // the radio on but muted: the drill needs its music, the trailer brings its own
     const panels = { rover: $('rover'), dosage: $('dosage'), milk: $('milk'), ingr: $('panel').children[1], guide: $('panel2').children[1], log: $('panel2').children[2], radio: $('baseRow'), stage: $('stage') };
