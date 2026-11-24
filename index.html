@@ -106,12 +106,12 @@
   #radioBox #radioFx { flex:none; max-width:42%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--dim); }   /* quiet grey: notes only */
   #radioBox #radioFx.warn { color:var(--amber); }
   .rlamps { display:grid; grid-template-columns:136px 1fr; grid-template-rows:repeat(6, 1fr); height:68px; gap:3px 4px; }   /* the station's perk on the left, the radio's state on the right */
-  .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:#0e1012; box-shadow:inset 0 0 0 1px #23272b; transition:background .3s, color .3s, box-shadow .3s; }
+  .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:linear-gradient(180deg, #08090a, #0f1113); border-radius:2px; box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px #050607, 0 1px 0 rgba(255,255,255,.07); transition:background .3s, color .3s, box-shadow .3s; }   /* a lens set into the panel: sunken, read not pressed (2026-11-24) */
   .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
   .rlamps span[data-l="tape"] { grid-row:1 / 4; } .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
-  .rlamps span.warn { color:#14110a; background:var(--amber); box-shadow:0 0 10px rgba(255,180,60,.45); }   /* trouble: amber means attention only (2026-11-24) */
-  .rlamps span.half { color:rgba(var(--fluo-rgb),.75); background:#0e1012; box-shadow:inset 0 0 0 1px rgba(var(--fluo-rgb),.35); }   /* armed: Void FM away from the dark, its perk waiting */
-  .rlamps span.white { color:var(--fluo); background:linear-gradient(180deg, rgba(var(--fluo-rgb),.16), rgba(var(--fluo-rgb),.07)), #0e1012; box-shadow:inset 0 0 0 1px rgba(var(--fluo-rgb),.6), 0 0 8px rgba(var(--fluo-rgb),.25); text-shadow:0 0 6px rgba(var(--fluo-rgb),.7); }   /* on: lit in cyan, like the panel dots (2026-11-24) */
+  .rlamps span.warn { color:#ffd9a0; background:radial-gradient(120% 140% at 50% 40%, rgba(255,180,60,.55), rgba(255,180,60,.18) 70%), #140f08; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,180,60,.6), 0 1px 0 rgba(255,255,255,.07); text-shadow:0 0 6px rgba(255,180,60,.8); }   /* trouble: amber means attention only (2026-11-24) */
+  .rlamps span.half { color:rgba(var(--fluo-rgb),.7); box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px rgba(var(--fluo-rgb),.35), 0 1px 0 rgba(255,255,255,.07); }   /* armed: Void FM away from the dark, its perk waiting */
+  .rlamps span.white { color:#c9f8ff; background:radial-gradient(120% 140% at 50% 40%, rgba(var(--fluo-rgb),.42), rgba(var(--fluo-rgb),.12) 70%), #061014; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(var(--fluo-rgb),.55), 0 1px 0 rgba(255,255,255,.07); text-shadow:0 0 6px rgba(var(--fluo-rgb),.8); }   /* on: lit in cyan, like the panel dots (2026-11-24) */
   .rlamps span kbd.k { min-width:18px !important; height:18px !important; }
   #radioBox.call > svg.outline path:first-of-type, #milk.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* a panel calls: the radio, or Milk+ for the first Strength (2026-11-24) */   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
@@ -254,7 +254,18 @@
   body.wide #camTab, body.wide #mineBox > svg.outline { opacity:0; transition:opacity 6s ease 3s; }   /* no camera out there, no frame */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
-  .overlay { position:absolute; inset:0; top:calc(10px + var(--tabH, 0px)); left:12px; right:12px;   /* on the picture, inside the frame */ height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
+  .overlay { position:absolute; inset:0; top:calc(10px + var(--tabH, 0px)); left:12px; right:12px;   /* on the picture, inside the frame */ height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.72); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:14px; }
+  .plate { position:relative; width:100%; max-height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:30px 26px 32px; clip-path:var(--chamfer);   /* a bolted instrument plate (2026-11-24) */
+    background:
+      radial-gradient(circle at 14px 14px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at calc(100% - 14px) 14px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at 14px calc(100% - 14px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      linear-gradient(112deg, transparent 31%, rgba(255,255,255,.05) 31.15%, transparent 31.5%), linear-gradient(104deg, transparent 72%, rgba(255,255,255,.04) 72.1%, transparent 72.4%),   /* scuffs */
+      radial-gradient(130% 55% at 50% 112%, rgba(0,0,0,.5), transparent 62%), radial-gradient(50% 35% at 0% 0%, rgba(0,0,0,.32), transparent 70%), radial-gradient(45% 30% at 100% 8%, rgba(0,0,0,.28), transparent 70%),   /* grime in the corners and along the bottom */
+      repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px),   /* brushed */
+      linear-gradient(180deg, #2e3236, #1c1f22);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(150,157,164,.28), inset 0 -2px 0 rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.35); }
   .overlay h1, .overlay h2, .overlay .ttl { margin:-8px 0 0; font:700 30px/1.05 var(--f-title); letter-spacing:.01em; }
   .overlay p { margin:0; }
   .overlay .body { font:400 14px/1.55 var(--f-text); color:var(--text); max-width:340px; }
@@ -267,8 +278,9 @@
   #start .ver { margin-bottom:44px; } #start #goGlow { margin-top:40px; }   /* the logo up, the start button down: room to read the steps between (2026-11-24) */
   .overlay button { width:auto; text-align:center; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; font:500 13px/1.4 var(--f-text); letter-spacing:0; text-transform:none; }
-  .go { display:inline-flex; align-items:center; gap:12px; height:40px; padding:0 16px 0 20px !important; font:600 12px/1 var(--f-small) !important; letter-spacing:.16em; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(var(--fluo-rgb),.35)); }
+  .go { display:inline-flex; align-items:center; justify-content:center; gap:12px; height:50px; min-width:220px; padding:0 34px !important; font:700 13px/1 var(--f-small) !important; letter-spacing:.2em; box-shadow:inset 0 2px 0 rgba(255,255,255,.45), inset 0 -4px 0 rgba(0,0,0,.28) !important; transition:transform .06s, box-shadow .06s; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(var(--fluo-rgb),.35)); }
   .go::before { background:var(--fluo) !important; }
+  .go:active { transform:translateY(2px); box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 -1px 0 rgba(0,0,0,.2) !important; }   /* a push-button: it goes down (2026-11-24) */
   /* Begin shift: amber, the guide's colour: the very first step, glowing in the guide's rhythm (2026-11-17). The other screens' ways on stay fluo. */
   #go.go { background:var(--amber) !important; filter:none; }
   #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:var(--amber) !important; } 
@@ -444,14 +456,14 @@
     <div class="box" id="mineBox">                          <!-- the shaft cam, framed like every panel (2026-11-24) -->
     <div id="camTab" class="phead"><h3>Shaft cam 1</h3><span class="pmeta" id="camMeta">KR-1</span></div>   <!-- the mining window's name plate, as in the mockups -->
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
-    <div id="start" class="overlay">
+    <div id="start" class="overlay"><div class="plate">
       <div class="wa"><div class="w">ASS<i>2</i>ROID</div><div class="sub"><span>Ex Profundo</span></div></div>
       <div class="ver">Prototype 4</div>
       <div class="lamprow"><svg class="lamp" viewBox="0 0 24 16" role="img" aria-label="Check engine light"><title>Check engine light</title><path d="M9 1H15V3H13V5H17L19 7H21V5H23V13H21V11H19V14H9L6 11H4V13H2V7H4V9H6V5H11V3H9Z"/></svg>
         <ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
       <div class="keys"><span><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M10 6H2.5M5.5 3L2.5 6l3 3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v7.5M3 6.5l3 3 3-3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h7.5M6.5 3l3 3-3 3"/></svg></kbd></span><span>Move and dig (or WASD)</span><span><kbd class="k">1–5</kbd></span><span>Shake, then drink Milk+</span>
         <span><kbd class="k">R</kbd><kbd class="k">T</kbd><kbd class="k">V</kbd></span><span>Radio, tape, volume</span><span><kbd class="k">Space</kbd></span><span>Pause</span></div>
-      <span id="goGlow"><button id="go" class="go">Begin shift</button></span><span class="gokey" id="goKey">or press Enter</span>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
+      <span id="goGlow"><button id="go" class="go">Begin shift</button></span><span class="gokey" id="goKey">or press Enter</span></div>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
@@ -2383,7 +2395,8 @@ function endDrift() {
   s.drift.done = true; document.body.classList.remove('wide'); $('baseRow').style.cssText = ''; finishGame(true);
 }
 
-function showMenu(html) { $('menu').innerHTML = html; $('menu').classList.remove('hidden'); }
+function showMenu(html) { $('menu').innerHTML = `<div class="plate">${html}</div>`;   // every screen on the plate (2026-11-24)
+  $('menu').classList.remove('hidden'); }
 function hideMenu() { $('menu').classList.add('hidden'); menuKeys = null; }
 
 // ─────────────────────────────────────────────────────────────────────────────
