@@ -581,7 +581,7 @@ const CONFIG = {
   chrome:  { stacks: 2, meltHeat: 6, riskFrom: 3, blowChance: 0.2, coolPerSec: 0.6, throwRows: 3, heatEveryMs: 500 },   // a hit heats it at most every 0.5 s   // Frenzy + stacked Strength heats a slab: 6 hits melt it; from heat 3 each hit may blow you up instead
   radio:   { // xfadeMs: songs cross-fade over 1.5 s; cutMs: a hard cut (broken drill, Candygirl) still fades over 0.15 s, so it never clicks;
              // duckDownMs/duckUpMs: the music dips under a DJ in 0.4 s and comes back over 1.5 s; djLead: the dip starts 0.4 s before the voice
-             voices: false, jingleChance: 0.35, adChance: 0.18, pumpDigSpeed: 0.9, discoCalm: 1.5, discoShake: 0.65,   /* voices: the DJs, off since 2026-11-17 (the user: they are cringe; the sound effects stay) */ songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
+             voices: false, jingleChance: 0.35, adChance: 0.18, pumpDigSpeed: 0.9, discoShake: 0.65,   /* one perk a station: Disco Gravitas no longer calms the meter (2026-11-24) */   /* voices: the DJs, off since 2026-11-17 (the user: they are cringe; the sound effects stay) */ songMs: 150000, volume: 0.7, fadeMs: 600, xfadeMs: 1500, cutMs: 150, duckDownMs: 400, duckUpMs: 1500, djLead: 400, duck: 0.35, joinBy: 0.75, rareChance: 0.2, djChance: 0.33, djSecret: 0.15, djDuck: 0.6, djLevel: 0.75,
              states: { normal: { rate: 1, lowpass: 20000, highpass: 10, drive: 0 }, still: { rate: 0.88, lowpass: 650, highpass: 10, drive: 0 }, frenzy: { rate: 1.08, lowpass: 20000, highpass: 220, drive: 0.35 } } },   // Frenzy and Stillness change the sound, not the station   // the voices sit lower and the music ducks less (to 60%)   // the DJ (Coach Rocky, the Broadcaster) talks in 1 break in 3; 15% of those, the secret; the music ducks to 35% under him   // a station's rare song (Candygirl on the Pump Zone) plays instead 1 time in 5   // switching station joins a random song somewhere in its first 75%   // volume 0–1; cross-fades take 0.6 s; behind a menu the radio ducks to 35%   // Pump Zone digs ~10% faster; Disco Gravitas calms the meter 50% faster
   start:   { whey: 2 },           // starter ration: the game opens with the player shaking their first Strength
   loadingMs: 4000,                // loading screen bar; then it waits for a key
@@ -652,7 +652,7 @@ const RADIO = {
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
     SONG('The Pump Zone', 'Drill Instructor', 'The Pump Zone Drill Instructor')],
   },
-  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Shake to the beat: mixing a Milk+ takes a third less time. Calms the meter a little, too.', ident: ['Somewhere, someone is digging toward you.', 'Stasera, the stars are ours.'], songs: [
+  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Shake to the beat: faster mixing.', ident: ['Somewhere, someone is digging toward you.', 'Stasera, the stars are ours.'], songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
     SONG('Disco Gravitas', 'Dolce de Leche+', 'Disco Gravitas Dolce de Leche Plus')] },
@@ -1379,7 +1379,7 @@ function canMix(v) { return Object.entries(CONFIG.recipes[v]).every(([k, n]) => 
 // Mixing takes time: you shake the bottle and cannot dig meanwhile. Drinking is instant.
 const shaking = () => s.shake && s.shake.until > now();
 
-// Disco Gravitas: you shake to the beat, a third quicker (2026-11-17, its perk; it still calms the meter too).
+// Disco Gravitas: you shake to the beat, a third quicker (2026-11-17: its one perk; the meter calming went on 2026-11-24).
 function shakeLen() { return CONFIG.mix.shakeMs * (radio.on === 'disco' ? CONFIG.radio.discoShake : 1); }
 function mix(v) {
   if (!running || shaking() || !canMix(v)) return;
@@ -2463,7 +2463,7 @@ function update(dt) {
     say('STILLNESS. Everything has slowed down. You do not mind.'); unlock('state_still');
     openSeam('still');
   } else if (!active('focus')) {                     // Hyperfocus: the meter holds still
-    const k = B.decayPerSec * dt / 1000 * (radio.on === 'disco' ? CONFIG.radio.discoCalm : 1);   // Disco Gravitas calms
+    const k = B.decayPerSec * dt / 1000;
     s.meter = s.meter > 0 ? Math.max(0, s.meter - k) : Math.min(0, s.meter + k);
   }
   if (!active('strength')) s.strStacks = 0;
