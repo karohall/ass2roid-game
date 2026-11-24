@@ -202,13 +202,10 @@
   #hint:empty { visibility:hidden; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
-  #hint .em { font-weight:800; }
-  body.hintCap #hint { font-weight:500; }   /* the lighter hint (2026-11-24, on trial): plain text, only the key drawn */
-  body.hintCap #hint .em { font-weight:700; }
-  #hint kbd.hk { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; margin:0 1px; vertical-align:1px; font:700 11px/1 var(--f-title); color:var(--bg);
-    background:linear-gradient(180deg, #fbfbf9, #e4e5e2); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 0 0 1px rgba(20,22,24,.38), inset 0 -2px 0 rgba(20,22,24,.3); }   /* the start screen's keycap, in the bar's light */
-  body.hintDark #hint kbd.hk { color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }   /* or dark, as on the start screen */   /* the body is 600 now (2026-11-17): emphasis a step heavier still */
-  #hint b { font-weight:700; padding:0 4px; background:var(--bg); color:var(--fluo); white-space:nowrap; }   /* bold says what matters: the key to press */
+  #hint { font-weight:500; }   /* the hint is plain text, only the key drawn (the user chose it, 2026-11-24) */
+  #hint .em { font-weight:700; }
+  #hint kbd.hk { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; margin:0 1px; vertical-align:1px; font:700 11px/1 var(--f-title); color:#e8ebee;
+    background:linear-gradient(180deg, #3a3f44, #24282c); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }   /* the start screen's dark keycap */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .cardrow { display:flex; gap:10px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
   .artimg { flex:none; width:96px; height:72px; object-fit:cover; margin-top:2px; cursor:zoom-in; clip-path:var(--chamfer-s); }   /* the find's photo, beside its card */
@@ -642,13 +639,13 @@ CONFIG.jizz.song = SONG('Disco Gravitas', 'Latte acidico, doppio+', 'Disco Gravi
 const RADIO = {
   tape:  { name: 'Tape', kind: 'Tape', ident: ['Side A'], fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
     SONG('Tape', 'Testarocca', 'Testarocca')] },
-  pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', songs: [
+  pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', ident: ['Hydrate. Dominate. Excavate.', 'No pain, no gain.'], songs: [
     SONG('The Pump Zone', 'Down in the Shaft', 'The Pump Zone Down In The Shaft'),
     SONG('The Pump Zone', 'Hard Hat, Hard Body', 'The Pump Zone Hard Hat, Hard Body'),
     SONG('The Pump Zone', 'Presslufthammerherz', 'The Pump Zone Presslufthammerherz'),
     SONG('The Pump Zone', 'Drill Instructor', 'The Pump Zone Drill Instructor')],
   },
-  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Shake to the beat: mixing a Milk+ takes a third less time. Calms the meter a little, too.', songs: [
+  disco: { name: 'Disco Gravitas', kind: 'Station', fx: 'Shake to the beat: mixing a Milk+ takes a third less time. Calms the meter a little, too.', ident: ['Somewhere, someone is digging toward you.', 'Stasera, the stars are ours.'], songs: [
     SONG('Disco Gravitas', 'Amore Orbitale', 'Disco Gravitas Amore Orbitale'),
     SONG('Disco Gravitas', 'Ti Sento nel Profondo (I Dig You)', 'Disco Gravitas Ti Sento nel Profondo (I Dig You)'),
     SONG('Disco Gravitas', 'Dolce de Leche+', 'Disco Gravitas Dolce de Leche Plus')] },
@@ -2756,7 +2753,7 @@ function renderStatic() {
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
-  const banner = !sound.on ? 'Radio off · Press R to tune in' : song.ad ? song.title : song.jingle ? st.name : `${st.name} · Now playing: ${song.title}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''}`;   // a station slogan rolls by with the song, a different one each song
+  const banner = !sound.on ? 'Radio off · Press R to tune in' : song.ad ? song.title : song.jingle ? st.name : `${st.name}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''} · Now playing: ${song.title}`;   // a station slogan rolls by with the song, a different one each song
   if ($('radioTicker').textContent !== banner) { const el = $('radioTicker'); el.textContent = banner; el.style.setProperty('--dur', Math.max(12, el.offsetWidth / 40).toFixed(1) + 's'); }   // a steady, unhurried pace: about 40 px a second, whatever the length (2026-11-18)
   setText('radioKind', sound.on ? st.kind : 'Off'); setText('radioKeys', s && running && s.drill <= 0 ? `No power: tape only · V: volume (${VOLUMES[radio.vol].name})` : `R: next station · T: tape · V: volume (${VOLUMES[radio.vol].name})`); setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + ''); setText('radioLesson', sound.on && s && !s.radioHops ? 'Each station does something: R for the next.' : '');   // the radio lesson lives in the radio, until another station is tried
@@ -2771,8 +2768,6 @@ function keyState(b, st) {
 }
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
 const lastHTML = {};
-function hintStyle(k) { document.body.classList.toggle('hintCap', k === 'cap' || k === 'dark'); document.body.classList.toggle('hintDark', k === 'dark'); const h = $('hint'); if (h.textContent) h.innerHTML = hintHTML(h.textContent); }
-if (/[?&]hintcap\b/.test(location.search)) document.addEventListener('DOMContentLoaded', () => hintStyle('cap'));
 const EM = '\u0001', EM_END = '\u0002', em = t => EM + t + EM_END;   // emphasis markers: invisible, so the typewriter types through them
 const plain = m => m.replace(/[\u0001\u0002]/g, '');
 // Hint text to HTML: emphasised words get a heavier weight, even while half typed.
@@ -2780,7 +2775,7 @@ function hintHTML(t) {
   const esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const open = (esc.split(EM).length - 1) - (esc.split(EM_END).length - 1);
   return esc.replaceAll(EM, '<span class="em">').replaceAll(EM_END, '</span>')
-    .replace(/([Pp]ress) (\d|[A-Z](?![a-z])|↑|↓|←|→|Space|Enter)((?: again)?)/g, (m, p, k, a) => document.body.classList.contains('hintCap') ? `${p} <kbd class="hk">${k}</kbd>${a}` : `<b>${m}</b>`)   /* what to do: in bold (chip), or only the key as a keycap (cap) */
+    .replace(/([Pp]ress) (\d|[A-Z](?![a-z])|↑|↓|←|→|Space|Enter)((?: again)?)/g, (m, p, k, a) => `${p} <kbd class="hk">${k}</kbd>${a}`)   // what to do: the key, drawn as a key
     + (open > 0 ? '</span>' : '');
 }
 // A discovery's tag: what kind of find, in its role's colour. The text after the tag starts with a capital.
