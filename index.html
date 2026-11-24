@@ -215,7 +215,7 @@
   body.wide #camTab { opacity:0; transition:opacity 6s ease 3s; }   /* no camera out there */
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
-  .overlay { position:absolute; inset:0; height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
+  .overlay { position:absolute; inset:0; top:var(--tabH, 0px); height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.86); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:28px 30px; gap:20px; }
   .overlay h1, .overlay h2, .overlay .ttl { margin:-8px 0 0; font:700 30px/1.05 var(--f-title); letter-spacing:.01em; }
   .overlay p { margin:0; }
   .overlay .body { font:400 14px/1.55 var(--f-text); color:var(--text); max-width:340px; }
@@ -272,7 +272,7 @@
   .journey .link { flex:1; height:1px; background:var(--line-2); margin-top:15px; }
   .journeyCap { font:500 11px var(--f-small); color:var(--faint); margin-top:-14px; }
   /* Näsa: Y2K chrome, the name in Näsa blue. The one rounded thing: a foreign brand, barging in at the top edge. */
-  #nasa { position:absolute; top:10px; left:50%; transform:translateX(-50%); width:max-content; max-width:420px; z-index:3; display:flex; align-items:center; gap:12px; padding:16px 24px 16px 20px; border-radius:999px;
+  #nasa { position:absolute; top:calc(var(--tabH, 0px) + 10px); left:50%; transform:translateX(-50%); width:max-content; max-width:420px; z-index:3; display:flex; align-items:center; gap:12px; padding:16px 24px 16px 20px; border-radius:999px;
           color:#24262f; font:500 12px/1.35 var(--f-text); text-align:left; background:linear-gradient(180deg, #ffffff 0%, #e4e3f3 30%, #b9b8cf 55%, #f1f0fb 75%, #cfcde2 100%);
           box-shadow:inset 0 2px 1px #fff, inset 0 -3px 4px rgba(80,78,110,.45), 0 0 0 1px rgba(255,255,255,.6), 0 8px 22px rgba(0,0,0,.6); animation:nasaIn .28s cubic-bezier(.3,1.5,.6,1); }
   #nasa .logo { flex:none; display:flex; align-items:flex-start; } #nasa .logo b { font:700 15px/1 var(--f-title); color:var(--nasa); letter-spacing:.02em; } #nasa .logo sup { font:700 12px var(--f-small); color:var(--nasa); margin-left:1px; }
@@ -3016,7 +3016,8 @@ function placeMeter() {
   w.style.setProperty('--row1', row1 + 'px');
   // The mining window fills the left column: as tall as the rows beside it, less the hint and the legend under it (whose height depends on its width: settle in a few passes).
   for (let i = 0; i < 4; i++) {
-    const fixed = $('hint').offsetHeight + $('legend').offsetHeight + 16 + 2;
+    const tab = $('camTab'), tabH = tab.offsetHeight ? tab.offsetHeight + 7 : 0, fixed = $('hint').offsetHeight + $('legend').offsetHeight + 16 + 2 + tabH;   /* the Shaft cam tab above it, too */
+    $('stage').style.setProperty('--tabH', tabH + 'px');   /* the overlays start under the tab, on the mine itself */
     w.style.setProperty('--cvk', Math.max(1, Math.min(1.6, (row1 + 350 - fixed) / cv.height)).toFixed(4));
   }
   rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
