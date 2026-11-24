@@ -84,7 +84,7 @@
   @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type, .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
   #radioBox .ticker { position:relative; flex:1; min-width:0; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
-                      padding:3px 0; background:#07090a; clip-path:var(--chamfer-s); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); }   /* the display's dark well, as in the design system (2026-11-24) */
+                      padding:4px 0; background:#07090a; clip-path:var(--chamfer-s); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); }   /* the display's dark well, as in the design system (2026-11-24) */
   #radioBox .ticker::after { content:''; position:absolute; inset:0; pointer-events:none;
                       background:linear-gradient(90deg, #07090a, rgba(7,9,10,0) 5%, rgba(7,9,10,0) 95%, #07090a), repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.2) 2px 3px); }   /* soft ends, fine scanlines */
   #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
@@ -94,10 +94,11 @@
   #rover .row:nth-child(2) { margin-bottom:1px; }
   #layerName { font:600 13px var(--f-text); }
   #radioFx { font-size:14px; color:var(--text); min-height:2.8em; }   /* the station's effect, across the full width: room for two lines, so the box never changes height */
-  #radioKeys { white-space:nowrap; flex:none; display:flex; align-items:center; gap:5px; }
-  #radioKeys kbd.k { min-width:18px; height:18px; padding:0 5px; font-size:10px; } #radioKeys kbd.k + span { margin-right:6px; }   /* the keyboard, visible: keycaps, small */
+  #radioKeys { white-space:nowrap; flex:none; display:flex; align-items:center; gap:6px; }
+  #radioKeys kbd.k { min-width:20px; height:20px; padding:0 5px; font-size:10px; } #radioKeys kbd.k + span { margin-right:14px; } #radioKeys kbd.k + span:last-child { margin-right:0; }   /* the hint's keycap size; the groups apart */   /* the keyboard, visible: keycaps, small */
   #radioBox > .row:last-child { flex-wrap:wrap; gap:4px 12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
-  #radioBox .label { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:8px; }
+  #radioBox .label { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:14px; }
+  #radioKind { margin-left:14px; }   /* room either side of the display (2026-11-24) */
   #legend { min-height:50px; padding:6px 10px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.12); clip-path:var(--chamfer-s); display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   /* The legend: each thing in the rock as it looks, a small plate in its role's colour. */
   #legend > span { display:inline-flex; align-items:center; gap:6px; }
@@ -861,7 +862,7 @@ function guideNow() {
 // (A song that ends gives way to the next from its start; a song that is pinned, like Stella's Show, starts at the top.)
 function loadSong(file) {
   player.src = encodeURI(file);
-  if (sound.randomStart) player.addEventListener('loadedmetadata', () => { player.currentTime = Math.random() * CONFIG.radio.joinBy * player.duration; }, { once: true });
+  if (sound.randomStart) player.addEventListener('loadedmetadata', () => { if (isFinite(player.duration) && player.duration > 0) player.currentTime = Math.random() * CONFIG.radio.joinBy * player.duration; }, { once: true });   /* only a song of known length can be joined partway */
   sound.randomStart = false;
   player.play().catch(() => {});
 }

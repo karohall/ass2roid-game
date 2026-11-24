@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Design system · ASS2ROID Prototype 4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ─────────────────────────────────────────────────────────────────────────────
    ASS2ROID · Prototype 4 · design system (Gunmetal)
@@ -22,7 +22,9 @@
   --text:    #e1e4e6;   /* text */
   --faint:   #5f656b;   /* tertiary, locked */
   --greige:  #c9ccc9;   /* the hint: concrete, the coldest greige, closest to the steel (2026-11-15) */
-  --fluo:    #00ff73;   /* the one glow: act now, glowing things */
+  --fluo:    #34e6ff;   /* the one glow: act now, glowing things. Bioluminescent blue (was green until 2026-11-16) */
+  --fluo-rgb: 52,230,255;
+  --spore:   #00ff73;   /* Crack Spores: the green, now the spores' own */
   --amber:   #ffb43c;   /* warnings: wear, tip points */
   --violet:  #a993d6;   /* the secret menu as a whole: its labels, its keys */
   --candy:   #f2b8d6;   /* Candygirl: pastel pink, the rave's colour */
@@ -109,7 +111,7 @@ h1, h2, h3, p { margin: 0; }
                           var(--cut-s) 0, calc(var(--cut-s) + .7px) 1px, 1px calc(var(--cut-s) + .7px), 1px calc(100% - 1px), calc(100% - var(--cut-s) - .7px) calc(100% - 1px), calc(100% - 1px) calc(100% - var(--cut-s) - .7px), calc(100% - 1px) 1px, calc(var(--cut-s) + .7px) 1px); }
 .btn > span { position: relative; }
 .btn.hover { --c: var(--steel); background: var(--raised); }
-.btn.primary { color: var(--ink); background: var(--fluo); --c: var(--fluo); box-shadow: none; filter: drop-shadow(0 0 6px rgba(0,255,115,.35)); }
+.btn.primary { color: var(--ink); background: var(--fluo); --c: var(--fluo); box-shadow: none; filter: drop-shadow(0 0 6px rgba(52,230,255,.35)); }
 .btn.busy { color: var(--text); --c: var(--line-2); }
 .btn.busy::after { content: ''; position: absolute; left: 1px; bottom: 1px; height: 2px; width: 60%; background: var(--fluo); }
 .btn.off { color: var(--faint); --c: var(--line); cursor: default; }
@@ -120,7 +122,8 @@ h1, h2, h3, p { margin: 0; }
 .key { display: inline-grid; place-items: center; width: 24px; height: 24px; font: 700 13px/1 var(--f-title); color: var(--text); background: var(--raised);
        clip-path: polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); box-shadow: inset 0 -2px 0 rgba(0,0,0,.45); }
 .key.secret { color: var(--violet); } .key.candy { color: var(--candy); } .key.jizz { color: var(--jizz); }
-.key.wide { width: auto; padding: 0 var(--s2); font: 600 10px/1 var(--f-small); letter-spacing: .1em; }
+.key.wide { width: auto; padding: 0 var(--s2); font: 600 10px/1 var(--f-small); letter-spacing: .1em; }   /* only for keys with more than one character: 1–5, Space */
+.key svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }   /* arrows are drawn, all alike: font glyphs come from different fonts */
 
 /* Icons: one 16 px grid, 1.5 px strokes, square ends. */
 .ico { width: 16px; height: 16px; flex: none; color: var(--steel); }
@@ -150,21 +153,27 @@ h1, h2, h3, p { margin: 0; }
         clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
 .hint .t-micro { display: flex; align-items: center; gap: var(--s2); color: #6c665c; margin-bottom: var(--s2); }
 .hint .t-micro::after { content: ''; flex: 1; height: 1px; background: rgba(11,12,14,.18); }
-.hint p { font: 500 14px/1.5 var(--f-text); }
-.hint b { font-weight: 600; padding: 0 var(--s1); background: var(--ink); color: var(--fluo); white-space: nowrap; }
+.hint p { font: 560 14px/1.5 var(--f-text); }   /* a touch over 500: plain, not stuffy (2026-11-24) */
+.hint .key { width: auto; min-width: 20px; height: 20px; padding: 0 5px; margin: 0 1px; vertical-align: 1px; font: 700 11px/1 var(--f-title); color: #e8ebee;
+             background: linear-gradient(180deg, #3a3f44, #24282c); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }   /* only the key is drawn: a dark keycap, no block (2026-11-24) */
 
 /* The meter: the moodboard's divider. The triangle is the pointer, the dots flank it. */
 .meter { position: relative; height: 30px; }
 .meter .rail { position: absolute; left: 0; right: 0; top: 14px; height: 2px; background: var(--line-2); }
 .meter .fill { position: absolute; top: 13px; height: 4px; background: var(--text); }
 .meter .tip { position: absolute; top: 8px; width: 2px; height: 14px; background: var(--amber); }
-.meter .ptr { position: absolute; top: 0; width: 0; height: 0; transform: translateX(-50%); border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid var(--fluo); filter: drop-shadow(0 0 5px rgba(0,255,115,.55)); }
+.meter .ptr { position: absolute; top: 0; width: 0; height: 0; transform: translateX(-50%); border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 12px solid var(--fluo); filter: drop-shadow(0 0 5px rgba(52,230,255,.55)); }
 .meter .dots { position: absolute; top: 4px; display: flex; gap: 4px; transform: translateX(-50%); } .meter .dots i { width: 3px; height: 3px; background: var(--steel); }
 .scale { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: var(--s2); text-align: center; color: var(--faint); }
 .scale .on { color: var(--text); }
 
+/* The radio: glass in the fluo, the only panel that glows (the Drift turns it indigo). Its display is a dark well. */
+.frame.radio { background: radial-gradient(120% 160% at 50% 130%, rgba(var(--fluo-rgb),.26), rgba(var(--fluo-rgb),.06) 55%, transparent 75%), linear-gradient(180deg, rgba(var(--fluo-rgb),.10), rgba(var(--fluo-rgb),.02)), #0b0e10; padding-top: var(--s1); }
+.radio-keys { display: flex; gap: 6px; align-items: center; justify-content: flex-end; margin-top: var(--s3); }
+.radio-keys .t-meta + .key { margin-left: var(--s3); }
+
 /* Ticker */
-.ticker { position: relative; overflow: hidden; white-space: nowrap; padding: var(--s2) var(--s3); background: #08090a; font: 600 16px/1.3 var(--f-title); color: var(--fluo); text-shadow: 0 0 5px rgba(0,255,115,.4);
+.ticker { position: relative; overflow: hidden; white-space: nowrap; padding: var(--s2) var(--s3); background: #08090a; font: 600 16px/1.3 var(--f-title); color: var(--fluo); text-shadow: 0 0 5px rgba(52,230,255,.4);
           clip-path: polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s)); }
 .ticker::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.18) 2px 3px); }
 
@@ -261,7 +270,7 @@ h1, h2, h3, p { margin: 0; }
         <p class="t-body-s" style="color:var(--steel)">Needs attention: the square becomes an amber triangle. Shape as well as colour, since green and amber look alike to many colour-blind players.</p></div><span class="t-meta">alert</span></div>
     </div></section>
 
-  <section class="sec"><h2>Controls<small>Outline by default. Fluo only for the one thing to do now. Shaking shows its progress along the bottom edge. Keys are keycaps, so the keyboard is always visible.</small></h2>
+  <section class="sec"><h2>Controls<small>Outline by default. Fluo only for the one thing to do now. Shaking shows its progress along the bottom edge. Keys are keycaps, so the keyboard is always visible: one size everywhere, single keys square.</small></h2>
     <div style="display:flex;flex-direction:column;gap:var(--s5)">
       <div class="row">
         <div class="spec"><span class="btn"><span>Shake</span></span><span class="t-meta">default</span></div>
@@ -273,7 +282,7 @@ h1, h2, h3, p { margin: 0; }
         <div class="spec"><span class="btn jizz"><span>Shake</span></span><span class="t-meta">Jizz+</span></div>
       </div>
       <div class="row">
-        <div class="spec"><div style="display:flex;gap:6px"><span class="key">1</span><span class="key">2</span><span class="key">5</span><span class="key candy">0</span><span class="key jizz">9</span><span class="key wide">Space</span><span class="key wide">B</span><span class="key wide">R</span></div><span class="t-meta">keycaps</span></div>
+        <div class="spec"><div style="display:flex;gap:6px"><span class="key">1</span><span class="key">2</span><span class="key">5</span><span class="key candy">0</span><span class="key jizz">9</span><span class="key wide">1–5</span><span class="key wide">Space</span><span class="key">B</span><span class="key">R</span><span class="key"><svg viewBox="0 0 12 12"><path d="M10 6H2.5M5.5 3L2.5 6l3 3"/></svg></span><span class="key"><svg viewBox="0 0 12 12"><path d="M6 2v7.5M3 6.5l3 3 3-3"/></svg></span><span class="key"><svg viewBox="0 0 12 12"><path d="M2 6h7.5M6.5 3l3 3-3 3"/></svg></span></div><span class="t-meta">keycaps · one size, 24 px: single keys square, arrows drawn</span></div>
         <div class="spec"><div style="display:flex;gap:12px;align-items:center">
           <svg class="ico"><use href="#i-bottle"/></svg><svg class="ico fluo"><use href="#i-bottle-full"/></svg><svg class="ico candy"><use href="#i-bottle"/></svg><svg class="ico jizz"><use href="#i-bottle"/></svg>
           <svg class="ico"><use href="#i-pick"/></svg><svg class="ico text"><use href="#i-sample"/></svg><svg class="ico text"><use href="#i-sealed"/></svg>
@@ -306,10 +315,10 @@ h1, h2, h3, p { margin: 0; }
       </div>
     </div></section>
 
-  <section class="sec"><h2>Hint<small>The one light surface, in concrete, under the mining window. Normal weight; the key to press is set in ink and fluo. No forced line breaks, no orphans.</small></h2>
-    <div class="row"><div class="hint" style="width:460px"><div class="t-micro">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: <b>Press B</b> to set a charge under you (15 drill samples).</p></div></div></section>
+  <section class="sec"><h2>Hint<small>The one light surface, in concrete, under the mining window. Plain text, a touch over regular (560). Only the key to press is drawn, as a small dark keycap: the sentence reads first, the key still catches the eye. No forced line breaks, no orphans.</small></h2>
+    <div class="row"><div class="hint" style="width:460px"><div class="t-micro">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: press <span class="key">B</span> to set a charge under you (15 drill samples).</p></div></div></section>
 
-  <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio display is the only other glowing text.</small></h2>
+  <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio is the only other thing that glows: glass in the fluo, its display a dark well that reads station · tagline · Now playing: song.</small></h2>
     <div class="row">
       <div class="frame live" style="width:428px"><div class="frame-head"><span class="t-label">Dosage</span><span class="t-meta" style="color:var(--fluo)">Next drink ×1.5</span></div>
         <div class="t-num-xl" style="margin-bottom:var(--s3)">MEH</div>
@@ -317,10 +326,10 @@ h1, h2, h3, p { margin: 0; }
           <div class="dots" style="left:calc(50% - 30px)"><i></i><i></i><i></i><i></i></div><div class="dots" style="left:calc(50% + 30px)"><i></i><i></i><i></i><i></i></div><div class="ptr" style="left:50%"></div></div>
         <div class="scale t-micro"><span>Get out</span><span>Coward</span><span class="on">Meh</span><span>We see you</span><span>Hell yeah</span></div>
       </div>
-      <div class="frame" style="width:428px"><div class="frame-head"><span class="t-label">Radio</span><span class="t-meta">Station</span></div>
-        <div class="ticker">The Pump Zone · Now playing: Drill Instructor</div>
+      <div class="frame radio" style="width:428px"><div class="frame-head"><span class="t-label">Radio</span><span class="t-meta">Station</span></div>
+        <div class="ticker">The Pump Zone · No pain, no gain. · Now playing: Drill Instructor</div>
         <p class="t-body-s" style="margin-top:var(--s3)">Digging slightly faster.</p>
-        <div style="display:flex;gap:6px;align-items:center;margin-top:var(--s3)"><span class="key wide">R</span><span class="t-meta">next station</span><span class="key wide">T</span><span class="t-meta">tape</span><span class="key wide">V</span><span class="t-meta">volume (loud)</span></div>
+        <div class="radio-keys"><span class="key">R</span><span class="t-meta">next station</span><span class="key">T</span><span class="t-meta">tape</span><span class="key">V</span><span class="t-meta">volume (soft)</span></div>
       </div>
     </div></section>
 
@@ -343,7 +352,7 @@ h1, h2, h3, p { margin: 0; }
 <script>
   // Colour swatches, with contrast against the background where it matters.
   const C = [['Ink', '--ink', 'background'], ['Panel', '--panel', 'panels'], ['Raised', '--raised', 'tiles, hover'], ['Steel', '--steel', 'lines, labels, secondary text'],
-             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Concrete', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'],
+             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Concrete', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'], ['Spore', '--spore', 'Crack Spores'],
              ['Amber', '--amber', 'wear, tip points'], ['Violet', '--violet', 'the secret menu'], ['Candy', '--candy', 'Candygirl'], ['Jizz', '--jizz', 'Jizz+'], ['Näsa', '--nasa', 'Näsa only']];
   const css = getComputedStyle(document.documentElement), hex = v => css.getPropertyValue(v).trim();
   const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
