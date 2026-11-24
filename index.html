@@ -234,7 +234,7 @@
   #dosage.later:not(.shown)::before { content:''; position:absolute; inset:0; visibility:visible; background:rgba(8,9,11,.26); box-shadow:inset 0 0 0 1px rgba(150,157,164,.12); }
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
-  #hint:empty { background:#121417; box-shadow:inset 0 1px 0 rgba(214,220,226,.35), inset 0 0 0 1px rgba(150,157,164,.5), inset 0 -1px 0 rgba(70,76,82,.8); }   /* empty (start screen, paused): the bar unlit, in the panels' dark and steel edge; it lights with the first hint (2026-11-24) */
+  #hint:empty { background:rgba(18,20,23,.28); box-shadow:inset 0 1px 0 rgba(214,220,226,.22), inset 0 0 0 1px rgba(150,157,164,.14), inset 0 -1px 0 rgba(70,76,82,.22); }   /* empty (start screen, paused): a ghost like the waiting panels, their frame at 28%; it lights with the first hint (2026-11-24) */
   #hint { transition:background-color .5s ease, box-shadow .5s ease; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
