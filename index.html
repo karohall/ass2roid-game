@@ -341,8 +341,7 @@
   #log, #cardDetail, #ingredients, #recipes { background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c;
     box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
   #cardDetail { border-top:0; }
-  #radioBox { clip-path:var(--chamfer); background:linear-gradient(180deg, #1c1f22, #131517); }   /* a dash panel: only the band and the lit lamps glow (2026-11-24) */
-  #radioBox > svg.outline path:first-of-type { fill:rgba(255,255,255,.015); }
+  #radioBox { clip-path:var(--chamfer); }   /* the same dark as every panel (the frame's bay): only the band and the lit lamps glow (2026-11-24) */
   #radioBox { transition:filter 6s ease 2s; } body.drifting.wide #radioBox { filter:hue-rotate(62deg) saturate(1.1) brightness(.8); }   /* the Drift: a deep indigo-violet, in key with the nebulae (2026-11-17) */
   /* Control panel (2026-11-16, round 5). One housing for the whole deck: brushed gunmetal with screws, the columns set in it with seams;
      the panels are bays cut into it. A pseudo-element, so the Drift can fade it and leave the sky. */
