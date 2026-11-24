@@ -70,11 +70,11 @@
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
-  #radioBox { flex:1; min-width:0; padding:8px 12px; display:grid; grid-template-columns:72px minmax(0,1fr) 66px 236px 62px; grid-template-rows:20px 1fr; gap:4px 14px; align-items:center; }
+  #radioBox { flex:1; min-width:0; padding:8px 12px; display:grid; grid-template-columns:72px minmax(0,1fr) 236px 62px; grid-template-rows:20px 1fr; gap:4px 14px; align-items:center; }
   #radioBox > h3 { grid-column:1; grid-row:1; align-self:start; margin:0 0 0 -2px; }   /* its name plate, like every panel's: the frame draws its tab */
   #rVol { grid-column:1; grid-row:2; gap:3px; } #rVol > i { width:36px; height:36px; } #rVol > i::before { inset:3px; } #rVol > i::after { top:5px; height:9px; transform-origin:50% 13px; }   /* the small volume knob */
   #rVol kbd.k { min-width:18px; height:18px; }
-  .rmid { grid-column:2; grid-row:1 / 3; } .rvu { grid-column:3; grid-row:1 / 3; } .rlamps { grid-column:4; grid-row:1 / 3; } #rTune { grid-column:5; grid-row:1 / 3; }   /* the big tuning knob */   /* long and slim: knob, dial, lamps, knob */
+  .rmid { grid-column:2; grid-row:1 / 3; } .rlamps { grid-column:3; grid-row:1 / 3; } #rTune { grid-column:4; grid-row:1 / 3; }   /* the big tuning knob */   /* long and slim: knob, dial, lamps, knob */
   #radioBox > :not(svg) { position:relative; z-index:1; }
   .rknob { display:flex; flex-direction:column; align-items:center; gap:6px; }
   .rknob > i { width:50px; height:50px; border-radius:50%; position:relative; display:block;
@@ -92,13 +92,6 @@
   .rst.on { color:var(--fluo); text-shadow:0 0 6px rgba(var(--fluo-rgb),.85); }
   .rneedle { position:absolute; top:22px; bottom:3px; left:var(--x, 3%); width:2px; margin-left:-1px; background:#ff5a3c; box-shadow:0 0 6px rgba(255,90,60,.8); transition:left .7s cubic-bezier(.4,1.3,.5,1); }   /* it sweeps when you tune */
   .rband.off { filter:brightness(.35) saturate(.4); } .rband.tape { filter:brightness(.55) saturate(.6); }   /* off: dark; tape: the band rests */
-  .rvu { display:flex; flex-direction:column; align-items:center; gap:5px; }
-  .rvu svg { width:66px; height:50px; display:block; clip-path:var(--chamfer-s); background:radial-gradient(90% 110% at 50% 100%, rgba(var(--fluo-rgb),.16), transparent 70%), linear-gradient(180deg, #0e1a1c, #081012); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); }   /* lit like the band */
-  .rvu .arc, .rvu .ticks path { fill:none; stroke:rgba(var(--fluo-rgb),.55); stroke-width:1.2; } .rvu .red { fill:none; stroke:#ff5a3c; stroke-width:2.2; opacity:.85; }
-  .rvu text { font:700 7px var(--f-title); letter-spacing:.1em; fill:rgba(var(--fluo-rgb),.5); text-anchor:middle; }
-  .rvu .needle { stroke:#ff5a3c; stroke-width:1.6; stroke-linecap:round; transform-origin:30px 38px; transform:rotate(-50deg); filter:drop-shadow(0 0 2px rgba(255,90,60,.8)); }
-  .rvu circle { fill:#2a2e32; stroke:#0c0d0f; }
-  .rvu .kl { font:600 11px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
   .rband.tuning { animation:tuning .45s steps(9) 1; } .rband.tuning .rst { animation:tunejit .45s steps(9) 1; }   /* the signal breaks up while the needle sweeps */
   @keyframes tuning { 0% { filter:brightness(1.6); } 20% { filter:brightness(.4); } 40% { filter:brightness(1.3); } 60% { filter:brightness(.6); } 80% { filter:brightness(1.15); } 100% { filter:none; } }
   @keyframes tunejit { 0%, 100% { transform:translateX(-50%); } 25% { transform:translateX(calc(-50% + 1.5px)); } 50% { transform:translateX(calc(-50% - 1px)); } 75% { transform:translateX(calc(-50% + .5px)); } }
@@ -500,9 +493,6 @@
         <div class="rband off" id="rBand"><div class="rscale"></div><span class="rst" data-k="pump" style="left:17%">The Pump Zone</span><span class="rst" data-k="disco" style="left:50%">Disco Gravitas</span><span class="rst" data-k="void" style="left:83%">Void FM</span><div class="rneedle" id="rNeedle"></div></div>
         <div class="rrow"><div class="rsong"><span id="radioTicker"></span></div><span id="radioFx"></span></div>
       </div>
-      <div class="rvu" id="rVu"><svg viewBox="0 0 60 44" aria-hidden="true"><path class="arc" d="M8 34 A26 26 0 0 1 52 34"/><path class="red" d="M44.4 18.6 A26 26 0 0 1 52 34"/>
-        <g class="ticks"><path d="M8 34l4-1.6M10.6 23.7l3.6 2.2M17.5 15.6l2.6 3.3M30 11v4.2M42.5 15.6l-2.6 3.3M49.4 23.7l-3.6 2.2M52 34l-4-1.6"/></g>
-        <text x="30" y="40">VU</text><path class="needle" id="rVuNeedle" d="M30 38 L30 12"/><circle cx="30" cy="38" r="2.6"/></svg><span class="kl">Signal</span></div>
       <div class="rlamps"><span data-l="dig">Dig faster</span><span data-l="mix">Mix faster</span><span data-l="nv">Night vision</span><span data-l="tape"><kbd class="k">T</kbd>Tape</span><span data-l="pwr">No power</span></div>
       <div class="rknob" id="rTune"><i></i><span class="kl"><kbd class="k">R</kbd>Tune</span></div>
     </div>
@@ -826,7 +816,6 @@ function soundGraph() {
     const crush = node('createWaveShaper', { curve: drive(25), oversample: '2x' });
     bus.lp.connect(bus.hp); bus.hp.connect(bus.dry); bus.hp.connect(crush); crush.connect(bus.wet);
     bus.dry.connect(ac.destination); bus.wet.connect(ac.destination);
-    bus.vu = ac.createAnalyser(); bus.vu.fftSize = 1024; bus.vu.smoothingTimeConstant = 0; const vuSink = ac.createGain(); vuSink.gain.value = 0; bus.hp.connect(bus.vu); bus.vu.connect(vuSink); vuSink.connect(ac.destination);   /* the VU meter listens (2026-11-24) */
     decks.forEach(d => ac.createMediaElementSource(d).connect(bus.lp));
     // The voice chain.
     const vhp = node('createBiquadFilter', { type: 'highpass' }), vlp = node('createBiquadFilter', { type: 'lowpass' });
@@ -2812,20 +2801,6 @@ function tuneStatic() {
     src.connect(bp); bp.connect(g); g.connect(ac.destination); src.start(t); src.stop(t + .43);
   } catch (e) {}
 }
-// The VU needle: the music's level, quick up and slow down like a real meter; resting when nothing plays. A gentle wobble without the audio graph.
-const vuBuf = new Uint8Array(1024); let vuLevel = 0, vuShown = -99;
-function vuTick() {
-  let target = 0;
-  if (sound.on && !player.paused && VOLUMES[radio.vol].k > 0) {
-    if (bus.vu) { bus.vu.getByteTimeDomainData(vuBuf); let sum = 0; for (let i = 0; i < vuBuf.length; i += 2) { const v = (vuBuf[i] - 128) / 128; sum += v * v; } target = Math.min(1, Math.sqrt(sum / (vuBuf.length / 2)) / Math.max(.08, player.volume) * 2.6); }   /* the signal, not the listening volume */
-    else target = .45 + Math.sin(performance.now() / 310) * .12 + Math.sin(performance.now() / 97) * .08;
-  }
-  vuLevel += (target - vuLevel) * (target > vuLevel ? .35 : .08);
-  const deg = -50 + vuLevel * 100;
-  if (Math.abs(deg - vuShown) > .4) { vuShown = deg; const n = $('rVuNeedle'); if (n) n.style.transform = `rotate(${deg.toFixed(1)}deg)`; }
-  requestAnimationFrame(vuTick);
-}
-requestAnimationFrame(vuTick);
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
