@@ -393,7 +393,22 @@
   .dbar.broken::after { content:'Pickaxe'; position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
   /* Indicator lamps: a lens each, its name engraved beside it. Off is a dark lens; lit means on; blinking means look. */
   .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
-  #rover .lamps:not(:has(.ind.shown)) { display:none; }   /* the lamp strip waits for its first lamp: no empty strip (2026-11-24) */
+  #rover .lamps:not(:has(.ind.shown, .ind.warn)) { display:none; }   /* shown once a lamp is revealed, or the caution is lit */
+  #cautionWhy { font-style:normal; text-transform:none; letter-spacing:.02em; color:var(--amber); margin-left:6px; }
+  #cautionWhy:empty { display:none; }   /* the lamp strip waits for its first lamp: no empty strip (2026-11-24) */
+  .rd { display:inline-block; height:1em; overflow:hidden; vertical-align:top; line-height:1; }   /* a rolling digit: a drum of 0-9 */
+  .rd > span { display:block; transition:transform .35s cubic-bezier(.3,.7,.3,1); }
+  .ru { margin-left:.22em; }
+  @media (prefers-reduced-motion: reduce) { .rd > span { transition:none; } }
+  .tape { width:min(300px, 100%); margin:0 auto; padding:14px 16px 12px; text-align:left; color:var(--bg); background:var(--concrete);
+          -webkit-mask:radial-gradient(circle 3px at 6px 0, transparent 98%, #000) -6px 0 / 12px 100% repeat-x; mask:radial-gradient(circle 3px at 6px 0, transparent 98%, #000) -6px 0 / 12px 100% repeat-x;
+          box-shadow:inset 0 -1px 0 rgba(0,0,0,.15); }   /* the shift recorder's paper strip, perforated at the top */
+  .tape .th { font:700 10px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#555a5c; padding-bottom:8px; margin-bottom:6px; border-bottom:1px dashed rgba(11,12,14,.35); display:flex; justify-content:space-between; }
+  .tape .ln { display:flex; align-items:baseline; gap:6px; font:500 12px/1.75 var(--f-small); clip-path:inset(0 0 100% 0); animation:println .18s steps(3) forwards; }
+  .tape .ln span { flex:none; } .tape .ln i { flex:1; border-bottom:1px dotted rgba(11,12,14,.4); transform:translateY(-3px); }
+  .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
+  @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
+  @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607, inset 0 -1px 1px rgba(0,0,0,.6); }
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 35% 30%, #e6fdff, var(--fluo) 60%); box-shadow:0 0 0 1px #050607, 0 0 7px var(--fluo); }
@@ -465,10 +480,12 @@
       <div class="row" style="display:none"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>   <!-- where you are: the shaft cam's header (2026-11-24) -->
       <div class="inst"><span class="eng">Depth</span><span class="win"><span id="depth">0 m</span></span></div>
       <div class="inst"><span class="eng">Drill samples</span><span class="win"><span id="samples">0</span></span></div>
+      <div class="inst"><span class="eng">Shift time</span><span class="win"><span id="hourMeter">0 min</span></span></div>   <!-- the hour meter: minutes, rolling (2026-11-24) -->
       <div class="inst" id="powerRow"><span class="eng">Digging power</span><span class="pips" id="pips"></span><span class="val" id="power">1</span></div>
       <div class="inst" id="drillRow"><span class="eng">Drill</span><span class="dbar" id="dbar"></span><span class="val" id="drill">100%</span></div>
       <div class="row later" data-reveal="blast"><span>B: blast the rock below</span><span id="chargeCost" class="small"></span></div>
       <div class="lamps">                                   <!-- indicator lamps: what is on, at a glance -->
+        <span class="ind" id="lampCaution"><i></i>Caution<em id="cautionWhy"></em></span>   <!-- the master caution (2026-11-24) -->
         <span class="ind later" data-reveal="drill" id="lampDrill"><i></i>Drill</span>
         <span class="ind later" data-reveal="recipe_focus" id="lampFocus"><i></i>Focus</span><span class="ind later" data-reveal="blast" id="lampCharge"><i></i>Charge</span>
       </div>
@@ -1781,20 +1798,13 @@ function finishGame(drifted = false) {
   showMenu(`${drifted
       ? '<span class="lbl">Contact lost</span><h2 class="ttl">The drift.</h2><p class="body">You let go of the Rock and drifted out into the vast nothingness of space. It was very quiet.<br>It was not unpleasant.</p>'
       : '<span class="lbl live">Shift complete</span><h2 class="ttl">The Core.</h2><p class="body">You are now further down than anyone asked you to be. What you found here is redacted by the Belt Authority.</p>'}
-    <dl class="kv">${stats.map(([k, v, unit, f]) => `<div><dt>${k}</dt><dd class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</dd></div>`).join('')}</dl>
+    <div class="tape"><div class="th"><span>Shift recorder</span><span>KR-1</span></div>${stats.map(([k, v, unit, f], i) => `<div class="ln" style="animation-delay:${300 + i * 220}ms"><span>${k}</span><i></i><b>${f ? f(v) : v}${unit || ''}</b></div>`).join('')}</div>
     ${unrecovered}
     ${drifted ? '<p class="note">The Core is still down there.</p>' : ''}
     <button id="again" class="go">New game</button><span class="gokey">or press Enter</span>`);
   $('again').onclick = newGame;
   menuKeys = k => { if (k === 'Enter') newGame(); };
-  // The stats count up, like a tally.
-  const cells = [...document.querySelectorAll('#menu .num')], t0 = performance.now();
-  (function count() {
-    const k = Math.min(1, (performance.now() - t0) / CONFIG.ending.countMs);
-    for (const c of cells) { const v = Math.round(+c.dataset.to * k); c.textContent = (c.dataset.fmt ? fmt(v) : v) + c.dataset.unit; }
-    if (k < 1) requestAnimationFrame(count);
-  })();
-  setTimeout(() => cells.forEach(c => c.textContent = (c.dataset.fmt ? fmt(+c.dataset.to) : c.dataset.to) + c.dataset.unit), CONFIG.ending.countMs + 100);   // always land on the final numbers
+  // The stats print, line by line, on the shift recorder's paper (2026-11-24; they counted up before).
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2843,6 +2853,12 @@ function keyState(b, st) {
   if (st === 'shaking') b.style.setProperty('--p', (Math.min(1, 1 - (s.shake.until - now()) / (s.shake.ms || CONFIG.mix.shakeMs)) * 100).toFixed(1) + '%');
   const label = st === 'shaking' ? 'Shaking' : st === 'ready' ? 'Drink' : 'Shake'; if (b.getAttribute('aria-label') !== label) b.setAttribute('aria-label', label);
 }
+// A number on drums: each digit rolls to its value, like an odometer (2026-11-24).
+function rollNum(id, v, unit = '') {
+  const el = $(id), str = String(v); if (el.dataset.v === str + unit) return; el.dataset.v = str + unit;
+  if (el.querySelectorAll('.rd').length !== str.length || !el.querySelector('.ru')) el.innerHTML = str.split('').map(() => '<span class="rd"><span>0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</span></span>').join('') + `<span class="ru">${unit}</span>`;
+  el.querySelectorAll('.rd > span').forEach((c, i) => c.style.transform = `translateY(${-str[i]}em)`);
+}
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
 const lastHTML = {};
 const EM = '\u0001', EM_END = '\u0002', em = t => EM + t + EM_END;   // emphasis markers: invisible, so the typewriter types through them
@@ -2942,7 +2958,8 @@ function drawGaugeMeter(t) {
 
 function hud() {
   const t = now();
-  setText('depth', `${depthNow()} m`);
+  rollNum('depth', depthNow(), 'm');                       // the depth on drums
+  rollNum('hourMeter', Math.floor(s.timeMs / 60000), 'min');   // the hour meter: whole minutes, so it moves once a minute
   setText('samples', s.samples);
   // Digging power as pips, one per point (7 at most: base and two Strengths); the crust's need is the notched pip, and the value reads "have/need".
   const need = layer().crustMinPower, pw = power(), np = Math.max(7, need);
@@ -2959,6 +2976,14 @@ function hud() {
   // Indicator lamps: lit is on, amber is a warning, blinking means look now.
   const lamp = (id, st) => { const cl = $(id).classList; for (const k of ['on', 'warn', 'blink']) cl.toggle(k, st.split(' ').includes(k)); };
   lamp('lampDrill', onPick() ? 'warn blink' : worn ? 'warn' : '');
+  { // The master caution: one lamp for anything that needs you, its reason in a word; urgent ones blink.
+    const L = layer(), why = [];
+    if (running && !musicOn()) why.push(['no music', true]);
+    if (onPick()) why.push(['drill broken', true]); else if (worn) why.push(['drill worn', false]);
+    if (running && L.crustMinPower && p.y >= H - 8 && power() < L.crustMinPower) why.push(['crust too hard', false]);
+    lamp('lampCaution', why.length ? (why.some(w => w[1]) ? 'warn blink' : 'warn') : '');
+    setText('cautionWhy', why.length ? why[0][0] : '');
+  }
   lamp('lampFocus', active('focus') ? 'on' : '');
   lamp('lampCharge', s.charges.length ? 'warn blink' : s.layer >= 1 && s.samples >= CONFIG.charge.cost ? 'on' : '');
   for (const k of Object.keys(ING)) {
