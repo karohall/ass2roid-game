@@ -957,7 +957,7 @@ document.documentElement.style.setProperty('--viewH', cv.height + 'px');   // th
 const $ = id => document.getElementById(id);
 const now = () => performance.now();
 
-let pv = null, partAcc = 0;   // where the prospector is drawn: its tile (a glide was tried 2026-11-24 and felt imprecise)
+let pv = null, partAcc = 0;   // pv: where the prospector is drawn, a 60 ms step behind its tile at most   // where the prospector is drawn: its tile (a glide was tried 2026-11-24 and felt imprecise)
 let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastFrame = 0, cam = 0, particles = [], running = false, selCard = null;
 
 const layer = () => CONFIG.layers[s.layer];
@@ -2509,8 +2509,11 @@ function update(dt) {
   // Queued tap, then held digging.
   if (pendingTap && t - lastAct >= CONFIG.dig.tapMs * slowFactor()) { act(...pendingTap); pendingTap = null; lastAct = t; }
   else if (held && t - lastAct > CONFIG.dig.holdMs * slowFactor()) { act(held[0], held[1]); lastAct = t; }
-  // The prospector is exactly on its tile, and the camera keeps it there: no easing, so it never dips and slides back, and no glide either (2026-11-24).
-  pv = { x: p.x, y: p.y };
+  // A firm step: from where it is drawn to its new tile in a fixed 60 ms ease-out, starting at once (a snap felt jumpy, a long glide sliding; 2026-11-24).
+  // The camera follows the drawn prospector, so the rock moves with it and nothing bounces.
+  { const t = now(); if (!pv || Math.abs(pv.x - p.x) + Math.abs(pv.y - p.y) > 3) pv = { x: p.x, y: p.y, fx: p.x, fy: p.y, tx: p.x, ty: p.y, t0: t };
+    else { if (pv.tx !== p.x || pv.ty !== p.y) { pv.fx = pv.x; pv.fy = pv.y; pv.tx = p.x; pv.ty = p.y; pv.t0 = t; }
+      const q = Math.min(1, (t - pv.t0) / 60), e = 1 - (1 - q) * (1 - q); pv.x = pv.fx + (pv.tx - pv.fx) * e; pv.y = pv.fy + (pv.ty - pv.fy) * e; } }
   cam = Math.max(0, Math.min(H - VIEW, pv.y - 4));
   // Dust in steps, like the mine: 15 times a second, the same on any screen (it drifted every frame; 2026-11-24).
   partAcc = Math.min(partAcc + dt, 200);
