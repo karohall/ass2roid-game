@@ -150,7 +150,7 @@
   .box h3::before { content:''; width:6px; height:6px; flex:none; background:var(--dim); }
   .box h3 .org { font:500 11px/1 var(--f-small); letter-spacing:.04em; text-transform:none; color:var(--faint); }   /* who keeps it, quietly */
   #milk { --frame:rgba(170,177,184,.8); --edge-hi:rgba(236,240,244,.95); }                             /* the shakes stand out */
-  #milk.live h3::before, #radioBox.live > h3::before, #camTab.live h3::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }   /* a plate's lamp: lit means the panel is running right now (2026-11-24) */
+  body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }   /* the plates' lamps: all lit while the shift runs (the user, 2026-11-24) */
   .row { display:flex; justify-content:space-between; gap:8px; }
   .bar { height:4px; background:var(--line); margin:4px 0 3px; }
   .bar > div { height:100%; width:0; background:var(--dim); }
@@ -365,7 +365,7 @@
   .box h3 { padding:3px 8px 3px 7px; margin:0 0 4px -2px; width:max-content; color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s);
             text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
   .box h3::before { width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }
-  #milk.live h3::before, #radioBox.live > h3::before, #camTab.live h3::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 0 1px #08090a, 0 0 6px var(--fluo); }
+  body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 0 1px #08090a, 0 0 6px var(--fluo); }
   .box h3 .org { text-shadow:none; color:#6f767c; }
   #rover > .row:first-child h3 { margin:0; }
   /* The rover's instruments: an engraved name, then the instrument, then its value. */
@@ -957,7 +957,7 @@ document.documentElement.style.setProperty('--viewH', cv.height + 'px');   // th
 const $ = id => document.getElementById(id);
 const now = () => performance.now();
 
-let pv = null;   // where the prospector is drawn: its tile (a glide was tried 2026-11-24 and felt imprecise)
+let pv = null, partAcc = 0;   // where the prospector is drawn: its tile (a glide was tried 2026-11-24 and felt imprecise)
 let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastFrame = 0, cam = 0, particles = [], running = false, selCard = null;
 
 const layer = () => CONFIG.layers[s.layer];
@@ -2512,8 +2512,9 @@ function update(dt) {
   // The prospector is exactly on its tile, and the camera keeps it there: no easing, so it never dips and slides back, and no glide either (2026-11-24).
   pv = { x: p.x, y: p.y };
   cam = Math.max(0, Math.min(H - VIEW, pv.y - 4));
-  particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .25; q.life--; });
-  particles = particles.filter(q => q.life > 0);
+  // Dust in steps, like the mine: 15 times a second, the same on any screen (it drifted every frame; 2026-11-24).
+  partAcc = Math.min(partAcc + dt, 200);
+  while (partAcc >= 66) { partAcc -= 66; particles.forEach(q => { q.x += q.vx * 4; q.y += q.vy * 4 + 2; q.vy += 1; q.life -= 4; }); particles = particles.filter(q => q.life > 0); }
   if (p.y >= H - 1) breakthrough();
 }
 
@@ -2585,7 +2586,7 @@ function draw() {
     if (Math.floor(now() / (60 + 140 * left)) % 2) { ctx.save(); ctx.shadowColor = COL.amber; ctx.shadowBlur = 6; ctx.fillStyle = COL.amber; ctx.fillRect(X + 18.5 + 4 * left, Y + 15.5 - 7 * left, 3, 3); ctx.restore(); }
   }
   ctx.fillStyle = COL.steel;
-  particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
+  particles.forEach(q => ctx.fillRect(Math.round(q.x / 3) * 3, Math.round(q.y / 3) * 3, 3, 3));   // on a 3 px grid
   if (L.dark) { drawDark(L, y0, y1); drawProspector(ctx, V.x * T + jx, V.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick(), dark: true }); }
   ctx.restore();
   drawMap(); drawGauge();
@@ -2826,8 +2827,7 @@ function radioHud() {
   setText('radioFx', !sound.on ? 'Nothing runs without a soundtrack.'
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : st.fx) + '');   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', guideNow() === 'radio');   // the drill is waiting: look here
-  $('radioBox').classList.toggle('live', sound.on);   // on air: its lamp lit
-  $('camTab').classList.toggle('live', !!(running && s && !s.drift));   // the shaft cam feeds while the shift runs
+  document.body.classList.toggle('shiftOn', !!(running && s && !s.drift));   // every plate's lamp lit while the shift runs
 }
 
 // A shake key's state: can (SHAKE lit), shaking (SHAKE fills amber over the shake), ready (DRINK lit), off (dark: can't mix, or another is shaking).
@@ -2974,7 +2974,6 @@ function hud() {
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
   setText('effects', 'Active: ' + (fx.join(' · ') || 'none'));
-  $('milk').classList.toggle('live', fx.length > 0);   // the panel's lamp: something in it is working
   // A panel the hint names pulses for the hint's first six seconds (2026-11-17: they look alike, and the hint is far from the right column).
   const fresh = performance.now() - typing.from < 6000;
   for (const [re, el] of [[/rover panel/i, $('rover')], [/Field Guide/, $('guide').closest('.box')], [/Milk\+ menu/i, $('milk')], [/Next drink|\bthe meter\b/i, $('dosage')]]) el.classList.toggle('hinted', fresh && re.test(typing.text));
