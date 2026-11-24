@@ -887,6 +887,7 @@ function guideNow() {
   if (!running || !s || s.drift || s.over) return null;
   if (s.hintIntroUntil > now()) return 'hint';                                   // the shift begins: this is where instructions appear
   if (!musicOn()) return 'radio';                                                // the drill waits for music (also later, if the music stops)
+  if (s.dug > 0) return null;                                                    // the tutorial ends with the first tile dug (2026-11-24)
   if (s.drinks === 0 && (s.bottles.strength > 0 || (!shaking() && canMix('strength')))) return 'strength';   // shake the first Strength, then drink it
   if (s.drinks === 0 && shaking()) return null;                                  // the first shake: its key fills amber, nothing else calls
   if (s.dug === 0) return 'hint';                                                // Press ↓ to dig
