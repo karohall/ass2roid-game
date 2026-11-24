@@ -70,7 +70,38 @@
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
-  #radioBox { flex:1; min-width:0; padding:8px 12px 10px; }   /* long and slim */
+  #radioBox { flex:1; min-width:0; padding:8px 12px; display:grid; grid-template-columns:62px minmax(0,1fr) 168px 62px; gap:0 14px; align-items:center; }   /* long and slim: knob, dial, lamps, knob */
+  #radioBox > :not(svg) { position:relative; z-index:1; }
+  .rknob { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .rknob > i { width:50px; height:50px; border-radius:50%; position:relative; display:block;
+               background:radial-gradient(circle at 40% 35%, #3a3f44, #1a1d20 70%); box-shadow:0 0 0 3px #0c0d0f, 0 0 0 4px #2a2e32, inset 0 2px 2px rgba(255,255,255,.12), 0 4px 8px rgba(0,0,0,.6); }
+  .rknob > i::before { content:''; position:absolute; inset:4px; border-radius:50%; background:repeating-conic-gradient(#2c3034 0 6deg, #1e2124 6deg 12deg); mask:radial-gradient(circle, transparent 60%, #000 62%); -webkit-mask:radial-gradient(circle, transparent 60%, #000 62%); }   /* knurled, for gloves */
+  .rknob > i::after { content:''; position:absolute; left:50%; top:7px; width:3px; height:12px; margin-left:-1.5px; background:var(--text); border-radius:2px; transform-origin:50% 18px; transform:rotate(var(--a, 0deg)); transition:transform .5s cubic-bezier(.3,1.4,.5,1); }
+  .rknob .kl { display:flex; gap:5px; align-items:center; font:600 11px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
+  #radioBox kbd.k { min-width:20px; height:20px; padding:0 5px; font-size:10px; }
+  .rmid { display:grid; grid-template-rows:44px auto; gap:7px; min-width:0; }
+  .rband { position:relative; overflow:hidden; clip-path:var(--chamfer-s); background:linear-gradient(180deg, #0e1a1c, #081012); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); transition:filter .6s ease; }
+  .rband::before { content:''; position:absolute; inset:0; background:radial-gradient(70% 120% at 50% 100%, rgba(var(--fluo-rgb),.18), transparent 70%); }   /* the backlight */
+  .rband::after { content:''; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.2) 2px 3px); }
+  .rscale { position:absolute; left:14px; right:14px; bottom:7px; height:10px; background:repeating-linear-gradient(90deg, rgba(var(--fluo-rgb),.45) 0 1px, transparent 1px 12px); mask:linear-gradient(transparent 40%, #000 40%); -webkit-mask:linear-gradient(transparent 40%, #000 40%); }
+  .rst { position:absolute; top:9px; transform:translateX(-50%); font:700 11px/1 var(--f-title); letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; color:rgba(var(--fluo-rgb),.36); transition:color .4s, text-shadow .4s; }
+  .rst.on { color:var(--fluo); text-shadow:0 0 6px rgba(var(--fluo-rgb),.85); }
+  .rneedle { position:absolute; top:22px; bottom:3px; left:var(--x, 3%); width:2px; margin-left:-1px; background:#ff5a3c; box-shadow:0 0 6px rgba(255,90,60,.8); transition:left .7s cubic-bezier(.4,1.3,.5,1); }   /* it sweeps when you tune */
+  .rband.off { filter:brightness(.35) saturate(.4); } .rband.tape { filter:brightness(.55) saturate(.6); }   /* off: dark; tape: the band rests */
+  .rrow { display:flex; align-items:center; gap:14px; min-width:0; white-space:nowrap; }
+  .rsong { flex:1; min-width:0; overflow:hidden; font:600 13px/1.25 var(--f-text); color:var(--text); }
+  .rsong em { font-style:normal; font-weight:500; color:var(--dim); }
+  .rsong > span { display:inline-block; }
+  .rsong.roll { mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); -webkit-mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+  .rsong.roll > span { padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }   /* rolls only when it doesn't fit */
+  #radioBox #radioFx { flex:none; max-width:42%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--amber); }
+  .rlamps { display:grid; grid-template-columns:repeat(6, 1fr); grid-template-rows:34px 30px; gap:4px; }
+  .rlamps span { grid-column:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.1em; text-transform:uppercase; color:#41464b; background:#0e1012; box-shadow:inset 0 0 0 1px #23272b; transition:background .3s, color .3s, box-shadow .3s; }
+  .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:span 3; }
+  .rlamps span.lit { color:#14110a; background:var(--amber); box-shadow:0 0 10px rgba(255,180,60,.45); }   /* the perk working */
+  .rlamps span.half { color:#8a6a2c; background:#2a2214; box-shadow:inset 0 0 0 1px #4a3a1c; }   /* Void FM away from the dark: its perk waits */
+  .rlamps span.white { color:#0f1112; background:#d9dde0; box-shadow:0 0 8px rgba(255,255,255,.25); }
+  .rlamps span kbd.k { min-width:18px !important; height:18px !important; }
   #radioBox.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
   /* The guide (2026-11-16): the radio's amber pulse, used for every first step, one at a time (guideNow()): the hint bar when the shift
@@ -83,22 +114,11 @@
   .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* named in the hint: look here */
   @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type, .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
   #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
-  #radioBox .ticker { position:relative; flex:1; min-width:0; overflow:hidden; white-space:nowrap; font:600 15px/1.3 var(--f-title); color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.4);
-                      padding:4px 0; background:#07090a; clip-path:var(--chamfer-s); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); }   /* the display's dark well, as in the design system (2026-11-24) */
-  #radioBox .ticker::after { content:''; position:absolute; inset:0; pointer-events:none;
-                      background:linear-gradient(90deg, #07090a, rgba(7,9,10,0) 5%, rgba(7,9,10,0) 95%, #07090a), repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.2) 2px 3px); }   /* soft ends, fine scanlines */
-  #radioBox .ticker > span { display:inline-block; padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
   #rover > .row:not(:first-child) { font-size:12px; line-height:1.5; }   /* the layer and blast rows, small */
   #rover > .row.later { margin-top:6px; } #rover > .row.later > span:first-child { font:400 12px var(--f-small); color:var(--dim); }
   #rover .row:nth-child(2) { margin-bottom:1px; }
   #layerName { font:600 13px var(--f-text); }
-  #radioFx { font-size:14px; color:var(--text); min-height:2.8em; }   /* the station's effect, across the full width: room for two lines, so the box never changes height */
-  #radioKeys { white-space:nowrap; flex:none; display:flex; align-items:center; gap:6px; }
-  #radioKeys kbd.k { min-width:20px; height:20px; padding:0 5px; font-size:10px; } #radioKeys kbd.k + span { margin-right:14px; } #radioKeys kbd.k + span:last-child { margin-right:0; }   /* the hint's keycap size; the groups apart */   /* the keyboard, visible: keycaps, small */
-  #radioBox > .row:last-child { flex-wrap:wrap; gap:4px 12px; }   /* beside the short lesson line, so the volume word never squeezes anything */
-  #radioBox .label { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:14px; }
-  #radioKind { margin-left:14px; }   /* room either side of the display (2026-11-24) */
   #legend { min-height:50px; padding:6px 10px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.12); clip-path:var(--chamfer-s); display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   /* The legend: each thing in the rock as it looks, a small plate in its role's colour. */
   #legend > span { display:inline-flex; align-items:center; gap:6px; }
@@ -310,12 +330,8 @@
   #log, #cardDetail, #ingredients, #recipes { background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 35%), #090a0c;
     box-shadow:inset 0 2px 6px rgba(0,0,0,.9), inset 0 0 0 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06); padding:8px 10px; }
   #cardDetail { border-top:0; }
-  #radioBox { clip-path:var(--chamfer); background:radial-gradient(120% 160% at 50% 130%, rgba(var(--fluo-rgb),.26), rgba(var(--fluo-rgb),.06) 55%, transparent 75%), linear-gradient(180deg, rgba(var(--fluo-rgb),.10), rgba(var(--fluo-rgb),.02)), #0b0e10; }   /* dark behind the glass: the plate around is silver */
-  #radioBox > svg.outline path:first-of-type { fill:rgba(var(--fluo-rgb),.05); stroke:rgba(var(--fluo-rgb),.5); }
-  #radioBox::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; clip-path:var(--chamfer);
-    background:linear-gradient(180deg, rgba(255,255,255,.14) 0, rgba(255,255,255,.04) 22%, transparent 45%); box-shadow:inset 0 0 26px rgba(var(--fluo-rgb),.18); }
-  #radioBox .ticker { text-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 18px rgba(var(--fluo-rgb),.45); }
-  #radioFx { text-shadow:0 0 8px rgba(var(--fluo-rgb),.3); }
+  #radioBox { clip-path:var(--chamfer); background:linear-gradient(180deg, #1c1f22, #131517); }   /* a dash panel: only the band and the lit lamps glow (2026-11-24) */
+  #radioBox > svg.outline path:first-of-type { fill:rgba(255,255,255,.015); }
   #radioBox { transition:filter 6s ease 2s; } body.drifting.wide #radioBox { filter:hue-rotate(62deg) saturate(1.1) brightness(.8); }   /* the Drift: a deep indigo-violet, in key with the nebulae (2026-11-17) */
   /* Control panel (2026-11-16, round 5). One housing for the whole deck: brushed gunmetal with screws, the columns set in it with seams;
      the panels are bays cut into it. A pseudo-element, so the Drift can fade it and leave the sky. */
@@ -460,10 +476,14 @@
       <svg id="gauge" width="480" height="230" viewBox="0 0 480 230" role="img" aria-label="Dosage scale and next drink"></svg>
     </div>
     <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
-    <div class="box" id="radioBox">
-      <div class="row" style="align-items:center"><span class="label">Radio</span><div class="ticker"><span id="radioTicker"></span></div><span class="small" id="radioKind">Tape</span></div>
-      <div class="small" id="radioFx"></div>                 <!-- the station's effect, the full width -->
-      <div class="row"><span class="small" id="radioLesson"></span><span class="small" id="radioKeys"></span></div>
+    <div class="box" id="radioBox">                         <!-- a tractor's dial and an aircraft's lamps (2026-11-24) -->
+      <div class="rknob" id="rVol"><i></i><span class="kl"><kbd class="k">V</kbd>Vol</span></div>
+      <div class="rmid">
+        <div class="rband off" id="rBand"><div class="rscale"></div><span class="rst" data-k="pump" style="left:17%">The Pump Zone</span><span class="rst" data-k="disco" style="left:50%">Disco Gravitas</span><span class="rst" data-k="void" style="left:83%">Void FM</span><div class="rneedle" id="rNeedle"></div></div>
+        <div class="rrow"><div class="rsong"><span id="radioTicker"></span></div><span id="radioFx"></span></div>
+      </div>
+      <div class="rlamps"><span data-l="dig">Dig+</span><span data-l="mix">Mix+</span><span data-l="nv">NV</span><span data-l="tape"><kbd class="k">T</kbd>Tape</span><span data-l="pwr">No pwr</span></div>
+      <div class="rknob" id="rTune"><i></i><span class="kl"><kbd class="k">R</kbd>Tune</span></div>
     </div>
     </div>
 </div>
@@ -644,7 +664,7 @@ const SONG = (folder, title, name) => ({ title, file: `audio/Radio/${folder}/${n
 const CANDY_SONG = SONG('The Pump Zone', 'Candygirl (Asylum Mix)', 'Candygirl (Asylum Mix)');
 CONFIG.jizz.song = SONG('Disco Gravitas', 'Latte acidico, doppio+', 'Disco Gravitas Latte acidico, doppio+');   // Doppio+ plays its own song while it lasts (2026-11-18)
 const RADIO = {
-  tape:  { name: 'Tape', kind: 'Tape', ident: ['Side A'], fx: 'The rover’s own tape, on its own battery. It plays when nothing else will.', songs: [
+  tape:  { name: 'Tape', kind: 'Tape', ident: ['Side A'], fx: 'Its own battery: plays when nothing else will.', songs: [
     SONG('Tape', 'Testarocca', 'Testarocca')] },
   pump:  { name: 'The Pump Zone', kind: 'Station', fx: 'Digging slightly faster.', ident: ['Hydrate. Dominate. Excavate.', 'No pain, no gain.'], songs: [
     SONG('The Pump Zone', 'Down in the Shaft', 'The Pump Zone Down In The Shaft'),
@@ -709,7 +729,7 @@ function radioKey(k) {
 function radioNow() {
   if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
   if (s && s.drift) return performance.now() - s.drift.t0 < CONFIG.drift.lead * 1000 ? { key: 'oddity', song: 0, hush: true, fadeMs: 3000 } : { key: 'oddity', song: 0, fadeMs: 300 };   // a quiet lead (the mining song fades over 3 s), then Stella's Show from the top
-  if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Only the tape deck runs, on its own battery. Recovery brings the radio back.' };   // a hard cut: the power is gone
+  if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Recovery brings it back.' };   // a hard cut: the power is gone
   if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Doppio+. Doubles, darling.' };   // once the song is unlocked
   if (s && candy()) return { key: 'pump', song: 0, track: CANDY_SONG, cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
@@ -2760,11 +2780,23 @@ function renderStatic() {
 // The radio plays on every screen, the start screen included: the station and song roll by like a banner.
 function radioHud() {
   const n = radioNow(), st = RADIO[n.key], song = songOf(n);
-  const banner = !sound.on ? 'Radio off · Press R to tune in' : song.ad ? song.title : song.jingle ? st.name : `${st.name}${st.ident ? ' · ' + st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : ''} · Now playing: ${song.title}`;   // a station slogan rolls by with the song, a different one each song
-  if ($('radioTicker').textContent !== banner) { const el = $('radioTicker'); el.textContent = banner; el.style.setProperty('--dur', Math.max(12, el.offsetWidth / 40).toFixed(1) + 's'); }   // a steady, unhurried pace: about 40 px a second, whatever the length (2026-11-18)
-  setText('radioKind', sound.on ? st.kind : 'Off'); { const cap = (k, t) => `<kbd class="k">${k}</kbd><span>${t}</span>`, vol = cap('V', `volume (${VOLUMES[radio.vol].name})`);
-    const keys = s && running && s.drill <= 0 ? `<span>No power: tape only</span>${vol}` : cap('R', 'next station') + cap('T', 'tape') + vol; const rk = $('radioKeys'); if (rk.dataset.k !== keys) { rk.dataset.k = keys; rk.innerHTML = keys; } } setText('radioFx', !sound.on ? 'Nothing on Korova Rock runs without a soundtrack.'
-    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'Stillness: the signal sounds far away, as if through rock.' : '') || (s && nightVision() ? 'Night vision: you see further in the dark.' : st.fx) + ''); setText('radioLesson', sound.on && s && !s.radioHops ? 'Each station does something.' : '');   // the radio lesson lives in the radio, until another station is tried
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const tag = st.ident ? st.ident[song.ident ?? st.songs.indexOf(song) % st.ident.length] : '';
+  const line = !sound.on ? 'Radio off · <em>Press R to tune in</em>' : song.ad ? esc(song.title) : song.jingle ? esc(st.name) : `♪ ${esc(song.title)}${tag ? ` <em>· ${esc(tag)}</em>` : ''}`;   // the song and its tagline; the band says the station (2026-11-24)
+  const tk = $('radioTicker'), box = tk.parentElement;
+  if (tk.dataset.h !== line) { tk.dataset.h = line; tk.innerHTML = line; box.classList.remove('roll'); if (tk.offsetWidth > box.clientWidth) { box.classList.add('roll'); tk.style.setProperty('--dur', Math.max(10, tk.offsetWidth / 40).toFixed(1) + 's'); } }   // rolls only if it doesn't fit, about 40 px a second
+  const on = sound.on ? n.key : 'off', noPower = !!(s && running && s.drill <= 0);
+  const band = $('rBand'), at = { pump: 17, disco: 50, void: 83, oddity: 99, off: 3 }, k = on === 'tape' ? radio.last : on;
+  band.classList.toggle('off', on === 'off'); band.classList.toggle('tape', on === 'tape');
+  band.style.setProperty('--x', (at[k] ?? 3) + '%'); $('rNeedle').style.left = (at[k] ?? 3) + '%';
+  band.querySelectorAll('.rst').forEach(e => e.classList.toggle('on', e.dataset.k === on));
+  const lamp = (l, cls) => { const e = document.querySelector(`.rlamps [data-l="${l}"]`); for (const c of ['lit', 'half', 'white']) e.classList.toggle(c, c === cls); };
+  lamp('dig', on === 'pump' ? 'lit' : ''); lamp('mix', on === 'disco' ? 'lit' : ''); lamp('nv', on === 'void' ? (s && nightVision() ? 'lit' : 'half') : '');
+  lamp('tape', on === 'tape' ? 'white' : ''); lamp('pwr', noPower ? 'lit' : '');
+  $('rVol').style.setProperty('--a', [50, -20, -120][radio.vol] + 'deg'); $('rVol').title = 'Volume: ' + VOLUMES[radio.vol].name + ' (V)';
+  $('rTune').style.setProperty('--a', ({ pump: -55, disco: 0, void: 55, oddity: 120, tape: -120, off: -150 })[on] + 'deg');
+  setText('radioFx', !sound.on ? 'Nothing runs without a soundtrack.'
+    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : st.fx) + '');   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', guideNow() === 'radio');   // the drill is waiting: look here
 }
 
