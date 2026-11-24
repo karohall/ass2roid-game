@@ -242,7 +242,7 @@ h1, h2, h3, p { margin: 0; }
     <div class="t-meta" style="text-align:right">Chakra Petch · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
   </header>
 
-  <section class="sec"><h2>Colour<small>Steel does the structure. Concrete (the coldest greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Näsa blue means Näsa and nothing else.</small></h2>
+  <section class="sec"><h2>Colour<small>Steel does the structure. Concrete (the coldest greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Amber means attention: a warning, wear, the tutorial’s call, never “all is well”. Näsa blue means Näsa and nothing else.</small></h2>
     <div class="swatches" id="swatches"></div></section>
 
   <section class="sec"><h2>Type<small>Chakra Petch for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
@@ -260,7 +260,7 @@ h1, h2, h3, p { margin: 0; }
   <section class="sec"><h2>Space<small>Everything sits on a 4 px grid. Panels pad 16, rows breathe 8, groups part by 24.</small></h2>
     <div class="space" id="space"></div></section>
 
-  <section class="sec"><h2>Frame<small>The panel. A tab carries the title; the edge steps down beside it, like the moodboard frame. Corners cut top left and bottom right; a stripe detail sits on the lower ledge. The square before the title says the panel's state.</small></h2>
+  <section class="sec"><h2>Frame<small>The panel. A tab carries the title; the edge steps down beside it, like the moodboard frame. Corners cut top left and bottom right; a stripe detail sits on the lower ledge. The lamp before the title is lit while the shift runs, dark on the start screen and when paused. One header for every panel: the plate 10 px in from the frame’s corner, anything else (who keeps it, where it is, a button) on the right in small grey. A part that waits to be revealed is a ghost: its frame at 28%, the metal showing through.</small></h2>
     <div class="row">
       <div class="spec" style="width:300px"><div class="frame" data-stripes><div class="frame-head"><span class="t-label">Rover</span><span class="t-meta">KR-1</span></div>
         <p class="t-body-s" style="color:var(--steel)">A panel at rest: steel square, steel outline, panel fill.</p></div><span class="t-meta">default</span></div>
@@ -270,7 +270,7 @@ h1, h2, h3, p { margin: 0; }
         <p class="t-body-s" style="color:var(--steel)">Needs attention: the square becomes an amber triangle. Shape as well as colour, since green and amber look alike to many colour-blind players.</p></div><span class="t-meta">alert</span></div>
     </div></section>
 
-  <section class="sec"><h2>Controls<small>Outline by default. Fluo only for the one thing to do now. Shaking shows its progress along the bottom edge. Keys are keycaps, so the keyboard is always visible: one size everywhere, single keys square.</small></h2>
+  <section class="sec"><h2>Controls<small>Outline by default. Fluo only for the one thing to do now. Shaking shows its progress along the bottom edge. Keys are keycaps, so the keyboard is always visible: one dark cap everywhere, buttons and hints included, 20 px (24 px in the start screen’s key list), single keys square.</small></h2>
     <div style="display:flex;flex-direction:column;gap:var(--s5)">
       <div class="row">
         <div class="spec"><span class="btn"><span>Shake</span></span><span class="t-meta">default</span></div>
@@ -315,10 +315,10 @@ h1, h2, h3, p { margin: 0; }
       </div>
     </div></section>
 
-  <section class="sec"><h2>Hint<small>The one light surface, in concrete, under the mining window. Plain text, a touch over regular (560). Only the key to press is drawn, as a small dark keycap: the sentence reads first, the key still catches the eye. No forced line breaks, no orphans.</small></h2>
+  <section class="sec"><h2>Hint<small>The one light surface, in concrete, under the mining window. Plain text, a touch over regular (560). Only the key to press is drawn, as a small dark keycap: the sentence reads first, the key still catches the eye. Empty (start screen, paused), it waits as a ghost like any hidden panel. No forced line breaks, no orphans.</small></h2>
     <div class="row"><div class="hint" style="width:460px"><div class="t-micro">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: press <span class="key">B</span> to set a charge under you (15 drill samples).</p></div></div></section>
 
-  <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio is the only other thing that glows: glass in the fluo, its display a dark well that reads station · tagline · Now playing: song.</small></h2>
+  <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio is a tractor’s dial with an aircraft’s lamps (mockups/radio.html): a lit band with the stations as places and a red needle, VOL and TUNE knobs, the song and its tagline rolling under the band. Its lamps: white when on and well (DIG FASTER, MIX FASTER, NIGHT VISION, TAPE), outlined when armed (Night vision away from the dark), amber only for trouble (NO POWER). Only the band and lit lamps glow; the panel is the same dark as every other.</small></h2>
     <div class="row">
       <div class="frame live" style="width:428px"><div class="frame-head"><span class="t-label">Dosage</span><span class="t-meta" style="color:var(--fluo)">Next drink ×1.5</span></div>
         <div class="t-num-xl" style="margin-bottom:var(--s3)">MEH</div>
@@ -353,7 +353,7 @@ h1, h2, h3, p { margin: 0; }
   // Colour swatches, with contrast against the background where it matters.
   const C = [['Ink', '--ink', 'background'], ['Panel', '--panel', 'panels'], ['Raised', '--raised', 'tiles, hover'], ['Steel', '--steel', 'lines, labels, secondary text'],
              ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Concrete', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'], ['Spore', '--spore', 'Crack Spores'],
-             ['Amber', '--amber', 'wear, tip points'], ['Violet', '--violet', 'the secret menu'], ['Candy', '--candy', 'Candygirl'], ['Jizz', '--jizz', 'Jizz+'], ['Näsa', '--nasa', 'Näsa only']];
+             ['Amber', '--amber', 'attention: warnings, wear, calls'], ['Violet', '--violet', 'the secret menu'], ['Candy', '--candy', 'Candygirl'], ['Jizz', '--jizz', 'Jizz+'], ['Näsa', '--nasa', 'Näsa only']];
   const css = getComputedStyle(document.documentElement), hex = v => css.getPropertyValue(v).trim();
   const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
   const ratio = (a, b) => { const x = lum(a), y = lum(b); return ((Math.max(x, y) + .05) / (Math.min(x, y) + .05)).toFixed(1); };

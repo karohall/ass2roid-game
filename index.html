@@ -82,7 +82,7 @@
   .rknob > i::before { content:''; position:absolute; inset:4px; border-radius:50%; background:repeating-conic-gradient(#2c3034 0 6deg, #1e2124 6deg 12deg); mask:radial-gradient(circle, transparent 60%, #000 62%); -webkit-mask:radial-gradient(circle, transparent 60%, #000 62%); }   /* knurled, for gloves */
   .rknob > i::after { content:''; position:absolute; left:50%; top:7px; width:3px; height:12px; margin-left:-1.5px; background:var(--text); border-radius:2px; transform-origin:50% 18px; transform:rotate(var(--a, 0deg)); transition:transform .5s cubic-bezier(.3,1.4,.5,1); }
   .rknob .kl { display:flex; gap:5px; align-items:center; font:600 11px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
-  #radioBox kbd.k { min-width:20px; height:20px; padding:0 5px; font-size:10px; }
+
   .rmid { display:grid; grid-template-rows:44px auto; gap:7px; min-width:0; }
   .rband { position:relative; overflow:hidden; clip-path:var(--chamfer-s); background:linear-gradient(180deg, #0e1a1c, #081012); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); transition:filter .6s ease; }
   .rband::before { content:''; position:absolute; inset:0; background:radial-gradient(70% 120% at 50% 100%, rgba(var(--fluo-rgb),.18), transparent 70%); }   /* the backlight */
@@ -108,8 +108,8 @@
   .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:#0e1012; box-shadow:inset 0 0 0 1px #23272b; transition:background .3s, color .3s, box-shadow .3s; }
   .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
   .rlamps span[data-l="tape"] { grid-row:1 / 4; } .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
-  .rlamps span.lit { color:#14110a; background:var(--amber); box-shadow:0 0 10px rgba(255,180,60,.45); }   /* the perk working */
-  .rlamps span.half { color:var(--amber); background:#0e1012; box-shadow:inset 0 0 0 1px rgba(255,180,60,.6); }   /* armed: Void FM away from the dark, its perk waiting (an outline: lit is filled) */
+  .rlamps span.warn { color:#14110a; background:var(--amber); box-shadow:0 0 10px rgba(255,180,60,.45); }   /* trouble: amber means attention only (2026-11-24) */
+  .rlamps span.half { color:#d9dde0; background:#0e1012; box-shadow:inset 0 0 0 1px rgba(217,221,224,.55); }   /* armed: Void FM away from the dark, its perk waiting (an outline: lit is filled) */
   .rlamps span.white { color:#0f1112; background:#d9dde0; box-shadow:0 0 8px rgba(255,255,255,.25); }
   .rlamps span kbd.k { min-width:18px !important; height:18px !important; }
   #radioBox.call > svg.outline path:first-of-type, #milk.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* a panel calls: the radio, or Milk+ for the first Strength (2026-11-24) */   /* the drill needs music: the radio calls softly */
@@ -123,7 +123,7 @@
   @keyframes rowguide { 50% { outline-color:rgba(255,180,60,1); } }
   .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* named in the hint: look here */
   @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type, #milk.call > svg.outline path:first-of-type, .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
-  #pauseBtn { width:auto; flex:none; height:24px; padding:0 9px; font-size:11px; }   /* in the Rover panel's heading */
+  #pauseBtn { width:auto; flex:none; height:26px; padding:0 4px 0 9px; font-size:11px; display:inline-flex; align-items:center; gap:7px; }   /* in the Rover panel's heading */
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
   #rover > .row:not(:first-child) { font-size:12px; line-height:1.5; }   /* the layer and blast rows, small */
   #rover > .row.later { margin-top:6px; } #rover > .row.later > span:first-child { font:400 12px var(--f-small); color:var(--dim); }
@@ -270,10 +270,10 @@
   .go::before { background:var(--fluo) !important; }
   /* Begin shift: amber, the guide's colour: the very first step, glowing in the guide's rhythm (2026-11-17). The other screens' ways on stay fluo. */
   #go.go { background:var(--amber) !important; filter:none; }
-  #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:var(--amber) !important; } #go.go kbd { color:var(--amber); }
+  #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:var(--amber) !important; } 
   @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
   @media (prefers-reduced-motion: reduce) { #goGlow { animation:none; filter:drop-shadow(0 0 8px rgba(255,180,60,.6)); } }
-  .go kbd, .btn2 kbd { font:700 11px/1 var(--f-small); letter-spacing:.08em; padding:5px 6px; background:rgba(11,12,14,.85); color:var(--fluo); }
+
   .btn2 { display:inline-flex; align-items:center; gap:10px; height:32px; padding:0 10px 0 14px; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--text); box-shadow:inset 0 0 0 1px var(--line-2); clip-path:var(--chamfer-s); }
   .btn2 kbd { background:var(--raised); color:var(--text); }
   .go kbd.ar { font:700 17px/1 var(--f-text); padding:2px 7px 3px; }
@@ -291,7 +291,8 @@
   .lamprow ol { margin:0; padding:0; list-style:none; counter-reset:s; } .lamprow li { counter-increment:s; } .lamprow li::before { content:counter(s) '. '; color:var(--faint); }
   .keys { display:grid; grid-template-columns:auto auto; gap:8px 12px; align-items:center; font:400 12px var(--f-text); color:var(--dim); text-align:left; }
   .keys span:nth-child(odd) { justify-self:end; display:flex; gap:4px; }
-  kbd.k { display:inline-grid; place-items:center; box-sizing:border-box; min-width:24px; height:24px; padding:0 7px; font:700 11px/1 var(--f-title); letter-spacing:.04em; color:var(--text); background:var(--raised); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 -2px 0 rgba(0,0,0,.45); }
+  kbd.k, .go kbd, .btn2 kbd, #pauseBtn kbd { display:inline-grid; place-items:center; box-sizing:border-box; min-width:20px; height:20px; padding:0 5px; font:700 10px/1 var(--f-title); letter-spacing:.04em; color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }   /* one keycap everywhere (2026-11-24) */
+  #start .keys kbd.k { min-width:24px; height:24px; padding:0 7px; font-size:11px; }   /* the start screen's key list: the large size */
   /* Rows: key and value, numbers in Chakra Petch. */
   .kv { width:100%; max-width:320px; margin:0; }
   .kv div { display:grid; grid-template-columns:1fr auto; align-items:baseline; padding:6px 0; border-top:1px solid var(--line); text-align:left; }
@@ -327,7 +328,7 @@
   #artBig .head { display:flex; align-items:center; justify-content:space-between; height:40px; margin-bottom:16px; }
   #artBig .head h3 { margin:0; }
   #artBig .close { display:inline-flex; align-items:center; gap:8px; padding-top:8px; font:500 11px var(--f-small); color:var(--dim); }
-  #artBig .close kbd.k { font:600 11px/1 var(--f-small); letter-spacing:.08em; }
+
   #artBig .art { display:grid; grid-template-columns:minmax(0, 640px) minmax(220px, 1fr); gap:28px; align-items:start; }
   #artBig img { width:100%; aspect-ratio:4 / 3; object-fit:cover; display:block; clip-path:var(--chamfer); }
   #artBig .no { font:700 12px/1 var(--f-title); color:var(--faint); letter-spacing:.1em; }
@@ -390,6 +391,7 @@
   .dbar.broken::after { content:'Pickaxe'; position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
   /* Indicator lamps: a lens each, its name engraved beside it. Off is a dark lens; lit means on; blinking means look. */
   .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
+  #rover .lamps:not(:has(.ind.shown)) { display:none; }   /* the lamp strip waits for its first lamp: no empty strip (2026-11-24) */
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607, inset 0 -1px 1px rgba(0,0,0,.6); }
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 35% 30%, #e6fdff, var(--fluo) 60%); box-shadow:0 0 0 1px #050607, 0 0 7px var(--fluo); }
@@ -457,15 +459,15 @@
 
   <div id="panel2" class="panel">
     <div class="box later" data-reveal="dig" id="rover">
-      <div class="phead"><h3>Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button></div>
-      <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
+      <div class="phead"><h3>Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause <kbd>Space</kbd></button></div>
+      <div class="row" style="display:none"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>   <!-- where you are: the shaft cam's header (2026-11-24) -->
       <div class="inst"><span class="eng">Depth</span><span class="win"><span id="depth">0 m</span></span></div>
       <div class="inst"><span class="eng">Drill samples</span><span class="win"><span id="samples">0</span></span></div>
       <div class="inst" id="powerRow"><span class="eng">Digging power</span><span class="pips" id="pips"></span><span class="val" id="power">1</span></div>
       <div class="inst" id="drillRow"><span class="eng">Drill</span><span class="dbar" id="dbar"></span><span class="val" id="drill">100%</span></div>
       <div class="row later" data-reveal="blast"><span>B: blast the rock below</span><span id="chargeCost" class="small"></span></div>
       <div class="lamps">                                   <!-- indicator lamps: what is on, at a glance -->
-        <span class="ind" id="lampRadio"><i></i>Radio</span><span class="ind later" data-reveal="drill" id="lampDrill"><i></i>Drill</span>
+        <span class="ind later" data-reveal="drill" id="lampDrill"><i></i>Drill</span>
         <span class="ind later" data-reveal="recipe_focus" id="lampFocus"><i></i>Focus</span><span class="ind later" data-reveal="blast" id="lampCharge"><i></i>Charge</span>
       </div>
     </div>
@@ -2768,7 +2770,7 @@ function hint() {
 function renderStatic() {
   const L = layer(), crater = L.craters ? L.craters.find(c => c.id === s.crater) : null;
   $('layerName').textContent = `${s.layer + 1}. ${L.name}`;
-  $('camMeta').textContent = `KR-1 · ${s.layer + 1} ${L.name}`;   /* the shaft cam's tab: site and layer */
+  $('camMeta').textContent = `KR-1 · ${crater ? crater.label + ' · ' : ''}${s.layer + 1} ${L.name}`;   // where you are, in one place: site, crater, layer   /* the shaft cam's tab: site and layer */
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
   $('recipes').innerHTML = VARIANTS.map((v, i) => `${i ? `
     <div class="ph" id="ph_${v}">[${i + 1}] ? ? ?</div>` : ''}
@@ -2821,9 +2823,9 @@ function radioHud() {
   band.classList.toggle('off', on === 'off'); band.classList.toggle('tape', on === 'tape');
   band.style.setProperty('--x', (at[k] ?? 3) + '%'); $('rNeedle').style.left = (at[k] ?? 3) + '%';
   band.querySelectorAll('.rst').forEach(e => e.classList.toggle('on', e.dataset.k === on));
-  const lamp = (l, cls) => { const e = document.querySelector(`.rlamps [data-l="${l}"]`); for (const c of ['lit', 'half', 'white']) e.classList.toggle(c, c === cls); };
-  lamp('dig', on === 'pump' ? 'lit' : ''); lamp('mix', on === 'disco' ? 'lit' : ''); lamp('nv', on === 'void' ? (s && nightVision() ? 'lit' : 'half') : '');
-  lamp('tape', on === 'tape' ? 'white' : ''); lamp('pwr', noPower ? 'lit' : '');
+  const lamp = (l, cls) => { const e = document.querySelector(`.rlamps [data-l="${l}"]`); for (const c of ['warn', 'half', 'white']) e.classList.toggle(c, c === cls); };
+  lamp('dig', on === 'pump' ? 'white' : ''); lamp('mix', on === 'disco' ? 'white' : ''); lamp('nv', on === 'void' ? (s && nightVision() ? 'white' : 'half') : '');   // working: white, like the tape; armed: an outline
+  lamp('tape', on === 'tape' ? 'white' : ''); lamp('pwr', noPower ? 'warn' : '');
   $('rVol').style.setProperty('--a', [50, -20, -120][radio.vol] + 'deg'); $('rVol').title = 'Volume: ' + VOLUMES[radio.vol].name + ' (V)';
   $('rTune').style.setProperty('--a', ({ pump: -55, disco: 0, void: 55, oddity: 120, tape: -120, off: -150 })[on] + 'deg');
   setText('radioFx', !sound.on ? 'Nothing runs without a soundtrack.'
@@ -2953,7 +2955,6 @@ function hud() {
   setText('drill', onPick() ? '0%' : Math.round(s.drill) + '%');
   // Indicator lamps: lit is on, amber is a warning, blinking means look now.
   const lamp = (id, st) => { const cl = $(id).classList; for (const k of ['on', 'warn', 'blink']) cl.toggle(k, st.split(' ').includes(k)); };
-  lamp('lampRadio', running && !musicOn() ? 'warn blink' : musicOn() ? 'on' : '');
   lamp('lampDrill', onPick() ? 'warn blink' : worn ? 'warn' : '');
   lamp('lampFocus', active('focus') ? 'on' : '');
   lamp('lampCharge', s.charges.length ? 'warn blink' : s.layer >= 1 && s.samples >= CONFIG.charge.cost ? 'on' : '');
