@@ -2790,7 +2790,7 @@ function renderStatic() {
   // Rows that were already visible come back at once when the menu is rebuilt for a new layer.
   document.querySelectorAll('#recipes [data-reveal]').forEach(el => { if (s && REVEAL[el.dataset.reveal]()) el.classList.add('shown', 'settled'); });
   $('ingredients').innerHTML = Object.keys(ING).map(k => `<div class="row"><span id="in_${k}"></span><span id="iv_${k}">0</span></div>`).join('');
-  placeMeter();
+  if (fittedFor) fit(); else placeMeter();   // the mine and the page's scale together, never one without the other (2026-11-24)
 }
 
 // Tuning: a short burst of static under the music and the band breaking up while the needle sweeps (2026-11-24).
@@ -3158,6 +3158,7 @@ genLayer();
 renderStatic(); renderGuide();
 requestAnimationFrame(loop);
 setTimeout(() => { fittedFor = Math.round(innerWidth / 4) + 'x' + Math.round(innerHeight / 4); fit(); }, 0);   // once, after the first layout
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (fittedFor) fit(); });   // and again once the fonts are in: a stand-in font measures differently
 // Take the keyboard at once, also inside a frame (itch.io): Enter begins the shift without a click first.
 window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
