@@ -957,6 +957,7 @@ document.documentElement.style.setProperty('--viewH', cv.height + 'px');   // th
 const $ = id => document.getElementById(id);
 const now = () => performance.now();
 
+let pv = null;   // where the prospector is drawn: it glides to p (2026-11-24)
 let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastFrame = 0, cam = 0, particles = [], running = false, selCard = null;
 
 const layer = () => CONFIG.layers[s.layer];
@@ -2508,8 +2509,9 @@ function update(dt) {
   // Queued tap, then held digging.
   if (pendingTap && t - lastAct >= CONFIG.dig.tapMs * slowFactor()) { act(...pendingTap); pendingTap = null; lastAct = t; }
   else if (held && t - lastAct > CONFIG.dig.holdMs * slowFactor()) { act(held[0], held[1]); lastAct = t; }
-  // Smooth camera.
-  cam += (Math.max(0, Math.min(H - VIEW, p.y - 4)) - cam) * .15;
+  // The prospector glides to its tile; the camera follows the glide, so the rock scrolls under it and nothing bounces. Time-based: the same on any screen.
+  { const k = 1 - Math.exp(-dt / 40); if (!pv || Math.abs(pv.x - p.x) + Math.abs(pv.y - p.y) > 3) pv = { x: p.x, y: p.y }; else { pv.x += (p.x - pv.x) * k; pv.y += (p.y - pv.y) * k; if (Math.abs(p.x - pv.x) < .002) pv.x = p.x; if (Math.abs(p.y - pv.y) < .002) pv.y = p.y; } }
+  cam = Math.max(0, Math.min(H - VIEW, pv.y - 4));
   particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .25; q.life--; });
   particles = particles.filter(q => q.life > 0);
   if (p.y >= H - 1) breakthrough();
@@ -2569,12 +2571,12 @@ function draw() {
     }
   });
   // Prospector (jitters while shaking, grows with Strength, a progress bar overhead while shaking).
-  const jx = shaking() ? Math.round(Math.sin(now() / 25) * 3) : 0;
-  if (!L.dark) drawProspector(ctx, p.x * T + jx, p.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick() });
+  const jx = shaking() ? Math.round(Math.sin(now() / 25) * 3) : 0, V = pv || p;   // V: where the prospector is drawn
+  if (!L.dark) drawProspector(ctx, V.x * T + jx, V.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick() });
   if (shaking()) {
     const k = 1 - (s.shake.until - now()) / (s.shake.ms || CONFIG.mix.shakeMs);
-    ctx.fillStyle = COL.ink; ctx.fillRect(p.x * T + 2, p.y * T - 8, T - 4, 6);
-    ctx.fillStyle = COL.concrete; ctx.fillRect(p.x * T + 3, p.y * T - 7, (T - 6) * k, 4);
+    ctx.fillStyle = COL.ink; ctx.fillRect(V.x * T + 2, V.y * T - 8, T - 4, 6);
+    ctx.fillStyle = COL.concrete; ctx.fillRect(V.x * T + 3, V.y * T - 7, (T - 6) * k, 4);
   }
   for (const ch of s.charges) {                              // a blasting charge: on its plate, the fuse burning down to an amber spark
     const left = Math.max(0, ch.at - now()) / CONFIG.charge.fuseMs, X = ch.x * T, Y = ch.y * T;
@@ -2584,7 +2586,7 @@ function draw() {
   }
   ctx.fillStyle = COL.steel;
   particles.forEach(q => ctx.fillRect(q.x, q.y, 3, 3));
-  if (L.dark) { drawDark(L, y0, y1); drawProspector(ctx, p.x * T + jx, p.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick(), dark: true }); }
+  if (L.dark) { drawDark(L, y0, y1); drawProspector(ctx, V.x * T + jx, V.y * T, { str: active('strength') ? s.strStacks : 0, frenzy: frenzy(), pick: onPick(), dark: true }); }
   ctx.restore();
   drawMap(); drawGauge();
 }
@@ -2594,7 +2596,7 @@ const nightVision = () => !!layer().dark && musicOn() && radioNow().key === 'voi
 
 // The Crack: only a little light around the prospector (and its headlamp). The Crack Spores glow cyan, an open seam fluo.
 function drawDark(L, y0, y1) {
-  const cx = p.x * T + T / 2, cy = p.y * T + T / 2;
+  const V = pv || p, cx = V.x * T + T / 2, cy = V.y * T + T / 2;   // the light moves with the drawn prospector
   const k = s.sight = (s.sight || 0) + ((nightVision() ? 1 : 0) - (s.sight || 0)) * .06;   // 0 normal, 1 night vision
   // Candygirl in The Crack: an underground rave. The dark lifts most of the way, and pastel lights sweep the cave, slowly
   // (no strobes: safe for photosensitive players; with "reduce motion" the lights stand still). It fades in and out with the drink.
