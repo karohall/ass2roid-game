@@ -202,7 +202,12 @@
   #hint:empty { visibility:hidden; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
-  #hint .em { font-weight:800; }   /* the body is 600 now (2026-11-17): emphasis a step heavier still */
+  #hint .em { font-weight:800; }
+  body.hintCap #hint { font-weight:500; }   /* the lighter hint (2026-11-24, on trial): plain text, only the key drawn */
+  body.hintCap #hint .em { font-weight:700; }
+  #hint kbd.hk { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; margin:0 1px; vertical-align:1px; font:700 11px/1 var(--f-title); color:var(--bg);
+    background:linear-gradient(180deg, #fbfbf9, #e4e5e2); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 0 0 1px rgba(20,22,24,.38), inset 0 -2px 0 rgba(20,22,24,.3); }   /* the start screen's keycap, in the bar's light */
+  body.hintDark #hint kbd.hk { color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }   /* or dark, as on the start screen */   /* the body is 600 now (2026-11-17): emphasis a step heavier still */
   #hint b { font-weight:700; padding:0 4px; background:var(--bg); color:var(--fluo); white-space:nowrap; }   /* bold says what matters: the key to press */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .cardrow { display:flex; gap:10px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
@@ -673,7 +678,8 @@ function between(key) {   // what plays before the next song: a Näsa ad, a jing
 }
 // The radio lives outside the shift: it is tuned from the start screen, and it keeps playing between games.
 // It starts on the Pump Zone, so Begin shift has music. The tape belongs to the broken drill (and to T).
-const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, jingle: {}, vol: 0, unlocked: {} };   // unlocked: hidden songs you've earned; the radio keeps them between shifts
+const radio = { on: 'pump', last: 'pump', since: 0, clock: 0, idx: {}, rare: {}, jingle: {}, vol: 1, unlocked: {} };   /* vol 1: soft by default (2026-11-24) */
+radio.on = radio.last = STATIONS[Math.floor(Math.random() * STATIONS.length)];   /* a random station to start on (2026-11-24) */   // unlocked: hidden songs you've earned; the radio keeps them between shifts
 function radioKey(k) {
   if (s && s.drift) return;                                // Stella's Show plays to the end
   if (!sound.on) {                                          // the first R turns the radio on, on the station it is set to
@@ -859,10 +865,9 @@ function loadSong(file) {
 function soundTick(dt) {
   const n = radioNow();
   if (sound.on && n.key !== sound.key) {                                      // a different station: join it mid-broadcast
-    const first = !sound.key;                                                  // the radio's first song starts from the top
     sound.key = n.key;
     if (n.song === undefined) { radio.idx[n.key] = Math.floor(Math.random() * RADIO[n.key].songs.length); pickRare(n.key); }
-    sound.randomStart = n.song === undefined && !first;
+    sound.randomStart = n.song === undefined;                                 /* the first song too joins partway in (2026-11-24): no shift opens the same way */
   }
   const want = sound.on ? songOf(n).file || '' : '';
   const menuK = VOLUMES[radio.vol].k * ($('menu').classList.contains('hidden') ? 1 : CONFIG.radio.duck);   // ducks behind pause, loading and end screens
@@ -2766,6 +2771,8 @@ function keyState(b, st) {
 }
 function setText(id, v) { const el = $(id); if (el.textContent !== String(v)) el.textContent = v; }
 const lastHTML = {};
+function hintStyle(k) { document.body.classList.toggle('hintCap', k === 'cap' || k === 'dark'); document.body.classList.toggle('hintDark', k === 'dark'); const h = $('hint'); if (h.textContent) h.innerHTML = hintHTML(h.textContent); }
+if (/[?&]hintcap\b/.test(location.search)) document.addEventListener('DOMContentLoaded', () => hintStyle('cap'));
 const EM = '\u0001', EM_END = '\u0002', em = t => EM + t + EM_END;   // emphasis markers: invisible, so the typewriter types through them
 const plain = m => m.replace(/[\u0001\u0002]/g, '');
 // Hint text to HTML: emphasised words get a heavier weight, even while half typed.
@@ -2773,7 +2780,7 @@ function hintHTML(t) {
   const esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const open = (esc.split(EM).length - 1) - (esc.split(EM_END).length - 1);
   return esc.replaceAll(EM, '<span class="em">').replaceAll(EM_END, '</span>')
-    .replace(/([Pp]ress (?:\d|[A-Z](?![a-z])|↑|↓|←|→|Space|Enter)(?: again)?)/g, '<b>$1</b>')   // what to do, in bold
+    .replace(/([Pp]ress) (\d|[A-Z](?![a-z])|↑|↓|←|→|Space|Enter)((?: again)?)/g, (m, p, k, a) => document.body.classList.contains('hintCap') ? `${p} <kbd class="hk">${k}</kbd>${a}` : `<b>${m}</b>`)   /* what to do: in bold (chip), or only the key as a keycap (cap) */
     + (open > 0 ? '</span>' : '');
 }
 // A discovery's tag: what kind of find, in its role's colour. The text after the tag starts with a capital.
