@@ -40,11 +40,11 @@
   #gauge { display:block; }
   #dosage .dzplate { position:absolute; left:10px; top:8px; z-index:1; display:flex; align-items:center; gap:8px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase;
     color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
-  #camTab { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 7px; }
+  #camTab { margin:0 0 7px; }
   #camTab h3 { display:flex; align-items:center; gap:8px; margin:0 0 0 -2px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#aab1b8;
     background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
   #camTab h3::before { content:''; width:7px; height:7px; flex:none; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
-  #camMeta { font:500 11px/1 var(--f-small); letter-spacing:.04em; color:#868d93; white-space:nowrap; }
+
   #dosage .dzplate::before { content:''; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
   #gauge .needle.hot { animation:throb .4s ease-in-out infinite alternate; }   /* reaches under the Milk+ column, which ends above it */
   #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
@@ -71,7 +71,7 @@
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
   #radioBox { flex:1; min-width:0; padding:8px 12px; display:grid; grid-template-columns:72px minmax(0,1fr) 236px 62px; grid-template-rows:20px 1fr; gap:4px 14px; align-items:center; }
-  #radioBox > h3 { grid-column:1; grid-row:1; align-self:start; margin:0 0 0 -2px; }   /* its name plate, like every panel's: the frame draws its tab */
+  #radioBox > h3 { grid-column:1; grid-row:1; align-self:start; margin:2px 0 0 -2px; }   /* 10 px down, like every plate */   /* its name plate, like every panel's: the frame draws its tab */
   #rVol { grid-column:1; grid-row:2; gap:3px; } #rVol > i { width:36px; height:36px; } #rVol > i::before { inset:3px; } #rVol > i::after { top:5px; height:9px; transform-origin:50% 13px; }   /* the small volume knob */
   #rVol kbd.k { min-width:18px; height:18px; }
   .rmid { grid-column:2; grid-row:1 / 3; } .rlamps { grid-column:3; grid-row:1 / 3; } #rTune { grid-column:4; grid-row:1 / 3; }   /* the big tuning knob */   /* long and slim: knob, dial, lamps, knob */
@@ -149,7 +149,9 @@
   #mineBox > .overlay { position:absolute; z-index:2; } #mineBox > #nasa { position:absolute; z-index:3; }   /* on the picture, not in the flow (2026-11-24) */
   .box h3 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--text); }
   .box h3::before { content:''; width:6px; height:6px; flex:none; background:var(--dim); }
-  .box h3 .org { font:500 11px/1 var(--f-small); letter-spacing:.04em; text-transform:none; color:var(--faint); }   /* who keeps it, quietly */
+  .phead { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin:0 0 6px; }   /* every panel's header: the plate left, anything else right (2026-11-24) */
+  .phead > h3 { margin:0 0 0 -2px !important; }
+  .pmeta { font:500 11px/1 var(--f-small); letter-spacing:.04em; color:#868d93; white-space:nowrap; padding-top:4px; }   /* beside the plate, quietly: who keeps it, where it is */
   #milk { --frame:rgba(170,177,184,.8); --edge-hi:rgba(236,240,244,.95); }                             /* the shakes stand out */
   body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }   /* the plates' lamps: all lit while the shift runs (the user, 2026-11-24) */
   .row { display:flex; justify-content:space-between; gap:8px; }
@@ -367,7 +369,6 @@
             text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
   .box h3::before { width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }
   body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 0 1px #08090a, 0 0 6px var(--fluo); }
-  .box h3 .org { text-shadow:none; color:#6f767c; }
   #rover > .row:first-child h3 { margin:0; }
   /* The rover's instruments: an engraved name, then the instrument, then its value. */
   .inst { display:grid; grid-template-columns:104px 1fr auto; align-items:center; gap:8px; min-height:24px; margin-top:2px; }
@@ -424,7 +425,7 @@
 <div id="wrap">
   <div id="stage">
     <div class="box" id="mineBox">                          <!-- the shaft cam, framed like every panel (2026-11-24) -->
-    <div id="camTab"><h3>Shaft cam 1</h3><span id="camMeta">KR-1</span></div>   <!-- the mining window's name plate, as in the mockups -->
+    <div id="camTab" class="phead"><h3>Shaft cam 1</h3><span class="pmeta" id="camMeta">KR-1</span></div>   <!-- the mining window's name plate, as in the mockups -->
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
     <div id="start" class="overlay">
       <div class="wa"><div class="w">ASS<i>2</i>ROID</div><div class="sub"><span>Ex Profundo</span></div></div>
@@ -458,7 +459,7 @@
 
   <div id="panel2" class="panel">
     <div class="box later" data-reveal="dig" id="rover">
-      <div class="row" style="align-items:center"><h3 style="margin:0">Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button></div>
+      <div class="phead"><h3>Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause (Space)</button></div>
       <div class="row"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>
       <div class="inst"><span class="eng">Depth</span><span class="win"><span id="depth">0 m</span></span></div>
       <div class="inst"><span class="eng">Drill samples</span><span class="win"><span id="samples">0</span></span></div>
@@ -472,7 +473,7 @@
     </div>
 
     <div class="box later" data-reveal="guide">
-      <h3>Field Guide <span class="org">Kroeber Foundation</span></h3>
+      <div class="phead"><h3>Field Guide</h3><span class="pmeta">Kroeber Foundation</span></div>
       <div id="guide"></div>
       <div id="cardDetail" class="small"></div>
     </div>
