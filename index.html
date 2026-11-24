@@ -152,7 +152,6 @@
   .phead { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin:0 0 6px; }   /* every panel's header: the plate left, anything else right (2026-11-24) */
   .phead > h3 { margin:0 0 0 -2px !important; }
   .pmeta { font:500 11px/1 var(--f-small); letter-spacing:.04em; color:#868d93; white-space:nowrap; padding-top:4px; }   /* beside the plate, quietly: who keeps it, where it is */
-  #milk { --frame:rgba(170,177,184,.8); --edge-hi:rgba(236,240,244,.95); }                             /* the shakes stand out */
   body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }   /* the plates' lamps: all lit while the shift runs (the user, 2026-11-24) */
   .row { display:flex; justify-content:space-between; gap:8px; }
   .bar { height:4px; background:var(--line); margin:4px 0 3px; }
@@ -235,7 +234,6 @@
   #dosage.later:not(.shown)::before { content:''; position:absolute; inset:0; visibility:visible; background:rgba(8,9,11,.26); box-shadow:inset 0 0 0 1px rgba(150,157,164,.12); }
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
-  body.intro #milk > svg.outline { opacity:.28; }                     /* at first, only the shake button and the ghost of its frame: the frame lights with the first drink */
   #hint:empty { visibility:hidden; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
