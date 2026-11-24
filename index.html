@@ -234,7 +234,8 @@
   #dosage.later:not(.shown)::before { content:''; position:absolute; inset:0; visibility:visible; background:rgba(8,9,11,.26); box-shadow:inset 0 0 0 1px rgba(150,157,164,.12); }
   .later.shown:not(.settled) { animation:fadein 1.2s ease; }          /* fade in once; not again when a new layer rebuilds the menu */
   @keyframes fadein { from { opacity:0; } to { opacity:1; } }
-  #hint:empty { visibility:hidden; }
+  #hint:empty { background:transparent; box-shadow:inset 0 0 0 1px rgba(201,204,201,.22); }   /* empty (start screen, paused): a ghost of the bar, like a hidden panel (2026-11-24) */
+  #hint { transition:background-color .5s ease, box-shadow .5s ease; }
   #confetti { position:absolute; pointer-events:none; z-index:5; }
   #confetti i { position:absolute; display:block; }
   #hint { font-weight:560; }   /* the hint is plain text, only the key drawn (the user chose it, 2026-11-24); a touch heavier than 500 (Inter is variable) */
