@@ -103,7 +103,8 @@
   .rsong { mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); -webkit-mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   .rsong.roll { mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); -webkit-mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   .rsong.roll > span { padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }   /* rolls only when it doesn't fit */
-  #radioBox #radioFx { flex:none; max-width:42%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--amber); }
+  #radioBox #radioFx { flex:none; max-width:42%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--dim); }   /* quiet grey: notes only */
+  #radioBox #radioFx.warn { color:var(--amber); }
   .rlamps { display:grid; grid-template-columns:136px 1fr; grid-template-rows:repeat(6, 1fr); height:68px; gap:3px 4px; }   /* the station's perk on the left, the radio's state on the right */
   .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:#0e1012; box-shadow:inset 0 0 0 1px #23272b; transition:background .3s, color .3s, box-shadow .3s; }
   .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
@@ -292,7 +293,7 @@
   .keys { display:grid; grid-template-columns:auto auto; gap:8px 12px; align-items:center; font:400 12px var(--f-text); color:var(--dim); text-align:left; }
   .keys span:nth-child(odd) { justify-self:end; display:flex; gap:4px; }
   kbd.k, .go kbd, .btn2 kbd, #pauseBtn kbd { display:inline-grid; place-items:center; box-sizing:border-box; min-width:20px; height:20px; padding:0 5px; font:700 10px/1 var(--f-title); letter-spacing:.04em; color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }   /* one keycap everywhere (2026-11-24) */
-  .go kbd { display:inline; min-width:0; height:auto; padding:0 0 0 12px; margin-left:2px; color:inherit; opacity:.6; background:none; box-shadow:none; clip-path:none; border-left:1px solid rgba(11,12,14,.35); font:600 11px/1 var(--f-small); letter-spacing:.14em; }   /* on a bright button the key is a quiet word after a divider: BEGIN SHIFT | ENTER (2026-11-24) */
+  .gokey { margin-top:-12px; font:500 12px/1 var(--f-small); letter-spacing:.04em; color:var(--dim); }   /* a bright button carries no key: it is taught just under it (2026-11-24) */
   #start .keys kbd.k { min-width:24px; height:24px; padding:0 7px; font-size:11px; }   /* the start screen's key list: the large size */
   /* Rows: key and value, numbers in Chakra Petch. */
   .kv { width:100%; max-width:320px; margin:0; }
@@ -435,7 +436,7 @@
         <ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
       <div class="keys"><span><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M10 6H2.5M5.5 3L2.5 6l3 3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v7.5M3 6.5l3 3 3-3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h7.5M6.5 3l3 3-3 3"/></svg></kbd></span><span>Move and dig (or WASD)</span><span><kbd class="k">1–5</kbd></span><span>Shake, then drink Milk+</span>
         <span><kbd class="k">R</kbd><kbd class="k">T</kbd><kbd class="k">V</kbd></span><span>Radio, tape, volume</span><span><kbd class="k">Space</kbd></span><span>Pause</span></div>
-      <span id="goGlow"><button id="go" class="go">Begin shift <kbd>Enter</kbd></button></span>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
+      <span id="goGlow"><button id="go" class="go">Begin shift</button></span><span class="gokey" id="goKey">or press Enter</span>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
@@ -1708,7 +1709,7 @@ function breakthrough() {
     setTimeout(() => {
       if (!$('loadGo')) return;                               // the loading screen is already gone
       if ($('roverWhere')) $('roverWhere').textContent = 'Rover parked at';   // it has arrived: no longer en route (2026-11-17)
-      $('loadGo').outerHTML = '<button id="loadGo" class="go">Start digging <kbd class="ar">↓</kbd></button>'; $('loadGo').onclick = () => pickCrater(i);
+      $('loadGo').outerHTML = '<button id="loadGo" class="go">Start digging</button><span class="gokey">or press ↓</span>'; $('loadGo').onclick = () => pickCrater(i);
       menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
     }, CONFIG.loadingMs);
     return;
@@ -1783,7 +1784,7 @@ function finishGame(drifted = false) {
     <dl class="kv">${stats.map(([k, v, unit, f]) => `<div><dt>${k}</dt><dd class="num" data-to="${v}" data-fmt="${f ? 'time' : ''}" data-unit="${unit || ''}">0</dd></div>`).join('')}</dl>
     ${unrecovered}
     ${drifted ? '<p class="note">The Core is still down there.</p>' : ''}
-    <button id="again" class="go">New game <kbd>Enter</kbd></button>`);
+    <button id="again" class="go">New game</button><span class="gokey">or press Enter</span>`);
   $('again').onclick = newGame;
   menuKeys = k => { if (k === 'Enter') newGame(); };
   // The stats count up, like a tally.
@@ -2388,7 +2389,7 @@ function pause() {
     <dl class="kv"><div><dt>Depth</dt><dd>${depthNow()}<em>m</em></dd></div><div><dt>Drill samples</dt><dd>${s.samples}</dd></div>
       <div><dt>Field Guide</dt><dd>${s.guide.length}<em>/ ${guideEntries().length}</em></dd></div><div><dt>Shift</dt><dd>${fmt(Math.floor(s.timeMs / 1000))}</dd></div></dl>
     <p class="note">The Rock will wait. It has waited before.</p>
-    <button id="resume" class="go">Resume <kbd>Space</kbd></button>
+    <button id="resume" class="go">Resume</button><span class="gokey">or press Space</span>
     <div class="btn2" id="pauseVol">${pauseVolHTML()}</div>`);   // where people look to change things
   $('resume').onclick = resume;
   menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
@@ -2830,7 +2831,8 @@ function radioHud() {
   $('rVol').style.setProperty('--a', [50, -20, -120][radio.vol] + 'deg'); $('rVol').title = 'Volume: ' + VOLUMES[radio.vol].name + ' (V)';
   $('rTune').style.setProperty('--a', ({ pump: -55, disco: 0, void: 55, oddity: 120, tape: -120, off: -150 })[on] + 'deg');
   setText('radioFx', !sound.on ? 'Nothing runs without a soundtrack.'
-    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : st.fx) + '');   // the radio lesson lives in the radio, until another station is tried
+    : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : '') + '');   // only what's happening now; the perk is the lamp's job (2026-11-24)
+  $('radioFx').classList.toggle('warn', !sound.on || noPower);   // amber only for a warning   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', guideNow() === 'radio');   // the drill is waiting: look here
   document.body.classList.toggle('shiftOn', !!(running && s && !s.drift));   // every plate's lamp lit while the shift runs
 }
@@ -3166,7 +3168,7 @@ window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
 // The start button says what works right now: Enter only when the game has the keyboard.
-const startLabel = () => { $('go').innerHTML = document.hasFocus() ? 'Begin shift <kbd>Enter</kbd>' : 'Click to begin shift'; };
+const startLabel = () => { const f = document.hasFocus(); $('go').textContent = f ? 'Begin shift' : 'Click to begin shift'; $('goKey').style.visibility = f ? '' : 'hidden'; };   // the key under the button, only when the keyboard works
 addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 <script>
