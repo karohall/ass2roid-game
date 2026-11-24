@@ -83,7 +83,8 @@
   .rknob > i::after { content:''; position:absolute; left:50%; top:7px; width:3px; height:12px; margin-left:-1.5px; background:var(--text); border-radius:2px; transform-origin:50% 18px; transform:rotate(var(--a, 0deg)); transition:transform .5s cubic-bezier(.3,1.4,.5,1); }
   .rknob .kl { display:flex; gap:5px; align-items:center; font:600 11px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
 
-  .rmid { display:grid; grid-template-rows:44px auto; gap:7px; min-width:0; }
+  .rmid { display:grid; grid-template-rows:40px auto; gap:4px; min-width:0; padding:4px 4px 5px; clip-path:var(--chamfer-s); background:#06080a; box-shadow:inset 0 2px 5px rgba(0,0,0,.95), inset 0 0 0 1px #040506; }   /* one sunken display: the band and the song (2026-11-24) */
+  .rrow { padding:0 8px; }
   .rband { position:relative; overflow:hidden; clip-path:var(--chamfer-s); background:linear-gradient(180deg, #0e1a1c, #081012); box-shadow:inset 0 1px 3px rgba(0,0,0,.9); transition:filter .6s ease; }
   .rband::before { content:''; position:absolute; inset:0; background:radial-gradient(70% 120% at 50% 100%, rgba(var(--fluo-rgb),.18), transparent 70%); }   /* the backlight */
   .rband::after { content:''; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.2) 2px 3px); }
@@ -105,7 +106,7 @@
   .rsong.roll > span { padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }   /* rolls only when it doesn't fit */
   #radioBox #radioFx { flex:none; max-width:42%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--dim); }   /* quiet grey: notes only */
   #radioBox #radioFx.warn { color:var(--amber); }
-  .rlamps { display:grid; grid-template-columns:136px 1fr; grid-template-rows:repeat(6, 1fr); height:68px; gap:3px 4px; }   /* the station's perk on the left, the radio's state on the right */
+  .rlamps { display:grid; grid-template-columns:132px 1fr; grid-template-rows:repeat(6, 1fr); height:74px; gap:3px 4px; padding:4px; background:#0a0b0d; clip-path:var(--chamfer-s); box-shadow:inset 0 2px 5px rgba(0,0,0,.9), inset 0 0 0 1px #040506; }   /* one bezel for all the lenses */   /* the station's perk on the left, the radio's state on the right */
   .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:linear-gradient(180deg, #08090a, #0f1113); border-radius:2px; box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px #050607, 0 1px 0 rgba(255,255,255,.07); transition:background .3s, color .3s, box-shadow .3s; }   /* a lens set into the panel: sunken, read not pressed (2026-11-24) */
   .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
   .rlamps span[data-l="tape"] { grid-row:1 / 4; } .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
@@ -145,6 +146,7 @@
   #panel, #panel2 { display:flex; flex-direction:column; gap:10px; }
   /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
   .box { position:relative; padding:10px 12px 12px; --frame:rgba(150,157,164,.5); --edge-hi:rgba(214,220,226,.8); --edge-lo:rgba(70,76,82,.8); }   /* the frame's steel edge: highlight, body, shadow */
+  .box::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(circle at calc(100% - 20px) calc(100% - 11px), #8e959b 0 1.6px, #3b4045 2px 2.6px, #121417 3px 3.8px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px), radial-gradient(circle at 11px calc(100% - 11px), #8e959b 0 1.6px, #3b4045 2px 2.6px, #121417 3px 3.8px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px); }   /* screws along the frame's foot, clear of the headers (2026-11-24) */
   .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
   .box > *:not(svg) { position:relative; z-index:1; }
   #mineBox > .overlay { position:absolute; z-index:2; } #mineBox > #nasa { position:absolute; z-index:3; }   /* on the picture, not in the flow (2026-11-24) */
@@ -261,9 +263,7 @@
       radial-gradient(circle at calc(100% - 14px) 14px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
       radial-gradient(circle at 14px calc(100% - 14px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
       radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
-      linear-gradient(112deg, transparent 31%, rgba(255,255,255,.05) 31.15%, transparent 31.5%), linear-gradient(104deg, transparent 72%, rgba(255,255,255,.04) 72.1%, transparent 72.4%),   /* scuffs */
       radial-gradient(130% 55% at 50% 112%, rgba(0,0,0,.5), transparent 62%), radial-gradient(50% 35% at 0% 0%, rgba(0,0,0,.32), transparent 70%), radial-gradient(45% 30% at 100% 8%, rgba(0,0,0,.28), transparent 70%),   /* grime in the corners and along the bottom */
-      repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px),   /* brushed */
       linear-gradient(180deg, #2e3236, #1c1f22);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(150,157,164,.28), inset 0 -2px 0 rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.35); }
   .overlay h1, .overlay h2, .overlay .ttl { margin:-8px 0 0; font:700 30px/1.05 var(--f-title); letter-spacing:.01em; }
@@ -279,11 +279,13 @@
   .overlay button { width:auto; text-align:center; }
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; font:500 13px/1.4 var(--f-text); letter-spacing:0; text-transform:none; }
   .go { display:inline-flex; align-items:center; justify-content:center; gap:12px; height:50px; min-width:220px; padding:0 34px !important; font:700 13px/1 var(--f-small) !important; letter-spacing:.2em; box-shadow:inset 0 2px 0 rgba(255,255,255,.45), inset 0 -4px 0 rgba(0,0,0,.28) !important; transition:transform .06s, box-shadow .06s; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(var(--fluo-rgb),.35)); }
-  .go::before { background:var(--fluo) !important; }
+  .go::before { background:transparent !important; }
+  .go { color:var(--fluo) !important; background:linear-gradient(180deg, #3a3f44, #24282c) !important; text-shadow:0 0 8px rgba(var(--fluo-rgb),.75); filter:none !important;   /* an illuminated push-button: dark steel, the legend lit from behind (2026-11-24) */
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -3px 0 rgba(0,0,0,.5), inset 0 0 0 1px rgba(var(--fluo-rgb),.4), inset 0 0 18px rgba(var(--fluo-rgb),.1) !important; }
   .go:active { transform:translateY(2px); box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 -1px 0 rgba(0,0,0,.2) !important; }   /* a push-button: it goes down (2026-11-24) */
   /* Begin shift: amber, the guide's colour: the very first step, glowing in the guide's rhythm (2026-11-17). The other screens' ways on stay fluo. */
-  #go.go { background:var(--amber) !important; filter:none; }
-  #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:var(--amber) !important; } 
+  #go.go { color:var(--amber) !important; text-shadow:0 0 8px rgba(255,180,60,.75); filter:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -3px 0 rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,180,60,.45), inset 0 0 18px rgba(255,180,60,.1) !important; }
+  #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:transparent !important; } 
   @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
   @media (prefers-reduced-motion: reduce) { #goGlow { animation:none; filter:drop-shadow(0 0 8px rgba(255,180,60,.6)); } }
 
@@ -406,7 +408,8 @@
   /* Indicator lamps: a lens each, its name engraved beside it. Off is a dark lens; lit means on; blinking means look. */
   .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
   #rover .lamps:not(:has(.ind.shown, .ind.warn)) { display:none; }   /* shown once a lamp is revealed, or the caution is lit */
-  #cautionWhy { font-style:normal; text-transform:none; letter-spacing:.02em; color:var(--amber); margin-left:6px; }
+  #cautionWhy { font-style:normal; text-transform:none; letter-spacing:.02em; color:var(--dim); margin-left:6px; }
+  #lampCaution.warn i { box-shadow:0 0 0 1px #050607, 0 0 3px rgba(255,180,60,.6); }   /* a small glow */
   #cautionWhy:empty { display:none; }   /* the lamp strip waits for its first lamp: no empty strip (2026-11-24) */
   .rd { display:inline-block; height:1em; overflow:hidden; vertical-align:top; line-height:1; }   /* a rolling digit: a drum of 0-9 */
   .rd > span { display:block; transition:transform .35s cubic-bezier(.3,.7,.3,1); }
@@ -2994,7 +2997,7 @@ function hud() {
     if (running && !musicOn()) why.push(['no music', true]);
     if (onPick()) why.push(['drill broken', true]); else if (worn) why.push(['drill worn', false]);
     if (running && L.crustMinPower && p.y >= H - 8 && power() < L.crustMinPower) why.push(['crust too hard', false]);
-    lamp('lampCaution', why.length ? (why.some(w => w[1]) ? 'warn blink' : 'warn') : '');
+    lamp('lampCaution', why.length ? 'warn' : '');   // steady: noticed, not shouting (2026-11-24)
     setText('cautionWhy', why.length ? why[0][0] : '');
   }
   lamp('lampFocus', active('focus') ? 'on' : '');
