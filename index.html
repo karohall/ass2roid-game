@@ -146,7 +146,6 @@
   #panel, #panel2 { display:flex; flex-direction:column; gap:10px; }
   /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
   .box { position:relative; padding:10px 12px 12px; --frame:rgba(150,157,164,.5); --edge-hi:rgba(214,220,226,.8); --edge-lo:rgba(70,76,82,.8); }   /* the frame's steel edge: highlight, body, shadow */
-  .box::after { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(circle at calc(100% - 20px) calc(100% - 11px), #8e959b 0 1.6px, #3b4045 2px 2.6px, #121417 3px 3.8px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px), radial-gradient(circle at 11px calc(100% - 11px), #8e959b 0 1.6px, #3b4045 2px 2.6px, #121417 3px 3.8px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px); }   /* screws along the frame's foot, clear of the headers (2026-11-24) */
   .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
   .box > *:not(svg) { position:relative; z-index:1; }
   #mineBox > .overlay { position:absolute; z-index:2; } #mineBox > #nasa { position:absolute; z-index:3; }   /* on the picture, not in the flow (2026-11-24) */
@@ -257,12 +256,12 @@
   body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
   .overlay { position:absolute; inset:0; top:calc(10px + var(--tabH, 0px)); left:12px; right:12px;   /* on the picture, inside the frame */ height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.72); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:14px; }
-  .plate { position:relative; width:100%; max-height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:30px 26px 32px; clip-path:var(--chamfer);   /* a bolted instrument plate (2026-11-24) */
+  .plate { position:relative; width:100%; max-height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:46px 26px 44px; clip-path:polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);   /* a bolted instrument plate, its four corners cut alike (2026-11-24) */
     background:
-      radial-gradient(circle at 14px 14px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
-      radial-gradient(circle at calc(100% - 14px) 14px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
-      radial-gradient(circle at 14px calc(100% - 14px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
-      radial-gradient(circle at calc(100% - 14px) calc(100% - 14px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at 18px 18px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at calc(100% - 18px) 18px, #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at 18px calc(100% - 18px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
+      radial-gradient(circle at calc(100% - 18px) calc(100% - 18px), #8e959b 0 2px, #3b4045 2.4px 3.2px, #121417 3.6px 4.6px, rgba(0,0,0,.4) 5px 6px, transparent 6.4px),
       radial-gradient(130% 55% at 50% 112%, rgba(0,0,0,.5), transparent 62%), radial-gradient(50% 35% at 0% 0%, rgba(0,0,0,.32), transparent 70%), radial-gradient(45% 30% at 100% 8%, rgba(0,0,0,.28), transparent 70%),   /* grime in the corners and along the bottom */
       linear-gradient(180deg, #2e3236, #1c1f22);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(150,157,164,.28), inset 0 -2px 0 rgba(0,0,0,.6), inset 0 0 40px rgba(0,0,0,.35); }
@@ -280,11 +279,10 @@
   .overlay .choice { width:100%; max-width:360px; text-align:left; padding:10px 12px; font:500 13px/1.4 var(--f-text); letter-spacing:0; text-transform:none; }
   .go { display:inline-flex; align-items:center; justify-content:center; gap:12px; height:50px; min-width:220px; padding:0 34px !important; font:700 13px/1 var(--f-small) !important; letter-spacing:.2em; box-shadow:inset 0 2px 0 rgba(255,255,255,.45), inset 0 -4px 0 rgba(0,0,0,.28) !important; transition:transform .06s, box-shadow .06s; color:var(--bg) !important; background:var(--fluo) !important; filter:drop-shadow(0 0 8px rgba(var(--fluo-rgb),.35)); }
   .go::before { background:transparent !important; }
-  .go { color:var(--fluo) !important; background:linear-gradient(180deg, #3a3f44, #24282c) !important; text-shadow:0 0 8px rgba(var(--fluo-rgb),.75); filter:none !important;   /* an illuminated push-button: dark steel, the legend lit from behind (2026-11-24) */
-        box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -3px 0 rgba(0,0,0,.5), inset 0 0 0 1px rgba(var(--fluo-rgb),.4), inset 0 0 18px rgba(var(--fluo-rgb),.1) !important; }
-  .go:active { transform:translateY(2px); box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 -1px 0 rgba(0,0,0,.2) !important; }   /* a push-button: it goes down (2026-11-24) */
+  .go { color:var(--fluo) !important; text-shadow:0 0 8px rgba(var(--fluo-rgb),.75); filter:none !important; clip-path:none !important; border-radius:5px; background:radial-gradient(70% 90% at 50% 45%, rgba(var(--fluo-rgb),.16), transparent 70%), #0a0b0d !important; box-shadow:inset 0 0 0 2px #2c3034, inset 0 0 0 3px #08090a, inset 0 3px 6px rgba(0,0,0,.9) !important; }   /* the check engine lamp's own housing: black, ringed, the legend lit from behind (2026-11-24) */
+  .go:active { transform:translateY(1px); filter:brightness(.85) !important; }   /* a push-button: it goes down (2026-11-24) */
   /* Begin shift: amber, the guide's colour: the very first step, glowing in the guide's rhythm (2026-11-17). The other screens' ways on stay fluo. */
-  #go.go { color:var(--amber) !important; text-shadow:0 0 8px rgba(255,180,60,.75); filter:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -3px 0 rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,180,60,.45), inset 0 0 18px rgba(255,180,60,.1) !important; }
+  #go.go { color:var(--amber) !important; text-shadow:0 0 8px rgba(255,180,60,.75); filter:none; background:radial-gradient(70% 90% at 50% 45%, rgba(255,180,60,.16), transparent 70%), #0a0b0d !important; box-shadow:inset 0 0 0 2px #2c3034, inset 0 0 0 3px #08090a, inset 0 3px 6px rgba(0,0,0,.9) !important; }
   #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:transparent !important; } 
   @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
   @media (prefers-reduced-motion: reduce) { #goGlow { animation:none; filter:drop-shadow(0 0 8px rgba(255,180,60,.6)); } }
@@ -296,7 +294,7 @@
   kbd.k.ar svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
   /* Wordmark A: machined; the 2 an ink figure on a concrete block. */
   .wa { --s:54px; display:inline-flex; flex-direction:column; align-items:center; gap:calc(var(--s) * .16); }
-  .wa .w { display:flex; align-items:center; font:700 var(--s)/1 var(--f-title); letter-spacing:.03em; color:var(--text); }
+  .wa .w { display:flex; align-items:center; font:700 var(--s)/1 var(--f-title); letter-spacing:.03em; color:#dde1e4; text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.14), 0 4px 14px rgba(0,0,0,.45); }   /* stamped into the plate (2026-11-24) */
   .wa .w i { font-style:normal; display:inline-grid; place-items:center; height:1.04em; padding:0 .14em; margin:0 .07em 0 .05em; color:var(--bg); background:var(--concrete); clip-path:polygon(.13em 0, 100% 0, 100% calc(100% - .13em), calc(100% - .13em) 100%, 0 100%, 0 .13em); }
   .wa .sub { display:flex; align-items:center; gap:.9em; width:100%; font:600 calc(var(--s) * .17)/1 var(--f-small); letter-spacing:.5em; text-transform:uppercase; color:var(--dim); }
   .wa .sub::before, .wa .sub::after { content:''; flex:1; height:1px; background:var(--line-2); } .wa .sub span { margin-right:-.5em; }
@@ -436,10 +434,7 @@
                   text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
   .overlay .lbl::before { width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }
   .overlay .lbl.live::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 0 1px #08090a, 0 0 6px var(--fluo); }
-  .overlay .ttl { padding:10px 30px 12px; color:#d3d8dc; clip-path:var(--chamfer); text-shadow:0 -1px 0 rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.14);
-    background:radial-gradient(circle at 12px 50%, #7a8187 0 1.8px, #0b0c0e 2.4px 3.2px, transparent 3.7px), radial-gradient(circle at calc(100% - 12px) 50%, #7a8187 0 1.8px, #0b0c0e 2.4px 3.2px, transparent 3.7px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 3px), linear-gradient(180deg, #353a3f, #24282c);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), inset 0 -2px 0 rgba(0,0,0,.45); }
+  .overlay .ttl { color:#dde1e4; text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.14), 0 4px 14px rgba(0,0,0,.45); }   /* stamped into the plate like the game's name: no plate on the plate (2026-11-24) */
   /* The check engine light: a real dashboard lamp, the icon lit amber behind dark glass. It is on. */
   .lamprow .lamp { width:48px; height:34px; padding:7px 9px; margin:0; border-radius:5px; filter:none; animation:none; overflow:visible;
     background:radial-gradient(70% 90% at 50% 45%, rgba(255,180,60,.22), transparent 70%), #0a0b0d; box-shadow:0 0 0 2px #2c3034, 0 0 0 3px #08090a, inset 0 2px 5px rgba(0,0,0,.9); }
