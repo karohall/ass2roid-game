@@ -957,7 +957,7 @@ document.documentElement.style.setProperty('--viewH', cv.height + 'px');   // th
 const $ = id => document.getElementById(id);
 const now = () => performance.now();
 
-let pv = null;   // where the prospector is drawn: it glides to p (2026-11-24)
+let pv = null;   // where the prospector is drawn: its tile (a glide was tried 2026-11-24 and felt imprecise)
 let g, H, p, s, held = null, pendingTap = null, lastAct = 0, lastFall = 0, lastFrame = 0, cam = 0, particles = [], running = false, selCard = null;
 
 const layer = () => CONFIG.layers[s.layer];
@@ -2509,8 +2509,8 @@ function update(dt) {
   // Queued tap, then held digging.
   if (pendingTap && t - lastAct >= CONFIG.dig.tapMs * slowFactor()) { act(...pendingTap); pendingTap = null; lastAct = t; }
   else if (held && t - lastAct > CONFIG.dig.holdMs * slowFactor()) { act(held[0], held[1]); lastAct = t; }
-  // The prospector glides to its tile; the camera follows the glide, so the rock scrolls under it and nothing bounces. Time-based: the same on any screen.
-  { const k = 1 - Math.exp(-dt / 40); if (!pv || Math.abs(pv.x - p.x) + Math.abs(pv.y - p.y) > 3) pv = { x: p.x, y: p.y }; else { pv.x += (p.x - pv.x) * k; pv.y += (p.y - pv.y) * k; if (Math.abs(p.x - pv.x) < .002) pv.x = p.x; if (Math.abs(p.y - pv.y) < .002) pv.y = p.y; } }
+  // The prospector is exactly on its tile, and the camera keeps it there: no easing, so it never dips and slides back, and no glide either (2026-11-24).
+  pv = { x: p.x, y: p.y };
   cam = Math.max(0, Math.min(H - VIEW, pv.y - 4));
   particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .25; q.life--; });
   particles = particles.filter(q => q.life > 0);
