@@ -109,8 +109,8 @@
   .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
   .rlamps span[data-l="tape"] { grid-row:1 / 4; } .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
   .rlamps span.warn { color:#14110a; background:var(--amber); box-shadow:0 0 10px rgba(255,180,60,.45); }   /* trouble: amber means attention only (2026-11-24) */
-  .rlamps span.half { color:#d9dde0; background:#0e1012; box-shadow:inset 0 0 0 1px rgba(217,221,224,.55); }   /* armed: Void FM away from the dark, its perk waiting (an outline: lit is filled) */
-  .rlamps span.white { color:#0f1112; background:#d9dde0; box-shadow:0 0 8px rgba(255,255,255,.25); }
+  .rlamps span.half { color:rgba(var(--fluo-rgb),.75); background:#0e1012; box-shadow:inset 0 0 0 1px rgba(var(--fluo-rgb),.35); }   /* armed: Void FM away from the dark, its perk waiting */
+  .rlamps span.white { color:var(--fluo); background:linear-gradient(180deg, rgba(var(--fluo-rgb),.16), rgba(var(--fluo-rgb),.07)), #0e1012; box-shadow:inset 0 0 0 1px rgba(var(--fluo-rgb),.6), 0 0 8px rgba(var(--fluo-rgb),.25); text-shadow:0 0 6px rgba(var(--fluo-rgb),.7); }   /* on: lit in cyan, like the panel dots (2026-11-24) */
   .rlamps span kbd.k { min-width:18px !important; height:18px !important; }
   #radioBox.call > svg.outline path:first-of-type, #milk.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* a panel calls: the radio, or Milk+ for the first Strength (2026-11-24) */   /* the drill needs music: the radio calls softly */
   @keyframes radiocall { 0%, 100% { stroke-opacity:.35; } 50% { stroke-opacity:1; } }
@@ -292,6 +292,7 @@
   .keys { display:grid; grid-template-columns:auto auto; gap:8px 12px; align-items:center; font:400 12px var(--f-text); color:var(--dim); text-align:left; }
   .keys span:nth-child(odd) { justify-self:end; display:flex; gap:4px; }
   kbd.k, .go kbd, .btn2 kbd, #pauseBtn kbd { display:inline-grid; place-items:center; box-sizing:border-box; min-width:20px; height:20px; padding:0 5px; font:700 10px/1 var(--f-title); letter-spacing:.04em; color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }   /* one keycap everywhere (2026-11-24) */
+  .go kbd { color:inherit; background:rgba(11,12,14,.13); box-shadow:inset 0 0 0 1px rgba(11,12,14,.32), inset 0 1px 0 rgba(11,12,14,.18); }   /* on a bright button the key is engraved in it, not a dark cap on top (2026-11-24) */
   #start .keys kbd.k { min-width:24px; height:24px; padding:0 7px; font-size:11px; }   /* the start screen's key list: the large size */
   /* Rows: key and value, numbers in Chakra Petch. */
   .kv { width:100%; max-width:320px; margin:0; }
