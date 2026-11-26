@@ -36,7 +36,7 @@
   #dosage { --tab:169px; position:relative;   /* the cluster, recessed behind glass, in every panel's frame: a tab around its name plate, then the top steps down (2026-11-17) */
     clip-path:polygon(8px 0, var(--tab) 0, calc(var(--tab) + 6px) 6px, 100% 6px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
-  #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
+  #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%), linear-gradient(112deg, transparent 34%, rgba(255,255,255,.04) 34%, rgba(255,255,255,.025) 50%, transparent 50%); }   /* glass over the dial: a faint reflection (2026-11-26) */
   #gauge { display:block; }
   #dosage .dzplate { position:absolute; left:10px; top:8px; z-index:1; display:flex; align-items:center; gap:8px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase;
     color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
@@ -750,7 +750,7 @@ const JINGLE = (path, title) => ({ title, file: `audio/Radio/${path}`, jingle: t
 const JINGLES = {
   pump: [['hard rock heavy ore', 'Hard rock, heavy ore'], ['milk+ ad', 'Milk+. Shake it.'], ['kein schmerz, kein erz', 'Kein Schmerz, kein Erz'], ['hard muscles, hard rock', 'Hard muscles, hard rock']]
     .map(([n, t]) => JINGLE(`The Pump Zone/radio jingles/${n}.wav`, t)),
-  disco: [JINGLE('Disco Gravitas/Disco Gravitas jingle 1.mp3', 'Stasera, the stars are ours')],   // the words, from the user (2026-11-24)
+  disco: [JINGLE('Disco Gravitas/Disco Gravitas jingle 1 - Stasera, the stars are ours.mp3', 'Stasera, the stars are ours')],   // the words, from the user (2026-11-24)
   void: [['108.1', '108.1'], ['golden record', 'The golden record'], ['in space no one can hear you cry', 'In space no one can hear you cry'], ['dying stars shine brighter', 'Dying stars shine brighter'], ['welcome to the never-ending show', 'Welcome to the never-ending show']]
     .map(([n, t]) => JINGLE(`Void FM/jingles/${n}.wav`, t)),
 };
@@ -2962,14 +2962,23 @@ function buildGauge() {
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
 }
+// The needle's weight (2026-11-26): a spring toward the meter (it overshoots a little and settles), a faint tremble while the drill bites.
+const needle = { x: null, v: 0, at: 0 };
+function needleU(target) {
+  const t = performance.now(), dt = Math.min(.05, (t - (needle.at || t)) / 1000); needle.at = t;
+  if (needle.x === null || t - lampTestAt < LAMPTEST_MS) { needle.x = target; needle.v = 0; return target; }   // the lamp test sweeps it itself
+  needle.v += ((target - needle.x) * 90 - needle.v * 11) * dt; needle.x += needle.v * dt;
+  return needle.x + (running && s && now() - (s.lastHitAt || 0) < 220 ? (Math.random() - .5) * .014 : 0);
+}
 function drawGaugeMeter(t) {
   if (gaugeFor !== tipAt() + '/' + Math.round($('dosage').clientWidth || GZ.w)) buildGauge();
   const G = $('gauge'), M = GZ.main, u = gU(testMeter(s.meter)), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
-  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 64, M.R + 10); attr(ln, 'stroke', col); }
+  const un = needleU(u);   // where the needle is drawn: with weight
+  for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, un, M.R - 64, M.R + 10); attr(ln, 'stroke', col); }
   q('needle').classList.toggle('hot', !!st);
-  attr(q('gfill'), 'd', st || Math.abs(u) < .005 ? '' : gArc(M, 0, u, M.R - 10));
+  attr(q('gfill'), 'd', st || Math.abs(un) < .005 ? '' : gArc(M, 0, un, M.R - 10));
   // The word under the needle lights up; past a tip, the end word becomes the state, in its colour.
   const still = st === 'still', gs = q('gstill'), LINE = 'Get out into the vast nothingness of space';
   if (still && !G.dataset.stillAt) G.dataset.stillAt = performance.now(); if (!still) delete G.dataset.stillAt;
