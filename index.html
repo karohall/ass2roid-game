@@ -114,6 +114,13 @@
   .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
   .rlamps span.warn { color:#ffd9a0; background:radial-gradient(120% 140% at 50% 40%, rgba(255,180,60,.55), rgba(255,180,60,.18) 70%), #140f08; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,180,60,.6), 0 1px 0 rgba(255,255,255,.07); text-shadow:0 0 6px rgba(255,180,60,.8); }   /* trouble: amber means attention only (2026-11-24) */
   .rlamps span.half { color:rgba(var(--fluo-rgb),.7); box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px rgba(var(--fluo-rgb),.35), 0 1px 0 rgba(255,255,255,.07); }   /* armed: Void FM away from the dark, its perk waiting */
+  body.lamptest .rlamps span:not([data-l="pwr"]) { color:#c9f8ff !important; background:radial-gradient(120% 140% at 50% 40%, rgba(var(--fluo-rgb),.42), rgba(var(--fluo-rgb),.12) 70%), #061014 !important; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(var(--fluo-rgb),.55) !important; text-shadow:0 0 6px rgba(var(--fluo-rgb),.8); }   /* the lamp test */
+  body.lamptest .rlamps span[data-l="pwr"] { color:#ffd9a0 !important; background:radial-gradient(120% 140% at 50% 40%, rgba(255,180,60,.55), rgba(255,180,60,.18) 70%), #140f08 !important; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,180,60,.6) !important; }
+  body.lamptest .ind i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560) !important; box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7) !important; }
+  body.lamptest #lampCaution i { background:radial-gradient(circle at 50% 40%, #ffe2b0, var(--amber) 55%, #6b4610) !important; box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(255,180,60,.6) !important; }
+  body.lamptest .rneedle { animation:needletest 1.3s ease-in-out; } @keyframes needletest { 0% { left:3%; } 45% { left:97%; } 100% { left:var(--x, 3%); } }
+  body.lamptest .rknob > i::after { animation:knobtest 1.3s ease-in-out; } @keyframes knobtest { 0% { transform:rotate(-135deg); } 45% { transform:rotate(135deg); } 100% { transform:rotate(var(--a, 0deg)); } }
+  @media (prefers-reduced-motion: reduce) { body.lamptest .rneedle, body.lamptest .rknob > i::after { animation:none; } }
   .rlamps span.white { color:#c9f8ff; background:radial-gradient(120% 140% at 50% 40%, rgba(var(--fluo-rgb),.42), rgba(var(--fluo-rgb),.12) 70%), #061014; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(var(--fluo-rgb),.55), 0 1px 0 rgba(255,255,255,.07); text-shadow:0 0 6px rgba(var(--fluo-rgb),.8); }   /* on: lit in cyan, like the panel dots (2026-11-24) */
   .rlamps span kbd.k { min-width:18px !important; height:18px !important; }
   #radioBox.call > svg.outline path:first-of-type, #milk.call > svg.outline path:first-of-type { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* a panel calls: the radio, or Milk+ for the first Strength (2026-11-24) */   /* the drill needs music: the radio calls softly */
@@ -431,6 +438,10 @@
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
+  .placard { position:relative; padding:8px 22px 9px; border-radius:2px; font:500 11px/1.45 var(--f-small) !important; letter-spacing:.05em; text-transform:uppercase; color:#9aa1a7 !important;   /* a stamped steel placard, riveted on (2026-11-26) */
+    text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.07);
+    background:radial-gradient(circle at 9px 50%, #7d848a 0 1.6px, #24282c 2px 2.8px, transparent 3.2px), radial-gradient(circle at calc(100% - 9px) 50%, #7d848a 0 1.6px, #24282c 2px 2.8px, transparent 3.2px), linear-gradient(180deg, #2a2e32, #1d2023);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.6), 0 0 0 1px #0a0b0d; }
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
@@ -483,7 +494,7 @@
     <div class="box later" id="milk" data-reveal="recipe_strength">   <!-- waits whole, like the Field Guide, until its first recipe (2026-11-24) -->
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later placard" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
@@ -1443,7 +1454,7 @@ function detonate(ch) {
 
 function bump(x, y, n) {
   for (let i = 0; i < n; i++)
-    particles.push({ x: x * T + T / 2, y: y * T + T / 2, vx: (Math.random() - .5) * 4, vy: (Math.random() - 1) * 3, life: 30 });
+    particles.push({ x: x * T + T / 2, y: y * T + T / 2, vx: (Math.random() - .5) * 7, vy: (Math.random() - 1) * 4.5, life: 18 });   // gravel: a hard burst, quickly down (2026-11-26)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2442,6 +2453,11 @@ function resume() {
   cv.focus();
 }
 
+// The lamp test (2026-11-26): at power-on every lamp lights and every needle sweeps its range, then all settle to their real state.
+let lampTestAt = -1e9; const LAMPTEST_MS = 1300;
+function lampTest() { lampTestAt = performance.now(); document.body.classList.add('lamptest'); clearTimeout(lampTest.t); lampTest.t = setTimeout(() => document.body.classList.remove('lamptest'), LAMPTEST_MS); }
+function testMeter(v) { const k = (performance.now() - lampTestAt) / LAMPTEST_MS; if (k >= 1 || k < 0) return v; const e = q => q * q * (3 - 2 * q);   // the dosage needle: up the scale and back to its place
+  return k < .45 ? -100 + 200 * e(k / .45) : 100 + (v - 100) * e((k - .45) / .55); }
 function newGame() {
   if (s && s.drift) { radio.on = s.drift.radioWas; radio.since = radio.clock; document.body.classList.remove('drifting', 'wide', 'drifted'); $('baseRow').style.cssText = ''; }   // back to what was playing before space
   s = freshState();
@@ -2449,6 +2465,7 @@ function newGame() {
   // Starter ration, so the first thing a new prospector does is shake a Milk+.
   s.inv.whey = CONFIG.start.whey; s.guide.push('ing_whey');
   begin();
+  lampTest();                                              // power on: every lamp, every needle, then their real places
   s.hintIntroUntil = now() + 4000;                         // the guide's first stop: the hint bar
   say('Welcome to Korova Rock. Dig responsibly.');
   say(`Starter ration: ${CONFIG.start.whey} Regolith Whey. Courtesy of the Foundation.`);
@@ -2549,7 +2566,7 @@ function update(dt) {
   // Smooth camera (the original, restored 2026-11-24: other motions were tried that day and felt worse).
   pv = { x: p.x, y: p.y };
   cam += (Math.max(0, Math.min(H - VIEW, p.y - 4)) - cam) * .15;
-  particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .25; q.life--; });
+  particles.forEach(q => { q.x += q.vx; q.y += q.vy; q.vy += .6; q.life--; });
   particles = particles.filter(q => q.life > 0);
   if (p.y >= H - 1) breakthrough();
 }
@@ -2951,7 +2968,7 @@ function buildGauge() {
 }
 function drawGaugeMeter(t) {
   if (gaugeFor !== tipAt() + '/' + Math.round($('dosage').clientWidth || GZ.w)) buildGauge();
-  const G = $('gauge'), M = GZ.main, u = gU(s.meter), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
+  const G = $('gauge'), M = GZ.main, u = gU(testMeter(s.meter)), st = frenzy() ? 'frenzy' : stillness() || s.drift ? 'still' : null, col = st === 'frenzy' ? '#ffb43c' : st === 'still' ? '#8fa6c4' : '#34e6ff';
   const q = c => G.querySelector('.' + c), attr = (el, k, v) => { v = String(v); if (el.getAttribute(k) !== v) el.setAttribute(k, v); }, put = (el, v) => { if (el.textContent !== v) el.textContent = v; };
   const lvl = Math.max(0, Math.min(4, Math.floor((u + 1) / 2 * 5 - 1e-9)));
   for (const ln of G.querySelectorAll('.needle line')) { gSeg(ln, M, u, M.R - 64, M.R + 10); attr(ln, 'stroke', col); }
