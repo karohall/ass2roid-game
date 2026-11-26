@@ -147,8 +147,9 @@
   #panel, #panel2 { display:flex; flex-direction:column; gap:10px; }
   /* Panels: the design system's frame, a vector outline with cut corners and a tab for the heading (drawn by frameBoxes()). */
   .box { position:relative; padding:10px 12px 12px; --frame:rgba(150,157,164,.5); --edge-hi:rgba(214,220,226,.8); --edge-lo:rgba(70,76,82,.8); }   /* the frame's steel edge: highlight, body, shadow */
-  .box > svg.outline { filter:drop-shadow(0 3px 0 #040506) drop-shadow(0 8px 10px rgba(0,0,0,.55)); }   /* every panel stands proud of the dashboard (2026-11-26) */
+  .box > svg.outline { filter:drop-shadow(0 2px 0 #040506) drop-shadow(0 5px 8px rgba(0,0,0,.45)); }   /* every panel stands proud of the dashboard (2026-11-26) */
   .box > svg.outline path:first-of-type { fill:var(--thick-rim) !important; }
+  .box.later:not(.shown) > svg.outline { filter:none; } .box.later:not(.shown) > svg.outline path:first-of-type { fill:var(--bay) !important; stroke:rgba(150,157,164,.5); } .box.later:not(.shown) > svg.outline path ~ path { display:none; }   /* a ghost stays a flat outline: no thickness until it appears */
   .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
   .box > *:not(svg) { position:relative; z-index:1; }
   #mineBox > .overlay { position:absolute; z-index:2; } #mineBox > #nasa { position:absolute; z-index:3; }   /* on the picture, not in the flow (2026-11-24) */
@@ -2920,7 +2921,9 @@ function buildGauge() {
   const pl = document.querySelector('#dosage .dzplate'), tab = pl && pl.offsetWidth ? pl.offsetLeft + pl.offsetWidth + 22 : 169; $('dosage').style.setProperty('--tab', tab + 'px');   // the tab fits the plate, as drawFrame() does
   const bez = `M8.5 .75 H${tab} L${tab + 6} 6.75 H${w - .75} V${GZ.h - 8.5} L${w - 8.5} ${GZ.h - .75} H.75 V8.5 Z`;   // the box's outline, as its clip-path
   let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
-  h += `<path class="bez" d="${bez}" fill="none" stroke="url(#gbez)" stroke-width="1.5"/>`;   // a steel bezel around the glass, like the radio's lit edge
+  { const d = 5, inner = `M${8.5 + d} ${d} H${tab - d / 2} L${tab + 6 - d / 2} ${6.75 + d} H${w - d} V${GZ.h - 8.5 - d} L${w - 8.5 - d} ${GZ.h - d} H${d} V${8.5 + d} Z`;   // the panels' thickness: a rim, a sunken tray (2026-11-26)
+    h += `<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient><linearGradient id="gtray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#090a0c"/><stop offset="1" stop-color="#0c0d10"/></linearGradient>`;
+    h += `<path class="bez" d="${bez}" fill="url(#grim)" stroke="#0a0b0d" stroke-width="1"/><path d="${inner}" fill="url(#gtray)" stroke="#020304" stroke-width="1.5"/><path d="${inner}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1" transform="translate(0 1.5)"/>`; }
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
@@ -3193,11 +3196,11 @@ function drawFrame(el) {
   {   // every panel has thickness (2026-11-26): a machined rim, a sunken tray inside
     const d = 5, inset = (tab ? `M${c + d} ${d} H${tab - d / 2} L${tab + step - d / 2} ${step + d} H${w - d}` : `M${c + d} ${d} H${w - d}`) + ` V${h - c - d} L${w - c - d} ${h - d} H${d} V${c + d} Z`;
     el.style.setProperty('--thick-rim', `url(#${id})`);
-    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e8eb"/><stop offset=".06" stop-color="#8d949a"/><stop offset=".6" stop-color="#555b61"/><stop offset="1" stop-color="#15171a"/></linearGradient>
+    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient>
       <linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#0c0e10"/><stop offset="1" stop-color="#15171a"/></linearGradient></defs>
       <path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="url(#${id})" stroke="#0a0b0d" stroke-width="1"/>
       <path d="${inset}" fill="url(#${id}b)" stroke="#020304" stroke-width="1.5"/>
-      <path d="${inset}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1" transform="translate(0 1.5)"/>`;
+      <path d="${inset}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1" transform="translate(0 1.5)"/>`;
   }
 }
 const frameWatch = new ResizeObserver(es => es.forEach(e => { const b = e.target.closest('.box'); if (b) drawFrame(b); }));
