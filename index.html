@@ -189,21 +189,7 @@
   .key.ready .face i:last-child { color:#03262c; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow:0 0 12px rgba(var(--fluo-rgb),.6); }
   .key.off .no { color:var(--faint); }
   .key.jizz.can .face i:first-child { color:var(--jizz); } .key.candy.can .face i:first-child { color:var(--candy); }
-  /* The rubber key family (2026-11-26): the Shake/Drink keys like the screens' buttons. Matte and domed; the legends glow through; the LED says shaking (amber) or ready (cyan). */
-  .recipe button.key { clip-path:none; border-radius:10px; padding:5px 6px; background:radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%);
-    box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1); transition:transform .06s, box-shadow .06s; }
-  .recipe button.key:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a, 0 2px 4px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); }
-  .recipe button.key::after { content:''; position:absolute; top:7px; right:8px; width:5px; height:5px; border-radius:50%; background:#24282c; box-shadow:inset 0 1px 1px rgba(0,0,0,.6); }   /* the LED, dark */
-  .recipe button.key.shaking::after { background:var(--amber); box-shadow:0 0 6px var(--amber); } .recipe button.key.ready::after { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
-  .key .face { background:none; box-shadow:none; padding:0; gap:0; border-radius:6px; overflow:hidden; }
-  .key .face i { background:none; color:#4a5056; } .key .face i:first-child { box-shadow:0 1px 0 rgba(0,0,0,.35); }
-  .key.can .face i:first-child { color:#d9dde0; background:none; text-shadow:0 0 6px rgba(255,255,255,.25); } .key.can:hover .face i:first-child { background:rgba(255,255,255,.04); }
-  .key.shaking .face i:first-child { color:var(--amber); background:none; text-shadow:0 0 6px rgba(255,180,60,.6); }
-  .key.shaking .face i:first-child::after { color:#1a1000; background:rgba(255,180,60,.9); }
-  .key.ready { box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1), 0 0 14px rgba(var(--fluo-rgb),.22); }
-  .key.ready .face i:last-child { color:var(--fluo); background:none; box-shadow:none; text-shadow:0 0 8px rgba(var(--fluo-rgb),.8); }
-  .key .no { left:7px; top:5px; width:auto; height:auto; background:none; box-shadow:none; clip-path:none; font:700 10px/1 var(--f-title); color:#7d858b; }   /* the number, engraved */
-  .key:active .face, .key.shaking .face { transform:none; }
+  /* The Shake/Drink keys keep their aviation look: a two-part lit face (the user preferred it to rubber, 2026-11-26). */
   .recipe .name { line-height:1.3; }
   .recipe .name b { font:600 13px var(--f-text); }
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
