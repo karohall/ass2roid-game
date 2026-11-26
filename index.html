@@ -323,9 +323,13 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px #08090a, 0 3px 0 #08090a, 0 6px 14px rgba(0,0,0,.45); clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px); transition:transform .06s; }
   .go.pl::before, .go.pl::after { display:none !important; }
   .go.pl .face { display:flex; flex-direction:column; gap:3px; min-width:250px; padding:3px; background:#050607; box-shadow:inset 0 2px 4px rgba(0,0,0,.95); }
-  .go.pl .face i { display:grid; place-items:center; height:34px; padding:0 22px; font:700 15px/1 var(--f-small); font-style:normal; letter-spacing:.2em; text-transform:uppercase; color:#03262c; text-shadow:none; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow:0 0 12px rgba(var(--fluo-rgb),.5); }   /* lit: filled with colour, like DRINK when it's ready (2026-11-26) */
-  .go.pl .face i + i { height:22px; font-size:12px; font-weight:600; letter-spacing:.16em; color:#7a8086; background:#0c0e10; box-shadow:none; }
-  .go.pl.amber .face i:first-child { color:#2a1700; background:radial-gradient(120% 140% at 50% 0%, #ffe4b5, var(--amber) 60%, #c98418); box-shadow:0 0 12px rgba(255,180,60,.5); }   /* Begin shift: amber, like SHAKE filling */
+  .go.pl .face i { position:relative; overflow:hidden; display:grid; place-items:center; height:34px; padding:0 22px; font:700 15px/1 var(--f-small); font-style:normal; letter-spacing:.2em; text-transform:uppercase; color:#c9f8ff; text-shadow:0 0 8px rgba(var(--fluo-rgb),.55); background:rgba(var(--fluo-rgb),.12); }   /* the legend lit; pressing fills it, like SHAKE (2026-11-26) */
+  .go.pl .face i + i { height:22px; font-size:12px; font-weight:600; letter-spacing:.16em; color:#7a8086; text-shadow:none; background:#0c0e10; box-shadow:none; }
+  .go.pl.amber .face i:first-child { color:#ffcf85; text-shadow:0 0 8px rgba(255,180,60,.55); background:rgba(255,180,60,.14); }
+  .go.pl.buffering .face i:first-child::after { content:attr(data-l); position:absolute; inset:0; display:grid; place-items:center; color:#03262c; text-shadow:none; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); clip-path:inset(0 100% 0 0); animation:plfill var(--buf, .6s) linear forwards; }   /* pressed: the light fills across, then it acts */
+  .go.pl.amber.buffering .face i:first-child::after { color:#2a1700; background:radial-gradient(120% 140% at 50% 0%, #ffe4b5, var(--amber) 60%, #c98418); }
+  @keyframes plfill { to { clip-path:inset(0 0 0 0); } }
+  @media (prefers-reduced-motion: reduce) { .go.pl { --buf:.15s; } }
   .go.pl:active { transform:translateY(1px); } .go.pl:hover .face i:first-child { filter:brightness(1.15); }
   .go.pl { padding:4px !important; height:auto !important; min-width:0 !important; border-radius:0 !important; text-shadow:none !important; filter:none !important;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px #08090a, 0 3px 0 #08090a, 0 6px 14px rgba(0,0,0,.45) !important; clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px) !important; }
@@ -1797,8 +1801,8 @@ function breakthrough() {
     setTimeout(() => {
       if (!$('loadGo')) return;                               // the loading screen is already gone
       if ($('roverWhere')) $('roverWhere').textContent = 'Rover parked at';   // it has arrived: no longer en route (2026-11-17)
-      $('loadGo').outerHTML = '<button id="loadGo" class="go pl"><span class="face"><i>Start digging</i><i>↓</i></span></button>'; $('loadGo').onclick = () => pickCrater(i);
-      menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
+      $('loadGo').outerHTML = '<button id="loadGo" class="go pl"><span class="face"><i>Start digging</i><i>↓</i></span></button>'; $('loadGo').onclick = () => buffer($('loadGo'), () => pickCrater(i));
+      menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') buffer($('loadGo'), () => pickCrater(i)); };
     }, CONFIG.loadingMs);
     return;
   }
@@ -1873,8 +1877,8 @@ function finishGame(drifted = false) {
     ${unrecovered}
     ${drifted ? '<p class="note">The Core is still down there.</p>' : ''}
     <button id="again" class="go pl"><span class="face"><i>New game</i><i>Enter</i></span></button>`);
-  $('again').onclick = newGame;
-  menuKeys = k => { if (k === 'Enter') newGame(); };
+  $('again').onclick = () => buffer($('again'), newGame);
+  menuKeys = k => { if (k === 'Enter') buffer($('again'), newGame); };
   // The stats print, line by line, on the shift recorder's paper (2026-11-24; they counted up before).
 }
 
@@ -2473,8 +2477,8 @@ function pause() {
     <p class="note">The Rock will wait. It has waited before.</p>
     <button id="resume" class="go pl"><span class="face"><i>Resume</i><i>Space</i></span></button>
     <div class="btn2" id="pauseVol">${pauseVolHTML()}</div>`);   // where people look to change things
-  $('resume').onclick = resume;
-  menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
+  $('resume').onclick = () => buffer($('resume'), resume);
+  menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') buffer($('resume'), resume); };
 }
 
 // Every timer is a timestamp, so freezing time means shifting them all by the time spent away
@@ -3165,7 +3169,7 @@ addEventListener('keydown', e => {
   if (k === ' ') e.preventDefault();
   if (k === 'r' || k === 't') { radioKey(k); return; }   // the radio works on every screen
   if (k === 'v') { volumeKey(); return; }                // and so does the volume
-  if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); newGame(); } return; }
+  if (!$('start').classList.contains('hidden')) { if (k === 'Enter') { e.preventDefault(); buffer($('go'), newGame); } return; }
   if (menuKeys) { menuKeys(k); return; }
   if (s && s.drift && !s.drift.done) { if (k === 'Escape') endDrift(); const nd = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1], a: [-1, 0], d: [1, 0], w: [0, -1], s: [0, 1] }[k]; if (nd) { s.drift.vx += nd[0] * CONFIG.drift.nudge; s.drift.vy += nd[1] * CONFIG.drift.nudge; e.preventDefault(); } if (DEV && k === ']') player.currentTime += 15; return; }   // developer mode: ] skips 15 s of the Drift   // the Drift: nothing to do but watch, or Esc
   if (k === ' ' || k === 'p' || k === 'Escape') { pause(); return; }   // Space, P or Esc
@@ -3194,7 +3198,14 @@ addEventListener('keyup', e => {
 cv.addEventListener('mousedown', () => cv.focus());
 document.addEventListener('mouseup', e => { if (e.target.closest('button')) e.target.closest('button').blur(); });
 
-$('go').onclick = newGame;
+// A push-light fills like a shake before it acts (2026-11-26, the user). Pressing again while it fills does nothing.
+function buffer(btn, fn) {
+  if (!btn || btn.classList.contains('buffering')) return;
+  const i = btn.querySelector('.face i'); if (i) i.dataset.l = i.textContent;
+  btn.classList.add('buffering');
+  setTimeout(() => { btn.classList.remove('buffering'); fn(); }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 150 : 600);
+}
+$('go').onclick = () => buffer($('go'), newGame);
 $('pauseBtn').onclick = pause;
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });   // a hidden tab pauses the shift (a screenshot or another window does not)
 // Fit the whole game to the window: never scroll, just scale down evenly on small screens.
