@@ -2976,13 +2976,13 @@ function buildGauge() {
   }
   $('gauge').innerHTML = h; gaugeFor = tipAt() + '/' + w;
 }
-// The needle's weight (2026-11-26): a spring toward the meter (it overshoots a little and settles), a faint tremble while the drill bites.
+// The needle's weight (2026-11-26): a spring toward the meter, nearly fully damped: it has weight, no bounce. No tremble (it read as spasms, 2026-11-26).
 const needle = { x: null, v: 0, at: 0 };
 function needleU(target) {
   const t = performance.now(), dt = Math.min(.05, (t - (needle.at || t)) / 1000); needle.at = t;
   if (needle.x === null || t - lampTestAt < LAMPTEST_MS) { needle.x = target; needle.v = 0; return target; }   // the lamp test sweeps it itself
-  needle.v += ((target - needle.x) * 90 - needle.v * 11) * dt; needle.x += needle.v * dt;
-  return needle.x + (running && s && now() - (s.lastHitAt || 0) < 220 ? (Math.random() - .5) * .014 : 0);
+  needle.v += ((target - needle.x) * 90 - needle.v * 17) * dt; needle.x += needle.v * dt;
+  return needle.x;
 }
 function drawGaugeMeter(t) {
   if (gaugeFor !== tipAt() + '/' + Math.round($('dosage').clientWidth || GZ.w)) buildGauge();
