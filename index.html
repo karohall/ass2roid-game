@@ -17,7 +17,7 @@
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font:400 14px/1.45 var(--f-text); text-wrap:pretty; -webkit-font-smoothing:antialiased; }   /* no orphans: never one word alone on a last line */
   :root { --mid:720px; --side:440px; --cvk:1; }   /* wide and low, like a screen (2026-11-26): the Milk+ menu in two columns, the right column wider so its cards wrap less */   /* the Milk+ column (and the cluster under it), the right column; --cvk: the mining window's size, set by placeMeter() to fill the height */
-  #wrap { display:grid; grid-template-columns:calc(440px * var(--cvk) + 2px + 24px) var(--mid) var(--side);   /* + the frame's padding */ grid-template-rows:var(--row1, auto) 230px 150px; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
+  #wrap { display:grid; grid-template-columns:calc(440px * var(--cvk) + 2px + 24px) var(--mid) var(--side);   /* + the frame's padding */ grid-template-rows:var(--row1, auto) 230px 130px; gap:10px 16px; align-items:start; padding:16px; width:max-content; transform-origin:top left; }   /* never wraps: fit() scales and centres it */
   #stage { grid-area:1 / 1 / 4 / 2; } #panel { grid-area:1 / 2; } #panel2 { grid-area:1 / 3 / 3 / 4; align-self:stretch; }   /* the mining window down the whole left; the Milk+ column; the right column down to the radio, its log filling it */
   #dosage { grid-area:2 / 2 / 3 / 3; align-self:stretch; }   /* the cluster, under the Milk+ column */
   #baseRow { grid-area:3 / 2 / 4 / 4; align-self:stretch; }   /* the radio, a long strip under both columns */
@@ -38,16 +38,16 @@
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
   #dosage::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg, rgba(255,255,255,.07), transparent 35%); }
   #gauge { display:block; }
-  #dosage .dzplate { position:absolute; left:10px; top:8px; z-index:1; display:flex; align-items:center; gap:8px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase;
+  #dosage .dzplate { position:absolute; left:10px; top:8px; z-index:1; display:flex; align-items:center; gap:8px; padding:3px 8px 3px 7px; font:600 12px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase;
     color:#aab1b8; background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
   #camTab { margin:0 0 7px; }
-  #camTab h3 { display:flex; align-items:center; gap:8px; margin:0 0 0 -2px; padding:3px 8px 3px 7px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#aab1b8;
+  #camTab h3 { display:flex; align-items:center; gap:8px; margin:0 0 0 -2px; padding:3px 8px 3px 7px; font:600 12px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#aab1b8;
     background:linear-gradient(180deg, #2c3034, #212428); clip-path:var(--chamfer-s); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.1); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5); }
   #camTab h3::before { content:''; width:7px; height:7px; flex:none; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
 
   #dosage .dzplate::before { content:''; width:7px; height:7px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #4a5056, #15171a); box-shadow:0 0 0 1px #08090a; }   /* the same plate and lamp as .box h3 */
   #gauge .needle.hot { animation:throb .4s ease-in-out infinite alternate; }   /* reaches under the Milk+ column, which ends above it */
-  #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
+  #dosageHead { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; font:600 12px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
   #dosageNow { font:700 20px/1 var(--f-title); letter-spacing:.04em; color:var(--hot); }
   #dosageHead.vast > span:first-child { display:none; }                /* Stillness: the label takes the whole row */
   #dosageHead.vast #dosageNow { font-size:16px; letter-spacing:.02em; width:100%; text-align:center; }
@@ -66,7 +66,7 @@
   .lamp { width:24px; height:16px; margin-left:10px; vertical-align:-3px; fill:var(--amber);
           filter:drop-shadow(0 0 3px rgba(255,180,60,.8)); animation:breathe 1.8s ease-in-out infinite; }
   @keyframes breathe { 0%, 100% { opacity:1; } 50% { opacity:.2; } }
-  #scale { display:flex; margin-top:5px; font:500 11px var(--f-small); color:var(--faint); }
+  #scale { display:flex; margin-top:5px; font:500 12px var(--f-small); color:var(--faint); }
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
@@ -89,7 +89,7 @@
     box-shadow:0 0 0 1px #08090a, 0 3px 6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); }
   .rknob > i::before { content:''; position:absolute; inset:24%; border-radius:50%; background:radial-gradient(circle, #2c3034 0 55%, transparent 56%), repeating-conic-gradient(#2e3236 0 8deg, #1d2023 8deg 16deg); box-shadow:0 0 0 1px #08090a, 0 2px 4px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.1); }   /* the knurled cap */
   .rknob > i::after { content:''; position:absolute; inset:24%; border-radius:50%; background:linear-gradient(#f0f2f4, #f0f2f4) 50% 0 / 2px 46% no-repeat; transform:rotate(var(--a, 0deg)); transition:transform .5s cubic-bezier(.3,1.4,.5,1); }   /* the white index line, turning */
-  .rknob .kl { display:flex; gap:5px; align-items:center; font:600 13px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
+  .rknob .kl { display:flex; gap:5px; align-items:center; font:600 12px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
 
   .rmid { display:grid; grid-template-rows:40px auto; gap:4px; min-width:0; padding:4px 4px 5px; clip-path:var(--chamfer-s); background:#06080a; box-shadow:inset 0 2px 5px rgba(0,0,0,.95), inset 0 0 0 1px #040506; }   /* one sunken display: the band and the song (2026-11-24) */
   .rrow { padding:0 8px; }
@@ -115,7 +115,7 @@
   #radioBox #radioFx { flex:none; max-width:58%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; text-align:right; font:500 13px/1.25 var(--f-small); color:var(--dim); }   /* quiet grey: notes only */
   #radioBox #radioFx.warn { color:var(--amber); }
   .rlamps { display:grid; grid-template-columns:132px 1fr; grid-template-rows:repeat(6, 1fr); height:74px; gap:3px 4px; padding:4px; background:#0a0b0d; clip-path:var(--chamfer-s); box-shadow:inset 0 2px 5px rgba(0,0,0,.9), inset 0 0 0 1px #040506; }   /* one bezel for all the lenses */   /* the station's perk on the left, the radio's state on the right */
-  .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 12px/1 var(--f-title); letter-spacing:.06em; text-transform:uppercase; color:#4a5056; background:linear-gradient(180deg, #08090a, #0f1113); border-radius:2px; box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px #050607, 0 1px 0 rgba(255,255,255,.07); transition:background .3s, color .3s, box-shadow .3s; }   /* a lens set into the panel: sunken, read not pressed (2026-11-24) */
+  .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:600 12px/1 var(--f-small); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:linear-gradient(180deg, #08090a, #0f1113); border-radius:2px; box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px #050607, 0 1px 0 rgba(255,255,255,.07); transition:background .3s, color .3s, box-shadow .3s; }   /* a lens set into the panel: sunken, read not pressed (2026-11-24) */
   .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
   .rlamps .tapecell { grid-column:2; grid-row:1 / 4; display:flex; align-items:center; gap:5px; } .rlamps .tapecell > span { flex:1; align-self:stretch; }   /* the T beside its lens, not in it (2026-11-26) */
   .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
@@ -144,8 +144,8 @@
   #pauseBtn { width:auto; flex:none; height:28px; padding:3px; display:inline-flex; align-items:stretch; background:linear-gradient(180deg, #2b2f33, #1b1e21);   /* an aviation key, like Shake/Drink (2026-11-26) */
     box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a; clip-path:var(--chamfer-s); transition:transform .06s; }
   #pauseBtn::before { display:none; } #pauseBtn:disabled { opacity:1; }
-  #pauseBtn .face { display:flex; align-items:center; gap:8px; padding:0 9px; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:#d9dde0; text-shadow:0 0 6px rgba(255,255,255,.2); }
-  #pauseBtn .face small { font:600 11px/1 var(--f-small); letter-spacing:.1em; color:#5f656b; text-shadow:none; }   /* its key, engraved */
+  #pauseBtn .face { display:flex; align-items:center; gap:8px; padding:0 9px; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); font:600 12px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:#d9dde0; text-shadow:0 0 6px rgba(255,255,255,.2); }
+  #pauseBtn .face small { font:600 12px/1 var(--f-small); letter-spacing:.1em; color:#5f656b; text-shadow:none; }   /* its key, engraved */
   #pauseBtn:disabled .face { color:#353a3f; text-shadow:none; }   /* dark when it can't pause */
   #pauseBtn:not(:disabled):active { transform:translateY(1px); }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
@@ -156,7 +156,7 @@
   #legend { min-height:50px; padding:6px 10px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.12); clip-path:var(--chamfer-s); display:flex; flex-wrap:wrap; align-content:flex-start; gap:6px 16px; margin-top:8px; }   /* room for two lines from the start, so the fit is right */
   /* The legend: each thing in the rock as it looks, a small plate in its role's colour. */
   #legend > span { display:inline-flex; align-items:center; gap:6px; }
-  .sw { display:inline-grid; place-items:center; width:16px; height:16px; flex:none; font:700 9px/1 var(--f-title); font-style:normal; color:var(--concrete); background:var(--bg); box-shadow:inset 0 0 0 1px var(--concrete); }
+  .sw { display:inline-grid; place-items:center; width:16px; height:16px; flex:none; font:700 10px/1 var(--f-title); font-style:normal; color:var(--concrete); background:var(--bg); box-shadow:inset 0 0 0 1px var(--concrete); }
   .sw.you { background:var(--concrete); box-shadow:inset 0 0 0 1.5px var(--bg), 0 0 0 1px var(--concrete); clip-path:var(--chamfer-s); }
   .sw.rock { background:repeating-linear-gradient(135deg, #5b6066 0 3px, #8b9198 3px 5px, #3a3e43 5px 8px); box-shadow:none; }
   .sw.steel { color:#b4bac0; box-shadow:inset 0 0 0 1px #b4bac0; }
@@ -174,18 +174,18 @@
   .box > svg.outline { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:0; transition:opacity 1.2s; }
   .box > *:not(svg) { position:relative; z-index:1; }
   #mineBox > .overlay { position:absolute; z-index:2; } #mineBox > #nasa { position:absolute; z-index:3; }   /* on the picture, not in the flow (2026-11-24) */
-  .box h3 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--text); }
+  .box h3 { display:flex; align-items:center; gap:8px; margin:0 0 10px; font:600 12px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--text); }
   .box h3::before { content:''; width:6px; height:6px; flex:none; background:var(--dim); }
   .phead { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin:0 0 6px; }   /* every panel's header: the plate left, anything else right (2026-11-24) */
   .phead > h3 { margin:0 0 0 -2px !important; }
-  .pmeta { font:500 11px/1 var(--f-small); letter-spacing:.04em; color:#868d93; white-space:nowrap; padding-top:4px; }   /* beside the plate, quietly: who keeps it, where it is */
+  .pmeta { font:500 12px/1 var(--f-small); letter-spacing:.04em; color:#868d93; white-space:nowrap; padding-top:4px; }   /* beside the plate, quietly: who keeps it, where it is */
   body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }   /* the plates' lamps: all lit while the shift runs (the user, 2026-11-24) */
   .row { display:flex; justify-content:space-between; gap:8px; }
   .bar { height:4px; background:var(--line); margin:4px 0 3px; }
   .bar > div { height:100%; width:0; background:var(--dim); }
   .bar.warn > div { background:var(--amber); }
   /* Buttons: outline, cut corners; fluo when it is the thing to do now. */
-  button { position:relative; isolation:isolate; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; background:transparent; color:var(--text); border:0; padding:8px 10px; cursor:pointer; width:100%; text-align:left; clip-path:var(--chamfer-s); }
+  button { position:relative; isolation:isolate; font:600 12px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; background:transparent; color:var(--text); border:0; padding:8px 10px; cursor:pointer; width:100%; text-align:left; clip-path:var(--chamfer-s); }
   button::before { content:''; position:absolute; inset:0; z-index:-1; background:var(--line-2);
     clip-path:polygon(var(--cut-s) 0, 100% 0, 100% calc(100% - var(--cut-s)), calc(100% - var(--cut-s)) 100%, 0 100%, 0 var(--cut-s), var(--cut-s) 0, calc(var(--cut-s) + .7px) 1px, 1px calc(var(--cut-s) + .7px), 1px calc(100% - 1px), calc(100% - var(--cut-s) - .7px) calc(100% - 1px), calc(100% - 1px) calc(100% - var(--cut-s) - .7px), calc(100% - 1px) 1px, calc(var(--cut-s) + .7px) 1px); }
   button:hover:not(:disabled) { background:var(--raised); }
@@ -202,7 +202,7 @@
   .recipe button.key::before { display:none; }
   .recipe button.key:disabled { opacity:1; }
   .key .face { display:grid; grid-template-rows:1fr 1fr; gap:2px; height:100%; padding:2px; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); }
-  .key .face i { position:relative; display:grid; place-items:center; overflow:hidden; font:600 11px/1 var(--f-small); font-style:normal; letter-spacing:.14em; color:#353a3f; background:#0c0e10; }
+  .key .face i { position:relative; display:grid; place-items:center; overflow:hidden; font:600 12px/1 var(--f-small); font-style:normal; letter-spacing:.14em; color:#353a3f; background:#0c0e10; }
   .key .no { position:absolute; left:-1px; top:-1px; z-index:2; width:17px; height:15px; display:grid; place-items:center; font:700 11px/1 var(--f-title); color:#c3c8cc; background:#2b2f33;
              box-shadow:0 0 0 1px #08090a; clip-path:polygon(0 0, 100% 0, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
   .key.can .face i:first-child { color:var(--text); background:#16191c; }
@@ -226,7 +226,7 @@
   .ph kbd.k { margin-right:8px; vertical-align:1px; }   /* a recipe still to find: its key before the ? ? ? */
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
   .recipe .name br { display:none; } .recipe .name > * { display:block; }   /* name, what it does and the recipe: each its own paragraph, so text-wrap:pretty keeps every last line from being an orphan */
-  .recipe .does { font-size:12px; color:var(--dim); }
+  .recipe .does { font-size:13px; color:var(--dim); }
   .small[data-reveal="drink"] { font:400 12px/1.5 var(--f-text); }   /* the caution and the Active line: read at the descriptions' size, not fine print (2026-11-26: "this text is tiny") */
   .recipe .name > *, .overlay .body, .overlay .note, #log div, #radioFx, .small, .journeyCap { text-wrap:balance; }   /* no short last lines in short blocks (2026-11-17) */
   .ph { display:none; color:var(--faint); margin-bottom:6px; font:500 12px var(--f-small); }   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
@@ -234,7 +234,7 @@
   #row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; } #row2 > .box { margin:0 !important; }
   #recipes { display:grid; grid-template-columns:1fr 1fr; column-gap:24px; align-items:start; }   /* two drinks side by side */
   body.fitting .ph { display:none !important; }
-  .small { font:400 11px/1.45 var(--f-small); color:var(--dim); }
+  .small { font:400 12px/1.45 var(--f-small); color:var(--dim); }
   #ingredients .row { padding:3px 0; align-items:center; } #ingredients .row > span:first-child { display:inline-flex; align-items:center; gap:9px; } #ingredients .row > span:last-child { font:700 14px var(--f-title); font-variant-numeric:tabular-nums; }
   #log { flex:1; min-height:70px; overflow:hidden; font:400 12px/1.5 var(--f-small); }   /* newest on top, the rest cut off; it takes the room the card leaves */
   #panel2 > .box:last-child { flex:1; min-height:0; display:flex; flex-direction:column; }   /* the right column has a fixed height: the log fills it */
@@ -242,15 +242,15 @@
   #log div:first-child { color:var(--text); } #log div:nth-child(2) { opacity:.85; } #log div:nth-child(3) { opacity:.7; } #log div:nth-child(4) { opacity:.58; } #log div:nth-child(n+5) { opacity:.45; }
   /* The Field Guide: cards as tiles; found ones raised, the rest an outline with a ?. */
   #guide { display:grid; grid-template-columns:repeat(4, 1fr); gap:5px; }   /* four to a row: the four layers and the four ingredients each in one row (2026-11-17) */
-  #guide .cat { grid-column:1 / -1; font:600 11px/1 var(--f-small); color:var(--faint); text-transform:uppercase; letter-spacing:.14em; margin-top:4px; }
-  .slot { box-shadow:inset 0 0 0 1px var(--line); padding:5px 4px; text-align:center; font:500 11px/1.25 var(--f-small); height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--faint); }
+  #guide .cat { grid-column:1 / -1; font:600 12px/1 var(--f-small); color:var(--faint); text-transform:uppercase; letter-spacing:.14em; margin-top:4px; }
+  .slot { box-shadow:inset 0 0 0 1px var(--line); padding:5px 4px; text-align:center; font:500 12px/1.25 var(--f-small); height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--faint); }
   .slot.found { background:var(--raised); box-shadow:none; color:var(--text); clip-path:var(--chamfer-s); }
   .slot.sel { background:var(--text); color:var(--bg); clip-path:var(--chamfer-s); }
   .slot.locked { font:700 14px var(--f-title); }
-  #guide .drawer { grid-column:1 / -1; text-align:left; font:500 11px var(--f-small); letter-spacing:0; text-transform:none; padding:7px 9px; }
+  #guide .drawer { grid-column:1 / -1; text-align:left; font:500 12px var(--f-small); letter-spacing:0; text-transform:none; padding:7px 9px; }
   #guide .tiles { grid-column:1 / -1; display:none; grid-template-columns:repeat(7, 1fr); gap:4px; }
   #guide .tiles.open, body.fitting #guide .tiles { display:grid; }   /* measured open, so opening it never rescales the game */
-  .tile { box-shadow:inset 0 0 0 1px var(--line); height:24px; display:flex; align-items:center; justify-content:center; font:700 11px var(--f-title); color:var(--faint); cursor:pointer; }
+  .tile { box-shadow:inset 0 0 0 1px var(--line); height:24px; display:flex; align-items:center; justify-content:center; font:700 12px var(--f-title); color:var(--faint); cursor:pointer; }
   .tile.found { background:var(--raised); box-shadow:none; color:var(--text); clip-path:var(--chamfer-s); }
   .tile.gone { box-shadow:none; color:#2f3337; text-decoration:line-through; }
   .tile.sel { background:var(--text); color:var(--bg); clip-path:var(--chamfer-s); }
@@ -278,7 +278,7 @@
   #confetti i { position:absolute; display:block; }
   #hint { font-weight:560; }   /* the hint is plain text, only the key drawn (the user chose it, 2026-11-24); a touch heavier than 500 (Inter is variable) */
   #hint .em { font-weight:700; }
-  #hint kbd.hk { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; margin:0 1px; vertical-align:1px; font:700 11px/1 var(--f-title); color:#e8ebee;
+  #hint kbd.hk { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; margin:0 1px; vertical-align:1px; font:700 12px/1 var(--f-title); color:#e8ebee;
     background:linear-gradient(180deg, #3a3f44, #24282c); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }   /* the start screen's dark keycap */
   body.drifting #hint { opacity:0; transition:opacity 4s ease; }   /* only the prospector and space remain */
   .cardrow { display:flex; gap:10px; align-items:flex-start; }   /* the photo, and the text in one column beside it */
@@ -306,10 +306,10 @@
   .overlay .body { font:400 14px/1.55 var(--f-text); color:var(--text); max-width:340px; }
   .overlay .note { font:400 13px/1.55 var(--f-text); color:var(--dim); max-width:340px; }
   .overlay .note b { color:var(--text); font-weight:600; }
-  .lbl { display:inline-flex; align-items:center; gap:8px; font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
+  .lbl { display:inline-flex; align-items:center; gap:8px; font:600 12px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); }
   .lbl::before { content:''; width:6px; height:6px; background:var(--dim); }
   .lbl.live::before { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
-  .ver { font:500 11px var(--f-small); color:var(--dim); letter-spacing:.04em; margin-top:-12px; }
+  .ver { font:500 12px var(--f-small); color:var(--dim); letter-spacing:.04em; margin-top:-12px; }
   #start .wa { --s:64px; } #start .wa .sub { font-size:12px; }
   #start .ver { margin-bottom:30px; font-size:13px; } #start #goGlow { margin-top:30px; }   /* one block: the name, the list, the key (2026-11-26) */   /* the logo up, the start button down: room to read the steps between (2026-11-24) */
   .overlay button { width:auto; text-align:center; }
@@ -343,7 +343,7 @@
   @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
   @media (prefers-reduced-motion: reduce) { #goGlow { animation:none; filter:drop-shadow(0 0 8px rgba(255,180,60,.6)); } }
 
-  .btn2 { display:inline-flex; align-items:center; gap:10px; height:32px; padding:0 10px 0 14px; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--text); box-shadow:inset 0 0 0 1px var(--line-2); clip-path:var(--chamfer-s); }
+  .btn2 { display:inline-flex; align-items:center; gap:10px; height:32px; padding:0 10px 0 14px; font:600 12px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:var(--text); box-shadow:inset 0 0 0 1px var(--line-2); clip-path:var(--chamfer-s); }
   .btn2 kbd { background:var(--raised); color:var(--text); }
   .go kbd.ar { font:700 17px/1 var(--f-text); padding:2px 7px 3px; }
   kbd.k.ar { width:24px; padding:0; }   /* the arrows: drawn, all three alike, in a square cap like R, T and V (2026-11-24) */
@@ -360,7 +360,7 @@
   .lamprow ol { margin:0; padding:0; list-style:none; counter-reset:s; } .lamprow li { counter-increment:s; } .lamprow li::before { content:counter(s) '. '; color:var(--faint); }
   .keys { display:grid; grid-template-columns:auto auto; gap:8px 12px; align-items:center; font:400 12px var(--f-text); color:var(--dim); text-align:left; }
   .keys span:nth-child(odd) { justify-self:end; display:flex; gap:4px; }
-  kbd.k, .go kbd, .btn2 kbd, #pauseBtn kbd { display:inline-grid; place-items:center; box-sizing:border-box; min-width:20px; height:20px; padding:0 5px; font:700 10px/1 var(--f-title); letter-spacing:.04em; color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }   /* one keycap everywhere (2026-11-24) */
+  kbd.k, .go kbd, .btn2 kbd, #pauseBtn kbd { display:inline-grid; place-items:center; box-sizing:border-box; min-width:20px; height:20px; padding:0 5px; font:700 11px/1 var(--f-title); letter-spacing:.04em; color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }   /* one keycap everywhere (2026-11-24) */
   .gokey { margin-top:-12px; font:500 12px/1 var(--f-small); letter-spacing:.04em; color:var(--dim); }   /* a bright button carries no key: it is taught just under it (2026-11-24) */
   #start .keys { gap:12px 16px; font:400 15px/1.4 var(--f-text); }   /* the start screen read at a real size (2026-11-26: "way too tiny") */
   #start .keys kbd.k { min-width:30px; height:30px; padding:0 9px; font-size:13px; } #start .keys kbd.k.ar { width:30px; padding:0; } #start .keys kbd.k.ar svg { width:14px; height:14px; }
@@ -370,12 +370,12 @@
   .kv { width:100%; max-width:320px; margin:0; }
   .kv div { display:grid; grid-template-columns:1fr auto; align-items:baseline; padding:6px 0; border-top:1px solid var(--line); text-align:left; }
   .kv div:first-child { border-top:0; } .kv dt { font:400 12px var(--f-small); color:var(--dim); } .kv dd { margin:0; font:700 15px/1 var(--f-title); font-variant-numeric:tabular-nums; }
-  .kv dd em { font:400 11px var(--f-small); font-style:normal; color:var(--faint); margin-left:3px; }
+  .kv dd em { font:400 12px var(--f-small); font-style:normal; color:var(--faint); margin-left:3px; }
   /* The rover's drive: a rail, filling in fluo. */
   .loadbar { width:260px; height:4px; background:var(--line); position:relative; } .loadbar i { position:absolute; left:0; top:0; bottom:0; width:0; background:var(--fluo); box-shadow:0 0 6px rgba(var(--fluo-rgb),.5); }
   /* The journey: the depth gauge's language on its side. Behind you, your rock; yours, framed; ahead, hatched. */
   .journey { display:flex; align-items:flex-start; width:100%; max-width:380px; margin:0; }
-  .journey .step { width:58px; flex:none; font:500 11px/1.2 var(--f-small); color:var(--faint); text-align:center; }
+  .journey .step { width:58px; flex:none; font:500 12px/1.2 var(--f-small); color:var(--faint); text-align:center; }
   .journey .dot { position:relative; width:52px; height:30px; margin:0 auto 7px; display:grid; place-items:center; clip-path:var(--chamfer-s);
                   background:#121417 repeating-linear-gradient(135deg, transparent 0 5px, rgba(150,157,164,.2) 5px 6px); box-shadow:inset 0 0 0 1px var(--line-2); }
   .journey .dot b { position:relative; z-index:1; display:grid; place-items:center; width:18px; height:16px; background:rgba(11,12,14,.88); font:700 12px/1 var(--f-title); color:var(--faint); }
@@ -385,13 +385,13 @@
   .journey .here .dot::after { content:''; position:absolute; inset:0; background:rgba(11,12,14,.5); }
   .journey .here .dot b { color:var(--text); }
   .journey .link { flex:1; height:1px; background:var(--line-2); margin-top:15px; }
-  .journeyCap { font:500 11px var(--f-small); color:var(--faint); margin-top:-14px; }
+  .journeyCap { font:500 12px var(--f-small); color:var(--faint); margin-top:-14px; }
   /* Näsa: Y2K chrome, the name in Näsa blue. The one rounded thing: a foreign brand, barging in at the top edge. */
   #nasa { position:absolute; top:calc(var(--tabH, 0px) + 20px); left:50%; transform:translateX(-50%); width:max-content; max-width:420px; z-index:3; display:flex; align-items:center; gap:12px; padding:16px 24px 16px 20px; border-radius:999px;
           color:#24262f; font:500 12px/1.35 var(--f-text); text-align:left; background:linear-gradient(180deg, #ffffff 0%, #e4e3f3 30%, #b9b8cf 55%, #f1f0fb 75%, #cfcde2 100%);
           box-shadow:inset 0 2px 1px #fff, inset 0 -3px 4px rgba(80,78,110,.45), 0 0 0 1px rgba(255,255,255,.6), 0 8px 22px rgba(0,0,0,.6); animation:nasaIn .28s cubic-bezier(.3,1.5,.6,1); }
   #nasa .logo { flex:none; display:flex; align-items:flex-start; } #nasa .logo b { font:700 15px/1 var(--f-title); color:var(--nasa); letter-spacing:.02em; } #nasa .logo sup { font:700 12px var(--f-small); color:var(--nasa); margin-left:1px; }
-  #nasa .inv { display:block; margin-top:2px; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:#4a4c8a; }
+  #nasa .inv { display:block; margin-top:2px; font:600 12px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:#4a4c8a; }
   #nasa.fading { opacity:0; transition:opacity 1s ease; }
   @keyframes nasaIn { from { transform:translate(-50%, -64px); } to { transform:translate(-50%, 0); } }
   @media (prefers-reduced-motion: reduce) { #nasa { animation:none; } }
@@ -400,7 +400,7 @@
   #artBig .box { width:min(980px, 94vw); padding:0 24px 24px; cursor:default; }
   #artBig .head { display:flex; align-items:center; justify-content:space-between; height:40px; margin-bottom:16px; }
   #artBig .head h3 { margin:0; }
-  #artBig .close { display:inline-flex; align-items:center; gap:8px; padding-top:8px; font:500 11px var(--f-small); color:var(--dim); }
+  #artBig .close { display:inline-flex; align-items:center; gap:8px; padding-top:8px; font:500 12px var(--f-small); color:var(--dim); }
 
   #artBig .art { display:grid; grid-template-columns:minmax(0, 640px) minmax(220px, 1fr); gap:28px; align-items:start; }
   #artBig img { width:100%; aspect-ratio:4 / 3; object-fit:cover; display:block; clip-path:var(--chamfer); }
@@ -408,7 +408,7 @@
   #artBig h4 { font:700 26px/1.1 var(--f-title); margin:8px 0 14px; }
   #artBig p { margin:0; font:13px/1.6 var(--f-text); color:var(--text); } #artBig p i { display:block; margin-top:14px; color:var(--faint); font-size:12px; }
   /* A discovery in the hint: a tag on ink in its role's colour. */
-  #hint .tag { display:inline-flex; align-items:center; gap:6px; margin-right:8px; padding:4px 8px 4px 7px; vertical-align:1px; font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; background:var(--bg); color:var(--fluo);
+  #hint .tag { display:inline-flex; align-items:center; gap:6px; margin-right:8px; padding:4px 8px 4px 7px; vertical-align:1px; font:600 12px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; background:var(--bg); color:var(--fluo);
                clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
   #hint .tag::before { content:''; width:5px; height:5px; background:currentColor; box-shadow:0 0 5px currentColor; }
   #hint .tag.violet { color:var(--violet); } #hint .tag.jizz { color:var(--jizz); } #hint .tag.candy { color:var(--candy); } #hint .tag.steel { color:var(--dim); } #hint .tag.steel::before { box-shadow:none; }
@@ -444,7 +444,7 @@
   #rover > .row:first-child h3 { margin:0; }
   /* The rover's instruments: an engraved name, then the instrument, then its value. */
   .inst { display:grid; grid-template-columns:104px 1fr auto; align-items:center; gap:8px; min-height:24px; margin-top:2px; }
-  .inst .eng { font:500 11px/1.2 var(--f-small); letter-spacing:.04em; white-space:nowrap; text-transform:uppercase; color:var(--dim); }
+  .inst .eng { font:500 12px/1.2 var(--f-small); letter-spacing:.04em; white-space:nowrap; text-transform:uppercase; color:var(--dim); }
   .inst .eng, #guide .cat, .rknob .kl { font-weight:600; color:#5f656b; }   /* backlit print (2026-11-26): unlit, dark grey print; wider strokes so the light gets through */
   body.shiftOn :is(.inst .eng, #guide .cat, .rknob .kl) { color:transparent; background:radial-gradient(70% 140% at 45% 55%, #f4f6f8, #b9bec3 70%, #8b9095); -webkit-background-clip:text; background-clip:text; }   /* lit with the shift: the light through the letters, neutral white (warm read as yellow), no halo */
   .inst .win { grid-column:2 / -1; display:flex; justify-content:flex-end; align-items:center; height:24px; padding:0 8px; background:linear-gradient(160deg, rgba(255,255,255,.035), transparent 40%), #07080a;
@@ -463,7 +463,7 @@
   .dbar { position:relative; display:flex; gap:2px; height:14px; padding:2px; background:#07080a; box-shadow:inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.05); }
   .dbar i { flex:1; background:rgba(150,157,164,.08); }
   .dbar i.on { background:#c4c9cd; } .dbar.worn i.on { background:var(--amber); box-shadow:0 0 4px rgba(255,180,60,.45); }
-  .dbar.broken::after { content:'Pickaxe'; position:absolute; inset:0; display:grid; place-items:center; font:600 11px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
+  .dbar.broken::after { content:'Pickaxe'; position:absolute; inset:0; display:grid; place-items:center; font:600 12px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
   /* Indicator lamps: a lens each, its name engraved beside it. Off is a dark lens; lit means on; blinking means look. */
   .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
   #rover .lamps:not(:has(.ind.shown, .ind.warn)) { display:none; }   /* shown once a lamp is revealed, or the caution is lit */
@@ -477,7 +477,7 @@
   .tape { width:min(300px, 100%); margin:0 auto; padding:14px 16px 12px; text-align:left; color:var(--bg); background:var(--concrete);
           -webkit-mask:radial-gradient(circle 3px at 6px 0, transparent 98%, #000) -6px 0 / 12px 100% repeat-x; mask:radial-gradient(circle 3px at 6px 0, transparent 98%, #000) -6px 0 / 12px 100% repeat-x;
           box-shadow:inset 0 -1px 0 rgba(0,0,0,.15); }   /* the shift recorder's paper strip, perforated at the top */
-  .tape .th { font:700 10px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#555a5c; padding-bottom:8px; margin-bottom:6px; border-bottom:1px dashed rgba(11,12,14,.35); display:flex; justify-content:space-between; }
+  .tape .th { font:700 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:#555a5c; padding-bottom:8px; margin-bottom:6px; border-bottom:1px dashed rgba(11,12,14,.35); display:flex; justify-content:space-between; }
   .tape .ln { display:flex; align-items:baseline; gap:6px; font:500 12px/1.75 var(--f-small); clip-path:inset(0 0 100% 0); animation:println .18s steps(3) forwards; }
   .tape .ln span { flex:none; } .tape .ln i { flex:1; border-bottom:1px dotted rgba(11,12,14,.4); transform:translateY(-3px); }
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
@@ -488,8 +488,8 @@
       linear-gradient(180deg, #2b2f33, #1b1e21);   /* plain gunmetal, the bezels' metal: no brushing (2026-11-26) */
     box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.5), 0 0 0 1px #08090a, 0 2px 5px rgba(0,0,0,.5); }   /* four hex bolts hold it at the corners, clear of the text */
   .placard::before { content:''; position:absolute; inset:5px 20px; border:1px solid rgba(0,0,0,.55); box-shadow:0 1px 0 rgba(255,255,255,.06); pointer-events:none; }   /* the engraved border */
-  .placard .ph { display:block; margin-bottom:4px; font:700 11px/1.2 var(--f-small); letter-spacing:.2em; text-transform:uppercase; color:var(--amber); }   /* CAUTION in amber paint: attention */
-  .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
+  .placard .ph { display:block; margin-bottom:4px; font:700 12px/1.2 var(--f-small); letter-spacing:.2em; text-transform:uppercase; color:var(--amber); }   /* CAUTION in amber paint: attention */
+  .ind { display:inline-flex; align-items:center; gap:5px; font:600 12px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
   .ind.warn { color:var(--text); } .ind.warn i { background:radial-gradient(circle at 50% 40%, #ffe2b0, var(--amber) 55%, #6b4610); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(255,180,60,.6); }
@@ -3235,7 +3235,7 @@ function placeMeter() {
   for (let i = 0; i < 4; i++) {
     const tab = $('camTab'), tabH = tab.offsetHeight ? tab.offsetHeight + 7 : 0, fixed = $('hint').offsetHeight + $('legend').offsetHeight + 16 + 2 + tabH + 22;   /* + the frame's padding (10 + 12) */   /* the Shaft cam tab above it, too */
     $('stage').style.setProperty('--tabH', tabH + 'px');   /* the overlays start under the tab, on the mine itself */
-    w.style.setProperty('--cvk', Math.max(1, Math.min(1.6, (row1 + 400 - fixed) / cv.height)).toFixed(4));
+    w.style.setProperty('--cvk', Math.max(1, Math.min(1.6, (row1 + 380 - fixed) / cv.height)).toFixed(4));
   }
   rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.innerHTML = t);
   $('hint').innerHTML = hint0;
