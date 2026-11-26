@@ -166,6 +166,7 @@
   button:hover:not(:disabled) { background:var(--raised); }
   button:hover:not(:disabled)::before { background:var(--dim); }
   button:focus-visible { outline:2px solid var(--fluo); outline-offset:2px; }
+  .go:focus-visible { outline:none; }   /* the rubber keys: their lit legend and "or press …" already say which key Enter or Space presses (2026-11-26) */
   button:disabled { opacity:.4; cursor:default; }
   .recipe { display:grid; grid-template-columns:1fr 96px; gap:8px; align-items:center; margin-bottom:6px; padding-top:6px; border-top:1px solid var(--line); }
   .recipe:first-child { border-top:0; padding-top:0; }
