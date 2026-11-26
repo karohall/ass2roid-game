@@ -337,7 +337,9 @@
   .go.pl { padding:4px !important; height:auto !important; min-width:0 !important; border-radius:0 !important; text-shadow:none !important; filter:none !important;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px #08090a, 0 3px 0 #08090a, 0 6px 14px rgba(0,0,0,.45) !important; clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px) !important; }
   .go.pl + .gokey, #goGlow:has(.go.pl) + .gokey { display:none !important; }   /* the key is on the key */
-  #goGlow:has(.go.pl) { animation:none !important; }
+  #goGlow:has(.go.pl) { animation:goglow 1.8s ease-in-out infinite !important; } #goGlow:has(.go.pl.buffering) { animation:none !important; }   /* Begin shift breathes until pressed (2026-11-26, the user) */
+  #go.go.pl:not(.buffering) .face i:first-child { animation:plbreathe 1.8s ease-in-out infinite; } @keyframes plbreathe { 50% { background:rgba(255,180,60,.26); text-shadow:0 0 12px rgba(255,180,60,.9); } }
+  @media (prefers-reduced-motion: reduce) { #goGlow:has(.go.pl), #go.go.pl .face i:first-child { animation:none !important; } }
   #go.go { color:rgba(255,180,60,.92) !important; text-shadow:0 0 7px rgba(255,180,60,.6); --led:255,180,60; }
   #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:transparent !important; } 
   @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
