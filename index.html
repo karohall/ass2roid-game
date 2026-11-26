@@ -215,9 +215,8 @@
   #ingredients .row { padding:3px 0; } #ingredients .row > span:last-child { font:700 14px var(--f-title); font-variant-numeric:tabular-nums; }
   #log { flex:1; min-height:70px; overflow:hidden; font:400 12px/1.5 var(--f-small); }   /* newest on top, the rest cut off; it takes the room the card leaves */
   #panel2 > .box:last-child { flex:1; min-height:0; display:flex; flex-direction:column; }   /* the right column has a fixed height: the log fills it */
-  #log div { position:relative; color:var(--dim); padding:2px 0 2px 14px; }
-  #log div::before { content:''; position:absolute; left:1px; top:8px; width:5px; height:5px; background:var(--faint); transform:rotate(45deg); }
-  #log div:first-child { color:var(--text); } #log div:first-child::before { background:var(--fluo); }
+  #log div { position:relative; color:var(--dim); padding:2px 0; }   /* a message display, not a list (2026-11-26): no bullets; the newest line bright, the older ones fading */
+  #log div:first-child { color:var(--text); } #log div:nth-child(2) { opacity:.85; } #log div:nth-child(3) { opacity:.7; } #log div:nth-child(4) { opacity:.58; } #log div:nth-child(n+5) { opacity:.45; }
   /* The Field Guide: cards as tiles; found ones raised, the rest an outline with a ?. */
   #guide { display:grid; grid-template-columns:repeat(4, 1fr); gap:5px; }   /* four to a row: the four layers and the four ingredients each in one row (2026-11-17) */
   #guide .cat { grid-column:1 / -1; font:600 11px/1 var(--f-small); color:var(--faint); text-transform:uppercase; letter-spacing:.14em; margin-top:4px; }
