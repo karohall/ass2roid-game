@@ -215,7 +215,11 @@
   .key.jizz.can .face i:first-child { color:var(--jizz); } .key.candy.can .face i:first-child { color:var(--candy); }
   /* The Shake/Drink keys keep their aviation look: a two-part lit face (the user preferred it to rubber, 2026-11-26). */
   .recipe .name { line-height:1.3; }
-  .recipe .name b { font:600 13px var(--f-text); }
+  .recipe .name b { display:flex !important; align-items:center; font:600 12px/1 var(--f-small); letter-spacing:.1em; text-transform:uppercase; color:#5f656b; margin-bottom:6px; }
+  body.shiftOn .recipe:not([data-reveal="recipe_jizz"]):not([data-reveal="recipe_candy"]) .name b { color:transparent; background:radial-gradient(70% 140% at 45% 55%, #f4f6f8, #b9bec3 70%, #8b9095); -webkit-background-clip:text; background-clip:text; }
+  .recipe .name b kbd.k { color:#e8ebee; -webkit-text-fill-color:#e8ebee; }
+  .recipe .rt { display:flex !important; gap:12px; margin-top:6px; } .recipe .rt .ri { display:inline-flex; align-items:center; gap:4px; } .recipe .rt .ri b { all:unset; font:700 12px/1 var(--f-title); color:var(--dim); }
+  .recipe { border-top:0 !important; padding-top:4px !important; margin-bottom:12px !important; }
   .recipe .name b kbd.k, .ph kbd.k { margin-right:8px; vertical-align:1px; }   /* press 1 for Strength: the key before the name, readable (2026-11-26; the bezel plate was too small) */
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
   .recipe .name br { display:none; } .recipe .name > * { display:block; }   /* name, what it does and the recipe: each its own paragraph, so text-wrap:pretty keeps every last line from being an orphan */
@@ -2767,6 +2771,8 @@ const REVEAL = {
 const near = (r, f) => { for (let y = Math.max(0, p.y - r); y <= Math.min(H - 1, p.y + r); y++) for (let x = Math.max(0, p.x - r); x <= Math.min(W - 1, p.x + r); x++) if (f(g[y][x])) return g[y][x]; return null; };
 // Recovery before Chrome is known: say where it comes from, not a ?.
 const repairText = () => known('chrome') ? recipeText('recovery') : '1× Legacy Powder + something metal, from deeper down';
+const tileOf = k => `<i class="sw${k === 'spores' ? ' spore' : ''}">${ING[k].letter}</i>`;
+const recipeTiles = (r, all) => Object.entries(r).map(([k, n]) => `<span class="ri">${all || known(k) ? tileOf(k) : '<i class="sw dash">?</i>'}<b>×${n}</b></span>`).join('');   // the recipe as the rock shows it
 const recipeText = v => Object.entries(CONFIG.recipes[v]).map(([k, n]) => `${n}× ${known(k) ? ING[k].name : '?'}`).join(' + ');
 
 // Sealed finds: the hint says which state, and how to get there with what you have right now.
@@ -2836,15 +2842,15 @@ function renderStatic() {
   $('recipes').innerHTML = VARIANTS.map((v, i) => `${i ? `
     <div class="ph" id="ph_${v}"><kbd class="k">${i + 1}</kbd>? ? ?</div>` : ''}
     <div class="recipe later" data-reveal="recipe_${v}">
-      <div class="name"><b><kbd class="k">${i + 1}</kbd>${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
+      <div class="name"><b><kbd class="k">${i + 1}</kbd>${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="rt" id="rc_${v}"></span></div>
       <button id="act_${v}" class="key" aria-label="Shake"><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`).join('') + `
     <div class="recipe later" data-reveal="recipe_jizz">
-      <div class="name"><b><kbd class="k">9</kbd>Doppio+</b><br><span class="small">${jizzRecipe()}</span></div>
+      <div class="name"><b><kbd class="k">9</kbd>Doppio+</b><br><span class="rt">${recipeTiles(CONFIG.jizz.recipe, 1)}</span></div>
       <button id="act_jizz" class="key jizz" aria-label="Shake"><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>
     <div class="recipe later" data-reveal="recipe_candy">
-      <div class="name"><b><kbd class="k">0</kbd>Candygirl</b><br><span class="small">${candyRecipe()}</span></div>
+      <div class="name"><b><kbd class="k">0</kbd>Candygirl</b><br><span class="rt">${recipeTiles(CONFIG.candy.recipe, 1)}</span></div>
       <button id="act_candy" class="key candy" aria-label="Shake"><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`;   // the secret menu: only once found
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
@@ -3050,7 +3056,7 @@ function hud() {
     rollNum('iv_' + k, s.inv[k]);                        // on drums, like every count (2026-11-26)
   }
   for (const v of VARIANTS) {
-    setText('rc_' + v, recipeText(v));
+    { const el = $('rc_' + v), h = recipeTiles(CONFIG.recipes[v]); if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }
     const b = $('act_' + v), ready = s.bottles[v] > 0, mine = shaking() && s.shake.v === v;
     b.disabled = !running || (!ready && (shaking() || !canMix(v)));
     keyState(b, mine ? 'shaking' : ready ? 'ready' : b.disabled ? 'off' : 'can');
@@ -3167,9 +3173,9 @@ const LONGEST_HINT = 'Frenzy and Stillness are documented. Certain strata are on
 let panel2Need = 0;                                         // the right column's height with the longest card (fit() measures it)
 function placeMeter() {
   const rows = [...document.querySelectorAll('#panel .later:not(.shown), #stage .later:not(.shown)')], saved = [];
-  const put = (el, t) => { if (el) { saved.push([el, el.textContent]); el.textContent = t; } };
+  const put = (el, t) => { if (el) { saved.push([el, el.innerHTML]); el.innerHTML = t; } };   // HTML both ways: rows hold tiles
   // The worst case: every ingredient known (full names wrap), the longest effects line, every row shown.
-  for (const v of VARIANTS) put($('rc_' + v), Object.entries(CONFIG.recipes[v]).map(([k, n]) => n + '× ' + ING[k].name).join(' + '));
+  for (const v of VARIANTS) put($('rc_' + v), recipeTiles(CONFIG.recipes[v], 1));
   for (const k in ING) put($('in_' + k), '[' + ING[k].letter + '] ' + ING[k].name);
   put($('effects'), 'Active: Strength ×2 45s · Stamina 45s · FRENZY 12s');   // a long but real one
   const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it
@@ -3182,7 +3188,7 @@ function placeMeter() {
     $('stage').style.setProperty('--tabH', tabH + 'px');   /* the overlays start under the tab, on the mine itself */
     w.style.setProperty('--cvk', Math.max(1, Math.min(1.6, (row1 + 366 - fixed) / cv.height)).toFixed(4));
   }
-  rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.textContent = t);
+  rows.forEach(el => el.classList.remove('shown')); saved.forEach(([el, t]) => el.innerHTML = t);
   $('hint').innerHTML = hint0;
   if (!fitting) document.body.classList.remove('fitting');
 }
