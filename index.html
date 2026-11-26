@@ -317,6 +317,19 @@
   .go::after { content:''; position:absolute; top:9px; right:11px; width:6px; height:6px; border-radius:50%; background:rgb(var(--led)); box-shadow:0 0 6px rgb(var(--led)); }   /* its LED: on */
   .go:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a, 0 2px 4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06) !important; }   /* it goes down */
   /* Begin shift: amber, the guide's colour: the very first step, glowing in the guide's rhythm (2026-11-17). The other screens' ways on stay fluo. */
+  /* The screen keys as split push-lights (2026-11-26, the user's pick): a steel bezel; the legend lit in the top half, the key in the bottom. */
+  .go.pl { all:unset; box-sizing:border-box; display:inline-flex; cursor:pointer; padding:4px; position:relative; background:linear-gradient(180deg, #2b2f33, #1b1e21);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px #08090a, 0 3px 0 #08090a, 0 6px 14px rgba(0,0,0,.45); clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px); transition:transform .06s; }
+  .go.pl::before, .go.pl::after { display:none !important; }
+  .go.pl .face { display:flex; flex-direction:column; gap:3px; min-width:210px; padding:3px; background:#050607; box-shadow:inset 0 2px 4px rgba(0,0,0,.95); }
+  .go.pl .face i { display:grid; place-items:center; height:26px; padding:0 18px; font:600 13px/1 var(--f-small); font-style:normal; letter-spacing:.2em; text-transform:uppercase; color:#c9f8ff; text-shadow:0 0 8px rgba(var(--fluo-rgb),.55); background:rgba(var(--fluo-rgb),.12); }
+  .go.pl .face i + i { height:18px; font-size:10px; letter-spacing:.16em; color:#6b7177; text-shadow:none; background:#0c0e10; }
+  .go.pl.amber .face i:first-child { color:#ffcf85; text-shadow:0 0 8px rgba(255,180,60,.55); background:rgba(255,180,60,.14); }
+  .go.pl:active { transform:translateY(1px); } .go.pl:hover .face i:first-child { filter:brightness(1.15); }
+  .go.pl { padding:4px !important; height:auto !important; min-width:0 !important; border-radius:0 !important; text-shadow:none !important; filter:none !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px #08090a, 0 3px 0 #08090a, 0 6px 14px rgba(0,0,0,.45) !important; clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px) !important; }
+  .go.pl + .gokey, #goGlow:has(.go.pl) + .gokey { display:none !important; }   /* the key is on the key */
+  #goGlow:has(.go.pl) { animation:none !important; }
   #go.go { color:rgba(255,180,60,.92) !important; text-shadow:0 0 7px rgba(255,180,60,.6); --led:255,180,60; }
   #goGlow { display:inline-flex; animation:goglow 1.8s ease-in-out infinite; } #go.go::before { background:transparent !important; } 
   @keyframes goglow { 0%, 100% { filter:drop-shadow(0 0 3px rgba(255,180,60,.3)); } 50% { filter:drop-shadow(0 0 14px rgba(255,180,60,.95)) drop-shadow(0 0 4px rgba(255,180,60,.8)); } }
@@ -459,13 +472,12 @@
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
-  .placard { position:relative; margin-top:10px; padding:9px 30px 10px; text-align:left; text-wrap:pretty; color:#8a9197 !important;   /* the caution placard: a thin plate screwed on (2026-11-26) */
-    background:radial-gradient(circle at 13px 50%, #8d949a 0 1.3px, #4d5358 1.7px 2.7px, #0d0f11 3.1px 3.8px, transparent 4.2px),
-      radial-gradient(circle at calc(100% - 13px) 50%, #8d949a 0 1.3px, #4d5358 1.7px 2.7px, #0d0f11 3.1px 3.8px, transparent 4.2px), linear-gradient(180deg, #1d2023, #17191c);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px #08090a; clip-path:var(--chamfer-s); }   /* the screws: flush, clear of the text */
-  .placard::before { content:''; position:absolute; inset:4px 24px; border:1px solid rgba(0,0,0,.6); box-shadow:0 1px 0 rgba(255,255,255,.05); pointer-events:none; }   /* the engraved border */
-  .placard .ph { display:block; margin-bottom:4px; font:600 11px/1.2 var(--f-small); letter-spacing:.18em; text-transform:uppercase; color:#5f656b; }
-  body.shiftOn .placard .ph { color:transparent; background:radial-gradient(70% 140% at 45% 55%, #f4f6f8, #b9bec3 70%, #8b9095); -webkit-background-clip:text; background-clip:text; }   /* CAUTION in the backlit print */
+  .placard { position:relative; margin-top:10px; padding:12px 26px 13px; text-align:left; text-wrap:pretty; font-weight:500 !important; color:#23272b !important; text-shadow:0 1px 0 rgba(255,255,255,.35);   /* the caution placard: bright brushed metal, bolted on (2026-11-26) */
+    background:radial-gradient(circle at 10px 10px, #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px), radial-gradient(circle at calc(100% - 10px) 10px, #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px), radial-gradient(circle at 10px calc(100% - 10px), #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px), radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px, rgba(0,0,0,.04) 3px 4px), linear-gradient(180deg, #aeb4ba, #91989e 45%, #7b8288 55%, #9aa0a6);   /* satin, a step down from bright: it must not outshine the play */
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(0,0,0,.35), 0 0 0 1px #08090a, 0 2px 5px rgba(0,0,0,.5); }   /* four hex bolts hold it at the corners, clear of the text */
+  .placard::before { content:''; position:absolute; inset:5px 20px; border:1px solid rgba(0,0,0,.28); box-shadow:0 1px 0 rgba(255,255,255,.4); pointer-events:none; }   /* the engraved border */
+  .placard .ph { display:block; margin-bottom:4px; font:700 11px/1.2 var(--f-small); letter-spacing:.2em; text-transform:uppercase; color:#1a1d20; }   /* CAUTION, engraved */
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
@@ -505,7 +517,7 @@
         <ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
       <div class="keys"><span><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M10 6H2.5M5.5 3L2.5 6l3 3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v7.5M3 6.5l3 3 3-3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h7.5M6.5 3l3 3-3 3"/></svg></kbd></span><span>Move and dig (or WASD)</span><span><kbd class="k">1–5</kbd></span><span>Shake, then drink Milk+</span>
         <span><kbd class="k">R</kbd><kbd class="k">T</kbd><kbd class="k">V</kbd></span><span>Radio, tape, volume</span><span><kbd class="k">Space</kbd></span><span>Pause</span></div>
-      <span id="goGlow"><button id="go" class="go">Begin shift</button></span><span class="gokey" id="goKey">or press Enter</span></div>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
+      <span id="goGlow"><button id="go" class="go pl amber"><span class="face"><i>Begin shift</i><i>Enter</i></span></button></span><span class="gokey" id="goKey">or press Enter</span></div>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
@@ -518,7 +530,7 @@
     <div class="box later" id="milk" data-reveal="recipe_strength">   <!-- waits whole, like the Field Guide, until its first recipe (2026-11-24) -->
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small later placard" data-reveal="drink"><b class="ph">Caution</b>Quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later placard" data-reveal="drink"><b class="ph">Caution</b>Quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate.<br>This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
@@ -1782,7 +1794,7 @@ function breakthrough() {
     setTimeout(() => {
       if (!$('loadGo')) return;                               // the loading screen is already gone
       if ($('roverWhere')) $('roverWhere').textContent = 'Rover parked at';   // it has arrived: no longer en route (2026-11-17)
-      $('loadGo').outerHTML = '<button id="loadGo" class="go">Start digging</button><span class="gokey">or press ↓</span>'; $('loadGo').onclick = () => pickCrater(i);
+      $('loadGo').outerHTML = '<button id="loadGo" class="go pl"><span class="face"><i>Start digging</i><i>↓</i></span></button>'; $('loadGo').onclick = () => pickCrater(i);
       menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') pickCrater(i); };
     }, CONFIG.loadingMs);
     return;
@@ -1857,7 +1869,7 @@ function finishGame(drifted = false) {
     <div class="tape"><div class="th"><span>Shift recorder</span><span>KR-1</span></div>${stats.map(([k, v, unit, f], i) => `<div class="ln" style="animation-delay:${300 + i * 220}ms"><span>${k}</span><i></i><b>${f ? f(v) : v}${unit || ''}</b></div>`).join('')}</div>
     ${unrecovered}
     ${drifted ? '<p class="note">The Core is still down there.</p>' : ''}
-    <button id="again" class="go">New game</button><span class="gokey">or press Enter</span>`);
+    <button id="again" class="go pl"><span class="face"><i>New game</i><i>Enter</i></span></button>`);
   $('again').onclick = newGame;
   menuKeys = k => { if (k === 'Enter') newGame(); };
   // The stats print, line by line, on the shift recorder's paper (2026-11-24; they counted up before).
@@ -2456,7 +2468,7 @@ function pause() {
     <dl class="kv"><div><dt>Depth</dt><dd>${depthNow()}<em>m</em></dd></div><div><dt>Drill samples</dt><dd>${s.samples}</dd></div>
       <div><dt>Field Guide</dt><dd>${s.guide.length}<em>/ ${guideEntries().length}</em></dd></div><div><dt>Shift</dt><dd>${fmt(Math.floor(s.timeMs / 1000))}</dd></div></dl>
     <p class="note">The Rock will wait. It has waited before.</p>
-    <button id="resume" class="go">Resume</button><span class="gokey">or press Space</span>
+    <button id="resume" class="go pl"><span class="face"><i>Resume</i><i>Space</i></span></button>
     <div class="btn2" id="pauseVol">${pauseVolHTML()}</div>`);   // where people look to change things
   $('resume').onclick = resume;
   menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') resume(); };
@@ -2969,6 +2981,9 @@ function buildGauge() {
   { const d = 5, inner = `M${8.5 + d} ${d} H${tab - d / 2} L${tab + 6 - d / 2} ${6.75 + d} H${w - d} V${GZ.h - 8.5 - d} L${w - 8.5 - d} ${GZ.h - d} H${d} V${8.5 + d} Z`;   // the panels' thickness: a rim, a sunken tray (2026-11-26)
     h += `<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient><linearGradient id="gtray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#090a0c"/><stop offset="1" stop-color="#0c0d10"/></linearGradient>`;
     h += `<path class="bez" d="${bez}" fill="url(#grim)" stroke="#0a0b0d" stroke-width="1"/><path d="${inner}" fill="url(#gtray)" stroke="#020304" stroke-width="1.5"/><path d="${inner}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1" transform="translate(0 1.5)"/>`; }
+  // the instrument (2026-11-26): a dial face behind the scale with a steel rim, inner and outer
+  { const rf = M.R - 6, wf = 116, a = 1.2;
+    h += `<path d="${gArc(M, -a, a, rf)}" stroke="#0e1013" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2)}" stroke="url(#gbez)" stroke-width="2.5" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2 + 2)}" stroke="#050607" stroke-width="1.5" fill="none"/>`; }
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
@@ -2979,10 +2994,17 @@ function buildGauge() {
   h += `<path id="gline" d="${gArc(M, -1, 1, M.R + 30)}" fill="none"/><text class="gstill" font-family="Chakra Petch" font-weight="600" font-size="15" letter-spacing=".5" fill="#a9c0dc" opacity="0" style="filter:drop-shadow(0 0 5px rgba(169,192,220,.9))"><textPath href="#gline" startOffset="3%"></textPath></text>`;   // the scale's words, clear: the one under the needle lights up (2026-11-17: they replace the big readout)
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
   h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
+  // the pivot shroud: a steel cover screwed over the needle's base; the needle comes out from under it (2026-11-26)
+  { const rs = M.R - 60, sy = M.cy - 120;
+    h += `<defs><linearGradient id="gshroud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5056"/><stop offset=".08" stop-color="#2e3237"/><stop offset="1" stop-color="#17191c"/></linearGradient><radialGradient id="gscrew" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#d3d8dc"/><stop offset=".55" stop-color="#7c838a"/><stop offset="1" stop-color="#2a2e32"/></radialGradient></defs>`;
+    h += `<circle cx="${M.cx}" cy="${M.cy}" r="${rs}" fill="url(#gshroud)" stroke="#050607" stroke-width="1.5"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs - 2}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>`;
+    for (const dx of [-62, 62]) h += `<g transform="translate(${M.cx + dx} ${M.cy - rs + 30})"><circle r="5" fill="url(#gscrew)" stroke="#08090a" stroke-width="1"/><path d="M-3 -1.2 L3 1.2" stroke="#2a2e32" stroke-width="1.3"/></g>`;   // two screws hold it
+  }
   // (the big word readout is gone, 2026-11-17: the scale's own words light up instead)
   // the two small gauges
   for (const [k, d, title] of [['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
+    h += `<circle cx="${d.cx}" cy="${d.cy}" r="${d.R + 11}" fill="#0e1013" stroke="url(#gbez)" stroke-width="2.5"/><circle cx="${d.cx}" cy="${d.cy}" r="${d.R + 13.5}" fill="none" stroke="#050607" stroke-width="1.5"/>`;   // its own bezel ring (2026-11-26)
     h += `<path d="${gArc(d, -1, 1, d.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(d, -1, 1, r)}" stroke="rgba(150,157,164,.08)" stroke-width="7" fill="none"/>`;
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
@@ -3277,7 +3299,7 @@ window.focus(); $('go').focus({ preventScroll: true });
 // A click anywhere on the game gives the keyboard back to it.
 document.addEventListener('mousedown', () => window.focus());
 // The start button says what works right now: Enter only when the game has the keyboard.
-const startLabel = () => { const f = document.hasFocus(); $('go').textContent = f ? 'Begin shift' : 'Click to begin shift'; $('goKey').style.visibility = f ? '' : 'hidden'; };   // the key under the button, only when the keyboard works
+const startLabel = () => { const f = document.hasFocus(); $('go').querySelector('i:last-child').textContent = f ? 'Enter' : 'Click'; };   // the key on the key; until the page has the keyboard, it says Click
 addEventListener('focus', startLabel); addEventListener('blur', startLabel); startLabel();
 </script>
 <script>
