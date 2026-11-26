@@ -105,7 +105,7 @@
   .rsong { mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); -webkit-mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   .rsong.roll { mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); -webkit-mask-image:linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   .rsong.roll > span { padding-left:100%; animation:ticker var(--dur, 14s) linear infinite; }   /* rolls only when it doesn't fit */
-  #radioBox #radioFx { flex:none; max-width:42%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--dim); }   /* quiet grey: notes only */
+  #radioBox #radioFx { flex:none; max-width:58%; overflow:hidden; white-space:normal; text-wrap:balance; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; text-align:right; font:500 12px/1.25 var(--f-small); color:var(--dim); }   /* quiet grey: notes only */
   #radioBox #radioFx.warn { color:var(--amber); }
   .rlamps { display:grid; grid-template-columns:132px 1fr; grid-template-rows:repeat(6, 1fr); height:74px; gap:3px 4px; padding:4px; background:#0a0b0d; clip-path:var(--chamfer-s); box-shadow:inset 0 2px 5px rgba(0,0,0,.9), inset 0 0 0 1px #040506; }   /* one bezel for all the lenses */   /* the station's perk on the left, the radio's state on the right */
   .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:linear-gradient(180deg, #08090a, #0f1113); border-radius:2px; box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px #050607, 0 1px 0 rgba(255,255,255,.07); transition:background .3s, color .3s, box-shadow .3s; }   /* a lens set into the panel: sunken, read not pressed (2026-11-24) */
@@ -438,14 +438,14 @@
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
-  .placard { position:relative; padding:10px 30px 11px; border-radius:3px; text-align:center; text-wrap:balance; font:500 11px/1.5 var(--f-small) !important; letter-spacing:.05em; text-transform:uppercase; color:#a3aab0 !important;   /* the caution placard: stamped steel, riveted on (2026-11-26) */
+  .placard { position:relative; padding:10px 30px 11px; border-radius:3px; text-align:left; text-wrap:pretty; font:500 12px/1.5 var(--f-small) !important; letter-spacing:.01em; text-transform:none; color:#737a80 !important;   /* the caution placard: stamped steel, riveted on (2026-11-26) */
     text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.07);
     background:radial-gradient(circle at 13px 50%, #b3b9be 0 1.4px, #6d747a 1.8px 2.8px, #15171a 3.2px 3.9px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px),
       radial-gradient(circle at calc(100% - 13px) 50%, #b3b9be 0 1.4px, #6d747a 1.8px 2.8px, #15171a 3.2px 3.9px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px),
-      linear-gradient(180deg, #2c3034, #1e2124);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.6), 0 0 0 1px #0a0b0d, 0 2px 4px rgba(0,0,0,.4); }
+      linear-gradient(180deg, #24272b, #1b1e21);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07), inset 0 -1px 0 rgba(0,0,0,.6), 0 0 0 1px #0a0b0d; }
   .placard::before { content:''; position:absolute; inset:4px 24px; border:1px solid rgba(0,0,0,.55); border-radius:2px; box-shadow:0 1px 0 rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.04); pointer-events:none; }   /* the engraved border */
-  .placard .ph { display:block; margin-bottom:3px; font:700 11px/1.2 var(--f-title); letter-spacing:.3em; color:var(--amber); text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 0 6px rgba(255,180,60,.25); }   /* the heading, stamped in amber: a caution is attention */
+  .placard .ph { display:block; margin-bottom:3px; font:700 11px/1.2 var(--f-title); letter-spacing:.24em; text-transform:uppercase; color:#8a9197; text-shadow:0 -1px 0 rgba(0,0,0,.85); }   /* the heading in the plate's own grey: fine print, not a warning (2026-11-26) */
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
@@ -797,7 +797,7 @@ function radioKey(k) {
 function radioNow() {
   if (s && s.over) return { key: 'tape', song: 0, note: 'The shift is over. The rover plays its own tape.' };   // the end screen: Testarocca, from the top
   if (s && s.drift) return performance.now() - s.drift.t0 < CONFIG.drift.lead * 1000 ? { key: 'oddity', song: 0, hush: true, fadeMs: 3000 } : { key: 'oddity', song: 0, fadeMs: 300 };   // a quiet lead (the mining song fades over 3 s), then Stella's Show from the top
-  if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'The radio died with the drill. Recovery brings it back.' };   // a hard cut: the power is gone
+  if (s && s.drill <= 0) return { key: 'tape', cut: true, note: 'Recovery brings it back.' }   /* the NO POWER lamp beside it says what happened (2026-11-26) */;   // a hard cut: the power is gone
   if (s && jizz() && CONFIG.jizz.song) return { key: 'disco', song: 0, track: CONFIG.jizz.song, cut: true, note: 'Doppio+. Doubles, darling.' };   // once the song is unlocked
   if (s && candy()) return { key: 'pump', song: 0, track: CANDY_SONG, cut: true, note: 'Candygirl. ↑ runs you up the tunnel.' };   // the drink plays its song, from the top, as long as it lasts
   return { key: radio.on };
@@ -2881,7 +2881,7 @@ function radioHud() {
   lamp('tape', on === 'tape' ? 'white' : ''); lamp('pwr', noPower ? 'warn' : '');
   $('rVol').style.setProperty('--a', [50, -20, -120][radio.vol] + 'deg'); $('rVol').title = 'Volume: ' + VOLUMES[radio.vol].name + ' (V)';
   $('rTune').style.setProperty('--a', ({ pump: -55, disco: 0, void: 55, oddity: 120, tape: -120, off: -150 })[on] + 'deg');
-  setText('radioFx', !sound.on ? 'Nothing runs without a soundtrack.'
+  setText('radioFx', !sound.on ? ''
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : '') + '');   // only what's happening now; the perk is the lamp's job (2026-11-24)
   $('radioFx').classList.toggle('warn', !sound.on || noPower);   // amber only for a warning   // the radio lesson lives in the radio, until another station is tried
   $('radioBox').classList.toggle('call', guideNow() === 'radio');   // the drill is waiting: look here
