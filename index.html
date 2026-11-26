@@ -70,13 +70,19 @@
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
-  #radioBox { flex:1; min-width:0; padding:13px 18px 14px 16px; display:grid; grid-template-columns:72px minmax(0,1fr) 236px 58px; grid-template-rows:20px 1fr; gap:6px 18px; align-items:center; }   /* room inside the thick frame (2026-11-26) */
+  #radioBox { flex:1; min-width:0; padding:13px 18px 14px 16px; display:grid; grid-template-columns:86px minmax(0,1fr) 236px 76px; grid-template-rows:20px 1fr; gap:6px 18px; align-items:center; }   /* room inside the thick frame (2026-11-26) */
   #radioBox > h3 { grid-column:1; grid-row:1; align-self:start; margin:2px 0 0 -2px; }   /* 10 px down, like every plate */   /* its name plate, like every panel's: the frame draws its tab */
-  #rVol { grid-column:1; grid-row:2; gap:4px; } #rVol > i { width:36px; height:36px; }   /* the small volume knob */
+  #rVol { grid-column:1; grid-row:2; gap:4px; }   /* the small volume knob */
   #rVol kbd.k { min-width:18px; height:18px; }
   .rmid { grid-column:2; grid-row:1 / 3; } .rlamps { grid-column:3; grid-row:1 / 3; } #rTune { grid-column:4; grid-row:1 / 3; }   /* the big tuning knob */   /* long and slim: knob, dial, lamps, knob */
   #radioBox > :not(svg) { position:relative; z-index:1; }
-  .rknob { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .rknob { display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .rks { display:flex; gap:5px; }   /* rubber keys instead of knobs: they work (2026-11-26) */
+  button.rk { all:unset; box-sizing:border-box; display:grid; place-items:center; width:34px; height:30px; border-radius:8px; cursor:pointer; user-select:none; font:700 14px/1 var(--f-title); color:#cfd4d8;
+    background:radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%); box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1); transition:transform .06s, box-shadow .06s; }
+  button.rk::before, button.rk::after { display:none !important; }   /* no button frame: the rubber is the shape */
+  button.rk:hover { color:#fff; } button.rk:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a, 0 2px 4px rgba(0,0,0,.45); }
+  #rVolLvl { font:600 10px/1 var(--f-small); letter-spacing:.12em; color:var(--fluo); text-transform:uppercase; }
   .rknob > i { width:46px; height:46px; border-radius:50%; position:relative; display:block;   /* an aviation knob: a skirt with a ring of ticks (2026-11-26) */
     background:radial-gradient(circle closest-side, #1c1f22 0 70%, transparent 71% 88%, #1c1f22 89%), repeating-conic-gradient(rgba(200,205,210,.55) 0 2deg, transparent 2deg 20deg), #1c1f22;
     box-shadow:0 0 0 1px #08090a, 0 3px 6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); }
@@ -212,7 +218,7 @@
   .ph.on { display:block; }
   body.fitting .ph { display:none !important; }
   .small { font:400 11px/1.45 var(--f-small); color:var(--dim); }
-  #ingredients .row { padding:3px 0; align-items:center; } #ingredients .row > span:last-child { font:700 14px var(--f-title); font-variant-numeric:tabular-nums; }
+  #ingredients .row { padding:3px 0; align-items:center; } #ingredients .row > span:first-child { display:inline-flex; align-items:center; gap:9px; } #ingredients .row > span:last-child { font:700 14px var(--f-title); font-variant-numeric:tabular-nums; }
   #log { flex:1; min-height:70px; overflow:hidden; font:400 12px/1.5 var(--f-small); }   /* newest on top, the rest cut off; it takes the room the card leaves */
   #panel2 > .box:last-child { flex:1; min-height:0; display:flex; flex-direction:column; }   /* the right column has a fixed height: the log fills it */
   #log div { position:relative; color:var(--dim); padding:2px 0; }   /* a message display, not a list (2026-11-26): no bullets; the newest line bright, the older ones fading */
@@ -536,13 +542,13 @@
     <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
     <div class="box" id="radioBox">                         <!-- a tractor's dial and an aircraft's lamps (2026-11-24) -->
       <h3>Radio</h3>
-      <div class="rknob" id="rVol"><i></i><span class="kl"><kbd class="k">V</kbd>Vol</span></div>
+      <div class="rknob" id="rVol"><div class="rks"><button class="rk" data-vol="1" aria-label="Quieter">−</button><button class="rk" data-vol="-1" aria-label="Louder">+</button></div><span class="kl"><kbd class="k">V</kbd>Vol <span class="lvl" id="rVolLvl"></span></span></div>
       <div class="rmid">
         <div class="rband off" id="rBand"><div class="rscale"></div><span class="rst" data-k="pump" style="left:17%">The Pump Zone</span><span class="rst" data-k="disco" style="left:50%">Disco Gravitas</span><span class="rst" data-k="void" style="left:83%">Void FM</span><div class="rneedle" id="rNeedle"></div></div>
         <div class="rrow"><div class="rsong"><span id="radioTicker"></span></div><span id="radioFx"></span></div>
       </div>
       <div class="rlamps"><span data-l="dig">Dig faster</span><span data-l="mix">Mix faster</span><span data-l="nv">Night vision</span><div class="tapecell"><kbd class="k">T</kbd><span data-l="tape">Tape</span></div><span data-l="pwr">No power</span></div>
-      <div class="rknob" id="rTune"><i></i><span class="kl"><kbd class="k">R</kbd>Tune</span></div>
+      <div class="rknob" id="rTune"><div class="rks"><button class="rk" data-tune="-1" aria-label="Previous station">◂</button><button class="rk" data-tune="1" aria-label="Next station">▸</button></div><span class="kl"><kbd class="k">R</kbd>Tune</span></div>
     </div>
     </div>
 </div>
@@ -775,7 +781,7 @@ function radioKey(k) {
   if (s) s.radioHops = (s.radioHops || 0) + 1;             // tried another station: the radio lesson is learned
   const was = radio.on;
   if (k === 't') { if (radio.on === 'tape') return; radio.on = 'tape'; }
-  else radio.on = radio.on === 'tape' ? radio.last : STATIONS[(STATIONS.indexOf(radio.on) + 1) % STATIONS.length];
+  else radio.on = radio.on === 'tape' ? radio.last : STATIONS[(STATIONS.indexOf(radio.on) + (k === 'prev' ? STATIONS.length - 1 : 1)) % STATIONS.length];   // ◂ tunes back (2026-11-26)
   if (radio.on !== 'tape') radio.last = radio.on;
   radio.since = radio.clock;
   if (running) say(`Radio: ${RADIO[radio.on].name}.`);
@@ -919,8 +925,10 @@ function songEnded() {
 const VOLUMES = [{ name: 'loud', k: 1 }, { name: 'soft', k: 0.4 }, { name: 'muted', k: 0 }];
 const pauseVolHTML = () => `Radio volume: ${VOLUMES[radio.vol].name} <kbd>V</kbd>`;
 const volumeLabel = () => `♪ V: radio volume (${VOLUMES[radio.vol].name})`;
-function volumeKey() {
-  radio.vol = (radio.vol + 1) % VOLUMES.length;
+// The radio's rubber keys: clicks do what V and R do (2026-11-26).
+document.querySelectorAll('#radioBox button.rk').forEach(b => b.addEventListener('click', () => { if (b.dataset.vol) volumeKey(+b.dataset.vol); else radioKey(b.dataset.tune === '-1' ? 'prev' : 'r'); cv.focus(); }));
+function volumeKey(dir) {
+  radio.vol = dir ? Math.max(0, Math.min(VOLUMES.length - 1, radio.vol + dir)) : (radio.vol + 1) % VOLUMES.length;   // V cycles; the − and + keys step (2026-11-26)
   if (running) say(`Radio volume: ${VOLUMES[radio.vol].name}.`);
   if ($('pauseVol')) $('pauseVol').innerHTML = pauseVolHTML();   // live on the pause screen
 }
@@ -2817,17 +2825,17 @@ function renderStatic() {
   $('camMeta').textContent = `KR-1 · ${crater ? crater.label + ' · ' : ''}${s.layer + 1} ${L.name}`;   // where you are, in one place: site, crater, layer   /* the shaft cam's tab: site and layer */
   $('crater').textContent = crater ? crater.label : 'Site KR-1';
   $('recipes').innerHTML = VARIANTS.map((v, i) => `${i ? `
-    <div class="ph" id="ph_${v}">[${i + 1}] ? ? ?</div>` : ''}
+    <div class="ph" id="ph_${v}"><kbd class="k">${i + 1}</kbd> ? ? ?</div>` : ''}
     <div class="recipe later" data-reveal="recipe_${v}">
-      <div class="name"><b>[${i + 1}] ${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
+      <div class="name"><b>${VNAME[v]}</b><br><span class="does">${VDESC[v]}</span><br><span class="small" id="rc_${v}"></span></div>
       <button id="act_${v}" class="key" aria-label="Shake"><span class="no">${i + 1}</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`).join('') + `
     <div class="recipe later" data-reveal="recipe_jizz">
-      <div class="name"><b>[9] Doppio+</b><br><span class="small">${jizzRecipe()}</span></div>
+      <div class="name"><b>Doppio+</b><br><span class="small">${jizzRecipe()}</span></div>
       <button id="act_jizz" class="key jizz" aria-label="Shake"><span class="no">9</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>
     <div class="recipe later" data-reveal="recipe_candy">
-      <div class="name"><b>[0] Candygirl</b><br><span class="small">${candyRecipe()}</span></div>
+      <div class="name"><b>Candygirl</b><br><span class="small">${candyRecipe()}</span></div>
       <button id="act_candy" class="key candy" aria-label="Shake"><span class="no">0</span><span class="face"><i data-l="SHAKE">SHAKE</i><i>DRINK</i></span></button>
     </div>`;   // the secret menu: only once found
   VARIANTS.forEach(v => { $('act_' + v).onclick = () => press(v); $('act_' + v).title = VDESC[v]; });
@@ -2870,8 +2878,7 @@ function radioHud() {
   const lamp = (l, cls) => { const e = document.querySelector(`.rlamps [data-l="${l}"]`); for (const c of ['warn', 'half', 'white']) e.classList.toggle(c, c === cls); };
   lamp('dig', on === 'pump' ? 'white' : ''); lamp('mix', on === 'disco' ? 'white' : ''); lamp('nv', on === 'void' ? (s && nightVision() ? 'white' : 'half') : '');   // working: white, like the tape; armed: an outline
   lamp('tape', on === 'tape' ? 'white' : ''); lamp('pwr', noPower ? 'warn' : '');
-  $('rVol').style.setProperty('--a', [50, -20, -120][radio.vol] + 'deg'); $('rVol').title = 'Volume: ' + VOLUMES[radio.vol].name + ' (V)';
-  $('rTune').style.setProperty('--a', ({ pump: -55, disco: 0, void: 55, oddity: 120, tape: -120, off: -150 })[on] + 'deg');
+  setText('rVolLvl', VOLUMES[radio.vol].name);
   setText('radioFx', !sound.on ? ''
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : '') + '');   // only what's happening now; the perk is the lamp's job (2026-11-24)
   $('radioFx').classList.toggle('warn', !sound.on || noPower);   // amber only for a warning   // the radio lesson lives in the radio, until another station is tried
@@ -3030,7 +3037,7 @@ function hud() {
   lamp('lampFocus', active('focus') ? 'on' : '');
   lamp('lampCharge', s.charges.length ? 'warn blink' : s.layer >= 1 && s.samples >= CONFIG.charge.cost ? 'on' : '');
   for (const k of Object.keys(ING)) {
-    setText('in_' + k, known(k) ? `[${ING[k].letter}] ${ING[k].name}` : '[?] ? ? ?');
+    { const el = $('in_' + k), h = known(k) ? `<i class="sw${k === 'spores' ? ' spore' : ''}">${ING[k].letter}</i>${ING[k].name}` : '<i class="sw dash">?</i>? ? ?'; if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }   // the map legend's tile, not [W]; compared on the row itself, which a new layer rebuilds (2026-11-26)
     rollNum('iv_' + k, s.inv[k]);                        // on drums, like every count (2026-11-26)
   }
   for (const v of VARIANTS) {
