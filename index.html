@@ -140,7 +140,13 @@
   @keyframes rowguide { 50% { outline-color:rgba(255,180,60,1); } }
   .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* named in the hint: look here */
   @media (prefers-reduced-motion: reduce) { #hint.guide, .recipe.guide, #radioBox.call > svg.outline path:first-of-type, #milk.call > svg.outline path:first-of-type, .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { animation:none; } .recipe.guide { outline-color:var(--amber); } #hint.guide { box-shadow:inset 0 0 0 3px var(--amber); } }
-  #pauseBtn { width:auto; flex:none; height:26px; padding:0 4px 0 9px; font-size:11px; display:inline-flex; align-items:center; gap:7px; }   /* in the Rover panel's heading */
+  #pauseBtn { width:auto; flex:none; height:28px; padding:3px; display:inline-flex; align-items:stretch; background:linear-gradient(180deg, #2b2f33, #1b1e21);   /* an aviation key, like Shake/Drink (2026-11-26) */
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a; clip-path:var(--chamfer-s); transition:transform .06s; }
+  #pauseBtn::before { display:none; } #pauseBtn:disabled { opacity:1; }
+  #pauseBtn .face { display:flex; align-items:center; gap:8px; padding:0 9px; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); font:600 11px/1 var(--f-small); letter-spacing:.14em; text-transform:uppercase; color:#d9dde0; text-shadow:0 0 6px rgba(255,255,255,.2); }
+  #pauseBtn .face small { font:600 11px/1 var(--f-small); letter-spacing:.1em; color:#5f656b; text-shadow:none; }   /* its key, engraved */
+  #pauseBtn:disabled .face { color:#353a3f; text-shadow:none; }   /* dark when it can't pause */
+  #pauseBtn:not(:disabled):active { transform:translateY(1px); }
   @keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }   /* rolls in from the right, out to the left */
   #rover > .row:not(:first-child) { font-size:12px; line-height:1.5; }   /* the layer and blast rows, small */
   #rover > .row.later { margin-top:6px; } #rover > .row.later > span:first-child { font:400 12px var(--f-small); color:var(--dim); }
@@ -507,7 +513,7 @@
 
   <div id="panel2" class="panel">
     <div class="box later" data-reveal="dig" id="rover">
-      <div class="phead"><h3>Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started">Pause <kbd>Space</kbd></button></div>
+      <div class="phead"><h3>Rover panel</h3><button id="pauseBtn" class="later" data-reveal="started"><span class="face">Pause<small>Space</small></span></button></div>
       <div class="row" style="display:none"><span id="layerName">Regolith Prime</span><span id="crater" class="small"></span></div>   <!-- where you are: the shaft cam's header (2026-11-24) -->
       <div class="inst"><span class="eng">Depth</span><span class="win"><span id="depth">0 m</span></span></div>
       <div class="inst"><span class="eng">Drill samples</span><span class="win"><span id="samples">0</span></span></div>
