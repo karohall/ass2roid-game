@@ -70,18 +70,19 @@
   #scale span { flex:1; text-align:center; }
   #scale span.on { color:var(--text); font-weight:600; }
   #baseRow { display:flex; }                                   /* the radio, beside the cluster */
-  #radioBox { flex:1; min-width:0; padding:13px 18px 14px 16px; display:grid; grid-template-columns:86px minmax(0,1fr) 236px 76px; grid-template-rows:20px 1fr; gap:6px 18px; align-items:center; }   /* room inside the thick frame (2026-11-26) */
+  #radioBox { flex:1; min-width:0; padding:13px 18px 14px 16px; display:grid; grid-template-columns:106px minmax(0,1fr) 236px 106px; grid-template-rows:20px 1fr; gap:6px 18px; align-items:center; }   /* room inside the thick frame (2026-11-26) */
   #radioBox > h3 { grid-column:1; grid-row:1; align-self:start; margin:2px 0 0 -2px; }   /* 10 px down, like every plate */   /* its name plate, like every panel's: the frame draws its tab */
   #rVol { grid-column:1; grid-row:2; gap:4px; }   /* the small volume knob */
-  #rVol kbd.k { min-width:18px; height:18px; }
+
   .rmid { grid-column:2; grid-row:1 / 3; } .rlamps { grid-column:3; grid-row:1 / 3; } #rTune { grid-column:4; grid-row:1 / 3; }   /* the big tuning knob */   /* long and slim: knob, dial, lamps, knob */
   #radioBox > :not(svg) { position:relative; z-index:1; }
   .rknob { display:flex; flex-direction:column; align-items:center; gap:7px; }
-  .rks { display:flex; gap:5px; }   /* rubber keys instead of knobs: they work (2026-11-26) */
-  button.rk { all:unset; box-sizing:border-box; display:grid; place-items:center; width:34px; height:30px; border-radius:8px; cursor:pointer; user-select:none; font:700 14px/1 var(--f-title); color:#cfd4d8;
-    background:radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%); box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1); transition:transform .06s, box-shadow .06s; }
+  .rks { display:flex; align-items:center; gap:5px; height:34px; padding:3px 3px 3px 5px; background:linear-gradient(180deg, #2b2f33, #1b1e21); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a; clip-path:var(--chamfer-s); }   /* a rocker, built like the Shake key: the bezel carries the keycap (2026-11-26) */
+  .rks .face { display:grid; grid-template-columns:1fr 1fr; gap:2px; height:100%; width:66px; padding:2px; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95); }
+  button.rk { all:unset; box-sizing:border-box; display:grid; place-items:center; cursor:pointer; user-select:none; font:700 15px/1 var(--f-title); color:#d9dde0; text-shadow:0 0 6px rgba(255,255,255,.2); background:#16191c; }   /* a half of the rocker's face, lit */
   button.rk::before, button.rk::after { display:none !important; }   /* no button frame: the rubber is the shape */
-  button.rk:hover { color:#fff; } button.rk:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a, 0 2px 4px rgba(0,0,0,.45); }
+  #rTune button.rk { font-size:19px; }   /* the arrow glyphs draw small */
+  button.rk:hover { color:#fff; background:#1f2326; } button.rk:active { transform:translateY(1px); background:#121417; }
   #rVolLvl { font:600 10px/1 var(--f-small); letter-spacing:.12em; color:var(--fluo); text-transform:uppercase; }
   .rknob > i { width:46px; height:46px; border-radius:50%; position:relative; display:block;   /* an aviation knob: a skirt with a ring of ticks (2026-11-26) */
     background:radial-gradient(circle closest-side, #1c1f22 0 70%, transparent 71% 88%, #1c1f22 89%), repeating-conic-gradient(rgba(200,205,210,.55) 0 2deg, transparent 2deg 20deg), #1c1f22;
@@ -218,7 +219,8 @@
   .recipe .name { line-height:1.3; }
   .recipe .name b { display:flex !important; align-items:center; font:600 12px/1 var(--f-small); letter-spacing:.1em; text-transform:uppercase; color:#5f656b; margin-bottom:6px; }
   body.shiftOn .recipe:not([data-reveal="recipe_jizz"]):not([data-reveal="recipe_candy"]) .name b { color:transparent; background:radial-gradient(70% 140% at 45% 55%, #f4f6f8, #b9bec3 70%, #8b9095); -webkit-background-clip:text; background-clip:text; }
-  .recipe .rt { display:flex !important; gap:12px; margin-top:6px; } .recipe .rt .ri { display:inline-flex; align-items:center; gap:4px; } .recipe .rt .ri b { all:unset; font:700 12px/1 var(--f-title); color:var(--dim); }
+  .recipe .rt .sw, #ingredients .sw { width:20px; height:20px; font-size:11px; }   /* the tiles big enough to read (2026-11-26) */
+  .recipe .rt { display:flex !important; gap:14px; margin-top:7px; } .recipe .rt .ri { display:inline-flex; align-items:center; gap:5px; } .recipe .rt .ri b { all:unset; font:700 14px/1 var(--f-title); color:var(--dim); }
   .recipe { border-top:0 !important; padding-top:4px !important; margin-bottom:12px !important; }
   .ph kbd.k { margin-right:8px; vertical-align:1px; }   /* a recipe still to find: its key before the ? ? ? */
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
@@ -457,6 +459,13 @@
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
+  .placard { position:relative; margin-top:10px; padding:9px 30px 10px; text-align:left; text-wrap:pretty; color:#8a9197 !important;   /* the caution placard: a thin plate screwed on (2026-11-26) */
+    background:radial-gradient(circle at 13px 50%, #8d949a 0 1.3px, #4d5358 1.7px 2.7px, #0d0f11 3.1px 3.8px, transparent 4.2px),
+      radial-gradient(circle at calc(100% - 13px) 50%, #8d949a 0 1.3px, #4d5358 1.7px 2.7px, #0d0f11 3.1px 3.8px, transparent 4.2px), linear-gradient(180deg, #1d2023, #17191c);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px #08090a; clip-path:var(--chamfer-s); }   /* the screws: flush, clear of the text */
+  .placard::before { content:''; position:absolute; inset:4px 24px; border:1px solid rgba(0,0,0,.6); box-shadow:0 1px 0 rgba(255,255,255,.05); pointer-events:none; }   /* the engraved border */
+  .placard .ph { display:block; margin-bottom:4px; font:600 11px/1.2 var(--f-small); letter-spacing:.18em; text-transform:uppercase; color:#5f656b; }
+  body.shiftOn .placard .ph { color:transparent; background:radial-gradient(70% 140% at 45% 55%, #f4f6f8, #b9bec3 70%, #8b9095); -webkit-background-clip:text; background-clip:text; }   /* CAUTION in the backlit print */
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
@@ -509,7 +518,7 @@
     <div class="box later" id="milk" data-reveal="recipe_strength">   <!-- waits whole, like the Field Guide, until its first recipe (2026-11-24) -->
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later placard" data-reveal="drink"><b class="ph">Caution</b>Quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
@@ -556,13 +565,13 @@
     <div id="baseRow">                                      <!-- the radio, a long strip from the cluster to the right edge -->
     <div class="box" id="radioBox">                         <!-- a tractor's dial and an aircraft's lamps (2026-11-24) -->
       <h3>Radio</h3>
-      <div class="rknob" id="rVol"><div class="rks"><button class="rk" data-vol="1" aria-label="Quieter">−</button><button class="rk" data-vol="-1" aria-label="Louder">+</button></div><span class="kl"><kbd class="k">V</kbd>Vol <span class="lvl" id="rVolLvl"></span></span></div>
+      <div class="rknob" id="rVol"><div class="rks"><kbd class="k">V</kbd><span class="face"><button class="rk" data-vol="1" aria-label="Quieter">−</button><button class="rk" data-vol="-1" aria-label="Louder">+</button></span></div><span class="kl">Vol <span class="lvl" id="rVolLvl"></span></span></div>
       <div class="rmid">
         <div class="rband off" id="rBand"><div class="rscale"></div><span class="rst" data-k="pump" style="left:17%">The Pump Zone</span><span class="rst" data-k="disco" style="left:50%">Disco Gravitas</span><span class="rst" data-k="void" style="left:83%">Void FM</span><div class="rneedle" id="rNeedle"></div></div>
         <div class="rrow"><div class="rsong"><span id="radioTicker"></span></div><span id="radioFx"></span></div>
       </div>
       <div class="rlamps"><span data-l="dig">Dig faster</span><span data-l="mix">Mix faster</span><span data-l="nv">Night vision</span><div class="tapecell"><kbd class="k">T</kbd><span data-l="tape">Tape</span></div><span data-l="pwr">No power</span></div>
-      <div class="rknob" id="rTune"><div class="rks"><button class="rk" data-tune="-1" aria-label="Previous station">◂</button><button class="rk" data-tune="1" aria-label="Next station">▸</button></div><span class="kl"><kbd class="k">R</kbd>Tune</span></div>
+      <div class="rknob" id="rTune"><div class="rks"><kbd class="k">R</kbd><span class="face"><button class="rk" data-tune="-1" aria-label="Previous station">◂</button><button class="rk" data-tune="1" aria-label="Next station">▸</button></span></div><span class="kl">Tune</span></div>
     </div>
     </div>
 </div>
