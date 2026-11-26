@@ -213,7 +213,8 @@
   .key.ready { box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a, 0 0 16px rgba(var(--fluo-rgb),.25); }
   .key.ready .face i:last-child { color:#03262c; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow:0 0 12px rgba(var(--fluo-rgb),.6); }
   .recipe button.key { display:flex; align-items:center; gap:6px; width:112px; padding:4px 4px 4px 6px; } .key .face { flex:1; }   /* the key carries its number: a keycap on the bezel, left of the face (2026-11-26) */
-  .key.off kbd.k { color:var(--faint); }
+  .recipe button.key kbd.k, .rks kbd.k { color:#fff; background:linear-gradient(180deg, #6a7076, #454a4f); box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -2px 0 rgba(0,0,0,.45); }   /* a key on a bezel: lighter than the steel around it, so it reads (2026-11-26) */
+  .key.off kbd.k { color:#c3c8cc; }
   .key.jizz.can .face i:first-child { color:var(--jizz); } .key.candy.can .face i:first-child { color:var(--candy); }
   /* The Shake/Drink keys keep their aviation look: a two-part lit face (the user preferred it to rubber, 2026-11-26). */
   .recipe .name { line-height:1.3; }
