@@ -230,7 +230,6 @@
   .small[data-reveal="drink"] { font:400 12px/1.5 var(--f-text); }   /* the caution and the Active line: read at the descriptions' size, not fine print (2026-11-26: "this text is tiny") */
   .recipe .name > *, .overlay .body, .overlay .note, #log div, #radioFx, .small, .journeyCap { text-wrap:balance; }   /* no short last lines in short blocks (2026-11-17) */
   .ph { display:none; color:var(--faint); margin-bottom:6px; font:500 12px var(--f-small); }
-  #recipes .ph.on { display:flex; align-items:center; align-self:stretch; min-height:64px; margin:0 0 6px; padding:0 14px; box-shadow:inset 0 0 0 1px var(--line); letter-spacing:.2em; }   /* an empty slot, like the Field Guide's: a drink still to find */   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
   .ph.on { display:block; }
   #row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; } #row2 > .box { margin:0 !important; }
   #recipes { display:grid; grid-template-columns:1fr 1fr; column-gap:24px; align-items:start; }   /* two drinks side by side */
@@ -3127,7 +3126,7 @@ function hud() {
   document.querySelectorAll('[data-reveal]').forEach(el => el.classList.toggle('shown', REVEAL[el.dataset.reveal]()));
   // Once the menu is more than Strength, each Milk+ still to find holds its key's place: [3] ? ? ?
   const menuGrown = VARIANTS.some((v, i) => i && REVEAL['recipe_' + v]());
-  VARIANTS.forEach((v, i) => i && $('ph_' + v).classList.toggle('on', (menuGrown || (i === 1 && REVEAL.recipe_strength())) && !REVEAL['recipe_' + v]()));   // the next drink waits as an empty slot beside Strength from the start: the two-column menu has no empty half (2026-11-26)
+  VARIANTS.forEach((v, i) => i && $('ph_' + v).classList.toggle('on', menuGrown && !REVEAL['recipe_' + v]()));
   document.querySelectorAll('.later.shown:not(.settled):not([data-settling])').forEach(el => { el.dataset.settling = 1; setTimeout(() => el.classList.add('settled'), 1300); });
   // The hint bar types each new hint out, with a block cursor while it types.
   const target = s.drift ? typing.text : running ? hint() : '';   // in the Drift, the last hint stays as it fades
