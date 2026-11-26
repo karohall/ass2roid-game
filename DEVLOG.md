@@ -542,3 +542,16 @@ When vibecoding with Claude Code, knowing about pixels, margins and padding come
 **Still to learn:** a large amount of information, with writing that is not too small, and everything still fitting on one screen.
 
 **Playtest, end of the day:** a full run took **14 minutes**, inside the 10–15 minute target. Small fixes after it: the Näsa pill taller, and Candygirl's pastels a notch deeper in the Chrome Vein, where the rock is light. Then the secret menu: Jizz+ is renamed **Doppio+** (too vulgar; Doppio sits beside Dolce de Leche+ on Disco Gravitas, and its line stays: *Doubles, darling*). Its rumour never showed in the run, so it now works like Candygirl's: graffiti in the rock, a redacted card that fills in, a rumour with the key. XXX is dropped for good. Very close to finished.
+
+## 2026-11-26 — Prototype 4: the cockpit pass
+
+Two days of turning the control panel into a cockpit: a rugged rover, still cold and monochrome.
+
+- **One physical language:** raised is pressed, sunken is read; cyan is on, amber is attention. Panels got thickness (a rim, a tray). Every number rolls on drums. Printed labels are backlit: dark when the rover is off, lit through the letters during the shift.
+- **Keys by job:** aviation keys for what you press while digging (Shake/Drink, Pause, the radio's VOL and TUNE rockers), split push-lights for the screens (Begin shift, Resume), which fill like a shake before they act. A keycap means a key on your keyboard; on a key's steel bezel it is a lighter cap so it reads.
+- **The dosage meter as an instrument:** a dial face with a rim, a pivot shroud screwed over the needle, a needle with weight (no tremble: it read as spasms).
+- **The caution placard:** a gunmetal plate with four bolts, CAUTION in amber.
+- **Hyperfocus is cut.** Four drinks, keys 1–4.
+- **The layout, wide and low like a screen:** the Milk+ menu in two columns, Ingredients and the Rover panel side by side, the right column narrow. The cockpit went from 1630 × 1300 to 1731 × 1062, so a 1080p screen shows it at full size instead of 73–83%. Then nothing under 12 px.
+
+**What I learnt.** A beginner's mistake: I started deviating from the design system, one small decision at a time, until every panel spoke its own dialect and I was lost in the woods of buttons and panel styles. The way back was one source of truth: a rule sheet (one style per job, and a list of where the game breaks it) and a type table (which font goes where). Now every new idea is checked against the rules instead of against memory.
