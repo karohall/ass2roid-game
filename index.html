@@ -438,14 +438,6 @@
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
-  .placard { position:relative; padding:10px 30px 11px; border-radius:3px; text-align:left; text-wrap:pretty; font:500 12px/1.5 var(--f-small) !important; letter-spacing:.01em; text-transform:none; color:#737a80 !important;   /* the caution placard: stamped steel, riveted on (2026-11-26) */
-    text-shadow:0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.07);
-    background:radial-gradient(circle at 13px 50%, #b3b9be 0 1.4px, #6d747a 1.8px 2.8px, #15171a 3.2px 3.9px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px),
-      radial-gradient(circle at calc(100% - 13px) 50%, #b3b9be 0 1.4px, #6d747a 1.8px 2.8px, #15171a 3.2px 3.9px, rgba(0,0,0,.35) 4.2px 5px, transparent 5.4px),
-      linear-gradient(180deg, #24272b, #1b1e21);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.07), inset 0 -1px 0 rgba(0,0,0,.6), 0 0 0 1px #0a0b0d; }
-  .placard::before { content:''; position:absolute; inset:4px 24px; border:1px solid rgba(0,0,0,.55); border-radius:2px; box-shadow:0 1px 0 rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.04); pointer-events:none; }   /* the engraved border */
-  .placard .ph { display:block; margin-bottom:3px; font:700 11px/1.2 var(--f-title); letter-spacing:.24em; text-transform:uppercase; color:#8a9197; text-shadow:0 -1px 0 rgba(0,0,0,.85); }   /* the heading in the plate's own grey: fine print, not a warning (2026-11-26) */
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
@@ -498,7 +490,7 @@
     <div class="box later" id="milk" data-reveal="recipe_strength">   <!-- waits whole, like the Field Guide, until its first recipe (2026-11-24) -->
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small later placard" data-reveal="drink" style="margin-top:8px"><b class="ph">Caution</b>Quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
