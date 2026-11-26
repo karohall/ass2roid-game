@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radio knobs · ASS2ROID Prototype 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* 2026-11-26: four knob directions for the radio's VOL (small) and TUNE (big), at real size on the radio's own dark panel. Click a knob to turn it. */
+:root { --text:#e1e4e6; --dim:#969da4; --fluo:#34e6ff; --fluo-rgb:52,230,255; --f-title:'Chakra Petch', sans-serif; --f-text:Inter, sans-serif; --f-small:'IBM Plex Sans', sans-serif; }
+* { box-sizing:border-box; }
+body { margin:0; background:#101214; color:var(--text); font:400 14px/1.5 var(--f-text); -webkit-font-smoothing:antialiased; }
+.doc { width:1040px; margin:0 auto; padding:32px 32px 64px; }
+h1 { font:700 28px/1 var(--f-title); margin:0 0 6px; }
+.intro { color:var(--dim); font:400 13px/1.5 var(--f-text); max-width:760px; margin:0 0 26px; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.opt h2 { font:600 11px/1 var(--f-title); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin:0 0 4px; }
+.opt h3 { font:700 17px/1.2 var(--f-title); margin:0 0 10px; }
+.opt .notes { margin-top:10px; font:400 12px/1.5 var(--f-small); color:var(--dim); } .opt .notes b { color:var(--text); font-weight:600; }
+/* the radio's panel, as in the game */
+.strip { height:130px; display:flex; align-items:center; justify-content:space-around; padding:0 26px; background:#121417;
+  clip-path:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); box-shadow:inset 0 0 0 1px rgba(150,157,164,.35); }
+.unit { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.kl { display:flex; gap:5px; align-items:center; font:600 11px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
+.k { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; font:700 10px/1 var(--f-title); color:#e8ebee; background:linear-gradient(180deg, #3a3f44, #24282c);
+     clip-path:polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); }
+.knob { position:relative; cursor:pointer; --a:-40deg; }
+.knob .rot { position:absolute; inset:0; transform:rotate(var(--a)); transition:transform .5s cubic-bezier(.3,1.4,.5,1); }
+.sm { width:40px; height:40px; } .lg { width:58px; height:58px; }
+/* 0. now */
+.now .body { position:absolute; inset:0; border-radius:50%; background:radial-gradient(120% 100% at 50% 25%, #2f3337, #1c1f22 72%); box-shadow:0 0 0 3px #0c0d0f, 0 0 0 4px #2a2e32, inset 0 1px 0 rgba(255,255,255,.07), 0 4px 8px rgba(0,0,0,.6); }
+.now .body::before { content:''; position:absolute; inset:4px; border-radius:50%; background:repeating-conic-gradient(#25282b 0 9deg, #191b1e 9deg 18deg); -webkit-mask:radial-gradient(circle, transparent 60%, #000 62%); mask:radial-gradient(circle, transparent 60%, #000 62%); }
+.now .rot::after { content:''; position:absolute; left:50%; top:12%; width:3px; height:26%; margin-left:-1.5px; background:var(--text); border-radius:2px; }
+/* 1. chicken-head: a round base, a raised pointer bar that narrows to a beak */
+.chk .base { position:absolute; inset:6%; border-radius:50%; background:radial-gradient(circle at 50% 40%, #26292c, #15171a 75%); box-shadow:0 0 0 2px #0a0b0d, 0 3px 6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06); }
+.chk .bar { position:absolute; left:50%; top:-4%; bottom:22%; width:34%; margin-left:-17%; border-radius:45% 45% 20% 20% / 30% 30% 20% 20%;
+  background:linear-gradient(90deg, #1b1e21, #3a3f44 45%, #2a2e32 55%, #16181b); clip-path:polygon(50% 0, 100% 18%, 100% 100%, 0 100%, 0 18%); box-shadow:0 2px 3px rgba(0,0,0,.6); }
+.chk .bar::after { content:''; position:absolute; left:50%; top:6%; width:2px; height:34%; margin-left:-1px; background:#e8ebee; border-radius:1px; }
+.chk .ticks { position:absolute; inset:-14%; border-radius:50%; background:repeating-conic-gradient(from -135deg, rgba(150,157,164,.5) 0 1.2deg, transparent 1.2deg 22.5deg); -webkit-mask:radial-gradient(circle, transparent 66%, #000 67%, #000 72%, transparent 73%); mask:radial-gradient(circle, transparent 66%, #000 67%, #000 72%, transparent 73%); }
+/* 2. aviation: a skirt with ticks, a smaller knob on it with a white index line */
+.avi .skirt { position:absolute; inset:-6%; border-radius:50%; background:radial-gradient(circle, #24282c 0 58%, #1a1d20 59% 100%); box-shadow:0 0 0 1px #08090a, 0 3px 6px rgba(0,0,0,.55); }
+.avi .skirt::before { content:''; position:absolute; inset:4%; border-radius:50%; background:repeating-conic-gradient(rgba(200,205,210,.55) 0 1.5deg, transparent 1.5deg 15deg); -webkit-mask:radial-gradient(circle, transparent 72%, #000 73%, #000 90%, transparent 91%); mask:radial-gradient(circle, transparent 72%, #000 73%, #000 90%, transparent 91%); }
+.avi .cap { position:absolute; inset:22%; border-radius:50%; background:repeating-conic-gradient(#2c3034 0 7deg, #1e2124 7deg 14deg); box-shadow:0 0 0 1px #08090a, 0 2px 4px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.1); }
+.avi .cap::after { content:''; position:absolute; inset:18%; border-radius:50%; background:radial-gradient(circle at 50% 35%, #34383c, #1f2225); }
+.avi .rot::after { content:''; position:absolute; left:50%; top:-4%; width:2px; height:34%; margin-left:-1px; background:#f0f2f4; }
+/* 3. dimple (cars): a smooth matte knob, a finger hollow, a lit dot for the position */
+.dim .body { position:absolute; inset:0; border-radius:50%; background:radial-gradient(120% 100% at 50% 20%, #34383c, #1c1f22 75%); box-shadow:0 0 0 2px #0a0b0d, 0 4px 8px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.1); }
+.dim .rot::before { content:''; position:absolute; left:50%; top:22%; width:34%; height:34%; margin-left:-17%; border-radius:50%; background:radial-gradient(circle at 50% 60%, #2a2e32, #121417); box-shadow:inset 0 2px 3px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.07); }
+.dim .rot::after { content:''; position:absolute; left:50%; top:7%; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--fluo); box-shadow:0 0 5px var(--fluo); }
+/* 4. no knobs: rubber keys, a pair for each */
+.keys { display:flex; gap:6px; }
+.rk { min-width:40px; height:34px; padding:0 10px; border-radius:9px; display:grid; place-items:center; cursor:pointer; user-select:none;
+  background:radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%); box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);
+  font:700 14px/1 var(--f-title); color:#cfd4d8; }
+.rk:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a; }
+.lvl { font:600 10px/1 var(--f-small); letter-spacing:.14em; color:var(--fluo); text-shadow:0 0 5px rgba(var(--fluo-rgb),.6); text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <h1>Radio knobs: four directions</h1>
+  <p class="intro">The radio’s VOL (small) and TUNE (big), at real size on its own dark panel, with the game’s now for reference. Click a knob to turn it.</p>
+  <div class="grid">
+    <section class="opt"><h2>Now</h2><h3>Matte rubber, knurled</h3>
+      <div class="strip now"><div class="unit"><div class="knob sm"><div class="body"></div><div class="rot"></div></div><span class="kl"><span class="k">V</span>Vol</span></div>
+        <div class="unit"><div class="knob lg"><div class="body"></div><div class="rot"></div></div><span class="kl"><span class="k">R</span>Tune</span></div></div>
+      <p class="notes">For reference.</p></section>
+    <section class="opt"><h2>1 · Tractors, old radios</h2><h3>Chicken-head</h3>
+      <div class="strip chk"><div class="unit"><div class="knob sm"><div class="ticks"></div><div class="base"></div><div class="rot"><div class="bar"></div></div></div><span class="kl"><span class="k">V</span>Vol</span></div>
+        <div class="unit"><div class="knob lg"><div class="ticks"></div><div class="base"></div><div class="rot"><div class="bar"></div></div></div><span class="kl"><span class="k">R</span>Tune</span></div></div>
+      <p class="notes"><b>Says:</b> a cab radio, worked with gloves. The pointer bar shows the setting from across the cab; tick marks around it. <b>Costs:</b> the most character, also the most to look at.</p></section>
+    <section class="opt"><h2>2 · Aviation</h2><h3>Skirted knob with index</h3>
+      <div class="strip avi"><div class="unit"><div class="knob sm"><div class="skirt"></div><div class="cap"></div><div class="rot"></div></div><span class="kl"><span class="k">V</span>Vol</span></div>
+        <div class="unit"><div class="knob lg"><div class="skirt"></div><div class="cap"></div><div class="rot"></div></div><span class="kl"><span class="k">R</span>Tune</span></div></div>
+      <p class="notes"><b>Says:</b> a cockpit radio: a ringed scale, a knurled knob, a white index line. Pairs with the aviation Shake/Drink keys. <b>Costs:</b> precise and cool rather than rugged.</p></section>
+    <section class="opt"><h2>3 · Cars</h2><h3>Dimple, lit dot</h3>
+      <div class="strip dim"><div class="unit"><div class="knob sm"><div class="body"></div><div class="rot"></div></div><span class="kl"><span class="k">V</span>Vol</span></div>
+        <div class="unit"><div class="knob lg"><div class="body"></div><div class="rot"></div></div><span class="kl"><span class="k">R</span>Tune</span></div></div>
+      <p class="notes"><b>Says:</b> a car stereo: smooth, a hollow for the fingertip, a small lit dot for the position. <b>Costs:</b> the softest; less rover than the others.</p></section>
+    <section class="opt"><h2>4 · Machinery</h2><h3>No knobs: rubber keys</h3>
+      <div class="strip"><div class="unit"><div class="keys"><span class="rk">−</span><span class="rk">+</span></div><span class="kl"><span class="k">V</span>Vol <span class="lvl">soft</span></span></div>
+        <div class="unit"><div class="keys"><span class="rk">◂</span><span class="rk">▸</span></div><span class="kl"><span class="k">R</span>Tune</span></div></div>
+      <p class="notes"><b>Says:</b> a work radio: two rubber keys each, like the screens’ buttons. <b>Costs:</b> no turning; the needle on the dial does all the showing.</p></section>
+  </div>
+</div>
+<script>
+document.querySelectorAll('.knob').forEach(k => { let a = -40; k.addEventListener('click', () => { a = a >= 80 ? -100 : a + 45; k.style.setProperty('--a', a + 'deg'); }); });
+</script>
+</body>
+</html>
