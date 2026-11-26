@@ -78,8 +78,8 @@
   #radioBox > :not(svg) { position:relative; z-index:1; }
   .rknob { display:flex; flex-direction:column; align-items:center; gap:6px; }
   .rknob > i { width:50px; height:50px; border-radius:50%; position:relative; display:block;
-               background:radial-gradient(circle at 40% 35%, #3a3f44, #1a1d20 70%); box-shadow:0 0 0 3px #0c0d0f, 0 0 0 4px #2a2e32, inset 0 2px 2px rgba(255,255,255,.12), 0 4px 8px rgba(0,0,0,.6); }
-  .rknob > i::before { content:''; position:absolute; inset:4px; border-radius:50%; background:repeating-conic-gradient(#2c3034 0 6deg, #1e2124 6deg 12deg); mask:radial-gradient(circle, transparent 60%, #000 62%); -webkit-mask:radial-gradient(circle, transparent 60%, #000 62%); }   /* knurled, for gloves */
+               background:radial-gradient(120% 100% at 50% 25%, #2f3337, #1c1f22 72%); box-shadow:0 0 0 3px #0c0d0f, 0 0 0 4px #2a2e32, inset 0 1px 0 rgba(255,255,255,.07), 0 4px 8px rgba(0,0,0,.6); }   /* matte rubber, like the keys (2026-11-26) */
+  .rknob > i::before { content:''; position:absolute; inset:4px; border-radius:50%; background:repeating-conic-gradient(#25282b 0 9deg, #191b1e 9deg 18deg); mask:radial-gradient(circle, transparent 60%, #000 62%); -webkit-mask:radial-gradient(circle, transparent 60%, #000 62%); }   /* knurled, for gloves */
   .rknob > i::after { content:''; position:absolute; left:50%; top:7px; width:3px; height:12px; margin-left:-1.5px; background:var(--text); border-radius:2px; transform-origin:50% 18px; transform:rotate(var(--a, 0deg)); transition:transform .5s cubic-bezier(.3,1.4,.5,1); }
   .rknob .kl { display:flex; gap:5px; align-items:center; font:600 11px/1 var(--f-title); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
 
@@ -91,7 +91,7 @@
   .rscale { position:absolute; left:14px; right:14px; bottom:7px; height:10px; background:repeating-linear-gradient(90deg, rgba(var(--fluo-rgb),.45) 0 1px, transparent 1px 12px); mask:linear-gradient(transparent 40%, #000 40%); -webkit-mask:linear-gradient(transparent 40%, #000 40%); }
   .rst { position:absolute; top:9px; transform:translateX(-50%); font:700 11px/1 var(--f-title); letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; color:rgba(var(--fluo-rgb),.36); transition:color .4s, text-shadow .4s; }
   .rst.on { color:var(--fluo); text-shadow:0 0 6px rgba(var(--fluo-rgb),.85); }
-  .rneedle { position:absolute; top:22px; bottom:3px; left:var(--x, 3%); width:2px; margin-left:-1px; background:#ff5a3c; box-shadow:0 0 6px rgba(255,90,60,.8); transition:left .7s cubic-bezier(.4,1.3,.5,1); }   /* it sweeps when you tune */
+  .rneedle { position:absolute; top:22px; bottom:3px; left:var(--x, 3%); width:2px; margin-left:-1px; background:#c9f8ff; box-shadow:0 0 6px rgba(var(--fluo-rgb),.9), 0 0 2px rgba(var(--fluo-rgb),1); transition:left .7s cubic-bezier(.4,1.3,.5,1); }   /* it sweeps when you tune */
   .rband.off { filter:brightness(.35) saturate(.4); } .rband.tape { filter:brightness(.55) saturate(.6); }   /* off: dark; tape: the band rests */
   .rband.tuning { animation:tuning .45s steps(9) 1; } .rband.tuning .rst { animation:tunejit .45s steps(9) 1; }   /* the signal breaks up while the needle sweeps */
   @keyframes tuning { 0% { filter:brightness(1.6); } 20% { filter:brightness(.4); } 40% { filter:brightness(1.3); } 60% { filter:brightness(.6); } 80% { filter:brightness(1.15); } 100% { filter:none; } }
@@ -108,8 +108,9 @@
   #radioBox #radioFx.warn { color:var(--amber); }
   .rlamps { display:grid; grid-template-columns:132px 1fr; grid-template-rows:repeat(6, 1fr); height:74px; gap:3px 4px; padding:4px; background:#0a0b0d; clip-path:var(--chamfer-s); box-shadow:inset 0 2px 5px rgba(0,0,0,.9), inset 0 0 0 1px #040506; }   /* one bezel for all the lenses */   /* the station's perk on the left, the radio's state on the right */
   .rlamps span { grid-column:1; grid-row:span 2; display:flex; align-items:center; justify-content:center; gap:5px; font:700 11px/1 var(--f-title); letter-spacing:.08em; text-transform:uppercase; color:#4a5056; background:linear-gradient(180deg, #08090a, #0f1113); border-radius:2px; box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px #050607, 0 1px 0 rgba(255,255,255,.07); transition:background .3s, color .3s, box-shadow .3s; }   /* a lens set into the panel: sunken, read not pressed (2026-11-24) */
-  .rlamps span[data-l="tape"], .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
-  .rlamps span[data-l="tape"] { grid-row:1 / 4; } .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
+  .rlamps span[data-l="pwr"] { grid-column:2; grid-row:span 3; }
+  .rlamps .tapecell { grid-column:2; grid-row:1 / 4; display:flex; align-items:center; gap:5px; } .rlamps .tapecell > span { flex:1; align-self:stretch; }   /* the T beside its lens, not in it (2026-11-26) */
+  .rlamps span[data-l="pwr"] { grid-row:4 / 7; }
   .rlamps span.warn { color:#ffd9a0; background:radial-gradient(120% 140% at 50% 40%, rgba(255,180,60,.55), rgba(255,180,60,.18) 70%), #140f08; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,180,60,.6), 0 1px 0 rgba(255,255,255,.07); text-shadow:0 0 6px rgba(255,180,60,.8); }   /* trouble: amber means attention only (2026-11-24) */
   .rlamps span.half { color:rgba(var(--fluo-rgb),.7); box-shadow:inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px rgba(var(--fluo-rgb),.35), 0 1px 0 rgba(255,255,255,.07); }   /* armed: Void FM away from the dark, its perk waiting */
   .rlamps span.white { color:#c9f8ff; background:radial-gradient(120% 140% at 50% 40%, rgba(var(--fluo-rgb),.42), rgba(var(--fluo-rgb),.12) 70%), #061014; box-shadow:inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(var(--fluo-rgb),.55), 0 1px 0 rgba(255,255,255,.07); text-shadow:0 0 6px rgba(var(--fluo-rgb),.8); }   /* on: lit in cyan, like the panel dots (2026-11-24) */
@@ -530,7 +531,7 @@
         <div class="rband off" id="rBand"><div class="rscale"></div><span class="rst" data-k="pump" style="left:17%">The Pump Zone</span><span class="rst" data-k="disco" style="left:50%">Disco Gravitas</span><span class="rst" data-k="void" style="left:83%">Void FM</span><div class="rneedle" id="rNeedle"></div></div>
         <div class="rrow"><div class="rsong"><span id="radioTicker"></span></div><span id="radioFx"></span></div>
       </div>
-      <div class="rlamps"><span data-l="dig">Dig faster</span><span data-l="mix">Mix faster</span><span data-l="nv">Night vision</span><span data-l="tape"><kbd class="k">T</kbd>Tape</span><span data-l="pwr">No power</span></div>
+      <div class="rlamps"><span data-l="dig">Dig faster</span><span data-l="mix">Mix faster</span><span data-l="nv">Night vision</span><div class="tapecell"><kbd class="k">T</kbd><span data-l="tape">Tape</span></div><span data-l="pwr">No power</span></div>
       <div class="rknob" id="rTune"><i></i><span class="kl"><kbd class="k">R</kbd>Tune</span></div>
     </div>
     </div>
