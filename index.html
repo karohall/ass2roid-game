@@ -189,6 +189,21 @@
   .key.ready .face i:last-child { color:#03262c; background:radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow:0 0 12px rgba(var(--fluo-rgb),.6); }
   .key.off .no { color:var(--faint); }
   .key.jizz.can .face i:first-child { color:var(--jizz); } .key.candy.can .face i:first-child { color:var(--candy); }
+  /* The rubber key family (2026-11-26): the Shake/Drink keys like the screens' buttons. Matte and domed; the legends glow through; the LED says shaking (amber) or ready (cyan). */
+  .recipe button.key { clip-path:none; border-radius:10px; padding:5px 6px; background:radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%);
+    box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1); transition:transform .06s, box-shadow .06s; }
+  .recipe button.key:active { transform:translateY(2px); box-shadow:0 0 0 1px #070809, 0 1px 0 #08090a, 0 2px 4px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); }
+  .recipe button.key::after { content:''; position:absolute; top:7px; right:8px; width:5px; height:5px; border-radius:50%; background:#24282c; box-shadow:inset 0 1px 1px rgba(0,0,0,.6); }   /* the LED, dark */
+  .recipe button.key.shaking::after { background:var(--amber); box-shadow:0 0 6px var(--amber); } .recipe button.key.ready::after { background:var(--fluo); box-shadow:0 0 6px var(--fluo); }
+  .key .face { background:none; box-shadow:none; padding:0; gap:0; border-radius:6px; overflow:hidden; }
+  .key .face i { background:none; color:#4a5056; } .key .face i:first-child { box-shadow:0 1px 0 rgba(0,0,0,.35); }
+  .key.can .face i:first-child { color:#d9dde0; background:none; text-shadow:0 0 6px rgba(255,255,255,.25); } .key.can:hover .face i:first-child { background:rgba(255,255,255,.04); }
+  .key.shaking .face i:first-child { color:var(--amber); background:none; text-shadow:0 0 6px rgba(255,180,60,.6); }
+  .key.shaking .face i:first-child::after { color:#1a1000; background:rgba(255,180,60,.9); }
+  .key.ready { box-shadow:0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1), 0 0 14px rgba(var(--fluo-rgb),.22); }
+  .key.ready .face i:last-child { color:var(--fluo); background:none; box-shadow:none; text-shadow:0 0 8px rgba(var(--fluo-rgb),.8); }
+  .key .no { left:7px; top:5px; width:auto; height:auto; background:none; box-shadow:none; clip-path:none; font:700 10px/1 var(--f-title); color:#7d858b; }   /* the number, engraved */
+  .key:active .face, .key.shaking .face { transform:none; }
   .recipe .name { line-height:1.3; }
   .recipe .name b { font:600 13px var(--f-text); }
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
@@ -410,7 +425,7 @@
   .lamps { display:flex; justify-content:space-between; gap:4px 8px; flex-wrap:wrap; margin-top:6px; padding:5px 9px; background:#0c0d0f; box-shadow:inset 0 1px 3px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05); }
   #rover .lamps:not(:has(.ind.shown, .ind.warn)) { display:none; }   /* shown once a lamp is revealed, or the caution is lit */
   #cautionWhy { font-style:normal; text-transform:none; letter-spacing:.02em; color:var(--dim); margin-left:6px; }
-  #lampCaution.warn i { box-shadow:0 0 0 1px #050607, 0 0 3px rgba(255,180,60,.6); }   /* a small glow */
+  #lampCaution.warn i { box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 3px rgba(255,180,60,.6); }   /* a small glow */
   #cautionWhy:empty { display:none; }   /* the lamp strip waits for its first lamp: no empty strip (2026-11-24) */
   .rd { display:inline-block; height:1em; overflow:hidden; vertical-align:top; line-height:1; }   /* a rolling digit: a drum of 0-9 */
   .rd > span { display:block; transition:transform .35s cubic-bezier(.3,.7,.3,1); }
@@ -426,9 +441,9 @@
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
-  .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607, inset 0 -1px 1px rgba(0,0,0,.6); }
-  .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 35% 30%, #e6fdff, var(--fluo) 60%); box-shadow:0 0 0 1px #050607, 0 0 7px var(--fluo); }
-  .ind.warn { color:var(--text); } .ind.warn i { background:radial-gradient(circle at 35% 30%, #fff0d2, var(--amber) 60%); box-shadow:0 0 0 1px #050607, 0 0 7px var(--amber); }
+  .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
+  .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
+  .ind.warn { color:var(--text); } .ind.warn i { background:radial-gradient(circle at 50% 40%, #ffe2b0, var(--amber) 55%, #6b4610); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(255,180,60,.6); }
   .ind.blink i { animation:blink 1s steps(1, end) infinite; }
   @keyframes blink { 50% { background:radial-gradient(circle at 35% 30%, #3a3f44, #121417); box-shadow:0 0 0 1px #050607; } }
   @media (prefers-reduced-motion: reduce) { .ind.blink i { animation:none; } }
@@ -2974,7 +2989,7 @@ function hud() {
   const t = now();
   rollNum('depth', depthNow(), 'm');                       // the depth on drums
   rollNum('hourMeter', Math.floor(s.timeMs / 60000), 'min');   // the hour meter: whole minutes, so it moves once a minute
-  setText('samples', s.samples);
+  rollNum('samples', s.samples);                           // on drums, like depth and shift time (2026-11-26)
   // Digging power as pips, one per point (7 at most: base and two Strengths); the crust's need is the notched pip, and the value reads "have/need".
   const need = layer().crustMinPower, pw = power(), np = Math.max(7, need);
   setHTML('pips', Array.from({ length: np }, (_, i) => `<i class="${i < pw ? 'on' : ''}${i === need - 1 ? ' need' : ''}"></i>`).join(''));
