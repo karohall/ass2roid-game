@@ -224,6 +224,7 @@
   .recipe[data-reveal="recipe_jizz"] .name b { color:var(--jizz); } .recipe[data-reveal="recipe_candy"] .name b { color:var(--candy); }
   .recipe .name br { display:none; } .recipe .name > * { display:block; }   /* name, what it does and the recipe: each its own paragraph, so text-wrap:pretty keeps every last line from being an orphan */
   .recipe .does { font-size:12px; color:var(--dim); }
+  .small[data-reveal="drink"] { font:400 12px/1.5 var(--f-text); }   /* the caution and the Active line: read at the descriptions' size, not fine print (2026-11-26: "this text is tiny") */
   .recipe .name > *, .overlay .body, .overlay .note, #log div, #radioFx, .small, .journeyCap { text-wrap:balance; }   /* no short last lines in short blocks (2026-11-17) */
   .ph { display:none; color:var(--faint); margin-bottom:6px; font:500 12px var(--f-small); }   /* "[3] ? ? ?": a Milk+ still to find; keys never change */
   .ph.on { display:block; }
@@ -508,7 +509,7 @@
     <div class="box later" id="milk" data-reveal="recipe_strength">   <!-- waits whole, like the Field Guide, until its first recipe (2026-11-24) -->
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
-      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions.<br>Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
+      <div class="small later" data-reveal="drink" style="margin-top:6px">Caution: quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
       <div class="small later" data-reveal="drink" id="effects" style="margin-top:4px">Active: none</div>
     </div>
 
