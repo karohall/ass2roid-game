@@ -208,6 +208,53 @@ h1, h2, h3, p { margin: 0; }
 .edge { position: relative; width: 460px; height: 150px; background: #08090a; overflow: hidden; }
 .edge .nasa { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); }
 .edge .grid { position: absolute; inset: 56px 12px 0; background: repeating-linear-gradient(90deg, #1b1d20 0 38px, #08090a 38px 40px), repeating-linear-gradient(#1b1d20 0 38px, #08090a 38px 40px); background-blend-mode: darken; }
+
+/* ── Rules (2026-11-26): one style per job. Specimens copy the game's CSS. ── */
+.rules { display: grid; grid-template-columns: 170px 1fr 1.2fr; border-top: 1px solid var(--line-2); }
+.rules > div { padding: var(--s4) var(--s3) var(--s4) 0; border-bottom: 1px solid var(--line); }
+.rules .job { font: 600 11px/1.5 var(--f-title); letter-spacing: .16em; text-transform: uppercase; color: var(--text); }
+.rules .job small { display: block; margin-top: var(--s1); font: 400 12px/1.45 var(--f-text); letter-spacing: 0; text-transform: none; color: var(--faint); }
+.rules .how { font: 400 13px/1.5 var(--f-text); color: var(--steel); } .rules .how b { color: var(--text); font-weight: 600; }
+.rules .how .where { display: block; margin-top: var(--s2); font: 500 11px/1.45 var(--f-small); color: var(--faint); }
+.rules .ex { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4); padding: var(--s3) var(--s4); background: #121417; box-shadow: inset 0 0 0 1px #08090a; }
+.rules .ex .t-meta { width: 100%; margin-top: -4px; }
+.rules .head { font: 600 10px/1 var(--f-small); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); padding: var(--s2) 0; }
+.rules .open { color: var(--amber); font: 600 10px/1 var(--f-small); letter-spacing: .14em; text-transform: uppercase; margin-left: var(--s1); }
+/* backlit print */
+.bl { font: 600 12px/1 var(--f-small); letter-spacing: .1em; text-transform: uppercase; color: #5f656b; }
+.bl.lit { color: transparent; background: radial-gradient(70% 140% at 45% 55%, #f3eee4, #b7b2a8 70%, #8d8981); -webkit-background-clip: text; background-clip: text; }
+/* readout: a sunken window, the number on drums */
+.ro { display: inline-flex; align-items: baseline; justify-content: flex-end; gap: 4px; min-width: 120px; height: 28px; padding: 0 10px; align-items: center; background: #050607; box-shadow: inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.06); font: 700 16px/1 var(--f-title); font-variant-numeric: tabular-nums; color: var(--text); }
+.ro small { font: 600 11px var(--f-title); color: var(--faint); }
+/* aviation key: steel bezel, sunken face, the legend lit */
+.av { display: inline-flex; padding: 3px; background: linear-gradient(180deg, #2b2f33, #1b1e21); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 2px 0 #08090a, 0 0 0 1px #08090a; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+.av .face { display: flex; align-items: center; gap: 8px; padding: 0 10px; height: 22px; background: #050607; box-shadow: inset 0 1px 3px rgba(0,0,0,.95); font: 600 11px/1 var(--f-small); letter-spacing: .14em; text-transform: uppercase; color: #d9dde0; text-shadow: 0 0 6px rgba(255,255,255,.2); }
+.av .face small { font: inherit; letter-spacing: .1em; color: #5f656b; text-shadow: none; }
+.av.two .face { flex-direction: column; gap: 2px; padding: 2px; height: auto; width: 76px; }
+.av.two .face i { display: grid; place-items: center; width: 100%; height: 18px; font-style: normal; background: #16191c; }
+.av.two .face i + i { color: #03262c; text-shadow: none; background: radial-gradient(120% 140% at 50% 0%, #c8f9ff, var(--fluo) 60%, #1fb0c6); box-shadow: 0 0 12px rgba(52,230,255,.6); }
+/* rubber key: matte, domed, the legend glowing through */
+.rb { display: inline-grid; place-items: center; height: 40px; padding: 0 26px; border-radius: 10px; font: 700 12px/1 var(--f-small); letter-spacing: .2em; text-transform: uppercase; color: rgba(52,230,255,.92); text-shadow: 0 0 7px rgba(52,230,255,.6);
+  background: radial-gradient(120% 100% at 50% 20%, #34383c, #1f2225 75%); box-shadow: 0 0 0 1px #070809, 0 3px 0 #08090a, 0 4px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1); }
+.rb.sq { width: 34px; height: 30px; padding: 0; border-radius: 8px; color: #cfd4d8; text-shadow: none; font: 700 14px/1 var(--f-title); letter-spacing: 0; }
+.rb.amber { color: rgba(255,180,60,.92); text-shadow: 0 0 7px rgba(255,180,60,.6); }
+/* the game's keycap */
+.kc { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; font: 700 10px/1 var(--f-title); letter-spacing: .04em; color: #e8ebee; background: linear-gradient(180deg, #3a3f44, #24282c); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 0 rgba(0,0,0,.5); clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px); }
+/* legend tile */
+.lt { display: inline-grid; place-items: center; width: 16px; height: 16px; font: 700 9px/1 var(--f-title); color: #b4bac0; background: var(--ink); box-shadow: inset 0 0 0 1px #b4bac0; }
+.lt.spore { color: var(--spore); box-shadow: inset 0 0 0 1px var(--spore), 0 0 5px rgba(0,255,115,.5); }
+/* lamps */
+.lp { display: inline-grid; place-items: center; height: 24px; padding: 0 12px; border-radius: 2px; font: 700 11px/1 var(--f-title); letter-spacing: .08em; text-transform: uppercase; color: #4a5056; background: linear-gradient(180deg, #08090a, #0f1113); box-shadow: inset 0 2px 4px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.07); }
+.lp.on { color: #c9f8ff; background: radial-gradient(120% 140% at 50% 40%, rgba(52,230,255,.42), rgba(52,230,255,.12) 70%), #061014; box-shadow: inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(52,230,255,.55); text-shadow: 0 0 6px rgba(52,230,255,.8); }
+.lp.armed { color: rgba(52,230,255,.7); box-shadow: inset 0 2px 4px rgba(0,0,0,.9), inset 0 0 0 1px rgba(52,230,255,.35); }
+.lp.warn { color: #ffd9a0; background: radial-gradient(120% 140% at 50% 40%, rgba(255,180,60,.55), rgba(255,180,60,.18) 70%), #140f08; box-shadow: inset 0 2px 4px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,180,60,.6); text-shadow: 0 0 6px rgba(255,180,60,.8); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--fluo); box-shadow: 0 0 6px var(--fluo); } .dot.off { background: #2a2e32; box-shadow: none; }
+/* breaks */
+.breaks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-2); }
+.breaks li { display: grid; grid-template-columns: 200px 1fr 1fr; gap: var(--s4); padding: var(--s3) 0; border-bottom: 1px solid var(--line); font: 400 13px/1.5 var(--f-text); color: var(--steel); }
+.breaks li b { color: var(--text); font-weight: 600; } .breaks li .fix { color: var(--text); }
+.breaks .head { font: 600 10px/1 var(--f-small); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+@media (max-width: 900px) { .rules { grid-template-columns: 1fr; } .breaks li { grid-template-columns: 1fr; gap: var(--s1); } }
 </style>
 </head>
 <body>
@@ -241,6 +288,34 @@ h1, h2, h3, p { margin: 0; }
       <p class="t-body-s">Gunmetal. Neutral cold steel, a concrete hint, one glow; a pastel for each secret. Every component on this page is built from the tokens in its first three sections and nothing else; the game will be re-skinned from these, keeping its layout.</p></div>
     <div class="t-meta" style="text-align:right">Chakra Petch · Inter · IBM Plex Sans<br>4 px grid · one chamfer</div>
   </header>
+
+
+  <section class="sec"><h2>Rules<small>One style per job. Before anything gets a look, ask what it is: does it name a thing, show a value, get pressed, or tell you which key? The answer picks the style, and nothing else may wear it. Two base rules: <b style="color:var(--text)">raised is pressed, sunken is read</b>; <b style="color:var(--text)">cyan is on, amber is attention</b>. No decoration: a bolt, texture or glow needs a reason, and never sits over text. Written 26 Nov; where an older section below disagrees, this one wins.</small></h2>
+    <div>
+    <div class="rules">
+      <div class="head">Job</div><div class="head">Style</div><div class="head">Looks like</div>
+      <div class="job">Name a thing<small>labels on panels and instruments</small></div><div class="how"><b>Backlit print.</b> Plex Sans 600, caps, +0.1em. Dark grey when the rover is off (start screen, paused); during the shift, warm-white light through the letters, no halo.<span class="where">Rover rows, Field Guide sections, radio VOL / TUNE, panel plates.</span></div><div class="ex"><span class="bl">Depth</span><span class="bl">Drill samples</span><span class="bl lit">Depth</span><span class="bl lit">Drill samples</span><span class="t-meta">off · lit</span></div>
+      <div class="job">Show a value<small>anything that counts or measures</small></div><div class="how"><b>A readout:</b> a sunken window, the number in Chakra Petch on rolling drums, its unit small in grey. Every number rolls; nothing just swaps.<span class="where">Depth, samples, shift time, hour meter, ingredient counts, Field Guide count.</span></div><div class="ex"><span class="ro">522<small>m</small></span><span class="ro">0:12</span></div>
+      <div class="job">Press during play<small>what you do while digging</small></div><div class="how"><b>An aviation key:</b> a raised steel bezel around a sunken face; the legend lights when pressing would do something, and is dark when it can’t. Its keyboard key sits on the key.<span class="where">Shake / Drink, Pause.</span></div><div class="ex"><span class="av two"><span class="face"><i>Shake</i><i>Drink</i></span></span><span class="av"><span class="face">Pause<small>Space</small></span></span></div>
+      <div class="job">Press outside play<small>screens and the radio</small></div><div class="how"><b>A rubber key:</b> matte, softly domed, the legend glowing through. Amber when it starts something (Begin shift), cyan otherwise.<span class="where">Begin shift, Resume, the radio’s − + ◂ ▸.<span class="open">open</span> the radio keys are “iffy”; aviation keys there were rejected.</span></div><div class="ex"><span class="rb amber">Begin shift</span><span class="rb">Resume</span><span class="rb sq">−</span><span class="rb sq">▸</span></div>
+      <div class="job">Which key<small>the keyboard, wherever it’s mentioned</small></div><div class="how"><b>The keycap:</b> one dark cap, 20 px (24 in the start screen’s key list), single keys square. Shows a key on your keyboard, nothing else.<span class="where">Hint bar, radio V / R / T, before each recipe’s name (found or not), start screen.</span></div><div class="ex"><span class="kc">1</span><span class="kc">V</span><span class="kc">R</span><span class="kc">Space</span></div>
+      <div class="job">Something in the rock<small>a thing you look for on the map</small></div><div class="how"><b>The legend tile:</b> the map’s own tile, flat, not raised: it is not a key. Unfound: a dashed square with ?.<span class="where">Map legend, ingredients (compounds).</span></div><div class="ex"><span class="lt">W</span><span class="lt">P</span><span class="lt spore">S</span></div>
+      <div class="job">Say a state<small>on, waiting, trouble</small></div><div class="how"><b>A lamp:</b> a sunken lens, dark when off. Cyan lit = on and well; cyan outline = armed, waiting; amber = attention. Panel plates carry a dot: lit while the shift runs.<span class="where">Radio perk lamps, NO POWER, panel plates, master caution.</span></div><div class="ex"><span class="lp">Tape</span><span class="lp on">Night vision</span><span class="lp armed">Dig faster</span><span class="lp warn">No power</span><span class="dot"></span><span class="dot off"></span></div>
+      <div class="job">Explain<small>what it does, fine print</small></div><div class="how"><b>Plain text:</b> Inter for what you read, Plex Sans for fine print, sentence case, left-aligned, grey. Never caps or centred for more than a few words.<span class="where">Recipe descriptions, the caution note, log, Field Guide cards.</span></div><div class="ex"><span class="t-body-s" style="color:var(--steel)">Dig harder. Stacks. Pushes toward Frenzy.</span></div>
+      <div class="job">Hold it all<small>the panel</small></div><div class="how"><b>A thick panel:</b> the outline drawn at its own size, a rim, a tray inset, a lip. A part not yet revealed is a flat ghost.<span class="where">Every box.</span></div><div class="ex"><span class="t-meta" style="width:auto;margin:0">See Frame below (its 24 Nov look; the rim and tray came after).</span></div>
+    </div></div></section>
+
+  <section class="sec"><h2>Breaks<small>Where the game doesn’t follow the rules yet, 26 Nov. Each needs a decision before it changes; nothing here is fixed by default.</small></h2>
+    <ul class="breaks">
+      <li><span class="head">Where</span><span class="head">What it does now</span><span class="head">What the rules say</span></li>
+      <li><b>Shake key’s number</b><span>Was a small plate on the bezel, too small to read as “press 1 for Strength”.</span><span class="fix">Fixed 26 Nov: the keycap before the recipe’s name.</span></li>
+      <li><b>Milk+ menu</b><span>Reads as a document: bold title-case names, prose under them, hairlines between rows.</span><span class="fix">Names are labels (backlit print); the recipe’s ingredients are tiles with counts; descriptions stay plain grey text.</span></li>
+      <li><b>Pause screen</b><span>Its stats use sentence-case labels and loose numbers; the volume is an outlined box.</span><span class="fix">Labels in backlit print (dark, since the rover is off), values in readouts; the volume is the radio’s own key and level.</span></li>
+      <li><b>Unfound compounds</b><span>Dashed ? squares that read half like keys.</span><span class="fix">Clearly a tile: the legend tile’s size and flatness, dashed.</span></li>
+      <li><b>Radio keys</b><span>Rubber; “iffy”. Aviation keys rejected.</span><span class="fix">Open: rubber is right by the rules; the shape needs work.</span></li>
+      <li><b>Hint bar</b><span>The one light surface: flat concrete, white-ish, dark text.</span><span class="fix">Open: an exception by design, or a printed paper strip (an idea, never tried).</span></li>
+      <li><b>Caution</b><span>A plain small note under the recipes.</span><span class="fix">Open: a placard was liked as an idea; a sunken one read like a screen.</span></li>
+    </ul></section>
 
   <section class="sec"><h2>Colour<small>Steel does the structure. Concrete (the coldest greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Amber means attention: a warning, wear, the tutorial’s call, never “all is well”. Näsa blue means Näsa and nothing else.</small></h2>
     <div class="swatches" id="swatches"></div></section>
