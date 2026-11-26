@@ -472,12 +472,12 @@
   .tape .ln b { flex:none; font:700 13px/1.75 var(--f-title); font-variant-numeric:tabular-nums; }
   @keyframes println { to { clip-path:inset(0 0 0 0); } }   /* each line prints, top to bottom */
   @media (prefers-reduced-motion: reduce) { .tape .ln { animation:none; clip-path:none; } }
-  .placard { position:relative; margin-top:10px; padding:12px 26px 13px; text-align:left; text-wrap:pretty; font-weight:500 !important; color:#23272b !important; text-shadow:0 1px 0 rgba(255,255,255,.35);   /* the caution placard: bright brushed metal, bolted on (2026-11-26) */
+  .placard { position:relative; margin-top:10px; padding:12px 26px 13px; text-align:left; text-wrap:pretty; font-weight:500 !important; color:#b4bac0 !important; text-shadow:0 -1px 0 rgba(0,0,0,.8);   /* the caution placard: a dark steel plate like the keys' bezels, bolted on (2026-11-26; light metal was a mismatch) */
     background:radial-gradient(circle at 10px 10px, #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px), radial-gradient(circle at calc(100% - 10px) 10px, #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px), radial-gradient(circle at 10px calc(100% - 10px), #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px), radial-gradient(circle at calc(100% - 10px) calc(100% - 10px), #f2f4f6 0 .9px, #9aa1a8 1.4px 2.2px, #5b6167 2.6px 3.3px, #2a2e32 3.7px 4.3px, rgba(0,0,0,.35) 4.6px 5.4px, transparent 5.8px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px, rgba(0,0,0,.04) 3px 4px), linear-gradient(180deg, #aeb4ba, #91989e 45%, #7b8288 55%, #9aa0a6);   /* satin, a step down from bright: it must not outshine the play */
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(0,0,0,.35), 0 0 0 1px #08090a, 0 2px 5px rgba(0,0,0,.5); }   /* four hex bolts hold it at the corners, clear of the text */
-  .placard::before { content:''; position:absolute; inset:5px 20px; border:1px solid rgba(0,0,0,.28); box-shadow:0 1px 0 rgba(255,255,255,.4); pointer-events:none; }   /* the engraved border */
-  .placard .ph { display:block; margin-bottom:4px; font:700 11px/1.2 var(--f-small); letter-spacing:.2em; text-transform:uppercase; color:#1a1d20; }   /* CAUTION, engraved */
+      repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 3px, rgba(0,0,0,.05) 3px 4px), linear-gradient(180deg, #30353a, #262a2e 45%, #1f2326 55%, #2a2e32);   /* brushed dark steel, the bezels' metal */
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.5), 0 0 0 1px #08090a, 0 2px 5px rgba(0,0,0,.5); }   /* four hex bolts hold it at the corners, clear of the text */
+  .placard::before { content:''; position:absolute; inset:5px 20px; border:1px solid rgba(0,0,0,.55); box-shadow:0 1px 0 rgba(255,255,255,.06); pointer-events:none; }   /* the engraved border */
+  .placard .ph { display:block; margin-bottom:4px; font:700 11px/1.2 var(--f-small); letter-spacing:.2em; text-transform:uppercase; color:#dfe3e6; }   /* CAUTION, engraved */
   .ind { display:inline-flex; align-items:center; gap:5px; font:500 11px/1 var(--f-small); letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
   .ind i { width:9px; height:9px; border-radius:50%; background:radial-gradient(circle at 50% 40%, #15181b, #08090a); box-shadow:inset 0 1px 2px rgba(0,0,0,.95), 0 0 0 1px #040506, 0 1px 0 rgba(255,255,255,.08); }   /* a small lens set into the panel, like the radio's lamps (2026-11-26) */
   .ind.on { color:var(--text); } .ind.on i { background:radial-gradient(circle at 50% 40%, #c9f8ff, var(--fluo) 55%, #0b5560); box-shadow:inset 0 1px 2px rgba(0,0,0,.6), 0 0 0 1px #040506, 0 0 6px rgba(var(--fluo-rgb),.7); }
@@ -517,7 +517,7 @@
         <ol><li>Check engine light.</li><li>Ignore that it is on.</li><li>See step 1.</li></ol></div>
       <div class="keys"><span><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M10 6H2.5M5.5 3L2.5 6l3 3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2v7.5M3 6.5l3 3 3-3"/></svg></kbd><kbd class="k ar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h7.5M6.5 3l3 3-3 3"/></svg></kbd></span><span>Move and dig (or WASD)</span><span><kbd class="k">1–5</kbd></span><span>Shake, then drink Milk+</span>
         <span><kbd class="k">R</kbd><kbd class="k">T</kbd><kbd class="k">V</kbd></span><span>Radio, tape, volume</span><span><kbd class="k">Space</kbd></span><span>Pause</span></div>
-      <span id="goGlow"><button id="go" class="go pl amber"><span class="face"><i>Begin shift</i><i>Enter</i></span></button></span><span class="gokey" id="goKey">or press Enter</span></div>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
+      <span id="goGlow"><button id="go" class="go pl"><span class="face"><i>Begin shift</i><i>Enter</i></span></button></span><span class="gokey" id="goKey">or press Enter</span></div>   <!-- the glow lives on the wrapper: the button's cut corners clip anything drawn outside it -->
     </div>
     <div id="menu" class="overlay hidden"></div>
     <div id="nasa" class="hidden"></div>
@@ -2982,7 +2982,7 @@ function buildGauge() {
     h += `<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient><linearGradient id="gtray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#090a0c"/><stop offset="1" stop-color="#0c0d10"/></linearGradient>`;
     h += `<path class="bez" d="${bez}" fill="url(#grim)" stroke="#0a0b0d" stroke-width="1"/><path d="${inner}" fill="url(#gtray)" stroke="#020304" stroke-width="1.5"/><path d="${inner}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1" transform="translate(0 1.5)"/>`; }
   // the instrument (2026-11-26): a dial face behind the scale with a steel rim, inner and outer
-  { const rf = M.R - 6, wf = 116, a = 1.2;
+  { const rf = M.R - 6, wf = 140, a = 1.2;   // the rim clear of every word (2026-11-26)
     h += `<path d="${gArc(M, -a, a, rf)}" stroke="#0e1013" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2)}" stroke="url(#gbez)" stroke-width="2.5" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2 + 2)}" stroke="#050607" stroke-width="1.5" fill="none"/>`; }
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
@@ -3009,7 +3009,7 @@ function buildGauge() {
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
     const lab = t => `<text x="${d.cx}" y="${t}" text-anchor="middle" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>`;
-    if (d.side) h += txt(k + 'read', d.cx, d.cy + 5, 14, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx - d.R - 14}" y="${d.cy - 2}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + `<text class="${k}sub" x="${d.cx - d.R - 14}" y="${d.cy + 14}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#34e6ff"></text>`;   // its name and seconds to its left
+    if (d.side) h += txt(k + 'read', d.cx, d.cy + 5, 14, '#5f656b', 700, 'Chakra Petch') + `<text x="${d.cx - d.R - 26}" y="${d.cy - 2}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#5f656b" letter-spacing="1.6">${title}</text>` + `<text class="${k}sub" x="${d.cx - d.R - 26}" y="${d.cy + 14}" text-anchor="end" font-family="IBM Plex Sans" font-weight="600" font-size="11" fill="#34e6ff"></text>`;   // its name and seconds to its left
     else if (d.in) h += txt(k + 'read', d.cx, d.cy + 5, 15, '#5f656b', 700, 'Chakra Petch') + txt(k + 'sub', d.cx, d.cy + 19, 11, '#34e6ff', 600, 'IBM Plex Sans') + lab(d.cy + d.R + 18);
     else h += `<circle cx="${d.cx}" cy="${d.cy}" r="7" fill="#15171a" stroke="rgba(150,157,164,.35)"/>` + txt(k + 'read', d.cx, ry, d.R > 36 ? 16 : 14, '#5f656b', 700, 'Chakra Petch') + lab(ry + 20) + txt(k + 'sub', d.cx, ry + 37, 11, '#34e6ff', 600, 'IBM Plex Sans');
   }
