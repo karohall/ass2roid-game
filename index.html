@@ -578,6 +578,12 @@
   @keyframes hintguide { 0%, 100% { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 2px rgba(255,180,60,.3); } 50% { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 3px rgba(255,180,60,1); } }
   @keyframes hintflash { 0%, 40% { background:rgba(var(--fluo-rgb),.22); } 100% { background:#0a0c0e; } }
   #hintWrap { margin-top:10px; } #hintWrap h3 { margin-bottom:8px; } #hint { margin:0 !important; }   /* ADVISORY a panel like every other: the same frame, tab and plate; the message screen inside it (2026-11-27) */
+  /* the pause screen (2026-11-27): the stats as the Rover panel's rows; the volume as the radio's rocker */
+  .pstats { width:100%; max-width:320px; text-align:left; } .pstats .inst { grid-template-columns:1fr 120px; } .pstats .inst .win { grid-column:2; }
+  .pstats .win small { font:500 12px var(--f-small); color:var(--dim); margin-left:4px; text-shadow:none; }
+  .pvol { display:flex; align-items:center; gap:14px; } .pvol .eng { font:600 12px/1 var(--f-small); letter-spacing:.1em; text-transform:uppercase; color:#8b9196; }
+  .pvol .rks { height:36px; } .pvol .rks .face { width:72px; } .pvol button.rk { font-size:17px; }
+  .pvol .lvl { min-width:54px; font:600 12px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--fluo); text-align:left; }
 </style>
 </head>
 <body class="intro">
@@ -1042,7 +1048,7 @@ document.querySelectorAll('#radioBox button.rk').forEach(b => b.addEventListener
 function volumeKey(dir) {
   radio.vol = dir ? Math.max(0, Math.min(VOLUMES.length - 1, radio.vol + dir)) : (radio.vol + 1) % VOLUMES.length;   // V cycles; the − and + keys step (2026-11-26)
   if (running) say(`Radio volume: ${VOLUMES[radio.vol].name}.`);
-  if ($('pauseVol')) $('pauseVol').innerHTML = pauseVolHTML();   // live on the pause screen
+  if ($('pauseVolLvl')) $('pauseVolLvl').textContent = VOLUMES[radio.vol].name;   // live on the pause screen
 }
 function tuneIn() { if (!sound.on) { sound.on = true; soundGraph(); soundTick(0); } if (bus.ac && bus.ac.state === 'suspended') bus.ac.resume(); }
 // Nothing on Korova Rock runs without a soundtrack: the drill only works while music plays.
@@ -2542,12 +2548,12 @@ function pause() {
   running = false; held = null; pendingTap = null; pausedAt = now();
   showMenu(`<span class="lbl">Paused</span><h2 class="ttl">${layer().name}</h2>
     ${journey(s.layer)}
-    <dl class="kv"><div><dt>Depth</dt><dd>${depthNow()}<em>m</em></dd></div><div><dt>Drill samples</dt><dd>${s.samples}</dd></div>
-      <div><dt>Field Guide</dt><dd>${s.guide.length}<em>/ ${guideEntries().length}</em></dd></div><div><dt>Shift</dt><dd>${fmt(Math.floor(s.timeMs / 1000))}</dd></div></dl>
+    <div class="pstats">${[['Depth', depthNow() + '<small>m</small>'], ['Drill samples', s.samples], ['Field Guide', s.guide.length + '<small>/ ' + guideEntries().length + '</small>'], ['Shift', fmt(Math.floor(s.timeMs / 1000))]].map(([k, v]) => `<div class="inst"><span class="eng">${k}</span><span class="win"><span>${v}</span></span></div>`).join('')}</div>
     <p class="note">The Rock will wait. It has waited before.</p>
     <button id="resume" class="go pl"><span class="face"><i>Resume</i><i>Space</i></span></button>
-    <div class="btn2" id="pauseVol">${pauseVolHTML()}</div>`);   // where people look to change things
+    <div class="pvol" id="pauseVol"><span class="eng">Radio volume</span><div class="rks"><kbd class="k">V</kbd><span class="face"><button class="rk" data-vol="1" aria-label="Quieter">−</button><button class="rk" data-vol="-1" aria-label="Louder">+</button></span></div><span class="lvl" id="pauseVolLvl">${VOLUMES[radio.vol].name}</span></div>`);   // where people look to change things
   $('resume').onclick = () => buffer($('resume'), resume);
+  document.querySelectorAll('#pauseVol button.rk').forEach(b => b.onclick = () => volumeKey(+b.dataset.vol));   // the same rocker as the radio's
   menuKeys = k => { if (k === ' ' || k === 'p' || k === 'Escape') buffer($('resume'), resume); };
 }
 
