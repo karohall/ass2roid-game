@@ -553,6 +553,18 @@
   /* the backplate and the start and pause cards, sleek too: flat gunmetal, a fine edge; no sheen, grain or big screws */
   #wrap::before { background:linear-gradient(180deg, #25282c, #1b1e21) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.04) !important; }
   .plate { background:radial-gradient(circle at 16px 16px, #6b7177 0 1.8px, transparent 2.2px), radial-gradient(circle at calc(100% - 16px) 16px, #6b7177 0 1.8px, transparent 2.2px), radial-gradient(circle at 16px calc(100% - 16px), #6b7177 0 1.8px, transparent 2.2px), radial-gradient(circle at calc(100% - 16px) calc(100% - 16px), #6b7177 0 1.8px, transparent 2.2px), #141619 !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.16) !important; }
+  /* ── Realism pass (2026-11-27). One light, from above. Panels matte aluminium; every display dark glass with the same faint reflection;
+     keys soft plastic, lit from above with a short shadow; recesses read by light (dark top, light bottom lip), not by outlines. ── */
+  .inst .win, #effects .inst .win, #log, #cardDetail, .rmid, .rband { background:linear-gradient(180deg, rgba(255,255,255,.045), transparent 45%), linear-gradient(180deg, #0c0e11, #06070a) !important; box-shadow:inset 0 1px 2px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06) !important; }
+  #mineBox canvas { border-color:#050607 !important; box-shadow:0 1px 0 rgba(255,255,255,.06); }
+  .recipe button.key, #pauseBtn, .rks, .go.pl { background:linear-gradient(180deg, #2a2e33, #1d2024) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(0,0,0,.6), 0 2px 3px rgba(0,0,0,.35) !important; }
+  .key .face, #pauseBtn .face, .rks .face, .go.pl .face { background:#0a0b0d !important; box-shadow:inset 0 1px 2px rgba(0,0,0,.9) !important; }
+  .recipe button.key kbd.k, .rks kbd.k, kbd.k { background:linear-gradient(180deg, #34383d, #25292d) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 1px 0 rgba(0,0,0,.6) !important; }
+  .key.ready { box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(0,0,0,.6), 0 2px 3px rgba(0,0,0,.35) !important; }
+  .placard { box-shadow:inset 0 1px 0 rgba(0,0,0,.6), inset 0 -1px 0 rgba(255,255,255,.06), inset 1px 0 0 rgba(0,0,0,.4), inset -1px 0 0 rgba(255,255,255,.04) !important; }   /* an engraved groove, read by light */
+  #hint { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.08), 0 -1px 0 rgba(0,0,0,.6) !important; }   /* the concrete plate set in: shaded at the top, a light lip below */
+  @keyframes hintguide { 0%, 100% { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,180,60,.3), 0 1px 0 rgba(255,255,255,.08); } 50% { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 0 0 3px rgba(255,180,60,1), 0 1px 0 rgba(255,255,255,.08); } }
+  #wrap::before { background:linear-gradient(180deg, #2a2d31, #1c1f22) !important; }
 </style>
 </head>
 <body class="intro">
@@ -3031,10 +3043,10 @@ function buildGauge() {
   let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
   { const d = 5, inner = `M${8.5 + d} ${d} H${tab - d / 2} L${tab + 6 - d / 2} ${6.75 + d} H${w - d} V${GZ.h - 8.5 - d} L${w - 8.5 - d} ${GZ.h - d} H${d} V${8.5 + d} Z`;   // the panels' thickness: a rim, a sunken tray (2026-11-26)
     h += `<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient><linearGradient id="gtray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#090a0c"/><stop offset="1" stop-color="#0c0d10"/></linearGradient>`;
-    h += `<path class="bez" d="${bez}" fill="#141619" stroke="rgba(255,255,255,.09)" stroke-width="1"/>`; }   // sleek: the same fine edge as every panel (2026-11-27)
+    h += `<defs><linearGradient id="gAlu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2f34"/><stop offset=".5" stop-color="#22262a"/><stop offset="1" stop-color="#1b1e21"/></linearGradient><linearGradient id="gGlass" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="${GZ.h}"><stop offset="0" stop-color="#0c0e11"/><stop offset="1" stop-color="#06070a"/></linearGradient><linearGradient id="gRefl" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="150"><stop offset="0" stop-color="#fff" stop-opacity=".07"/><stop offset=".55" stop-color="#fff" stop-opacity=".015"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gCover" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2e33"/><stop offset=".35" stop-color="#202327"/><stop offset="1" stop-color="#1a1d20"/></linearGradient><filter id="gSh" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter><clipPath id="gClip"><rect x="0" y="0" width="${w}" height="${GZ.h - 1.5}"/></clipPath></defs><path class="bez" d="${bez}" fill="url(#gAlu)" stroke="rgba(0,0,0,.6)" stroke-width="1"/>`; }   // realism (2026-11-27): matte aluminium lit from above
   // the instrument (2026-11-26): a dial face behind the scale with a steel rim, inner and outer
   { const rf = M.R - 6, wf = 140, a = 1.2;   // the rim clear of every word (2026-11-26)
-    h += `<path d="${gArc(M, -a, a, rf)}" stroke="#0e1013" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2)}" stroke="url(#gbez)" stroke-width="2.5" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2 + 2)}" stroke="#050607" stroke-width="1.5" fill="none"/>`; }
+    h += `<path d="${gArc(M, -a, a, rf)}" stroke="url(#gGlass)" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf)}" stroke="url(#gRefl)" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2)}" stroke="url(#gbez)" stroke-width="2.5" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2 + 2)}" stroke="#050607" stroke-width="1.5" fill="none"/>`; }
   // the main dial
   h += `<path d="${gArc(M, -1, 1, M.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(M, -1, 1, rb)}" stroke="rgba(150,157,164,.08)" stroke-width="${bw}" fill="none"/>`;
   h += `<path d="${gArc(M, tu, 1, rb)}" stroke="#ffb43c" stroke-width="${bw}" fill="none" opacity=".85"/><path d="${gArc(M, -1, -tu, rb)}" stroke="#8fa6c4" stroke-width="${bw}" fill="none" opacity=".8"/>`;
@@ -3044,18 +3056,18 @@ function buildGauge() {
   // Stillness: Get out grows into the whole line, written along the arc (the other words fade back)
   h += `<path id="gline" d="${gArc(M, -1, 1, M.R + 30)}" fill="none"/><text class="gstill" font-family="Chakra Petch" font-weight="600" font-size="15" letter-spacing=".5" fill="#a9c0dc" opacity="0" style="filter:drop-shadow(0 0 5px rgba(169,192,220,.9))"><textPath href="#gline" startOffset="3%"></textPath></text>`;   // the scale's words, clear: the one under the needle lights up (2026-11-17: they replace the big readout)
   h += '<line class="gnext gs" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/><line class="gnext gc" stroke="#34e6ff" stroke-width="2" stroke-dasharray="4 3" opacity="0"/>';
-  h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".75"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
+  h += '<g class="needle"><line class="nglow" stroke-width="8" filter="url(#gglow)" opacity=".3"/><line class="ncore" stroke-width="3.5" stroke-linecap="round"/></g>';
   // the pivot shroud: a steel cover screwed over the needle's base; the needle comes out from under it (2026-11-26)
   { const rs = M.R - 60, sy = M.cy - 120;
     h += `<defs><linearGradient id="gshroud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5056"/><stop offset=".08" stop-color="#2e3237"/><stop offset="1" stop-color="#17191c"/></linearGradient><radialGradient id="gscrew" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#d3d8dc"/><stop offset=".55" stop-color="#7c838a"/><stop offset="1" stop-color="#2a2e32"/></radialGradient></defs>`;
-    h += `<circle cx="${M.cx}" cy="${M.cy}" r="${rs}" fill="url(#gshroud)" stroke="#050607" stroke-width="1.5"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs - 2}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>`;
-    for (const dx of [-62, 62]) h += `<g transform="translate(${M.cx + dx} ${M.cy - rs + 30})"><circle r="5" fill="url(#gscrew)" stroke="#08090a" stroke-width="1"/><path d="M-3 -1.2 L3 1.2" stroke="#2a2e32" stroke-width="1.3"/></g>`;   // two screws hold it
+    h += `<g clip-path="url(#gClip)"><circle cx="${M.cx}" cy="${M.cy - 2}" r="${rs}" fill="#000" opacity=".55" filter="url(#gSh)"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs}" fill="url(#gCover)" stroke="rgba(0,0,0,.7)" stroke-width="1"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs - 2}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1" transform="translate(0 1)"/></g>`;   // realism (2026-11-27): a flat machined cover, flush with the dial, its shadow on the glass; inside the meter
+    h += `<line x1="0" x2="${w}" y1="${GZ.h - 1}" y2="${GZ.h - 1}" stroke="rgba(0,0,0,.7)" stroke-width="1.5"/><path d="M8.5 .75 H${tab} L${tab + 6} 6.75 H${w - .75}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;   // the panel's bottom edge across the cover; its top edge catching the light
   }
   // (the big word readout is gone, 2026-11-17: the scale's own words light up instead)
   // the two small gauges
   for (const [k, d, title] of [['w', GZ.win, 'NEXT DRINK']]) {
     const r = d.R - 7 / 2 - 2, ry = Math.round(d.cy + d.R * .57 + 18);   // readout, name and note under each gauge (or on its face)
-    h += `<circle cx="${d.cx}" cy="${d.cy}" r="${d.R + 11}" fill="#0e1013" stroke="url(#gbez)" stroke-width="2.5"/><circle cx="${d.cx}" cy="${d.cy}" r="${d.R + 13.5}" fill="none" stroke="#050607" stroke-width="1.5"/>`;   // its own bezel ring (2026-11-26)
+    h += `<circle cx="${d.cx}" cy="${d.cy}" r="${d.R + 11}" fill="url(#gGlass)" stroke="url(#gbez)" stroke-width="2.5"/><circle cx="${d.cx}" cy="${d.cy}" r="${d.R + 13.5}" fill="none" stroke="#050607" stroke-width="1.5"/>`;   // its own bezel ring (2026-11-26)
     h += `<path d="${gArc(d, -1, 1, d.R)}" stroke="rgba(150,157,164,.4)" stroke-width="2" fill="none"/><path d="${gArc(d, -1, 1, r)}" stroke="rgba(150,157,164,.08)" stroke-width="7" fill="none"/>`;
     h += `<path class="${k}fill" stroke-width="7" fill="none" opacity=".55"/>` + ticks(d, 10, 5, 9);
     h += `<g class="${k}needle"><line class="nglow" stroke-width="5" filter="url(#sglow)" opacity=".7"/><line class="ncore" stroke-width="2.5" stroke-linecap="round"/></g>`;
@@ -3329,8 +3341,8 @@ function drawFrame(el) {
   svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--edge-hi)"/><stop offset=".45" style="stop-color:var(--frame)"/><stop offset="1" style="stop-color:var(--edge-lo)"/></linearGradient></defs><path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="var(--panel)" stroke="url(#${id})" stroke-width="1.5"/>`;
   {   // every panel has thickness (2026-11-26): a machined rim, a sunken tray inside
     const d = 5, inset = (tab ? `M${c + d} ${d} H${tab - d / 2} L${tab + step - d / 2} ${step + d} H${w - d}` : `M${c + d} ${d} H${w - d}`) + ` V${h - c - d} L${w - c - d} ${h - d} H${d} V${c + d} Z`;
-    el.style.setProperty('--thick-rim', '#141619');   // sleek (2026-11-27): one fine edge and a light line along the top; no rim, tray or lip
-    svg.innerHTML = `<path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="#141619" stroke="rgba(255,255,255,.09)" stroke-width="1"/><path d="${top}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>`;
+    el.style.setProperty('--thick-rim', `url(#${id})`);   // sleek (2026-11-27): one fine edge and a light line along the top; no rim, tray or lip
+    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22262a"/><stop offset=".5" stop-color="#1b1e22"/><stop offset="1" stop-color="#17191c"/></linearGradient></defs><path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="url(#${id})" stroke="rgba(0,0,0,.6)" stroke-width="1"/><path d="${top}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/><path d="M.5 ${h - c} V${c}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="1"/>`;   // realism (2026-11-27): matte aluminium lit from above: a bright top edge, a dark outline where it meets the deck
   }
 }
 const frameWatch = new ResizeObserver(es => es.forEach(e => { const b = e.target.closest('.box'); if (b) drawFrame(b); }));
