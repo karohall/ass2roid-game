@@ -234,12 +234,10 @@
   .ph { display:none; color:var(--faint); margin-bottom:6px; font:500 12px var(--f-small); }
   .ph.on { display:block; }
   #row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; } #row2 > .box { margin:0 !important; }
-  #effects { display:flex; align-items:center; gap:12px; margin-top:10px; font:600 12px/1 var(--f-small); }   /* Active: a readout like the Rover's (2026-11-26) */
-  #effects .eng { flex:none; letter-spacing:.1em; text-transform:uppercase; color:#5f656b; }
-  body.shiftOn #effects .eng { color:transparent; background:radial-gradient(70% 140% at 45% 55%, #f4f6f8, #b9bec3 70%, #8b9095); -webkit-background-clip:text; background-clip:text; }
-  #effects .win { flex:1; min-width:0; display:flex; align-items:center; gap:16px; height:28px; padding:0 10px; overflow:hidden; white-space:nowrap; background:#050607; box-shadow:inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.06); }
-  #effects .win span { letter-spacing:.1em; text-transform:uppercase; color:#c9f8ff; text-shadow:0 0 6px rgba(var(--fluo-rgb),.5); }
-  #effects .win b { margin-left:6px; font:700 14px/1 var(--f-title); letter-spacing:0; text-transform:none; color:var(--text); text-shadow:none; }
+  #effects { display:grid; grid-template-columns:1fr 1fr; column-gap:24px; align-content:start; min-height:54px; margin-top:10px; }   /* Active: each drink a row like the Rover panel's, its name printed, its time in a readout; two side by side, room for two rows so nothing below moves (2026-11-26) */
+  #effects .inst { grid-template-columns:1fr 120px; } #effects .inst .win { grid-column:2; height:24px; }
+  #effects .inst .win small { font:500 12px var(--f-small); color:var(--dim); margin-left:4px; text-shadow:none; text-transform:uppercase; letter-spacing:.06em; }
+  #effects .none { align-self:center; font:400 12px var(--f-small); color:var(--faint); }
   #recipes { display:grid; grid-template-columns:1fr 1fr; column-gap:24px; align-items:start; }   /* two drinks side by side */
   body.fitting .ph { display:none !important; }
   .small { font:400 12px/1.45 var(--f-small); color:var(--dim); }
@@ -553,7 +551,7 @@
       <h3>Milk+ menu</h3>
       <div id="recipes"></div>
       <div class="small later placard" data-reveal="drink"><b class="ph">Caution</b>Quick drinks push harder. Double check any possible interactions. Interaction states may reveal otherwise inaccessible substrate. This is not a recommendation.</div>
-      <div class="later" data-reveal="drink" id="effects"><span class="eng">Active</span><span class="win"></span></div>
+      <div class="later" data-reveal="drink" id="effects"><div class="none">Nothing active</div></div>
     </div>
 
     <div id="row2">   <!-- Ingredients and the Rover panel side by side, each half as wide (2026-11-26) -->
@@ -3123,7 +3121,7 @@ function hud() {
   if (frenzy()) fx.push(`FRENZY ${Math.ceil((s.frenzyUntil - t) / 1000)}s`);
   if (stillness()) fx.push(`STILLNESS ${Math.ceil((s.stillUntil - t) / 1000)}s`);
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
-  { const el = $('effects'), h = '<span class="eng">Active</span><span class="win">' + fx.map(x => { const m = /^(.*?)\s(\d+)s$/.exec(x); return m ? '<span>' + m[1] + '<b>' + m[2] + ' s</b></span>' : '<span>' + x + '</span>'; }).join('') + '</span>'; if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }   // a readout: the label, a sunken window, each effect lit with its seconds (2026-11-26)
+  { const el = $('effects'), h = fx.map(x => { const m = /^(.*?)\s(\d+)s$/.exec(x); return m ? '<div class="inst"><span class="eng">' + m[1] + '</span><span class="win"><span>' + m[2] + '<small>sec</small></span></span></div>' : '<div class="inst"><span class="eng">' + x + '</span></div>'; }).join('') || '<div class="none">Nothing active</div>'; if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }   // each active drink a row like the Rover panel's (2026-11-26)
   // A panel the hint names pulses for the hint's first six seconds (2026-11-17: they look alike, and the hint is far from the right column).
   const fresh = performance.now() - typing.from < 6000;
   for (const [re, el] of [[/rover panel/i, $('rover')], [/Field Guide/, $('guide').closest('.box')], [/Milk\+ menu/i, $('milk')], [/Next drink|\bthe meter\b/i, $('dosage')]]) el.classList.toggle('hinted', fresh && re.test(typing.text));
@@ -3238,7 +3236,7 @@ function placeMeter() {
   // The worst case: every ingredient known (full names wrap), the longest effects line, every row shown.
   for (const v of VARIANTS) put($('rc_' + v), recipeTiles(CONFIG.recipes[v], 1));
   for (const k in ING) put($('in_' + k), '[' + ING[k].letter + '] ' + ING[k].name);
-  put($('effects'), '<span class="eng">Active</span><span class="win"><span>Strength ×2<b>45 s</b></span><span>Stamina<b>45 s</b></span><span>FRENZY<b>12 s</b></span></span>');   // a long but real one
+  put($('effects'), ['Strength ×2', 'Stamina', 'Frenzy'].map(n => '<div class="inst"><span class="eng">' + n + '</span><span class="win"><span>45<small>sec</small></span></span></div>').join(''));   // a long but real one
   const hint0 = $('hint').innerHTML; $('hint').textContent = LONGEST_HINT;   // the hint as fit() measures it
   rows.forEach(el => el.classList.add('shown')); document.body.classList.add('fitting');
   const row1 = Math.max($('panel').offsetHeight, panel2Need - 240), w = $('wrap');   // the right column has rows 1 and 2
