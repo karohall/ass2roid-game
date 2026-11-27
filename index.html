@@ -542,13 +542,16 @@
   .recipe button.key kbd.k, .rks kbd.k { background:#2a2e32 !important; box-shadow:none !important; color:#d9dde0 !important; }
   .inst .win, #effects .inst .win { background:#0b0c0e !important; box-shadow:none !important; }
   .rlamps span { box-shadow:0 0 0 1px rgba(255,255,255,.06) !important; }
-  .placard { background:radial-gradient(circle at 9px 9px, #6b7177 0 1.6px, transparent 2px), radial-gradient(circle at calc(100% - 9px) 9px, #6b7177 0 1.6px, transparent 2px), radial-gradient(circle at 9px calc(100% - 9px), #6b7177 0 1.6px, transparent 2px), radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), #6b7177 0 1.6px, transparent 2px) !important;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08) !important; padding:10px 22px 11px !important; color:#8b9196 !important; text-shadow:none !important; }
+  .placard { background:none !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.08) !important; padding:10px 14px 11px !important; color:#8b9196 !important; text-shadow:none !important; }   /* a thin outlined area; its text on the same left line as the timers below (2026-11-27: off balance) */
   .placard::before { display:none !important; }
   #hint { box-shadow:inset 0 0 0 1px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.12) !important; }
   @keyframes hintguide { 0%, 100% { box-shadow:inset 0 0 0 2px rgba(255,180,60,.3), 0 0 0 1px rgba(255,255,255,.12); } 50% { box-shadow:inset 0 0 0 3px rgba(255,180,60,1), 0 0 0 1px rgba(255,255,255,.12); } }
   /* the Milk+ panel: the drinks at the top, the caution and the drink timers at its lower end (the user, 2026-11-27) */
   #milk { display:flex; flex-direction:column; } #milk .placard { margin-top:auto !important; }
+  #milk #effects { padding:0 14px; margin-top:10px; }   /* the timers start where the caution's text starts */
+  /* the backplate and the start and pause cards, sleek too: flat gunmetal, a fine edge; no sheen, grain or big screws */
+  #wrap::before { background:linear-gradient(180deg, #25282c, #1b1e21) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.04) !important; }
+  .plate { background:radial-gradient(circle at 16px 16px, #6b7177 0 1.8px, transparent 2.2px), radial-gradient(circle at calc(100% - 16px) 16px, #6b7177 0 1.8px, transparent 2.2px), radial-gradient(circle at 16px calc(100% - 16px), #6b7177 0 1.8px, transparent 2.2px), radial-gradient(circle at calc(100% - 16px) calc(100% - 16px), #6b7177 0 1.8px, transparent 2.2px), #141619 !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.16) !important; }
 </style>
 </head>
 <body class="intro">
