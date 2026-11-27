@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ASS2ROID: Ex Profundo (Prototype 4)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   /* Prototype 4, "Gunmetal" (mockups/design-system.html). Fluo (act now) is the bioluminescent blue, the spores the green (swapped 2026-11-16). No text under 11 px: the game is often shown scaled down (the itch.io frame). Neutral cold steel, a concrete hint, one glow (fluo: act now),
      amber for warnings, a pastel for each secret. Sizes the layout depends on are unchanged (fit() measures the rest). */
@@ -569,10 +569,10 @@
   .recipe button.key kbd.k, .rks kbd.k { background:linear-gradient(180deg, #6a7076, #454a4f) !important; color:#fff !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 1px 0 rgba(0,0,0,.6) !important; }   /* a key on a bezel stays the lighter cap: it must stand out from the plastic around it (the rule, 2026-11-26) */
   .box h3, #camTab h3, #dosage .dzplate, .hplate { text-shadow:none !important; }   /* every name plate printed the same: no old stamped shadow on some and not others (2026-11-27) */
   #dosage .dzplate { left:12px !important; top:10px !important; } #dosage::after { display:none !important; } #dosage { background:transparent !important; }   /* the meter's plate where every panel has it; no old sheen or backing: the dial has its own glass (2026-11-27) */
-  /* ADVISORY as the rover's computer (2026-11-27, the user's pick): dark glass like every display, a > prompt, the message in a terminal font, lit pale cyan; it types in, the cursor a block */
-  #hint { background:linear-gradient(180deg, rgba(255,255,255,.045), transparent 45%), linear-gradient(180deg, #0c0e11, #06070a); box-shadow:inset 0 1px 2px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06); color:#bfeff6; font:400 14px/1.6 'IBM Plex Mono', monospace; text-shadow:0 0 6px rgba(var(--fluo-rgb),.4); }
-  #hint:not(:empty)::before { content:'> '; color:rgba(var(--fluo-rgb),.6); }
-  #hint .em { font-weight:500; color:#e6fbff; }
+  /* ADVISORY as the rover's computer (2026-11-27): dark glass like every display, a > prompt, the message typed in, the cursor a block */
+  #hint { background:linear-gradient(180deg, rgba(255,255,255,.045), transparent 45%), linear-gradient(180deg, #0c0e11, #06070a); box-shadow:inset 0 1px 2px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06); color:#e6e9ec; font:500 15px/1.6 var(--f-title); letter-spacing:.02em; text-shadow:0 0 6px rgba(255,255,255,.22); }   /* Chakra Petch in white: the cockpit's own display lettering; white is lit text, cyan stays for lamps (2026-11-27, the user's pick) */
+  #hint:not(:empty)::before { content:'> '; color:rgba(230,233,236,.5); }
+  #hint .em { font-weight:700; color:#fff; }
   #hint kbd.hk { background:linear-gradient(180deg, #6a7076, #454a4f) !important; color:#fff !important; text-shadow:none; font-family:var(--f-title) !important; }
   #hint:empty { background:rgba(8,9,11,.45); box-shadow:inset 0 1px 2px rgba(0,0,0,.6); }
   @keyframes hintguide { 0%, 100% { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 2px rgba(255,180,60,.3); } 50% { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 3px rgba(255,180,60,1); } }
@@ -3072,8 +3072,7 @@ function buildGauge() {
   // the pivot shroud: a steel cover screwed over the needle's base; the needle comes out from under it (2026-11-26)
   { const rs = M.R - 60, sy = M.cy - 120;
     h += `<defs><linearGradient id="gshroud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5056"/><stop offset=".08" stop-color="#2e3237"/><stop offset="1" stop-color="#17191c"/></linearGradient><radialGradient id="gscrew" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#d3d8dc"/><stop offset=".55" stop-color="#7c838a"/><stop offset="1" stop-color="#2a2e32"/></radialGradient></defs>`;
-    h += `<g clip-path="url(#gClip)"><circle cx="${M.cx}" cy="${M.cy - 2}" r="${rs}" fill="#000" opacity=".55" filter="url(#gSh)"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs}" fill="url(#gCover)" stroke="rgba(0,0,0,.7)" stroke-width="1"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs - 2}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1" transform="translate(0 1)"/></g>`;   // realism (2026-11-27): a flat machined cover, flush with the dial, its shadow on the glass; inside the meter
-    h += `<rect x="1" y="${GZ.h - 11}" width="${w - 2}" height="10" fill="url(#gAlu)"/><line x1="1" x2="${w - 1}" y1="${GZ.h - 11.5}" y2="${GZ.h - 11.5}" stroke="rgba(0,0,0,.55)" stroke-width="1"/><line x1="1" x2="${w - 1}" y1="${GZ.h - 10.5}" y2="${GZ.h - 10.5}" stroke="rgba(255,255,255,.14)" stroke-width="1"/>`;   // a ledge along the meter's foot: the cover stands on it instead of being cut by the edge (2026-11-27)
+    h += `<linearGradient id="gAluU" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${GZ.h}"><stop offset="0" stop-color="#22262a"/><stop offset=".5" stop-color="#1b1e22"/><stop offset="1" stop-color="#17191c"/></linearGradient><circle cx="${M.cx}" cy="${M.cy}" r="${rs}" fill="url(#gAluU)"/><path d="${gArc(M, -1.2, 1.2, rs)}" fill="none" stroke="rgba(0,0,0,.65)" stroke-width="1.5"/><path d="${gArc(M, -1.2, 1.2, rs - 1.5)}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>`;   // the dial is a window cut into the aluminium: below it, the panel's own metal hides the needle's pivot; no cover, nothing cut off (2026-11-27)
     h += `<line x1="0" x2="${w}" y1="${GZ.h - 1}" y2="${GZ.h - 1}" stroke="rgba(0,0,0,.7)" stroke-width="1.5"/><path d="M8.5 .75 H${tab} L${tab + 6} 6.75 H${w - .75}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;   // the panel's bottom edge across the cover; its top edge catching the light
   }
   // (the big word readout is gone, 2026-11-17: the scale's own words light up instead)
