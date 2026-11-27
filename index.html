@@ -32,7 +32,7 @@
   canvas.still { filter:grayscale(.9) brightness(.82) contrast(.88) sepia(.25) hue-rotate(175deg) saturate(1.3); transition:filter 1.5s; }   /* Stillness: cold, drained, blue-grey */
   @keyframes tilt { 0%,100%{transform:rotate(-7deg) translateX(-6px)} 50%{transform:rotate(6deg) translateX(6px)} }
   /* The hint: concrete, the one light surface. Bold says what to do: ink, with the key in fluo. */
-  #hint { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1.5px rgba(80,84,82,.45), inset 0 -2px 0 rgba(0,0,0,.18); margin-top:8px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:600 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; clip-path:var(--chamfer); }   /* at least three lines, text at the top */
+  #hint { box-shadow:inset 0 2px 4px rgba(0,0,0,.35), inset 0 0 0 1px rgba(0,0,0,.25), 0 0 0 4px #2b2f33, 0 0 0 5px #08090a, 0 0 0 6px rgba(255,255,255,.06); margin:14px 6px 6px; padding:10px 14px 12px; background:var(--concrete); color:var(--bg); font:600 14px/1.5 var(--f-text); min-height:78px; white-space:pre-line; }   /* at least three lines, text at the top; a concrete plate set into the dash in a gunmetal bezel (2026-11-27, the user's pick) */
   #dosage { --tab:169px; position:relative;   /* the cluster, recessed behind glass, in every panel's frame: a tab around its name plate, then the top steps down (2026-11-17) */
     clip-path:polygon(8px 0, var(--tab) 0, calc(var(--tab) + 6px) 6px, 100% 6px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     background:linear-gradient(160deg, rgba(255,255,255,.04), transparent 30%), #08090b; box-shadow:inset 0 3px 10px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9); }
@@ -135,8 +135,8 @@
   /* The guide (2026-11-16): the radio's amber pulse, used for every first step, one at a time (guideNow()): the hint bar when the shift
      begins, the radio, the [1] Strength row (shake it, then drink it), the hint bar again for the first dig. */
   #hint.guide { animation:hintguide 1.8s ease-in-out infinite; }
-  @keyframes hintguide { 0%, 100% { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 2px rgba(255,180,60,.3), inset 0 -2px 0 rgba(0,0,0,.18); }
-                         50% { box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 3px rgba(255,180,60,1), inset 0 -2px 0 rgba(0,0,0,.18); } }
+  @keyframes hintguide { 0%, 100% { box-shadow:inset 0 2px 4px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,180,60,.3), 0 0 0 4px #2b2f33, 0 0 0 5px #08090a, 0 0 0 6px rgba(255,255,255,.06); }
+                         50% { box-shadow:inset 0 2px 4px rgba(0,0,0,.35), inset 0 0 0 3px rgba(255,180,60,1), 0 0 0 4px #2b2f33, 0 0 0 5px #08090a, 0 0 0 6px rgba(255,255,255,.06); } }
   .recipe.guide { outline:1.5px solid rgba(255,180,60,.3); outline-offset:4px; animation:rowguide 1.8s ease-in-out infinite; }
   @keyframes rowguide { 50% { outline-color:rgba(255,180,60,1); } }
   .box.hinted > svg.outline path:first-of-type, #dosage.hinted .bez { stroke:var(--amber); animation:radiocall 1.8s ease-in-out infinite; }   /* named in the hint: look here */
@@ -1816,7 +1816,7 @@ function breakthrough() {
     setTimeout(() => {
       if (!$('loadGo')) return;                               // the loading screen is already gone
       if ($('roverWhere')) $('roverWhere').textContent = 'Rover parked at';   // it has arrived: no longer en route (2026-11-17)
-      $('loadGo').outerHTML = '<button id="loadGo" class="go pl"><span class="face"><i>Start digging</i><i>↓</i></span></button>'; $('loadGo').onclick = () => buffer($('loadGo'), () => pickCrater(i));
+      $('loadGo').outerHTML = '<button id="loadGo" class="go pl"><span class="face"><i>Start digging</i><i>Enter</i></span></button>'; $('loadGo').onclick = () => buffer($('loadGo'), () => pickCrater(i));
       menuKeys = k => { if (k === 'ArrowDown' || k === 's' || k === 'Enter' || k === ' ') buffer($('loadGo'), () => pickCrater(i)); };
     }, CONFIG.loadingMs);
     return;
