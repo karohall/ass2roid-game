@@ -29,7 +29,10 @@
   --violet:  #a993d6;   /* the secret menu as a whole: its labels, its keys */
   --candy:   #f2b8d6;   /* Candygirl: pastel pink, the rave's colour */
   --jizz:    #b9d3f0;   /* Jizz+: pastel blue */
-  --nasa:    #0000dd;   /* Näsa, and nothing else */
+  --nasa:    #0000dd;
+  --alu:     #1e2125;   /* panels: #22262a at the top to #17191c at the foot (27 Nov) */
+  --glass:   #090b0d;   /* every display: #0c0e11 to #06070a, a faint reflection above */
+  --deck:    #30353a;   /* the gunmetal deck: #3c4147 to #262a2e */   /* Näsa, and nothing else */
 
   /* Type. Chakra Petch for titles and numbers, Inter for text, Plex Sans for the small print. */
   --f-title: 'Chakra Petch', sans-serif;   /* titles and numbers: squared, cut corners, elegant (SIL Open Font License) */
@@ -256,6 +259,36 @@ h1, h2, h3, p { margin: 0; }
 .breaks li b { color: var(--text); font-weight: 600; } .breaks li .fix { color: var(--text); }
 .breaks .head { font: 600 10px/1 var(--f-small); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 @media (max-width: 900px) { .rules { grid-template-columns: 1fr; } .breaks li { grid-template-columns: 1fr; gap: var(--s1); } }
+
+/* ── Specimens of the game as it is (27 Nov): aluminium panels lit from above, dark glass, soft plastic keys ── */
+.alu { position:relative; padding:12px 16px 16px; background:linear-gradient(180deg, #22262a, #1b1e22 50%, #17191c); box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 0 0 1px rgba(0,0,0,.6), 0 2px 2px rgba(0,0,0,.55);
+  clip-path:polygon(8px 0, 112px 0, 118px 6px, 100% 6px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.alu.ghost { background:rgba(8,9,11,.28); box-shadow:inset 0 0 0 1px rgba(150,157,164,.14); }
+.deck { padding:22px; background:linear-gradient(180deg, #3c4147, #2c3035 55%, #262a2e); }
+.plt { display:flex; align-items:center; gap:8px; margin-bottom:10px; font:500 12px/1 var(--f-title); letter-spacing:.24em; text-transform:uppercase; color:#8b9196; }
+.plt::before { content:''; width:5px; height:5px; border-radius:50%; background:#2a2e32; }
+.plt.lit::before { background:radial-gradient(circle at 35% 30%, #d9fbff, var(--fluo) 60%); box-shadow:0 0 4px var(--fluo); }
+.glass { background:linear-gradient(180deg, rgba(255,255,255,.045), transparent 45%), linear-gradient(180deg, #0c0e11, #06070a); box-shadow:inset 0 1px 2px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06); }
+.irow { display:grid; grid-template-columns:1fr 130px; align-items:center; gap:10px; margin:0 0 6px; }
+.irow .bl { font-size:12px; } .irow .w { height:24px; display:flex; align-items:center; justify-content:flex-end; padding:0 8px; font:700 15px/1 var(--f-title); color:#fff; text-shadow:0 0 6px rgba(255,255,255,.25); }
+.irow .w small { font:500 12px var(--f-small); color:var(--steel); margin-left:4px; text-shadow:none; }
+.plas { display:inline-flex; padding:3px; background:linear-gradient(180deg, #2a2e33, #1d2024); box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(0,0,0,.6), 0 2px 3px rgba(0,0,0,.35); }
+.plas .face { display:flex; flex-direction:column; gap:2px; padding:2px; background:#0a0b0d; box-shadow:inset 0 1px 2px rgba(0,0,0,.9); }
+.plas .face i { display:grid; place-items:center; height:20px; padding:0 14px; font:600 12px/1 var(--f-small); font-style:normal; letter-spacing:.14em; text-transform:uppercase; color:#353a3f; background:#121417; }
+.plas .face i.on { color:#e1e4e6; } .plas .face i.ready { color:#03262c; background:var(--fluo); } .plas .face i.fill { color:#2a1700; background:linear-gradient(90deg, var(--amber) 55%, rgba(255,180,60,.14) 55%); }
+.plas.row .face { flex-direction:row; } .plas.row .face i { width:30px; padding:0; font:700 15px/1 var(--f-title); color:#d9dde0; }
+.plas .kc { align-self:center; margin:0 5px 0 2px; }
+.pl2 .face i { height:28px; font:700 13px/1 var(--f-small); letter-spacing:.2em; } .pl2 .face i.amberlit { color:#ffcf85; background:rgba(255,180,60,.14); text-shadow:0 0 8px rgba(255,180,60,.55); } .pl2 .face i.cyanlit { color:#c9f8ff; background:rgba(52,230,255,.12); text-shadow:0 0 8px rgba(52,230,255,.55); }
+.pl2 .face i.sub { height:18px; font-size:10px; color:#7a8086; background:#0c0e10; }
+.adv { padding:12px 14px; min-height:70px; font:500 15px/1.6 var(--f-title); letter-spacing:.02em; color:#e6e9ec; text-shadow:0 0 6px rgba(255,255,255,.22); }
+.adv::before { content:'> '; color:rgba(230,233,236,.5); } .adv .cur { display:inline-block; width:8px; height:15px; vertical-align:-2px; background:#e6e9ec; }
+.adv.guide { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 2px rgba(255,180,60,.8); }
+.dial { position:relative; height:120px; overflow:hidden; border-radius:2px; }
+.dial .win { position:absolute; left:50%; top:10px; width:300px; height:300px; margin-left:-150px; border-radius:50%; }
+.dial .needle { position:absolute; left:50%; top:14px; width:3px; height:80px; margin-left:-1px; background:var(--fluo); box-shadow:0 0 6px rgba(52,230,255,.5); }
+.dial .metal { position:absolute; left:50%; top:92px; width:180px; height:180px; margin-left:-90px; border-radius:50%; background:linear-gradient(180deg, #1d2024, #17191c); box-shadow:0 -1px 0 rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08); }
+.band { padding:8px 12px; font:700 12px/1 var(--f-title); letter-spacing:.1em; text-transform:uppercase; color:rgba(52,230,255,.36); display:flex; justify-content:space-between; }
+.band b { color:var(--fluo); text-shadow:0 0 6px rgba(52,230,255,.6); }
 </style>
 </head>
 <body>
@@ -332,10 +365,10 @@ h1, h2, h3, p { margin: 0; }
       <li><b>Caution</b><span>Was a plain small note under the recipes.</span><span class="fix">Fixed 26 Nov: a plain gunmetal plate like the key bezels, four corner bolts, CAUTION in amber paint, the text readable.</span></li>
     </ul></section>
 
-  <section class="sec"><h2>Colour<small>Steel does the structure. Concrete (the coldest greige) is the hint’s surface. Fluo is the one glow, and it always means: this, now. Amber means attention: a warning, wear, the tutorial’s call, never “all is well”. Näsa blue means Näsa and nothing else.</small></h2>
+  <section class="sec"><h2>Colour<small>Materials first: a gunmetal deck, aluminium panels, dark glass displays, soft plastic keys, all lit from above. Cyan means a lamp is on, and nothing else. White is lit text. Amber is attention: a warning, wear, the first three hints’ call, never “all is well”. Näsa blue is Näsa only. Concrete has retired: the advisory is glass like every display.</small></h2>
     <div class="swatches" id="swatches"></div></section>
 
-  <section class="sec"><h2>Type<small>Chakra Petch for titles and numbers, Inter for anything you read, Plex Sans for the small print. Numbers are tabular, so they don't jitter as they count.</small></h2>
+  <section class="sec"><h2>Type<small>Chakra Petch for what counts or names and for the advisory; IBM Plex Sans for what is printed or lit on the machine; Inter for sentences. Nothing under 12 px except keycaps and tiles. The Type table above is the rule; these are the sizes in use.</small></h2>
     <div class="type">
       <span class="t-display">The Chrome Vein</span><span class="t-meta">display · Chakra Petch 700 · 40/40 · screen titles</span>
       <span class="t-num-xl">522 m</span><span class="t-meta">number XL · Chakra Petch 700 · 28 · depth, samples</span>
@@ -343,85 +376,55 @@ h1, h2, h3, p { margin: 0; }
       <span class="t-label">Field Guide</span><span class="t-meta">label · Chakra Petch 600 · 12 · +0.2em · panel titles (see the Type table)</span>
       <span class="t-body">Hard band ahead. Strength makes it much faster.</span><span class="t-meta">body · Inter 400 · 14/21 · hints, cards</span>
       <span class="t-body-s">Dig harder. Stacks. Pushes toward Frenzy.</span><span class="t-meta">body S · Inter 400 · 13/19 · descriptions</span>
-      <span class="t-meta" style="color:var(--text)">KR-1 · 3 Chrome Vein · 2× Regolith Whey</span><span class="t-meta">meta · Plex Sans 500 · 11 · details, recipes</span>
-      <span class="t-micro">Shake · Drink · Get out</span><span class="t-meta">micro · Plex Sans 600 · 10 · +0.14em · buttons, scale</span>
+      <span class="t-meta" style="color:var(--text)">KR-1 · 3 Chrome Vein · 2× Regolith Whey</span><span class="t-meta">fine print · Plex Sans 400–500 · 12 · details, units</span>
+      <span class="t-micro" style="font-size:12px">Shake · Drink · Night vision</span><span class="t-meta">legend · Plex Sans 600 · 12 · +0.14em · keys and lamps, lit</span>
     </div></section>
 
-  <section class="sec"><h2>Space<small>Everything sits on a 4 px grid. Panels pad 16, rows breathe 8, groups part by 24.</small></h2>
+  <section class="sec"><h2>Space<small>Everything sits on a 4 px grid. Panels pad 10 above, 14 at the sides; rows breathe 6; panels part by 10 on the deck. The whole cockpit fits 1920 × 1080 at full size.</small></h2>
     <div class="space" id="space"></div></section>
 
-  <section class="sec"><h2>Frame<small>The panel. A tab carries the title; the edge steps down beside it, like the moodboard frame. Corners cut top left and bottom right; a stripe detail sits on the lower ledge. The lamp before the title is lit while the shift runs, dark on the start screen and when paused. One header for every panel: the plate 10 px in from the frame’s corner, anything else (who keeps it, where it is, a button) on the right in small grey. A part that waits to be revealed is a ghost: its frame at 28%, the metal showing through.</small></h2>
-    <div class="row">
-      <div class="spec" style="width:300px"><div class="frame" data-stripes><div class="frame-head"><span class="t-label">Rover</span><span class="t-meta">KR-1</span></div>
-        <p class="t-body-s" style="color:var(--steel)">A panel at rest: steel square, steel outline, panel fill.</p></div><span class="t-meta">default</span></div>
-      <div class="spec" style="width:300px"><div class="frame live"><div class="frame-head"><span class="t-label">Milk+</span><span class="t-meta">Strength ×2 · 41 s</span></div>
-        <p class="t-body-s" style="color:var(--steel)">Every plate’s lamp is lit while the shift runs, and dark on the start screen and when paused: the whole panel is on.</p></div><span class="t-meta">live</span></div>
-      <div class="spec" style="width:300px"><div class="frame alert"><div class="frame-head"><span class="t-label">Drill</span><span class="t-meta">worn</span></div>
-        <p class="t-body-s" style="color:var(--steel)">Needs attention: the square becomes an amber triangle. Shape as well as colour, since green and amber look alike to many colour-blind players.</p></div><span class="t-meta">alert</span></div>
-    </div></section>
+  <section class="sec"><h2>Panel<small>Matte aluminium lit from above: brighter at the top, a bright top edge, a dark line where it meets the deck, a short shadow below it. A tab carries the name plate; the edge steps down beside it; the corners top left and bottom right are cut. The plate is printed lettering with a dot: lit cyan while the shift runs, dark on the start screen and when paused. A part not yet revealed is a flat ghost.</small></h2>
+    <div class="deck"><div class="row">
+      <div class="spec" style="width:300px"><div class="alu"><div class="plt lit">Rover panel</div>
+        <div class="irow"><span class="bl lit">Depth</span><span class="w glass">18<small>m</small></span></div><div class="irow"><span class="bl lit">Drill samples</span><span class="w glass">2</span></div></div><span class="t-meta">during the shift</span></div>
+      <div class="spec" style="width:300px"><div class="alu"><div class="plt">Rover panel</div>
+        <div class="irow"><span class="bl">Depth</span><span class="w glass">18<small>m</small></span></div><div class="irow"><span class="bl">Drill samples</span><span class="w glass">2</span></div></div><span class="t-meta">paused, start screen: the print unlit</span></div>
+      <div class="spec" style="width:200px"><div class="alu ghost" style="height:118px"></div><span class="t-meta">not yet revealed: a ghost</span></div>
+    </div></div></section>
 
-  <section class="sec"><h2>Controls<small>Outline by default. Fluo only for the one thing to do now. Shaking shows its progress along the bottom edge. Keys are keycaps, so the keyboard is always visible: one dark cap everywhere, buttons and hints included, 20 px (24 px in the start screen’s key list), single keys square.</small></h2>
-    <div style="display:flex;flex-direction:column;gap:var(--s5)">
-      <div class="row">
-        <div class="spec"><span class="btn"><span>Shake</span></span><span class="t-meta">default</span></div>
-        <div class="spec"><span class="btn hover"><span>Shake</span></span><span class="t-meta">hover</span></div>
-        <div class="spec"><span class="btn primary"><span>Drink</span></span><span class="t-meta">primary: do this now</span></div>
-        <div class="spec"><span class="btn busy"><span>Shaking…</span></span><span class="t-meta">busy</span></div>
-        <div class="spec"><span class="btn off"><span>Shake</span></span><span class="t-meta">not enough</span></div>
-        <div class="spec"><span class="btn candy"><span>Shake</span></span><span class="t-meta">Candygirl</span></div>
-        <div class="spec"><span class="btn jizz"><span>Shake</span></span><span class="t-meta">Jizz+</span></div>
-      </div>
-      <div class="row">
-        <div class="spec"><div style="display:flex;gap:6px"><span class="key">1</span><span class="key">2</span><span class="key">5</span><span class="key candy">0</span><span class="key jizz">9</span><span class="key wide">1–5</span><span class="key wide">Space</span><span class="key">B</span><span class="key">R</span><span class="key"><svg viewBox="0 0 12 12"><path d="M10 6H2.5M5.5 3L2.5 6l3 3"/></svg></span><span class="key"><svg viewBox="0 0 12 12"><path d="M6 2v7.5M3 6.5l3 3 3-3"/></svg></span><span class="key"><svg viewBox="0 0 12 12"><path d="M2 6h7.5M6.5 3l3 3-3 3"/></svg></span></div><span class="t-meta">keycaps · one size, 24 px: single keys square, arrows drawn</span></div>
-        <div class="spec"><div style="display:flex;gap:12px;align-items:center">
-          <svg class="ico"><use href="#i-bottle"/></svg><svg class="ico fluo"><use href="#i-bottle-full"/></svg><svg class="ico candy"><use href="#i-bottle"/></svg><svg class="ico jizz"><use href="#i-bottle"/></svg>
-          <svg class="ico"><use href="#i-pick"/></svg><svg class="ico text"><use href="#i-sample"/></svg><svg class="ico text"><use href="#i-sealed"/></svg>
-          <svg class="ico"><use href="#i-charge"/></svg><svg class="ico"><use href="#i-radio"/></svg><svg class="ico"><use href="#i-archive"/></svg><svg class="ico"><use href="#i-pause"/></svg><svg class="ico"><use href="#i-down"/></svg></div>
-          <span class="t-meta">icons · 16 px grid · 1.5 px strokes: bottle, ready, secret, drill, sample, sealed find, charge, radio, archive, pause, dig</span></div>
-      </div>
-    </div></section>
+  <section class="sec"><h2>Keys<small>Soft plastic, lit from above with a short shadow. In play, an aviation key: a bezel, a sunken face, the legend lit when pressing would do something. The lit half is what pressing does now: SHAKE fills amber over the shake, DRINK lights cyan when it’s ready. On screens, a split push-light: the legend lit above (amber to begin, cyan otherwise), the key below; pressed, it fills like a shake, then acts. The radio’s VOL and TUNE are rockers. A keycap is a key on your keyboard; on a bezel it is the lighter cap.</small></h2>
+    <div class="deck"><div class="row" style="align-items:center">
+      <div class="spec"><span class="plas"><span class="kc lit">1</span><span class="face"><i class="on">Shake</i><i>Drink</i></span></span><span class="t-meta">can shake</span></div>
+      <div class="spec"><span class="plas"><span class="kc lit">1</span><span class="face"><i class="fill">Shake</i><i>Drink</i></span></span><span class="t-meta">shaking</span></div>
+      <div class="spec"><span class="plas"><span class="kc lit">1</span><span class="face"><i>Shake</i><i class="ready">Drink</i></span></span><span class="t-meta">ready</span></div>
+      <div class="spec"><span class="plas row"><span class="kc lit">V</span><span class="face"><i>−</i><i>+</i></span></span><span class="t-meta">rocker</span></div>
+      <div class="spec"><span class="plas pl2"><span class="face"><i class="amberlit">Begin shift</i><i class="sub">Enter</i></span></span><span class="t-meta">push-light, breathing</span></div>
+      <div class="spec"><span class="plas pl2"><span class="face"><i class="cyanlit">Resume</i><i class="sub">Space</i></span></span><span class="t-meta">push-light</span></div>
+      <div class="spec"><div style="display:flex;gap:6px"><span class="kc">1</span><span class="kc">V</span><span class="kc">Space</span><span class="kc lit">1</span></div><span class="t-meta">keycaps; the lighter one on a bezel</span></div>
+    </div></div></section>
 
-  <section class="sec"><h2>Rows<small>Lists separate with hairlines, not boxes. Labels in steel, values in text, numbers in Chakra Petch.</small></h2>
-    <div class="row">
-      <div class="frame live" style="width:340px"><div class="frame-head"><span class="t-label">Milk+</span><span class="t-meta">Strength ×2 · 41 s</span></div>
-        <div class="drink"><svg class="ico fluo"><use href="#i-bottle-full"/></svg><span class="key">1</span><div><div class="name">Strength</div><div class="does">Dig harder. Stacks. Pushes toward Frenzy.</div><div class="rc">2× Regolith Whey</div></div><span class="btn primary"><span>Drink</span></span></div>
-        <div class="drink"><svg class="ico"><use href="#i-bottle"/></svg><span class="key">2</span><div><div class="name">Calm</div><div class="does">Pulls toward Stillness.</div><div class="rc">2× Legacy Powder</div></div><span class="btn busy"><span>Shaking…</span></span></div>
-        <div class="drink"><svg class="ico"><use href="#i-bottle"/></svg><span class="key">3</span><div><div class="name">Recovery</div><div class="does">Repairs the drill.</div><div class="rc">Legacy Powder + Chrome Filings</div></div><span class="btn off"><span>Shake</span></span></div>
-        <div class="drink candy"><svg class="ico candy"><use href="#i-bottle"/></svg><span class="key candy">0</span><div><div class="name">Candygirl</div><div class="rc">Chrome Filings + Crack Spores</div></div><span class="btn candy"><span>Shake</span></span></div>
-        <div class="drink jizz"><svg class="ico jizz"><use href="#i-bottle"/></svg><span class="key jizz">9</span><div><div class="name">Jizz+</div><div class="rc">2× Regolith Whey + Legacy Powder</div></div><span class="btn jizz"><span>Shake</span></span></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:var(--s5);width:300px">
-        <div class="frame alert"><div class="frame-head"><span class="t-label">Rover</span><span class="btn" style="min-width:0;height:24px"><span>Pause · Space</span></span></div>
-          <div class="kv"><span>Depth</span><span class="t-num-xl">522 m</span></div>
-          <div class="kv"><span>Drill samples</span><span class="t-num-l">56</span></div>
-          <div class="kv"><span>Digging power</span><span class="t-body-s">4<em>/ crust 7</em></span></div>
-          <div class="wear"><svg class="ico"><use href="#i-pick"/></svg><div class="bar"><i style="width:62%"></i></div><span class="t-num-l" style="font-size:13px">62%</span></div>
-        </div>
-        <div class="frame"><div class="frame-head"><span class="t-label">Ingredients</span></div>
-          <div class="ing"><span class="l">W</span><span class="t-body-s">Regolith Whey</span><span class="t-num-l">19</span></div>
-          <div class="ing"><span class="l">P</span><span class="t-body-s">Legacy Powder</span><span class="t-num-l">29</span></div>
-          <div class="ing glow"><span class="l">S</span><span class="t-body-s">Crack Spores</span><span class="t-num-l">13</span></div>
-        </div>
-      </div>
-    </div></section>
+  <section class="sec"><h2>Readouts<small>A value is a glass window with the number in Chakra Petch, its unit small and grey; every number rolls. Its name is printed beside it. The same row everywhere: the Rover panel, the drink timers under the caution, the pause screen. Things in the rock are the map’s own tiles, with counts.</small></h2>
+    <div class="deck"><div class="row">
+      <div class="alu" style="width:330px"><div class="plt lit">Milk+ menu</div>
+        <div style="padding:10px 14px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(0,0,0,.6), inset 0 -1px 0 rgba(255,255,255,.06)"><div style="font:600 12px/1.2 var(--f-small);letter-spacing:.2em;color:var(--amber);margin-bottom:4px">CAUTION</div><div style="font:400 12px/1.5 var(--f-text);color:#8b9196">Quick drinks push harder. Double check any possible interactions.</div></div>
+        <div class="irow" style="padding:0 14px"><span class="bl lit">Strength ×2</span><span class="w glass">34<small>sec</small></span></div></div>
+      <div class="alu" style="width:280px"><div class="plt lit">Ingredients</div>
+        <div class="irow" style="grid-template-columns:1fr auto"><span style="display:flex;gap:9px;align-items:center;font:500 14px var(--f-text)"><span class="lt">W</span>Regolith Whey</span><b style="font:700 15px var(--f-title)">2</b></div>
+        <div class="irow" style="grid-template-columns:1fr auto"><span style="display:flex;gap:9px;align-items:center;font:500 14px var(--f-text)"><span class="lt">P</span>Legacy Powder</span><b style="font:700 15px var(--f-title)">8</b></div></div>
+    </div></div></section>
 
-  <section class="sec"><h2>Hint<small>The one light surface, in concrete, under the mining window. Plain text, a touch over regular (560). Only the key to press is drawn, as a small dark keycap: the sentence reads first, the key still catches the eye. Empty (start screen, paused), it waits as a ghost like any hidden panel. No forced line breaks, no orphans.</small></h2>
-    <div class="row"><div class="hint" style="width:460px"><div class="t-micro">Note</div><p>Hard band ahead. Strength makes it much faster. Or blast it: press <span class="key">B</span> to set a charge under you (15 drill samples).</p></div></div></section>
+  <section class="sec"><h2>Advisory<small>The rover’s computer: a panel like every other, its message on dark glass in Chakra Petch, lit white, after a &gt; prompt; it types in with a block cursor. For the first three hints only, an amber outline pulses when the hint points somewhere, and a panel it names pulses for six seconds; after that the player is free to explore.</small></h2>
+    <div class="deck"><div class="row">
+      <div class="alu" style="width:420px"><div class="plt lit">Advisory</div><div class="adv glass">Your Strength is ready. Press <span class="kc lit">1</span> again to dri<span class="cur"></span></div></div>
+      <div class="alu" style="width:420px"><div class="plt lit">Advisory</div><div class="adv glass guide">Press <span class="kc lit">R</span> to tune in the radio.</div></div>
+    </div></div></section>
 
-  <section class="sec"><h2>Gauges<small>The dosage scale is the moodboard's divider: a rail, dot rows, and the triangle as pointer. Tip points in amber. The radio is a tractor’s dial with an aircraft’s lamps (mockups/radio.html): a lit band with the stations as places and a red needle, VOL and TUNE knobs, the song and its tagline rolling under the band. Its lamps: white when on and well (DIG FASTER, MIX FASTER, NIGHT VISION, TAPE), outlined when armed (Night vision away from the dark), amber only for trouble (NO POWER). Only the band and lit lamps glow; the panel is the same dark as every other.</small></h2>
-    <div class="row">
-      <div class="frame live" style="width:428px"><div class="frame-head"><span class="t-label">Dosage</span><span class="t-meta" style="color:var(--fluo)">Next drink ×1.5</span></div>
-        <div class="t-num-xl" style="margin-bottom:var(--s3)">MEH</div>
-        <div class="meter"><div class="rail"></div><div class="fill" style="left:22%;width:28%"></div><div class="tip" style="left:10%"></div><div class="tip" style="left:90%"></div>
-          <div class="dots" style="left:calc(50% - 30px)"><i></i><i></i><i></i><i></i></div><div class="dots" style="left:calc(50% + 30px)"><i></i><i></i><i></i><i></i></div><div class="ptr" style="left:50%"></div></div>
-        <div class="scale t-micro"><span>Get out</span><span>Coward</span><span class="on">Meh</span><span>We see you</span><span>Hell yeah</span></div>
-      </div>
-      <div class="frame radio live" style="width:428px"><div class="frame-head"><span class="t-label">Radio</span><span class="t-meta">Station</span></div>
-        <div class="ticker">The Pump Zone · No pain, no gain. · Now playing: Drill Instructor</div>
-        <p class="t-body-s" style="margin-top:var(--s3)">Digging slightly faster.</p>
-        <div class="radio-keys"><span class="key">R</span><span class="t-meta">next station</span><span class="key">T</span><span class="t-meta">tape</span><span class="key">V</span><span class="t-meta">volume (soft)</span></div>
-      </div>
-    </div></section>
+  <section class="sec"><h2>Instruments<small>The dosage meter: the dial is a window cut into the aluminium, its scale behind glass; below the window the panel’s own metal hides the needle’s pivot. The needle is illuminated, not neon. The scale’s words light as you pass them; tip points are amber. The radio: its band behind the same glass, the stations as places, a red needle; lamps beside it are lenses: dark when off, cyan when on and well, a cyan outline when armed, amber for trouble.</small></h2>
+    <div class="deck"><div class="row" style="align-items:flex-start">
+      <div class="alu" style="width:340px"><div class="plt lit">Dosage meter</div><div class="dial"><div class="win glass"></div><div class="needle"></div><div class="metal"></div></div></div>
+      <div class="alu" style="width:420px"><div class="plt lit">Radio</div><div class="band glass"><span>The Pump Zone</span><b>Disco Gravitas</b><span>Void FM</span></div>
+        <div style="display:flex;gap:8px;margin-top:10px"><span class="lp">Tape</span><span class="lp on">Night vision</span><span class="lp armed">Dig faster</span><span class="lp warn">No power</span></div></div>
+    </div></div></section>
 
   <section class="sec"><h2>Archive<small>Tiles in four states: found, still in the rock, withdrawn, selected. Cards pair the photo with the text in one column.</small></h2>
     <div class="row">
@@ -442,7 +445,7 @@ h1, h2, h3, p { margin: 0; }
 <script>
   // Colour swatches, with contrast against the background where it matters.
   const C = [['Ink', '--ink', 'background'], ['Panel', '--panel', 'panels'], ['Raised', '--raised', 'tiles, hover'], ['Steel', '--steel', 'lines, labels, secondary text'],
-             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Concrete', '--greige', 'the hint'], ['Fluo', '--fluo', 'the one glow'], ['Spore', '--spore', 'Crack Spores'],
+             ['Text', '--text', 'text'], ['Faint', '--faint', 'locked, tertiary'], ['Aluminium', '--alu', 'panels, lit from above'], ['Glass', '--glass', 'every display'], ['Deck', '--deck', 'the gunmetal the panels sit on'], ['Fluo', '--fluo', 'the one glow'], ['Spore', '--spore', 'Crack Spores'],
              ['Amber', '--amber', 'attention: warnings, wear, calls'], ['Violet', '--violet', 'the secret menu'], ['Candy', '--candy', 'Candygirl'], ['Jizz', '--jizz', 'Jizz+'], ['Näsa', '--nasa', 'Näsa only']];
   const css = getComputedStyle(document.documentElement), hex = v => css.getPropertyValue(v).trim();
   const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; };
@@ -464,9 +467,7 @@ h1, h2, h3, p { margin: 0; }
     svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
     const p = `M${c} .5 H${tab} L${tab + step} ${step + .5} H${w - .5} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z`;
     const stripes = el.hasAttribute('data-stripes') ? [0, 1, 2, 3].map(i => `<path d="M${w - 70 + i * 9} ${h - 1} l5 -5 h4 l-5 5z" fill="var(--line-2)"/>`).join('') : '';
-    svg.innerHTML = `<path d="${p}" fill="var(--panel)" stroke="var(--line-2)" stroke-width="1" vector-effect="non-scaling-stroke"/>`
-      + `<path d="M${tab + step} ${step + .5} H${w - .5}" stroke="var(--line-2)"/>`
-      + `<path d="M${c + 3} 34.5 H${w - .5}" stroke="var(--line)"/>` + stripes;
+    svg.innerHTML = `<defs><linearGradient id="al" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22262a"/><stop offset=".5" stop-color="#1b1e22"/><stop offset="1" stop-color="#17191c"/></linearGradient></defs><path d="${p}" fill="url(#al)" stroke="rgba(0,0,0,.6)" stroke-width="1"/><path d="M${c} .5 H${tab} L${tab + step} ${step + .5} H${w - .5}" fill="none" stroke="rgba(255,255,255,.16)"/>`;   // the game's aluminium panel (27 Nov)
   }
   // Colour-vision simulator: filters the documentation, not the bar.
   document.querySelectorAll('.cvd button').forEach(b => b.onclick = () => {
