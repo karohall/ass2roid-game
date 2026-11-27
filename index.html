@@ -528,6 +528,27 @@
   .loadbar { height:12px; padding:2px; background:#07080a; box-shadow:inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.06); }
   .loadbar i { left:2px; top:2px; bottom:2px; max-width:calc(100% - 4px); box-shadow:none; filter:drop-shadow(0 0 4px rgba(var(--fluo-rgb),.6));
                background:repeating-linear-gradient(90deg, var(--fluo) 0 9px, transparent 9px 12px); }
+  /* ── Sleek pass (2026-11-27, the user: "sleek and elegant"). Thin edges; depth only where something is truly raised or sunken. ── */
+  .box { padding:10px 14px 12px; }
+  .box h3, #camTab h3, #dosage .dzplate, .hplate { background:none !important; box-shadow:none !important; clip-path:none !important; padding:2px 0 !important; color:#8b9196 !important; font-weight:500 !important; letter-spacing:.24em !important; }
+  .box h3::before, #camTab h3::before, #dosage .dzplate::before, .hplate i { width:5px !important; height:5px !important; box-shadow:none !important; }
+  body.shiftOn .box h3::before, body.shiftOn #camTab h3::before, body.shiftOn #dosage .dzplate::before, body.shiftOn .hplate i { box-shadow:0 0 4px var(--fluo) !important; }
+  #log, #cardDetail, #ingredients, #recipes { background:none !important; box-shadow:none !important; }
+  .recipe { border-top:1px solid rgba(255,255,255,.06) !important; padding-top:6px !important; margin-bottom:4px !important; } .recipe:first-child, .recipe:nth-child(2) { border-top:0 !important; padding-top:0 !important; }
+  .recipe button.key, #pauseBtn, .rks, .go.pl { background:#1c1f22 !important; box-shadow:0 0 0 1px rgba(255,255,255,.09) !important; }
+  .key .face, #pauseBtn .face, .rks .face, .go.pl .face { background:#0b0c0e !important; box-shadow:none !important; }
+  .key .face i, button.rk { background:#121417 !important; }
+  .key.ready { box-shadow:0 0 0 1px rgba(255,255,255,.09) !important; } .key.ready .face i:last-child { box-shadow:none !important; background:var(--fluo) !important; }
+  .recipe button.key kbd.k, .rks kbd.k { background:#2a2e32 !important; box-shadow:none !important; color:#d9dde0 !important; }
+  .inst .win, #effects .inst .win { background:#0b0c0e !important; box-shadow:none !important; }
+  .rlamps span { box-shadow:0 0 0 1px rgba(255,255,255,.06) !important; }
+  .placard { background:radial-gradient(circle at 9px 9px, #6b7177 0 1.6px, transparent 2px), radial-gradient(circle at calc(100% - 9px) 9px, #6b7177 0 1.6px, transparent 2px), radial-gradient(circle at 9px calc(100% - 9px), #6b7177 0 1.6px, transparent 2px), radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), #6b7177 0 1.6px, transparent 2px) !important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.08) !important; padding:10px 22px 11px !important; color:#8b9196 !important; text-shadow:none !important; }
+  .placard::before { display:none !important; }
+  #hint { box-shadow:inset 0 0 0 1px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.12) !important; }
+  @keyframes hintguide { 0%, 100% { box-shadow:inset 0 0 0 2px rgba(255,180,60,.3), 0 0 0 1px rgba(255,255,255,.12); } 50% { box-shadow:inset 0 0 0 3px rgba(255,180,60,1), 0 0 0 1px rgba(255,255,255,.12); } }
+  /* the Milk+ panel: the drinks at the top, the caution and the drink timers at its lower end (the user, 2026-11-27) */
+  #milk { display:flex; flex-direction:column; } #milk .placard { margin-top:auto !important; }
 </style>
 </head>
 <body class="intro">
@@ -3006,7 +3027,7 @@ function buildGauge() {
   let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
   { const d = 5, inner = `M${8.5 + d} ${d} H${tab - d / 2} L${tab + 6 - d / 2} ${6.75 + d} H${w - d} V${GZ.h - 8.5 - d} L${w - 8.5 - d} ${GZ.h - d} H${d} V${8.5 + d} Z`;   // the panels' thickness: a rim, a sunken tray (2026-11-26)
     h += `<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient><linearGradient id="gtray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#090a0c"/><stop offset="1" stop-color="#0c0d10"/></linearGradient>`;
-    h += `<path class="bez" d="${bez}" fill="url(#grim)" stroke="#0a0b0d" stroke-width="1"/><path d="${inner}" fill="url(#gtray)" stroke="#020304" stroke-width="1.5"/><path d="${inner}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1" transform="translate(0 1.5)"/>`; }
+    h += `<path class="bez" d="${bez}" fill="#141619" stroke="rgba(255,255,255,.09)" stroke-width="1"/>`; }   // sleek: the same fine edge as every panel (2026-11-27)
   // the instrument (2026-11-26): a dial face behind the scale with a steel rim, inner and outer
   { const rf = M.R - 6, wf = 140, a = 1.2;   // the rim clear of every word (2026-11-26)
     h += `<path d="${gArc(M, -a, a, rf)}" stroke="#0e1013" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2)}" stroke="url(#gbez)" stroke-width="2.5" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2 + 2)}" stroke="#050607" stroke-width="1.5" fill="none"/>`; }
@@ -3304,12 +3325,8 @@ function drawFrame(el) {
   svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--edge-hi)"/><stop offset=".45" style="stop-color:var(--frame)"/><stop offset="1" style="stop-color:var(--edge-lo)"/></linearGradient></defs><path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="var(--panel)" stroke="url(#${id})" stroke-width="1.5"/>`;
   {   // every panel has thickness (2026-11-26): a machined rim, a sunken tray inside
     const d = 5, inset = (tab ? `M${c + d} ${d} H${tab - d / 2} L${tab + step - d / 2} ${step + d} H${w - d}` : `M${c + d} ${d} H${w - d}`) + ` V${h - c - d} L${w - c - d} ${h - d} H${d} V${c + d} Z`;
-    el.style.setProperty('--thick-rim', `url(#${id})`);
-    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient>
-      <linearGradient id="${id}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#0c0e10"/><stop offset="1" stop-color="#15171a"/></linearGradient></defs>
-      <path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="url(#${id})" stroke="#0a0b0d" stroke-width="1"/>
-      <path d="${inset}" fill="url(#${id}b)" stroke="#020304" stroke-width="1.5"/>
-      <path d="${inset}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1" transform="translate(0 1.5)"/>`;
+    el.style.setProperty('--thick-rim', '#141619');   // sleek (2026-11-27): one fine edge and a light line along the top; no rim, tray or lip
+    svg.innerHTML = `<path d="${top} V${h - c} L${w - c} ${h - .5} H.5 V${c} Z" fill="#141619" stroke="rgba(255,255,255,.09)" stroke-width="1"/><path d="${top}" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1"/>`;
   }
 }
 const frameWatch = new ResizeObserver(es => es.forEach(e => { const b = e.target.closest('.box'); if (b) drawFrame(b); }));
