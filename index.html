@@ -299,9 +299,9 @@
   #wrap { position:relative; z-index:1; }
   body.wide #sky { visibility:visible; z-index:2; }   /* above the deck's plate: it only paints inside its own window */
   body.wide #c { visibility:hidden; }                                /* the sky draws the Drift, in the same place, then grows */
-  #panel, #dosage, #legend { will-change:opacity; }   /* their fade into the Drift runs on the compositor, not a repaint each frame */
+  #panel, #dosage, #legendBox { will-change:opacity; }   /* their fade into the Drift runs on the compositor, not a repaint each frame */
   body.wide #camTab, body.wide #mineBox > svg.outline { opacity:0; transition:opacity 6s ease 3s; }   /* no camera out there, no frame */
-  body.wide #panel, body.wide #dosage, body.wide #legend { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
+  body.wide #panel, body.wide #dosage, body.wide #legendBox { opacity:0; pointer-events:none; transition:opacity 6s ease 3s; }   /* the Milk+ column and the meter melt; the Field Guide stays, to read the archive in */
   /* Screens: over the mining window, ink over the rock. Each says where you are; its one fluo button is the way on, with its key. */
   .overlay { position:absolute; inset:0; top:calc(10px + var(--tabH, 0px)); left:12px; right:12px;   /* on the picture, inside the frame */ height:calc(var(--viewH) * var(--cvk)); background:rgba(8,9,10,.72); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:14px; }
   .plate { position:relative; width:100%; max-height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:46px 26px 44px; clip-path:polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);   /* a bolted instrument plate, its four corners cut alike (2026-11-24) */
@@ -584,6 +584,7 @@
   .pvol { display:flex; align-items:center; gap:14px; } .pvol .eng { font:600 12px/1 var(--f-small); letter-spacing:.1em; text-transform:uppercase; color:#8b9196; }
   .pvol .rks { height:36px; } .pvol .rks .face { width:72px; } .pvol button.rk { font-size:17px; }
   .pvol .lvl { min-width:54px; font:600 12px/1 var(--f-small); letter-spacing:.12em; text-transform:uppercase; color:var(--fluo); text-align:left; }
+  #legendBox { margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,.07); } #legend { min-height:0 !important; padding:0 !important; background:none !important; box-shadow:none !important; clip-path:none !important; }   /* the map key: a panel like the others, its items printed on the aluminium (2026-11-27) */
 </style>
 </head>
 <body class="intro">
@@ -593,6 +594,7 @@
     <div class="box" id="mineBox">                          <!-- the shaft cam, framed like every panel (2026-11-24) -->
     <div id="camTab" class="phead"><h3>Shaft cam 1</h3><span class="pmeta" id="camMeta">KR-1</span></div>   <!-- the mining window's name plate, as in the mockups -->
     <canvas id="c" width="440" height="520" tabindex="0"></canvas>
+    <div id="legendBox" class="later" data-reveal="dig"><div id="legend" class="small"></div></div>   <!-- the map's key, printed in the shaft cam's own frame under the picture (2026-11-27) -->
     <div id="start" class="overlay"><div class="plate">
       <div class="wa"><div class="w">ASS<i>2</i>ROID</div><div class="sub"><span>Ex Profundo</span></div></div>
       <div class="ver">Prototype 4</div>
@@ -605,7 +607,6 @@
     <div id="nasa" class="hidden"></div>
     </div>
     <div id="hintWrap" class="box"><h3>Advisory</h3><div id="hint"></div></div>   <!-- the hint, a panel like the others: its name plate on the bezel (2026-11-27) -->
-    <div id="legend" class="small later" data-reveal="dig"></div>
   </div>
 
   <div id="panel">
