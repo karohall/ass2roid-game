@@ -3002,7 +3002,7 @@ function radioHud() {
   setText('radioFx', !sound.on ? ''
     : n.note || (s && running && frenzy() ? 'The Frenzy speeds the signal up.' : s && running && stillness() ? 'The signal, far away, through rock.' : '') || (s && nightVision() ? 'Night vision: you see further.' : noPower ? 'No power: tape only.' : '') + '');   // only what's happening now; the perk is the lamp's job (2026-11-24)
   $('radioFx').classList.toggle('warn', !sound.on || noPower);   // amber only for a warning   // the radio lesson lives in the radio, until another station is tried
-  $('radioBox').classList.toggle('call', guideNow() === 'radio');   // the drill is waiting: look here
+  $('radioBox').classList.toggle('call', (s.hintsSeen || 0) <= 3 && guideNow() === 'radio');   // the drill is waiting: look here
   document.body.classList.toggle('shiftOn', !!(running && s && !s.drift));   // every plate's lamp lit while the shift runs
 }
 
@@ -3186,9 +3186,11 @@ function hud() {
   if (shaking()) fx.push(`shaking ${VNAME[s.shake.v]}`);
   { const el = $('effects'), h = fx.map(x => { const m = /^(.*?)\s(\d+)s$/.exec(x); return m ? '<div class="inst"><span class="eng">' + m[1] + '</span><span class="win"><span>' + m[2] + '<small>sec</small></span></span></div>' : '<div class="inst"><span class="eng">' + x + '</span></div>'; }).join('') || '<div class="none">Nothing active</div>'; if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }   // each active drink a row like the Rover panel's (2026-11-26)
   // A panel the hint names pulses for the hint's first six seconds (2026-11-17: they look alike, and the hint is far from the right column).
-  const fresh = performance.now() - typing.from < 6000;
+  if (typing.text && typing.text !== s.lastHintText) { s.lastHintText = typing.text; s.hintsSeen = (s.hintsSeen || 0) + 1; }
+  const early = (s.hintsSeen || 0) <= 3;   // amber pulses only for the first three hints; after that the player is free to explore (the user, 2026-11-27)
+  const fresh = early && performance.now() - typing.from < 6000;
   for (const [re, el] of [[/rover panel/i, $('rover')], [/Field Guide/, $('guide').closest('.box')], [/Milk\+ menu/i, $('milk')], [/Next drink|\bthe meter\b/i, $('dosage')]]) el.classList.toggle('hinted', fresh && re.test(typing.text));
-  const gd = guideNow(); $('hint').classList.toggle('guide', gd === 'hint'); $('milk').classList.toggle('call', gd === 'strength');   // the whole Milk+ panel calls for the first Strength (was its row; 2026-11-24)
+  const gd = early ? guideNow() : null; $('hint').classList.toggle('guide', gd === 'hint'); $('milk').classList.toggle('call', gd === 'strength');   // the whole Milk+ panel calls for the first Strength (was its row; 2026-11-24)
   drawGaugeMeter(t);
   cv.className = s.drift ? '' : frenzy() ? 'frenzy' : stillness() ? 'still' : '';   // the Drift drops Stillness's tint: space has its own colours
   document.body.classList.toggle('intro', s.drinks === 0);
