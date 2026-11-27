@@ -564,7 +564,8 @@
   .placard { box-shadow:inset 0 1px 0 rgba(0,0,0,.6), inset 0 -1px 0 rgba(255,255,255,.06), inset 1px 0 0 rgba(0,0,0,.4), inset -1px 0 0 rgba(255,255,255,.04) !important; }   /* an engraved groove, read by light */
   #hint { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.08), 0 -1px 0 rgba(0,0,0,.6) !important; }   /* the concrete plate set in: shaded at the top, a light lip below */
   @keyframes hintguide { 0%, 100% { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,180,60,.3), 0 1px 0 rgba(255,255,255,.08); } 50% { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 0 0 3px rgba(255,180,60,1), 0 1px 0 rgba(255,255,255,.08); } }
-  #wrap::before { background:linear-gradient(180deg, #2a2d31, #1c1f22) !important; }
+  #wrap::before { background:linear-gradient(180deg, #3c4147, #2c3035 55%, #262a2e) !important; }   /* the deck a lighter gunmetal than the panels set on it (2026-11-27: too flat) */
+  .box > svg.outline, #gauge, #hint { filter:drop-shadow(0 2px 2px rgba(0,0,0,.55)) drop-shadow(0 0 1px rgba(0,0,0,.6)); }   /* each panel stands on the deck, lit from above: a short shadow below */
   .recipe button.key kbd.k, .rks kbd.k { background:linear-gradient(180deg, #6a7076, #454a4f) !important; color:#fff !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 1px 0 rgba(0,0,0,.6) !important; }   /* a key on a bezel stays the lighter cap: it must stand out from the plastic around it (the rule, 2026-11-26) */
   .box h3, #camTab h3, #dosage .dzplate, .hplate { text-shadow:none !important; }   /* every name plate printed the same: no old stamped shadow on some and not others (2026-11-27) */
 </style>
