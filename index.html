@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ASS2ROID: Ex Profundo (Prototype 4)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   /* Prototype 4, "Gunmetal" (mockups/design-system.html). Fluo (act now) is the bioluminescent blue, the spores the green (swapped 2026-11-16). No text under 11 px: the game is often shown scaled down (the itch.io frame). Neutral cold steel, a concrete hint, one glow (fluo: act now),
      amber for warnings, a pastel for each secret. Sizes the layout depends on are unchanged (fit() measures the rest). */
@@ -544,7 +544,7 @@
   .rlamps span { box-shadow:0 0 0 1px rgba(255,255,255,.06) !important; }
   .placard { background:none !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.08) !important; padding:10px 14px 11px !important; color:#8b9196 !important; text-shadow:none !important; }   /* a thin outlined area; its text on the same left line as the timers below (2026-11-27: off balance) */
   .placard::before { display:none !important; }
-  #hint { box-shadow:inset 0 0 0 1px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.12) !important; }
+
   @keyframes hintguide { 0%, 100% { box-shadow:inset 0 0 0 2px rgba(255,180,60,.3), 0 0 0 1px rgba(255,255,255,.12); } 50% { box-shadow:inset 0 0 0 3px rgba(255,180,60,1), 0 0 0 1px rgba(255,255,255,.12); } }
   /* the Milk+ panel: the drinks at the top, the caution and the drink timers at its lower end (the user, 2026-11-27) */
   #milk { display:flex; flex-direction:column; } #milk .placard { margin-top:auto !important; }
@@ -562,13 +562,21 @@
   .recipe button.key kbd.k, .rks kbd.k, kbd.k { background:linear-gradient(180deg, #34383d, #25292d) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 1px 0 rgba(0,0,0,.6) !important; }
   .key.ready { box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(0,0,0,.6), 0 2px 3px rgba(0,0,0,.35) !important; }
   .placard { box-shadow:inset 0 1px 0 rgba(0,0,0,.6), inset 0 -1px 0 rgba(255,255,255,.06), inset 1px 0 0 rgba(0,0,0,.4), inset -1px 0 0 rgba(255,255,255,.04) !important; }   /* an engraved groove, read by light */
-  #hint { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.08), 0 -1px 0 rgba(0,0,0,.6) !important; }   /* the concrete plate set in: shaded at the top, a light lip below */
+   /* the concrete plate set in: shaded at the top, a light lip below */
   @keyframes hintguide { 0%, 100% { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,180,60,.3), 0 1px 0 rgba(255,255,255,.08); } 50% { box-shadow:inset 0 2px 3px rgba(0,0,0,.35), inset 0 0 0 3px rgba(255,180,60,1), 0 1px 0 rgba(255,255,255,.08); } }
   #wrap::before { background:linear-gradient(180deg, #3c4147, #2c3035 55%, #262a2e) !important; }   /* the deck a lighter gunmetal than the panels set on it (2026-11-27: too flat) */
   .box > svg.outline, #gauge, #hint { filter:drop-shadow(0 2px 2px rgba(0,0,0,.55)) drop-shadow(0 0 1px rgba(0,0,0,.6)); }   /* each panel stands on the deck, lit from above: a short shadow below */
   .recipe button.key kbd.k, .rks kbd.k { background:linear-gradient(180deg, #6a7076, #454a4f) !important; color:#fff !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 1px 0 rgba(0,0,0,.6) !important; }   /* a key on a bezel stays the lighter cap: it must stand out from the plastic around it (the rule, 2026-11-26) */
   .box h3, #camTab h3, #dosage .dzplate, .hplate { text-shadow:none !important; }   /* every name plate printed the same: no old stamped shadow on some and not others (2026-11-27) */
   #dosage .dzplate { left:12px !important; top:10px !important; } #dosage::after { display:none !important; } #dosage { background:transparent !important; }   /* the meter's plate where every panel has it; no old sheen or backing: the dial has its own glass (2026-11-27) */
+  /* ADVISORY as the rover's computer (2026-11-27, the user's pick): dark glass like every display, a > prompt, the message in a terminal font, lit pale cyan; it types in, the cursor a block */
+  #hint { background:linear-gradient(180deg, rgba(255,255,255,.045), transparent 45%), linear-gradient(180deg, #0c0e11, #06070a); box-shadow:inset 0 1px 2px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06); color:#bfeff6; font:400 14px/1.6 'IBM Plex Mono', monospace; text-shadow:0 0 6px rgba(var(--fluo-rgb),.4); }
+  #hint:not(:empty)::before { content:'> '; color:rgba(var(--fluo-rgb),.6); }
+  #hint .em { font-weight:500; color:#e6fbff; }
+  #hint kbd.hk { background:linear-gradient(180deg, #6a7076, #454a4f) !important; color:#fff !important; text-shadow:none; font-family:var(--f-title) !important; }
+  #hint:empty { background:rgba(8,9,11,.45); box-shadow:inset 0 1px 2px rgba(0,0,0,.6); }
+  @keyframes hintguide { 0%, 100% { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 2px rgba(255,180,60,.3); } 50% { box-shadow:inset 0 1px 2px rgba(0,0,0,.85), inset 0 0 0 3px rgba(255,180,60,1); } }
+  @keyframes hintflash { 0%, 40% { background:rgba(var(--fluo-rgb),.22); } 100% { background:#0a0c0e; } }
 </style>
 </head>
 <body class="intro">
@@ -3047,7 +3055,7 @@ function buildGauge() {
   let h = '<defs><linearGradient id="gbez" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c7" stop-opacity=".8"/><stop offset=".5" stop-color="#6c737a" stop-opacity=".55"/><stop offset="1" stop-color="#3b4046" stop-opacity=".7"/></linearGradient><filter id="gglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3.5"/></filter><filter id="sglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter></defs>';
   { const d = 5, inner = `M${8.5 + d} ${d} H${tab - d / 2} L${tab + 6 - d / 2} ${6.75 + d} H${w - d} V${GZ.h - 8.5 - d} L${w - 8.5 - d} ${GZ.h - d} H${d} V${8.5 + d} Z`;   // the panels' thickness: a rim, a sunken tray (2026-11-26)
     h += `<linearGradient id="grim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8f969c"/><stop offset=".06" stop-color="#686f75"/><stop offset=".6" stop-color="#474d53"/><stop offset="1" stop-color="#15171a"/></linearGradient><linearGradient id="gtray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#020304"/><stop offset=".12" stop-color="#090a0c"/><stop offset="1" stop-color="#0c0d10"/></linearGradient>`;
-    h += `<defs><linearGradient id="gAlu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22262a"/><stop offset=".5" stop-color="#1b1e22"/><stop offset="1" stop-color="#17191c"/></linearGradient><linearGradient id="gGlass" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="${GZ.h}"><stop offset="0" stop-color="#0c0e11"/><stop offset="1" stop-color="#06070a"/></linearGradient><linearGradient id="gRefl" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="150"><stop offset="0" stop-color="#fff" stop-opacity=".07"/><stop offset=".55" stop-color="#fff" stop-opacity=".015"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gCover" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2e33"/><stop offset=".35" stop-color="#202327"/><stop offset="1" stop-color="#1a1d20"/></linearGradient><filter id="gSh" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter><clipPath id="gClip"><rect x="0" y="0" width="${w}" height="${GZ.h - 1.5}"/></clipPath></defs><path class="bez" d="${bez}" fill="url(#gAlu)" stroke="rgba(0,0,0,.6)" stroke-width="1"/>`; }   // realism (2026-11-27): matte aluminium lit from above
+    h += `<defs><linearGradient id="gAlu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22262a"/><stop offset=".5" stop-color="#1b1e22"/><stop offset="1" stop-color="#17191c"/></linearGradient><linearGradient id="gGlass" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="${GZ.h}"><stop offset="0" stop-color="#0c0e11"/><stop offset="1" stop-color="#06070a"/></linearGradient><linearGradient id="gRefl" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="150"><stop offset="0" stop-color="#fff" stop-opacity=".07"/><stop offset=".55" stop-color="#fff" stop-opacity=".015"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gCover" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2e33"/><stop offset=".35" stop-color="#202327"/><stop offset="1" stop-color="#1a1d20"/></linearGradient><filter id="gSh" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter><clipPath id="gClip"><rect x="0" y="0" width="${w}" height="${GZ.h - 11}"/></clipPath></defs><path class="bez" d="${bez}" fill="url(#gAlu)" stroke="rgba(0,0,0,.6)" stroke-width="1"/>`; }   // realism (2026-11-27): matte aluminium lit from above
   // the instrument (2026-11-26): a dial face behind the scale with a steel rim, inner and outer
   { const rf = M.R - 6, wf = 140, a = 1.2;   // the rim clear of every word (2026-11-26)
     h += `<path d="${gArc(M, -a, a, rf)}" stroke="url(#gGlass)" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf)}" stroke="url(#gRefl)" stroke-width="${wf}" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2)}" stroke="url(#gbez)" stroke-width="2.5" fill="none"/><path d="${gArc(M, -a, a, rf + wf / 2 + 2)}" stroke="#050607" stroke-width="1.5" fill="none"/>`; }
@@ -3065,6 +3073,7 @@ function buildGauge() {
   { const rs = M.R - 60, sy = M.cy - 120;
     h += `<defs><linearGradient id="gshroud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a5056"/><stop offset=".08" stop-color="#2e3237"/><stop offset="1" stop-color="#17191c"/></linearGradient><radialGradient id="gscrew" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#d3d8dc"/><stop offset=".55" stop-color="#7c838a"/><stop offset="1" stop-color="#2a2e32"/></radialGradient></defs>`;
     h += `<g clip-path="url(#gClip)"><circle cx="${M.cx}" cy="${M.cy - 2}" r="${rs}" fill="#000" opacity=".55" filter="url(#gSh)"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs}" fill="url(#gCover)" stroke="rgba(0,0,0,.7)" stroke-width="1"/><circle cx="${M.cx}" cy="${M.cy}" r="${rs - 2}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1" transform="translate(0 1)"/></g>`;   // realism (2026-11-27): a flat machined cover, flush with the dial, its shadow on the glass; inside the meter
+    h += `<rect x="1" y="${GZ.h - 11}" width="${w - 2}" height="10" fill="url(#gAlu)"/><line x1="1" x2="${w - 1}" y1="${GZ.h - 11.5}" y2="${GZ.h - 11.5}" stroke="rgba(0,0,0,.55)" stroke-width="1"/><line x1="1" x2="${w - 1}" y1="${GZ.h - 10.5}" y2="${GZ.h - 10.5}" stroke="rgba(255,255,255,.14)" stroke-width="1"/>`;   // a ledge along the meter's foot: the cover stands on it instead of being cut by the edge (2026-11-27)
     h += `<line x1="0" x2="${w}" y1="${GZ.h - 1}" y2="${GZ.h - 1}" stroke="rgba(0,0,0,.7)" stroke-width="1.5"/><path d="M8.5 .75 H${tab} L${tab + 6} 6.75 H${w - .75}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>`;   // the panel's bottom edge across the cover; its top edge catching the light
   }
   // (the big word readout is gone, 2026-11-17: the scale's own words light up instead)
